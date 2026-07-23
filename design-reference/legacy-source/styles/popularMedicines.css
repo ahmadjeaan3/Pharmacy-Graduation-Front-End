@@ -1,0 +1,31 @@
+.marquee-track {
+  display: flex;
+  gap: 32px;
+  width: max-content;
+  animation: scroll 20s linear infinite;
+}
+
+/* الحركة المستمرة بدون توقف */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* الكارد */
+.card {
+  width: 240px;
+  height: 270px;
+  flex-shrink: 0;
+  border: 1px solid #e4e4e4;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  background: white;
+}
