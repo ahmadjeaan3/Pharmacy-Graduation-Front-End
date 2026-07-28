@@ -3,7 +3,6 @@ export function getApiErrorMessage(error) {
     return "تعذر الوصول إلى خدمات المنصة حالياً. تحقق من اتصالك ثم حاول مجدداً.";
   const { status, data } = error.response;
   if (status === 401) return "البريد الإلكتروني أو كلمة المرور غير صحيحة.";
-  if (status === 403) return "لا تملك صلاحية تنفيذ هذه العملية.";
   if (status === 429)
     return "تم إرسال عدد كبير من الطلبات. انتظر قليلاً ثم حاول مجدداً.";
 
@@ -15,6 +14,7 @@ export function getApiErrorMessage(error) {
     return translateServerMessage(data);
   if (data?.detail) return translateServerMessage(data.detail);
   if (data?.error) return translateServerMessage(data.error);
+  if (status === 403) return "لا تملك صلاحية تنفيذ هذه العملية.";
   if (status === 400)
     return "تعذر قبول البيانات المدخلة. راجع الحقول وحاول مجدداً.";
   if (data?.title) return translateServerMessage(data.title);
@@ -122,5 +122,10 @@ function translateServerMessage(message) {
     return "انتهت هذه المحادثة. ابدأ محادثة جديدة للمتابعة.";
   if (normalized.includes("invalid request"))
     return "تعذر قبول البيانات المدخلة. راجع الحقول وحاول مجدداً.";
+  if (
+    normalized.includes("user account is inactive") ||
+    normalized.includes("account is inactive")
+  )
+    return "هذا الحساب موقوف حاليًا. تواصل مع إدارة المنصة أو فعّله من إدارة الحسابات.";
   return text;
 }

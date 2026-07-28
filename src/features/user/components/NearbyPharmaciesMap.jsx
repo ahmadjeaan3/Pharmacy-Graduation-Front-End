@@ -69,7 +69,7 @@ export function NearbyPharmaciesMap({ locationContext, route }) {
               zIndexOffset={1000}
             >
               <Popup>
-                <div dir="rtl" className="min-w-36 text-right">
+                <div dir="rtl" className="min-w-36 text-start">
                   <strong className="text-sm text-[#17363e]">
                     موقعك الحالي
                   </strong>
@@ -105,7 +105,7 @@ export function NearbyPharmaciesMap({ locationContext, route }) {
             )}
           </MapContainer>
           <div className="pointer-events-none absolute right-4 top-4 z-[500] rounded-xl border border-white/70 bg-white/92 px-3 py-2 text-xs font-bold text-[#29464d] shadow-lg backdrop-blur">
-            <span className="ml-2 inline-block size-2.5 rounded-full bg-[#216474]" />
+            <span className="me-2 inline-block size-2.5 rounded-full bg-[#216474]" />
             الطريق إلى الأقرب
           </div>
         </div>
@@ -126,7 +126,7 @@ function FitMap({ points }) {
 
 function PharmacyPopup({ pharmacy, number }) {
   return (
-    <div dir="rtl" className="min-w-56 text-right">
+    <div dir="rtl" className="min-w-56 text-start">
       <div className="flex items-center justify-between gap-2">
         <strong className="text-sm text-[#17363e]">
           {number}. {pharmacy.name}
@@ -145,7 +145,7 @@ function PharmacyPopup({ pharmacy, number }) {
         <span>
           <Star
             size={12}
-            className="ml-1 inline text-amber-500"
+            className="me-1 inline text-amber-500"
             fill="currentColor"
           />
           {Number(pharmacy.averageRating || 0).toLocaleString("ar-SY", {

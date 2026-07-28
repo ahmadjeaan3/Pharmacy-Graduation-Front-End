@@ -1,7 +1,9 @@
 import { HeartPulse } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useLanguage } from "../i18n/useLanguage";
 
 export function Brand({ light = false, compact = false, markOnly = false }) {
+  const { t } = useLanguage();
   return (
     <Link
       to="/"
@@ -19,7 +21,7 @@ export function Brand({ light = false, compact = false, markOnly = false }) {
           <strong
             className={`block text-[17px] font-extrabold tracking-tight ${light ? "text-white" : "text-[#102d34]"}`}
           >
-            حياة دوائية
+            {t("حياة دوائية")}
           </strong>
           <small
             className={`block text-[10px] font-medium tracking-wide ${light ? "text-white/60" : "text-[#668087]"}`}

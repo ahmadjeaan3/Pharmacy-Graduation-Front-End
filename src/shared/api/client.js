@@ -18,7 +18,20 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     const isLoginRequest = error.config?.url?.includes("/auth/login");
-    if (error.response?.status === 401 && !isLoginRequest) {
+    const authenticationChallenge =
+      error.response?.headers?.["www-authenticate"] || "";
+    const tokenWasRejected =
+      /invalid_token|token.*expired|signature/i.test(authenticationChallenge);
+    const sessionIsMissing = !getAccessToken();
+
+    // Do not destroy a valid local session for an application-level 401.
+    // Only authentication middleware challenges (or a locally missing/
+    // expired session) should send the user back to the login page.
+    if (
+      error.response?.status === 401 &&
+      !isLoginRequest &&
+      (tokenWasRejected || sessionIsMissing)
+    ) {
       window.dispatchEvent(new Event("pharmacy:unauthorized"));
     }
     return Promise.reject(error);

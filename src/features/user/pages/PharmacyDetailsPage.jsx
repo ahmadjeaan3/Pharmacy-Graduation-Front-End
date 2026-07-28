@@ -101,12 +101,12 @@ export function PharmacyDetailsPage() {
               <span
                 className={`rounded-full px-3 py-1.5 text-xs font-bold ${pharmacy.isOpenNow ? "bg-emerald-400/15 text-emerald-200" : "bg-white/10 text-white/60"}`}
               >
-                <Clock3 size={13} className="ml-1 inline" />
+                <Clock3 size={13} className="me-1 inline" />
                 {pharmacy.statusText}
               </span>
               {pharmacy.hasDeliveryService && (
                 <span className="rounded-full bg-[#f5cb72]/15 px-3 py-1.5 text-xs font-bold text-[#f5cb72]">
-                  <Bike size={13} className="ml-1 inline" />
+                  <Bike size={13} className="me-1 inline" />
                   توصيل متاح
                 </span>
               )}
@@ -123,7 +123,7 @@ export function PharmacyDetailsPage() {
                 <Star
                   size={17}
                   fill="currentColor"
-                  className="ml-1 inline text-[#f5cb72]"
+                  className="me-1 inline text-[#f5cb72]"
                 />
                 {Number(pharmacy.averageRating || 0).toLocaleString("ar-SY", {
                   maximumFractionDigits: 1,
@@ -183,7 +183,7 @@ export function PharmacyDetailsPage() {
                       .getElementById("medicine-request")
                       ?.scrollIntoView({ behavior: "smooth", block: "center" });
                   }}
-                  className={`rounded-[1.25rem] border bg-white p-4 text-right transition ${request.medicineId === medicine.medicineId ? "border-[#216474] ring-4 ring-[#216474]/8" : "border-[#174b57]/8 hover:border-[#216474]/25"}`}
+                  className={`rounded-[1.25rem] border bg-white p-4 text-start transition ${request.medicineId === medicine.medicineId ? "border-[#216474] ring-4 ring-[#216474]/8" : "border-[#174b57]/8 hover:border-[#216474]/25"}`}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <span className="grid size-10 place-items-center rounded-xl bg-[#eaf4f3] text-[#216474]">

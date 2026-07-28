@@ -273,7 +273,7 @@ export function PharmacyRequestDetailsPage() {
                 {data.pharmacyResponseNote || "لا توجد ملاحظة إضافية في الرد."}
               </p>
               {data.suggestedAlternative && (
-                <div className="mt-4 rounded-xl bg-white p-3 text-right text-xs">
+                <div className="mt-4 rounded-xl bg-white p-3 text-start text-xs">
                   <span className="text-[#829499]">البديل المقترح</span>
                   <strong className="mt-1 block">
                     {data.suggestedAlternative.medicineName}

@@ -3,6 +3,9 @@ import { formatChatDate } from "../utils/chatFormatters";
 
 export function ChatMessageBubble({ message }) {
   const fromUser = message.senderType === "User";
+  const content = fromUser
+    ? message.content
+    : normalizeAssistantContent(message.content);
   return (
     <div
       className={`flex items-end gap-3 ${fromUser ? "justify-start" : "justify-end"}`}
@@ -16,7 +19,7 @@ export function ChatMessageBubble({ message }) {
         className={`max-w-[min(82%,720px)] rounded-2xl px-4 py-3 ${fromUser ? "rounded-bl-md bg-[#216474] text-white" : "rounded-br-md border border-[#174b57]/8 bg-white text-[#29464d] shadow-sm"}`}
       >
         <p className="whitespace-pre-wrap text-sm leading-7">
-          {message.content}
+          {content}
         </p>
         <span
           className={`mt-2 flex items-center gap-1 text-[10px] ${fromUser ? "text-white/45" : "text-[#a0adb0]"}`}
@@ -27,4 +30,11 @@ export function ChatMessageBubble({ message }) {
       </div>
     </div>
   );
+}
+
+function normalizeAssistantContent(content = "") {
+  return content
+    .replace(/\*\*(.*?)\*\*/g, "$1")
+    .replace(/__(.*?)__/g, "$1")
+    .replace(/`([^`]+)`/g, "$1");
 }

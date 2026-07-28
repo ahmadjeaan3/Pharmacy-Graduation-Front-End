@@ -43,7 +43,7 @@ export function MedicinePicker({ value, onChange }) {
         </p>
       )}
       {!query.isError && (
-        <div className="mt-3 grid max-h-56 gap-2 overflow-y-auto pl-1 sm:grid-cols-2">
+        <div className="mt-3 grid max-h-56 gap-2 overflow-y-auto pe-1 sm:grid-cols-2">
           {(query.data?.items || []).map((medicine) => {
             const selected = value?.id === medicine.id;
             return (
@@ -51,7 +51,7 @@ export function MedicinePicker({ value, onChange }) {
                 key={medicine.id}
                 type="button"
                 onClick={() => onChange(medicine)}
-                className={`flex items-center gap-3 rounded-2xl border p-3 text-right transition ${selected ? "border-[#216474]/35 bg-[#eaf4f3]" : "border-[#174b57]/8 bg-white hover:border-[#216474]/25"}`}
+                className={`flex items-center gap-3 rounded-2xl border p-3 text-start transition ${selected ? "border-[#216474]/35 bg-[#eaf4f3]" : "border-[#174b57]/8 bg-white hover:border-[#216474]/25"}`}
               >
                 <span
                   className={`grid size-9 shrink-0 place-items-center rounded-xl ${selected ? "bg-[#216474] text-white" : "bg-[#f2f7f6] text-[#216474]"}`}

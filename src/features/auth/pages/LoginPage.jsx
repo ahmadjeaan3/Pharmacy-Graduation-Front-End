@@ -12,6 +12,7 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getApiErrorMessage } from "../../../shared/api/errors";
 import { Brand } from "../../../shared/components/Brand";
+import { LanguageSwitcher } from "../../../shared/components/LanguageSwitcher";
 import { login } from "../api/authApi";
 import { useAuth } from "../hooks/useAuth";
 
@@ -35,7 +36,10 @@ export function LoginPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#f7faf9] lg:grid lg:grid-cols-[1.05fr_.95fr]">
+    <div className="relative min-h-screen bg-[#f7faf9] lg:grid lg:grid-cols-[1.05fr_.95fr]">
+      <div className="absolute end-5 top-5 z-20">
+        <LanguageSwitcher />
+      </div>
       <section className="relative hidden min-h-screen overflow-hidden bg-[#123f49] lg:block">
         <img
           src="/assets/app/auth/login-bg.png"

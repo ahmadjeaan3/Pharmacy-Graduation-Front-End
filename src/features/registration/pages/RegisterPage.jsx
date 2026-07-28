@@ -23,6 +23,7 @@ import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { getApiErrorMessage } from "../../../shared/api/errors";
 import { Brand } from "../../../shared/components/Brand";
+import { LanguageSwitcher } from "../../../shared/components/LanguageSwitcher";
 import {
   registerOrganization,
   registerPharmacy,
@@ -91,7 +92,7 @@ function AccountTypeSelection({ onSelect }) {
                   type="button"
                   key={role}
                   onClick={() => onSelect(type)}
-                  className="group relative flex flex-col rounded-[1.8rem] border border-[#174b57]/10 bg-white p-7 text-right transition duration-300 hover:-translate-y-2 hover:border-[#216474]/30 hover:shadow-[0_25px_60px_rgba(23,75,87,.11)]"
+                  className="group relative flex flex-col rounded-[1.8rem] border border-[#174b57]/10 bg-white p-7 text-start transition duration-300 hover:-translate-y-2 hover:border-[#216474]/30 hover:shadow-[0_25px_60px_rgba(23,75,87,.11)]"
                 >
                   <span
                     className={`grid size-14 place-items-center rounded-2xl ${tone}`}
@@ -630,9 +631,12 @@ function RegisterHeader() {
     <header className="border-b border-[#174b57]/8 bg-white/90 backdrop-blur">
       <div className="mx-auto flex h-[76px] max-w-[1280px] items-center justify-between px-5 lg:px-8">
         <Brand />
-        <Link to="/login" className="btn-quiet">
-          لدي حساب
-        </Link>
+        <div className="flex items-center gap-2">
+          <LanguageSwitcher compact />
+          <Link to="/login" className="btn-quiet">
+            لدي حساب
+          </Link>
+        </div>
       </div>
     </header>
   );

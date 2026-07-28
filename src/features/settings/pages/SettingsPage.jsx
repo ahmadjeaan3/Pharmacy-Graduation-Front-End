@@ -1,18 +1,22 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   CalendarDays,
+  Camera,
   CheckCircle2,
   Eye,
   EyeOff,
+  ImagePlus,
   KeyRound,
+  Languages,
   Mail,
   Phone,
   Save,
   Settings,
   ShieldCheck,
+  Trash2,
   UserRound,
 } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useAuth } from "../../auth/hooks/useAuth";
 import {
   getPrimaryRole,
@@ -22,9 +26,13 @@ import { getApiErrorMessage } from "../../../shared/api/errors";
 import {
   accountKeys,
   changeAccountPassword,
+  deleteAccountAvatar,
   getAccountProfile,
+  updateAccountAvatar,
   updateAccountProfile,
 } from "../api/accountApi";
+import { ProfileAvatar } from "../../../shared/components/ProfileAvatar";
+import { LanguageSwitcher } from "../../../shared/components/LanguageSwitcher";
 
 const emptyPassword = {
   currentPassword: "",
@@ -56,7 +64,7 @@ function PasswordField({ label, value, onChange }) {
           <KeyRound size={17} />
         </span>
         <input
-          className="form-input has-field-icon !pl-12"
+          className="form-input has-field-icon !pe-12"
           type={visible ? "text" : "password"}
           value={value}
           onChange={onChange}
@@ -87,6 +95,8 @@ export function SettingsPage() {
   const [password, setPassword] = useState(emptyPassword);
   const [profileMessage, setProfileMessage] = useState("");
   const [passwordMessage, setPasswordMessage] = useState("");
+  const [avatarMessage, setAvatarMessage] = useState("");
+  const avatarInput = useRef(null);
 
   const profile = profileDraft ?? {
     fullName: profileQuery.data?.fullName || "",
@@ -107,6 +117,8 @@ export function SettingsPage() {
         fullName: data.fullName,
         email: data.email,
         roles: data.roles,
+        hasProfileImage: data.hasProfileImage,
+        profileImageUpdatedAtUtc: data.profileImageUpdatedAtUtc,
       });
       setProfileMessage("تم حفظ بيانات الحساب بنجاح.");
     },
@@ -119,6 +131,24 @@ export function SettingsPage() {
       setPasswordMessage("تم تغيير كلمة المرور بنجاح.");
     },
     onError: () => setPasswordMessage(""),
+  });
+  const syncAvatar = (data, message) => {
+    queryClient.setQueryData(accountKeys.profile, data);
+    updateUser({
+      hasProfileImage: data.hasProfileImage,
+      profileImageUpdatedAtUtc: data.profileImageUpdatedAtUtc,
+    });
+    setAvatarMessage(message);
+  };
+  const avatarMutation = useMutation({
+    mutationFn: updateAccountAvatar,
+    onSuccess: (data) => syncAvatar(data, "تم تحديث الصورة الشخصية بنجاح."),
+    onError: (error) => setAvatarMessage(getApiErrorMessage(error)),
+  });
+  const deleteAvatar = useMutation({
+    mutationFn: deleteAccountAvatar,
+    onSuccess: (data) => syncAvatar(data, "تم حذف الصورة الشخصية."),
+    onError: (error) => setAvatarMessage(getApiErrorMessage(error)),
   });
 
   const role = getRoleDefinition(
@@ -173,6 +203,91 @@ export function SettingsPage() {
       ) : (
         <div className="grid gap-6 xl:grid-cols-[1.25fr_.75fr]">
           <div className="space-y-6">
+            <section className="surface overflow-hidden">
+              <div className="bg-[linear-gradient(120deg,#f5faf9,#edf6f4)] p-6 lg:p-7">
+                <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
+                  <div className="relative w-fit">
+                    <ProfileAvatar
+                      user={profileQuery.data}
+                      sizeClass="size-28"
+                      className="rounded-[1.7rem] border-4 border-white shadow-[0_14px_35px_rgba(23,75,87,.15)]"
+                      fallbackIcon
+                    />
+                    <button
+                      type="button"
+                      onClick={() => avatarInput.current?.click()}
+                      className="absolute -bottom-2 -end-2 grid size-10 place-items-center rounded-xl border-4 border-white bg-[#216474] text-white shadow-lg transition hover:bg-[#174b57]"
+                      aria-label="تغيير الصورة الشخصية"
+                    >
+                      <Camera size={17} />
+                    </button>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-black text-[#216474]">
+                      هويتك داخل المنصة
+                    </p>
+                    <h3 className="mt-1 text-xl font-black text-[#29464d]">
+                      الصورة الشخصية
+                    </h3>
+                    <p className="mt-2 max-w-xl text-sm leading-7 text-[#71858a]">
+                      اختر صورة واضحة بصيغة JPG أو PNG أو WebP، وبحجم لا يتجاوز
+                      5 ميغابايت.
+                    </p>
+                    <input
+                      ref={avatarInput}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      className="hidden"
+                      onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        event.target.value = "";
+                        setAvatarMessage("");
+                        if (!file) return;
+                        if (file.size > 5 * 1024 * 1024)
+                          return setAvatarMessage(
+                            "حجم الصورة يجب ألا يتجاوز 5 ميغابايت.",
+                          );
+                        avatarMutation.mutate(file);
+                      }}
+                    />
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        disabled={avatarMutation.isPending}
+                        onClick={() => avatarInput.current?.click()}
+                        className="btn-primary"
+                      >
+                        <ImagePlus size={17} />
+                        {avatarMutation.isPending
+                          ? "جاري رفع الصورة..."
+                          : profileQuery.data.hasProfileImage
+                            ? "تغيير الصورة"
+                            : "رفع صورة"}
+                      </button>
+                      {profileQuery.data.hasProfileImage && (
+                        <button
+                          type="button"
+                          disabled={deleteAvatar.isPending}
+                          onClick={() => deleteAvatar.mutate()}
+                          className="inline-flex items-center gap-2 rounded-xl border border-rose-100 bg-white px-4 py-2.5 text-sm font-black text-rose-600 transition hover:bg-rose-50"
+                        >
+                          <Trash2 size={16} />
+                          {deleteAvatar.isPending
+                            ? "جاري الحذف..."
+                            : "حذف الصورة"}
+                        </button>
+                      )}
+                    </div>
+                    {avatarMessage && (
+                      <p className="mt-3 text-xs font-bold text-[#216474]">
+                        {avatarMessage}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </section>
+
             <form
               className="surface p-6 lg:p-7"
               onSubmit={(event) => {
@@ -326,10 +441,14 @@ export function SettingsPage() {
             </form>
           </div>
 
-          <aside className="surface h-fit p-6">
-            <span className="grid size-14 place-items-center rounded-2xl bg-[#173f49] text-xl font-black text-white">
-              {profileQuery.data.fullName?.trim()?.[0] || "ح"}
-            </span>
+          <aside className="space-y-6">
+            <section className="surface h-fit p-6">
+            <ProfileAvatar
+              user={profileQuery.data}
+              sizeClass="size-16"
+              className="bg-[#173f49] text-xl text-white"
+              fallbackIcon
+            />
             <h3 className="mt-4 text-xl font-black">
               {profileQuery.data.fullName}
             </h3>
@@ -359,6 +478,34 @@ export function SettingsPage() {
                 </strong>
               </div>
             </div>
+            </section>
+
+            <section className="surface p-6">
+              <div className="flex items-center gap-3">
+                <span className="grid size-11 place-items-center rounded-xl bg-violet-50 text-violet-700">
+                  <Languages size={20} />
+                </span>
+                <div>
+                  <h3 className="font-black">لغة المنصة</h3>
+                  <p className="mt-1 text-xs text-[#829499]">
+                    غيّر لغة العرض واتجاه الواجهة.
+                  </p>
+                </div>
+              </div>
+              <div className="mt-5 rounded-2xl border border-[#174b57]/8 bg-[#f7faf9] p-3">
+                <LanguageSwitcher />
+              </div>
+            </section>
+
+            <section className="rounded-[1.4rem] border border-[#216474]/10 bg-[#173f49] p-6 text-white shadow-[0_16px_40px_rgba(23,63,73,.12)]">
+              <ShieldCheck size={22} className="text-[#f5cb72]" />
+              <h3 className="mt-4 font-black">نصائح أمان الحساب</h3>
+              <ul className="mt-3 space-y-2 text-xs leading-6 text-white/60">
+                <li>• استخدم كلمة مرور مختلفة عن حساباتك الأخرى.</li>
+                <li>• لا تشارك بيانات الدخول أو رموز الاستلام.</li>
+                <li>• حدّث رقم الهاتف عند تغييره.</li>
+              </ul>
+            </section>
           </aside>
         </div>
       )}

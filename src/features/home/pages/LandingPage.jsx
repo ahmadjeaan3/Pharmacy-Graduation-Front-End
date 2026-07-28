@@ -4,19 +4,22 @@ import {
   ArrowLeft,
   ArrowUpLeft,
   BadgeCheck,
+  BellRing,
+  Bot,
   Building2,
   Check,
-  CircleCheckBig,
   Clock3,
+  FileText,
   HeartHandshake,
+  HeartPulse,
   MapPin,
   PackageCheck,
   PackageSearch,
   Search,
   ShieldCheck,
   Sparkles,
-  Star,
   UserRound,
+  QrCode,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { apiClient } from "../../../shared/api/client";
@@ -44,12 +47,35 @@ const services = [
   },
 ];
 
-const categories = [
-  ["القلب والضغط", HeartHandshake, "bg-rose-50 text-rose-600"],
-  ["العناية اليومية", Sparkles, "bg-amber-50 text-amber-600"],
-  ["الأدوية العامة", PackageSearch, "bg-cyan-50 text-cyan-700"],
-  ["الأم والطفل", UserRound, "bg-violet-50 text-violet-600"],
-  ["السكري", CircleCheckBig, "bg-emerald-50 text-emerald-700"],
+const smartFeatures = [
+  {
+    icon: FileText,
+    title: "الوصفة الذكية",
+    text: "ارفع وصفة مطبوعة واستخرج الأدوية منها ضمن مسار واضح للمراجعة والطلب.",
+    tone: "from-cyan-50 to-white text-cyan-700",
+    label: "استخراج وتحليل",
+  },
+  {
+    icon: Bot,
+    title: "المساعد الدوائي",
+    text: "محادثة ذكية مدعومة بدليل الأدوية للإجابة والبحث وتوجيه المستخدم.",
+    tone: "from-violet-50 to-white text-violet-700",
+    label: "مساعدة ذكية",
+  },
+  {
+    icon: QrCode,
+    title: "حجز واستلام",
+    text: "احجز الدواء لمدة محددة واستلمه باستخدام رمز QR واضح وآمن.",
+    tone: "from-amber-50 to-white text-amber-700",
+    label: "QR للاستلام",
+  },
+  {
+    icon: HeartPulse,
+    title: "ملف صحي متكامل",
+    text: "حساسيات وأمراض وأدوية حالية تساعد على إظهار التنبيهات المهمة.",
+    tone: "from-emerald-50 to-white text-emerald-700",
+    label: "تنبيهات صحية",
+  },
 ];
 
 const roles = [
@@ -81,11 +107,71 @@ export function LandingPage() {
     queryFn: async () => (await apiClient.get("/pharmacies/health")).data,
     retry: false,
   });
+  const ticker = useQuery({
+    queryKey: ["home-ticker"],
+    queryFn: async () => (await apiClient.get("/home-ticker")).data,
+    retry: false,
+    staleTime: 60_000,
+  });
+  const tickerItems = ticker.data?.length
+    ? ticker.data
+    : [
+        {
+          id: "default-duty",
+          type: "DutyPharmacy",
+          title: "صيدليات مناوبة الآن",
+          message: "اعثر على أقرب صيدلية مفتوحة ومتوفرة لخدمتك",
+        },
+        {
+          id: "default-announcement",
+          type: "Announcement",
+          title: "إعلانات وتنبيهات المنصة",
+          message: "تابع أحدث الخدمات والتنبيهات الدوائية",
+        },
+      ];
 
   return (
     <div className="min-h-screen overflow-hidden bg-[#f7faf9] text-[#142e35]">
       <PublicHeader />
       <main>
+        <aside
+          className="border-b border-[#174b57]/10 bg-[#174b57] text-white"
+          aria-label="إعلانات وتنبيهات المنصة"
+        >
+          <div className="mx-auto flex max-w-[1360px] items-center gap-3 px-5 py-3 lg:px-8">
+              <span className="relative grid size-9 shrink-0 place-items-center rounded-xl bg-[#f5cb72] text-[#173d46]">
+                <BellRing size={18} aria-hidden="true" />
+                <span className="absolute -left-0.5 -top-0.5 size-2.5 rounded-full border-2 border-[#174b57] bg-rose-400" />
+              </span>
+            <div className="landing-ticker min-w-0 flex-1 overflow-hidden" dir="ltr">
+              <div className="landing-ticker-track flex w-max items-center">
+                {[0, 1].map((copy) => (
+                  <div key={copy} className="flex shrink-0 items-center gap-8 px-4" aria-hidden={copy === 1 ? "true" : undefined} dir="rtl">
+                  {tickerItems.map((item) => (
+                    <span key={`${copy}-${item.id}`} className="contents">
+                      <strong
+                        className={`text-sm font-extrabold ${item.type === "DutyPharmacy" ? "text-[#f5cb72]" : "text-[#8bd0cb]"}`}
+                      >
+                        {item.title}
+                        {item.pharmacyName ? ` — ${item.pharmacyName}` : ""}
+                      </strong>
+                      <span className="text-white/30">•</span>
+                      <span className="text-sm font-semibold">{item.message}</span>
+                      <span className="text-white/30">•</span>
+                    </span>
+                  ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <Link
+              to="/login"
+              className="hidden min-h-10 shrink-0 items-center justify-center gap-2 rounded-xl bg-white/10 px-4 text-sm font-bold transition hover:bg-white/18 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f5cb72] sm:inline-flex"
+            >
+              استعرض الصيدليات <ArrowLeft size={16} aria-hidden="true" />
+            </Link>
+          </div>
+        </aside>
         <section className="relative isolate overflow-hidden bg-[#f4f9f8]">
           <div className="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_80%_15%,rgba(99,183,184,.22),transparent_28%),radial-gradient(circle_at_12%_72%,rgba(245,203,114,.18),transparent_25%)]" />
           <img
@@ -100,30 +186,30 @@ export function LandingPage() {
               transition={{ duration: 0.65 }}
             >
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#216474]/15 bg-white/80 px-4 py-2 text-xs font-bold text-[#216474] shadow-sm backdrop-blur">
-                <Sparkles size={15} /> رعايتك الصحية، أقرب مما تتخيل
+                <Sparkles size={15} /> منصة دوائية متكاملة بين يديك
               </div>
               <h1 className="max-w-3xl text-[2.7rem] font-black leading-[1.2] tracking-[-.04em] text-[#102d34] sm:text-6xl lg:text-[4.4rem]">
-                دواؤك يصلك
+                دواؤك أقرب إليك
                 <br />
                 <span className="relative text-[#216474]">
-                  بسهولة وأمان
+                  بخطوات ذكية وآمنة
                   <span className="absolute -bottom-2 right-0 h-2 w-4/5 rounded-full bg-[#f5cb72]/70 -z-10" />
                 </span>
               </h1>
               <p className="mt-7 max-w-xl text-base leading-8 text-[#5d7277] sm:text-lg">
-                منصة تجمع المستخدم والصيدلية والمنظمة والإدارة في بيئة صحية
-                واحدة للبحث عن الدواء وإدارة الخدمات والمبادرات الدوائية.
+                ابحث في الصيدليات القريبة، ارفع وصفتك المطبوعة، احجز دواءك
+                وتابع طلبك لحظيًا ضمن منصة تربط المستخدم والصيدلية والمنظمة.
               </p>
               <div className="mt-9 flex flex-wrap gap-3">
                 <Link to="/register" className="btn-primary px-6 py-3.5">
-                  ابدأ تجربتك <ArrowLeft size={18} />
+                  أنشئ حسابك مجانًا <ArrowLeft size={18} />
                 </Link>
-                <a href="#journey" className="btn-secondary px-6 py-3.5">
-                  اكتشف المنصة <ArrowUpLeft size={18} />
-                </a>
+                <Link to="/login" className="btn-secondary px-6 py-3.5">
+                  تسجيل الدخول <ArrowUpLeft size={18} />
+                </Link>
               </div>
               <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-[#60757a]">
-                {["صيدليات موثوقة", "تجربة عربية", "بيانات محمية"].map(
+                {["صيدليات معتمدة", "متابعة لحظية", "بيانات صحية محمية"].map(
                   (item) => (
                     <span key={item} className="flex items-center gap-2">
                       <span className="grid size-5 place-items-center rounded-full bg-[#dcefed] text-[#216474]">
@@ -299,30 +385,55 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-[1360px] px-5 py-24 lg:px-8">
-          <div className="text-center">
-            <p className="eyebrow justify-center">استكشف بسهولة</p>
-            <h2 className="section-title mt-3">تصنيفات صحية</h2>
-            <p className="mx-auto mt-3 max-w-xl leading-7 text-[#65797e]">
-              تنظيم واضح يساعد على تصفح المنتجات الدوائية حسب الفئة.
-            </p>
-          </div>
-          <div className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-5">
-            {categories.map(([label, Icon, tone]) => (
-              <article
-                key={label}
-                className="group rounded-[1.5rem] border border-[#174b57]/10 bg-white p-5 text-center transition hover:-translate-y-1 hover:shadow-xl"
-              >
-                <span
-                  className={`mx-auto grid size-14 place-items-center rounded-2xl ${tone} transition group-hover:scale-110`}
-                >
-                  <Icon size={25} />
-                </span>
-                <span className="mt-4 block font-bold text-[#263f45]">
-                  {label}
-                </span>
-              </article>
-            ))}
+        <section className="relative isolate overflow-hidden py-24">
+          <div className="absolute inset-x-0 top-0 -z-10 mx-auto h-full max-w-[1360px] rounded-[3rem] bg-[linear-gradient(135deg,#eef7f5,#f9fbfa)]" />
+          <div className="mx-auto max-w-[1360px] px-5 lg:px-12">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+              <div className="max-w-2xl">
+                <p className="eyebrow">
+                  <Sparkles size={16} /> تجربة أذكى
+                </p>
+                <h2 className="section-title mt-3">
+                  أكثر من مجرد بحث
+                  <br />
+                  عن اسم دواء
+                </h2>
+              </div>
+              <p className="max-w-md leading-7 text-[#65797e]">
+                أدوات مترابطة تختصر رحلة المستخدم من الوصفة والبحث حتى الحجز
+                والاستلام والمتابعة الصحية.
+              </p>
+            </div>
+            <div className="mt-12 grid gap-4 md:grid-cols-2">
+              {smartFeatures.map(
+                ({ icon: Icon, title, text, tone, label }, index) => (
+                  <article
+                    key={title}
+                    className={`group relative overflow-hidden rounded-[1.7rem] border border-white bg-gradient-to-br ${tone} p-6 shadow-[0_14px_35px_rgba(23,75,87,.055)] transition hover:-translate-y-1 hover:shadow-[0_22px_55px_rgba(23,75,87,.1)]`}
+                  >
+                    <span className="absolute -end-3 -top-7 text-8xl font-black opacity-[.045]">
+                      0{index + 1}
+                    </span>
+                    <div className="relative flex items-start gap-4">
+                      <span className="grid size-13 shrink-0 place-items-center rounded-2xl bg-white shadow-sm">
+                        <Icon size={24} />
+                      </span>
+                      <div>
+                        <span className="text-[10px] font-black opacity-65">
+                          {label}
+                        </span>
+                        <h3 className="mt-1 text-xl font-black text-[#17363e]">
+                          {title}
+                        </h3>
+                        <p className="mt-2 text-sm leading-7 text-[#65797e]">
+                          {text}
+                        </p>
+                      </div>
+                    </div>
+                  </article>
+                ),
+              )}
+            </div>
           </div>
         </section>
 
@@ -393,31 +504,73 @@ export function LandingPage() {
                 )}
               </div>
             </div>
-            <div className="relative mt-9 grid size-32 shrink-0 place-items-center rounded-[2rem] bg-[#174b57] text-[#f5cb72] shadow-[0_22px_50px_rgba(23,75,87,.22)] lg:ml-8 lg:mt-0">
+            <div className="relative mt-9 grid size-32 shrink-0 place-items-center rounded-[2rem] bg-[#174b57] text-[#f5cb72] shadow-[0_22px_50px_rgba(23,75,87,.22)] lg:me-8 lg:mt-0">
               <ShieldCheck size={58} strokeWidth={1.5} />
             </div>
           </div>
         </section>
 
         <section className="px-5 pb-24 lg:px-8">
-          <div className="mx-auto max-w-[1360px] overflow-hidden rounded-[2.25rem] bg-[#174b57] px-6 py-12 text-center text-white shadow-[0_30px_70px_rgba(23,75,87,.18)] sm:px-12">
-            <Star
-              className="mx-auto text-[#f5cb72]"
-              fill="currentColor"
-              size={22}
-            />
-            <h2 className="mt-5 text-3xl font-black sm:text-4xl">
-              ابدأ باستخدام حياة دوائية
-            </h2>
-            <p className="mx-auto mt-3 max-w-xl leading-7 text-white/65">
-              أنشئ حسابك واختر نوعه للوصول إلى الخدمات والصلاحيات المناسبة.
-            </p>
-            <Link
-              to="/register"
-              className="mt-7 inline-flex items-center gap-2 rounded-2xl bg-[#f5cb72] px-6 py-3.5 font-extrabold text-[#173d46] transition hover:-translate-y-1 hover:bg-[#ffd989]"
-            >
-              إنشاء حساب <ArrowLeft size={18} />
-            </Link>
+          <div className="relative mx-auto grid max-w-[1360px] overflow-hidden rounded-[2.4rem] bg-[#123f49] text-white shadow-[0_30px_80px_rgba(23,75,87,.2)] lg:grid-cols-[1.05fr_.95fr]">
+            <div className="relative p-7 sm:p-10 lg:p-14">
+              <div className="absolute -start-24 -top-32 size-72 rounded-full border-[44px] border-white/[.035]" />
+              <div className="relative">
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[.06] px-3.5 py-2 text-xs font-black text-[#9ed7d2]">
+                  <Sparkles size={14} />
+                  خطوتك الأولى نحو تجربة أسهل
+                </span>
+                <h2 className="mt-5 max-w-xl text-3xl font-black leading-tight sm:text-4xl">
+                  كل خدماتك الدوائية
+                  <br />
+                  تبدأ من حساب واحد
+                </h2>
+                <p className="mt-4 max-w-xl text-sm leading-7 text-white/60 sm:text-base">
+                  اختر نوع حسابك وابدأ باستخدام الأدوات المصممة لك، سواء كنت
+                  مستخدمًا أو صيدلية أو منظمة.
+                </p>
+                <div className="mt-7 flex flex-wrap gap-3">
+                  <Link
+                    to="/register"
+                    className="inline-flex items-center gap-2 rounded-xl bg-[#f5cb72] px-5 py-3.5 text-sm font-black text-[#173d46] transition hover:-translate-y-0.5 hover:bg-[#ffd989]"
+                  >
+                    إنشاء حساب جديد <ArrowLeft size={17} />
+                  </Link>
+                  <Link
+                    to="/login"
+                    className="inline-flex items-center gap-2 rounded-xl border border-white/12 bg-white/[.07] px-5 py-3.5 text-sm font-black text-white transition hover:bg-white/[.12]"
+                  >
+                    لدي حساب بالفعل
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative border-t border-white/8 bg-white/[.045] p-7 sm:p-10 lg:border-s lg:border-t-0 lg:p-12">
+              <div className="absolute -bottom-24 -end-16 size-64 rounded-full bg-[#8bd0cb]/10 blur-3xl" />
+              <p className="relative text-xs font-black text-[#f5cb72]">
+                ماذا ستحصل عليه؟
+              </p>
+              <div className="relative mt-5 grid gap-3">
+                {[
+                  [Search, "بحث أسرع", "نتائج دوائية وصيدليات قريبة"],
+                  [FileText, "أدوات ذكية", "وصفة ذكية ومساعد دوائي"],
+                  [ShieldCheck, "تجربة آمنة", "صلاحيات وبيانات صحية محمية"],
+                ].map(([Icon, title, text]) => (
+                  <div
+                    key={title}
+                    className="flex items-center gap-4 rounded-2xl border border-white/8 bg-white/[.055] p-4"
+                  >
+                    <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-white/[.08] text-[#9ed7d2]">
+                      <Icon size={20} />
+                    </span>
+                    <span>
+                      <strong className="block text-sm">{title}</strong>
+                      <small className="mt-1 block text-white/45">{text}</small>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
       </main>

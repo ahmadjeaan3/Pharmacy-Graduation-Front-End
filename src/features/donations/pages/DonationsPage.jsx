@@ -79,7 +79,7 @@ export function DonationsPage() {
         <button
           type="button"
           onClick={() => switchForm("offer")}
-          className="group relative overflow-hidden rounded-[1.5rem] border border-emerald-100 bg-gradient-to-br from-white to-emerald-50/70 p-6 text-right transition hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(5,150,105,.09)]"
+          className="group relative overflow-hidden rounded-[1.5rem] border border-emerald-100 bg-gradient-to-br from-white to-emerald-50/70 p-6 text-start transition hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(5,150,105,.09)]"
         >
           <Sparkles
             className="absolute -left-3 -top-3 text-emerald-100"
@@ -103,7 +103,7 @@ export function DonationsPage() {
         <button
           type="button"
           onClick={() => switchForm("assistance")}
-          className="group relative overflow-hidden rounded-[1.5rem] border border-amber-100 bg-gradient-to-br from-white to-amber-50/70 p-6 text-right transition hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(217,119,6,.09)]"
+          className="group relative overflow-hidden rounded-[1.5rem] border border-amber-100 bg-gradient-to-br from-white to-amber-50/70 p-6 text-start transition hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(217,119,6,.09)]"
         >
           <HeartHandshake
             className="absolute -left-3 -top-3 text-amber-100"
@@ -222,7 +222,7 @@ function ListTab({ active, label, count, onClick }) {
     >
       {label}
       {Number.isFinite(count) && (
-        <span className="mr-1.5 opacity-60">
+        <span className="ms-1.5 opacity-60">
           ({count.toLocaleString("ar-SY")})
         </span>
       )}

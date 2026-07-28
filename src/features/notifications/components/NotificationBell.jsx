@@ -10,8 +10,10 @@ import {
 } from "../api/notificationsApi";
 import { notificationTarget } from "../utils/notificationFormatters";
 import { NotificationItem } from "./NotificationItem";
+import { useLanguage } from "../../../shared/i18n/useLanguage";
 
 export function NotificationBell({ unreadCount = 0, roles = [] }) {
+  const { locale } = useLanguage();
   const [open, setOpen] = useState(false);
   const shellRef = useRef(null);
   const client = useQueryClient();
@@ -59,19 +61,19 @@ export function NotificationBell({ unreadCount = 0, roles = [] }) {
       >
         <Bell size={19} />
         {unreadCount > 0 && (
-          <span className="absolute -left-1.5 -top-1.5 grid min-w-5 place-items-center rounded-full border-2 border-white bg-rose-500 px-1 text-[9px] font-black leading-4 text-white">
-            {unreadCount > 99 ? "+99" : unreadCount.toLocaleString("ar-SA")}
+          <span className="absolute -end-1.5 -top-1.5 grid min-w-5 place-items-center rounded-full border-2 border-white bg-rose-500 px-1 text-[9px] font-black leading-4 text-white">
+            {unreadCount > 99 ? "+99" : unreadCount.toLocaleString(locale)}
           </span>
         )}
       </button>
       {open && (
-        <div className="absolute left-0 top-[calc(100%+12px)] z-50 w-[min(390px,calc(100vw-2rem))] overflow-hidden rounded-[1.5rem] border border-[#174b57]/10 bg-white shadow-[0_24px_70px_rgba(9,42,49,.2)]">
+        <div className="absolute end-0 top-[calc(100%+12px)] z-50 w-[min(390px,calc(100vw-2rem))] overflow-hidden rounded-[1.5rem] border border-[#174b57]/10 bg-white shadow-[0_24px_70px_rgba(9,42,49,.2)]">
           <div className="flex items-center justify-between border-b border-[#174b57]/8 p-4">
             <div>
               <h3 className="font-black">الإشعارات</h3>
               <p className="mt-0.5 text-[11px] text-[#829499]">
                 {unreadCount
-                  ? `${unreadCount.toLocaleString("ar-SA")} إشعارات غير مقروءة`
+                  ? `${unreadCount.toLocaleString(locale)} إشعارات غير مقروءة`
                   : "لا توجد إشعارات جديدة"}
               </p>
             </div>
@@ -96,7 +98,7 @@ export function NotificationBell({ unreadCount = 0, roles = [] }) {
                 <button
                   key={item.id}
                   onClick={() => openItem(item)}
-                  className="block w-full text-right hover:bg-[#f7faf9]"
+                  className="block w-full text-start hover:bg-[#f7faf9]"
                 >
                   <NotificationItem notification={item} compact />
                 </button>

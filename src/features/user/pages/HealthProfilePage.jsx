@@ -1,13 +1,18 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  Activity,
+  AlertTriangle,
   CalendarDays,
   CheckCircle2,
+  ClipboardCheck,
   ContactRound,
   Droplets,
   HeartPulse,
+  Pill,
   Phone,
   Plus,
   Printer,
+  RotateCcw,
   Save,
   ShieldCheck,
   UserRound,
@@ -85,7 +90,7 @@ export function HealthProfilePage() {
             onClick={() => setTab("profile")}
             className={`rounded-xl px-4 py-3 text-sm font-bold transition ${tab === "profile" ? "bg-[#174b57] text-white shadow" : "text-[#60777c] hover:bg-[#f3f7f6]"}`}
           >
-            <UserRound size={17} className="ml-2 inline" />
+            <UserRound size={17} className="me-2 inline" />
             تعديل الملف الصحي
           </button>
           <button
@@ -93,7 +98,7 @@ export function HealthProfilePage() {
             onClick={() => setTab("card")}
             className={`rounded-xl px-4 py-3 text-sm font-bold transition ${tab === "card" ? "bg-[#174b57] text-white shadow" : "text-[#60777c] hover:bg-[#f3f7f6]"}`}
           >
-            <ContactRound size={17} className="ml-2 inline" />
+            <ContactRound size={17} className="me-2 inline" />
             البطاقة الصحية
           </button>
         </div>
@@ -119,17 +124,33 @@ export function HealthProfilePage() {
 
 function MedicalProfileForm({ profile, medical }) {
   const queryClient = useQueryClient();
-  const [form, setForm] = useState(() => ({
+  const createForm = (data) => ({
     ...emptyForm,
-    ...medical,
-    dateOfBirth: medical.dateOfBirth || "",
-    emergencyContactName: medical.emergencyContactName || "",
-    emergencyContactPhoneNumber: medical.emergencyContactPhoneNumber || "",
-    emergencyNotes: medical.emergencyNotes || "",
-  }));
+    ...data,
+    dateOfBirth: data.dateOfBirth || "",
+    emergencyContactName: data.emergencyContactName || "",
+    emergencyContactPhoneNumber: data.emergencyContactPhoneNumber || "",
+    emergencyNotes: data.emergencyNotes || "",
+  });
+  const [form, setForm] = useState(() => createForm(medical));
+  const [savedForm, setSavedForm] = useState(() => createForm(medical));
+  const isDirty = JSON.stringify(form) !== JSON.stringify(savedForm);
+  const completedFields = [
+    form.dateOfBirth,
+    form.bloodType,
+    form.allergies.length,
+    form.chronicConditions.length,
+    form.currentMedications.length,
+    form.emergencyContactName,
+    form.emergencyContactPhoneNumber,
+  ].filter(Boolean).length;
+  const completion = Math.round((completedFields / 7) * 100);
   const mutation = useMutation({
     mutationFn: updateMedicalProfile,
     onSuccess: (data) => {
+      const nextForm = createForm(data);
+      setForm(nextForm);
+      setSavedForm(nextForm);
       queryClient.setQueryData(userKeys.medicalProfile, data);
       queryClient.invalidateQueries({ queryKey: userKeys.healthCard });
       queryClient.invalidateQueries({ queryKey: userKeys.profile });
@@ -149,6 +170,7 @@ function MedicalProfileForm({ profile, medical }) {
   };
   return (
     <form onSubmit={submit} className="space-y-5">
+      <ProfileInsights form={form} completion={completion} />
       <section className="grid gap-5 lg:grid-cols-[.8fr_1.2fr]">
         <div className="rounded-[1.4rem] border border-[#174b57]/8 bg-white p-6">
           <div className="flex items-center gap-3">
@@ -228,6 +250,7 @@ function MedicalProfileForm({ profile, medical }) {
               placeholder="مثال: حساسية البنسلين"
               values={form.allergies}
               limit={20}
+              suggestions={["البنسلين", "الأسبرين", "السلفا", "اللاتكس"]}
               onChange={(values) => setForm({ ...form, allergies: values })}
             />
             <TagsField
@@ -235,6 +258,7 @@ function MedicalProfileForm({ profile, medical }) {
               placeholder="مثال: السكري"
               values={form.chronicConditions}
               limit={20}
+              suggestions={["السكري", "ارتفاع الضغط", "الربو", "أمراض القلب"]}
               onChange={(values) =>
                 setForm({ ...form, chronicConditions: values })
               }
@@ -244,6 +268,7 @@ function MedicalProfileForm({ profile, medical }) {
               placeholder="اكتب اسم الدواء"
               values={form.currentMedications}
               limit={30}
+              suggestions={["Metformin", "Aspirin", "Amlodipine"]}
               onChange={(values) =>
                 setForm({ ...form, currentMedications: values })
               }
@@ -308,32 +333,143 @@ function MedicalProfileForm({ profile, medical }) {
           />
         </label>
       </section>
-      <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-end">
-        {mutation.isSuccess && (
-          <p className="flex items-center gap-2 text-sm font-bold text-emerald-600">
-            <CheckCircle2 size={17} />
-            تم حفظ ملفك الصحي
-          </p>
-        )}
-        {mutation.isError && (
-          <p className="text-sm font-semibold text-rose-600">
-            {getApiErrorMessage(mutation.error)}
-          </p>
-        )}
-        <button
-          type="submit"
-          disabled={mutation.isPending}
-          className="btn-primary justify-center px-7"
-        >
-          <Save size={17} />
-          {mutation.isPending ? "جاري الحفظ..." : "حفظ التغييرات"}
-        </button>
+      <div className="sticky bottom-4 z-20 flex flex-col gap-3 rounded-2xl border border-[#174b57]/10 bg-white/95 p-3 shadow-[0_16px_45px_rgba(23,75,87,.14)] backdrop-blur sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-h-6">
+          {isDirty && !mutation.isPending && (
+            <p className="flex items-center gap-2 text-sm font-bold text-amber-700">
+              <AlertTriangle size={17} />
+              لديك تغييرات غير محفوظة
+            </p>
+          )}
+          {mutation.isSuccess && (
+            <p className="flex items-center gap-2 text-sm font-bold text-emerald-600">
+              <CheckCircle2 size={17} />
+              تم حفظ ملفك الصحي
+            </p>
+          )}
+          {mutation.isError && (
+            <p className="text-sm font-semibold text-rose-600">
+              {getApiErrorMessage(mutation.error)}
+            </p>
+          )}
+        </div>
+        <div className="flex w-full gap-2 sm:w-auto">
+          <button
+            type="button"
+            disabled={!isDirty || mutation.isPending}
+            onClick={() => setForm(savedForm)}
+            className="btn-secondary flex-1 justify-center disabled:cursor-not-allowed disabled:opacity-45 sm:flex-none"
+          >
+            <RotateCcw size={16} />
+            استعادة
+          </button>
+          <button
+            type="submit"
+            disabled={!isDirty || mutation.isPending}
+            className="btn-primary flex-1 justify-center px-7 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
+          >
+            <Save size={17} />
+            {mutation.isPending ? "جاري الحفظ..." : "حفظ التغييرات"}
+          </button>
+        </div>
       </div>
     </form>
   );
 }
 
-function TagsField({ label, placeholder, values, limit, onChange }) {
+function ProfileInsights({ form, completion }) {
+  const hasSafetyData =
+    form.allergies.length > 0 ||
+    form.chronicConditions.length > 0 ||
+    form.currentMedications.length > 0;
+  return (
+    <section className="grid gap-4 lg:grid-cols-[1.2fr_.8fr]">
+      <div className="overflow-hidden rounded-[1.5rem] bg-[#174b57] p-6 text-white shadow-[0_18px_45px_rgba(23,75,87,.16)]">
+        <div className="flex items-start justify-between gap-5">
+          <div>
+            <p className="flex items-center gap-2 text-sm font-bold text-[#8bd0cb]">
+              <ClipboardCheck size={18} />
+              جاهزية الملف الصحي
+            </p>
+            <h3 className="mt-2 text-2xl font-black">
+              ملفك مكتمل بنسبة {completion}%
+            </h3>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-white/65">
+              كل معلومة تضيفها تساعد على إبراز التحذيرات المهمة وتسهّل التصرف
+              عند الحاجة.
+            </p>
+          </div>
+          <span className="grid size-16 shrink-0 place-items-center rounded-full border-[6px] border-[#f5cb72] text-sm font-black text-[#f5cb72]">
+            {completion}%
+          </span>
+        </div>
+        <div
+          className="mt-5 h-2 overflow-hidden rounded-full bg-white/10"
+          role="progressbar"
+          aria-label="نسبة اكتمال الملف الصحي"
+          aria-valuenow={completion}
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          <div
+            className="h-full rounded-full bg-[#f5cb72] transition-all"
+            style={{ width: `${completion}%` }}
+          />
+        </div>
+      </div>
+      <div
+        className={`rounded-[1.5rem] border p-5 ${
+          hasSafetyData
+            ? "border-emerald-200 bg-emerald-50"
+            : "border-amber-200 bg-amber-50"
+        }`}
+      >
+        <div className="flex items-center gap-3">
+          <span
+            className={`grid size-11 place-items-center rounded-xl bg-white ${
+              hasSafetyData ? "text-emerald-700" : "text-amber-700"
+            }`}
+          >
+            {hasSafetyData ? (
+              <Activity size={21} />
+            ) : (
+              <AlertTriangle size={21} />
+            )}
+          </span>
+          <div>
+            <h3 className="font-extrabold text-[#29464d]">ملخص السلامة</h3>
+            <p className="text-xs text-[#60777c]">
+              {hasSafetyData
+                ? "لديك معلومات صحية مسجلة"
+                : "لم تسجل معلومات صحية بعد"}
+            </p>
+          </div>
+        </div>
+        <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+          {[
+            ["حساسية", form.allergies.length],
+            ["حالة مزمنة", form.chronicConditions.length],
+            ["دواء حالي", form.currentMedications.length],
+          ].map(([label, count]) => (
+            <div key={label} className="rounded-xl bg-white/75 px-2 py-3">
+              <strong className="block text-xl text-[#174b57]">{count}</strong>
+              <span className="text-[11px] text-[#71858a]">{label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TagsField({
+  label,
+  placeholder,
+  values,
+  limit,
+  suggestions = [],
+  onChange,
+}) {
   const [input, setInput] = useState("");
   const add = () => {
     const value = input.trim();
@@ -398,6 +534,38 @@ function TagsField({ label, placeholder, values, limit, onChange }) {
           ))}
         </div>
       )}
+      {suggestions.some(
+        (suggestion) =>
+          !values.some(
+            (value) => value.toLowerCase() === suggestion.toLowerCase(),
+          ),
+      ) && (
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <span className="flex items-center gap-1 text-[11px] text-slate-400">
+            <Pill size={12} />
+            اقتراحات:
+          </span>
+          {suggestions
+            .filter(
+              (suggestion) =>
+                !values.some(
+                  (value) => value.toLowerCase() === suggestion.toLowerCase(),
+                ),
+            )
+            .map((suggestion) => (
+              <button
+                key={suggestion}
+                type="button"
+                onClick={() =>
+                  values.length < limit && onChange([...values, suggestion])
+                }
+                className="rounded-full border border-[#174b57]/10 bg-white px-2.5 py-1 text-[11px] font-bold text-[#60777c] transition hover:border-[#216474]/30 hover:bg-[#eaf4f3] hover:text-[#216474]"
+              >
+                + {suggestion}
+              </button>
+            ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -405,15 +573,35 @@ function TagsField({ label, placeholder, values, limit, onChange }) {
 function HealthCard({ card }) {
   return (
     <div className="mx-auto max-w-4xl">
-      <section className="overflow-hidden rounded-[2rem] border border-[#174b57]/10 bg-white shadow-[0_24px_70px_rgba(23,75,87,.12)]">
+      <section
+        id="health-report"
+        className="health-report overflow-hidden rounded-[2rem] border border-[#174b57]/10 bg-white shadow-[0_24px_70px_rgba(23,75,87,.12)]"
+      >
+        <div className="print-only health-report-letterhead">
+          <div className="health-report-brand">
+            <span className="health-report-logo">
+              <HeartPulse size={28} strokeWidth={2.2} />
+            </span>
+            <span>
+              <strong>حياة دوائية</strong>
+              <small>MEDICAL LIFE</small>
+            </span>
+          </div>
+          <div className="health-report-document-title">
+            <strong>تقرير المعلومات الصحية</strong>
+            <span>نسخة مخصصة للطباعة</span>
+          </div>
+        </div>
         <div className="relative isolate bg-[#174b57] p-6 text-white sm:p-8">
           <div className="noise absolute inset-0 -z-10" />
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-sm font-bold text-[#8bd0cb]">بطاقتي الصحية</p>
+              <p className="text-sm font-bold text-[#8bd0cb]">
+                البطاقة الصحية الرقمية
+              </p>
               <h2 className="mt-2 text-3xl font-black">{card.fullName}</h2>
               <p className="mt-2 text-sm text-white/55">
-                معلومات صحية مختصرة ومهمة
+                ملخص موحّد للمعلومات الصحية المهمة
               </p>
             </div>
             <span className="grid size-14 place-items-center rounded-2xl bg-[#f5cb72] text-[#173d46]">
@@ -422,51 +610,78 @@ function HealthCard({ card }) {
           </div>
         </div>
         <div className="p-6 sm:p-8">
-          <div className="grid gap-4 sm:grid-cols-3">
-            <CardInfo
-              icon={Droplets}
-              label="فصيلة الدم"
-              value={card.bloodType || "غير محددة"}
-              accent
+          <div className="health-report-section">
+            <ReportSectionTitle
+              icon={UserRound}
+              title="البيانات الأساسية"
+              subtitle="بيانات تعريفية مرتبطة بالحساب"
             />
-            <CardInfo
-              icon={CalendarDays}
-              label="تاريخ الميلاد"
-              value={card.dateOfBirth || "غير محدد"}
+            <div className="mt-4 grid gap-4 sm:grid-cols-3">
+              <CardInfo
+                icon={Droplets}
+                label="فصيلة الدم"
+                value={card.bloodType || "غير محددة"}
+                accent
+              />
+              <CardInfo
+                icon={CalendarDays}
+                label="تاريخ الميلاد"
+                value={card.dateOfBirth || "غير محدد"}
+              />
+              <CardInfo
+                icon={Phone}
+                label="رقم الهاتف"
+                value={card.phoneNumber || "غير مضاف"}
+              />
+            </div>
+          </div>
+
+          <div className="health-report-section mt-7">
+            <ReportSectionTitle
+              icon={Activity}
+              title="الملخص الطبي"
+              subtitle="المعلومات التي يجب الانتباه إليها"
             />
-            <CardInfo
+            <div className="mt-4 grid gap-5 md:grid-cols-3">
+              <CardList
+                title="الحساسيات"
+                values={card.allergies}
+                empty="لا توجد حساسيات مسجلة"
+                tone="danger"
+              />
+              <CardList
+                title="الحالات المزمنة"
+                values={card.chronicConditions}
+                empty="لا توجد حالات مسجلة"
+                tone="warning"
+              />
+              <CardList
+                title="الأدوية الحالية"
+                values={card.currentMedications}
+                empty="لا توجد أدوية مسجلة"
+                tone="primary"
+              />
+            </div>
+          </div>
+
+          <div className="health-report-section mt-7 rounded-2xl border border-amber-200 bg-amber-50 p-5">
+            <ReportSectionTitle
               icon={Phone}
-              label="رقم الهاتف"
-              value={card.phoneNumber || "غير مضاف"}
+              title="جهة اتصال للطوارئ"
+              subtitle="للتواصل السريع عند الحاجة"
             />
-          </div>
-          <div className="mt-7 grid gap-5 md:grid-cols-3">
-            <CardList
-              title="الحساسيات"
-              values={card.allergies}
-              empty="لا توجد حساسيات مسجلة"
-            />
-            <CardList
-              title="الحالات المزمنة"
-              values={card.chronicConditions}
-              empty="لا توجد حالات مسجلة"
-            />
-            <CardList
-              title="الأدوية الحالية"
-              values={card.currentMedications}
-              empty="لا توجد أدوية مسجلة"
-            />
-          </div>
-          <div className="mt-7 rounded-2xl bg-[#f8fbfa] p-5">
-            <h3 className="font-extrabold text-[#29464d]">جهة اتصال للطوارئ</h3>
             <div className="mt-3 flex flex-wrap gap-x-8 gap-y-2 text-sm text-[#60777c]">
-              <span>{card.emergencyContactName || "غير مضافة"}</span>
+              <span>
+                <b className="text-[#29464d]">الاسم: </b>
+                {card.emergencyContactName || "غير مضاف"}
+              </span>
               {card.emergencyContactPhoneNumber && (
                 <a
                   href={`tel:${card.emergencyContactPhoneNumber}`}
                   className="font-bold text-[#216474]"
                   dir="ltr"
                 >
+                  <b className="text-[#29464d]">الهاتف: </b>
                   {card.emergencyContactPhoneNumber}
                 </a>
               )}
@@ -477,22 +692,47 @@ function HealthCard({ card }) {
               </p>
             )}
           </div>
-          <div className="mt-6 flex flex-col gap-3 border-t border-slate-100 pt-5 text-xs text-[#8a9a9e] sm:flex-row sm:items-center sm:justify-between">
-            <span>آخر تحديث: {formatDate(card.lastUpdatedAtUtc, true)}</span>
+
+          <div className="health-report-footer mt-6 flex flex-col gap-3 border-t border-slate-100 pt-5 text-xs text-[#8a9a9e] sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-1">
+              <span>آخر تحديث: {formatDate(card.lastUpdatedAtUtc, true)}</span>
+              <span className="print-only">
+                تاريخ إصدار التقرير: {new Date().toLocaleDateString("ar")}
+              </span>
+            </div>
             <button
               type="button"
               onClick={() => window.print()}
-              className="btn-secondary"
+              className="no-print btn-secondary"
             >
               <Printer size={16} />
-              طباعة البطاقة
+              طباعة التقرير الصحي
             </button>
           </div>
+          <p className="print-only health-report-disclaimer">
+            هذا التقرير يعكس المعلومات التي أدخلها المستخدم في منصة حياة دوائية،
+            ولا يُعد تشخيصًا أو وصفة طبية.
+          </p>
         </div>
       </section>
     </div>
   );
 }
+
+function ReportSectionTitle({ icon: Icon, title, subtitle }) {
+  return (
+    <div className="flex items-center gap-3">
+      <span className="grid size-10 place-items-center rounded-xl bg-[#eaf4f3] text-[#216474]">
+        <Icon size={19} />
+      </span>
+      <div>
+        <h3 className="font-extrabold text-[#29464d]">{title}</h3>
+        <p className="text-xs text-[#71858a]">{subtitle}</p>
+      </div>
+    </div>
+  );
+}
+
 function CardInfo({ icon: Icon, label, value, accent }) {
   return (
     <div
@@ -504,16 +744,21 @@ function CardInfo({ icon: Icon, label, value, accent }) {
     </div>
   );
 }
-function CardList({ title, values, empty }) {
+function CardList({ title, values, empty, tone = "primary" }) {
+  const tones = {
+    danger: "border-rose-100 bg-rose-50/60",
+    warning: "border-amber-100 bg-amber-50/60",
+    primary: "border-[#174b57]/8 bg-[#f8fbfa]",
+  };
   return (
-    <div>
+    <div className={`rounded-2xl border p-4 ${tones[tone]}`}>
       <h3 className="font-extrabold text-[#29464d]">{title}</h3>
       {values.length ? (
         <ul className="mt-3 space-y-2">
           {values.map((value) => (
             <li
               key={value}
-              className="rounded-xl bg-[#f8fbfa] px-3 py-2 text-sm text-[#60777c]"
+              className="rounded-xl bg-white/80 px-3 py-2 text-sm text-[#60777c]"
             >
               {value}
             </li>

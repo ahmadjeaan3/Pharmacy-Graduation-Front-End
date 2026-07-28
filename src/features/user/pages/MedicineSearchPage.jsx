@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import {
   Building2,
   ExternalLink,
@@ -10,7 +10,7 @@ import {
   SlidersHorizontal,
   Star,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
   getLocationContext,
@@ -67,7 +67,33 @@ export function MedicineSearchPage() {
       }),
     enabled: activeView === "pharmacies",
   });
-  const searchMutation = useMutation({ mutationFn: searchMedicines });
+  const [searchRequest, setSearchRequest] = useState(null);
+  const initialSearchStarted = useRef(false);
+  useEffect(() => {
+    const initialQuery = searchParams.get("q")?.trim();
+    if (!initialQuery || initialSearchStarted.current) return;
+    initialSearchStarted.current = true;
+    setSearchRequest({
+      query: initialQuery,
+      radiusInMeters: radius,
+      maxResults: 50,
+      sortBy,
+    });
+  }, [radius, searchParams, sortBy]);
+  const medicineSearchQuery = useQuery({
+    queryKey: ["user", "medicine-search", searchRequest],
+    queryFn: () => searchMedicines(searchRequest),
+    enabled: Boolean(searchRequest),
+    retry: 1,
+    staleTime: 30_000,
+  });
+  const searchMutation = {
+    data: medicineSearchQuery.data,
+    error: medicineSearchQuery.error,
+    isError: medicineSearchQuery.isError,
+    isPending: medicineSearchQuery.isFetching,
+    reset: () => setSearchRequest(null),
+  };
   const results = useMemo(
     () => searchMutation.data ?? [],
     [searchMutation.data],
@@ -81,7 +107,7 @@ export function MedicineSearchPage() {
     event.preventDefault();
     const normalized = query.trim();
     if (!normalized) return;
-    searchMutation.mutate({
+    setSearchRequest({
       query: normalized,
       radiusInMeters: radius,
       maxResults: 50,
