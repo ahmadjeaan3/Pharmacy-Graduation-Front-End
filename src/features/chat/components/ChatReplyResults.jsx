@@ -1,10 +1,12 @@
 import {
   ArrowLeft,
+  BookOpenText,
   ExternalLink,
   HeartPulse,
   MapPin,
   PackageCheck,
   Pill,
+  ShieldAlert,
   Star,
 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -14,10 +16,61 @@ import { intentLabel } from "../utils/chatFormatters";
 export function ChatReplyResults({ reply, onPrompt }) {
   if (!reply) return null;
   return (
-    <div className="mr-12 max-w-3xl space-y-3">
+    <div className="ms-12 max-w-3xl space-y-3">
       <span className="inline-flex rounded-full bg-violet-50 px-3 py-1 text-[10px] font-black text-violet-700">
         {intentLabel[reply.detectedIntent] || "مساعدة"}
       </span>
+      {reply.aiEngine && (
+        <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold text-[#71858a]">
+          <span className="rounded-full border border-emerald-100 bg-emerald-50 px-2.5 py-1 text-emerald-700">
+            مساعد صيدلاني ذكي
+          </span>
+          {reply.aiRetrievalConfidence && (
+            <span className="rounded-full border border-[#174b57]/10 bg-white px-2.5 py-1">
+              موثوقية الاسترجاع: {reply.aiRetrievalConfidence}
+            </span>
+          )}
+        </div>
+      )}
+      {reply.requiresPharmacist && (
+        <div className="flex items-start gap-2 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-xs font-bold leading-6 text-amber-900">
+          <ShieldAlert className="mt-0.5 shrink-0" size={17} />
+          <span>
+            هذه المعلومات للتثقيف ولا تغني عن مراجعة الطبيب أو الصيدلي،
+            خصوصًا قبل بدء الدواء أو إيقافه.
+          </span>
+        </div>
+      )}
+      {reply.aiSources?.length > 0 && (
+        <div className="rounded-2xl border border-[#174b57]/8 bg-white p-3">
+          <div className="mb-2 flex items-center gap-2 text-xs font-black text-[#29464d]">
+            <BookOpenText size={16} className="text-violet-700" />
+            <span>المصادر الدوائية المستخدمة</span>
+          </div>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {reply.aiSources.slice(0, 4).map((source, index) => (
+              <div
+                key={`${source.sourceId}-${source.medicineName}-${index}`}
+                className="rounded-xl bg-[#f7faf9] p-2.5 text-start"
+              >
+                <strong className="block truncate text-xs text-[#29464d]">
+                  {source.medicineName || source.activeIngredient || `مصدر ${index + 1}`}
+                </strong>
+                <p className="mt-1 line-clamp-2 text-[10px] leading-5 text-[#71858a]">
+                  {[source.activeIngredient, source.strength, source.form]
+                    .filter(Boolean)
+                    .join(" • ")}
+                </p>
+                {source.manufacturer && (
+                  <small className="mt-1 block truncate text-[10px] text-[#93a3a7]">
+                    {source.manufacturer}
+                  </small>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       {reply.medicineResults?.length > 0 && (
         <div className="grid gap-2 sm:grid-cols-2">
           {reply.medicineResults.slice(0, 4).map((item) => (
@@ -84,7 +137,7 @@ export function ChatReplyResults({ reply, onPrompt }) {
               مراجعة وتحديث المعلومات الصحية
             </small>
           </div>
-          <ArrowLeft className="mr-auto text-violet-700" size={16} />
+          <ArrowLeft className="ms-auto text-violet-700" size={16} />
         </Link>
       )}
       {reply.suggestedActions?.length > 0 && (

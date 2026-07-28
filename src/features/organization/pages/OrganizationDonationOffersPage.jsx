@@ -254,7 +254,7 @@ function Info({ icon: Icon, label, value }) {
     <div className="flex min-w-0 items-center gap-2">
       <Icon size={14} className="shrink-0 text-[#829499]" />
       <span className="text-[#829499]">{label}</span>
-      <strong className="mr-auto max-w-[55%] truncate text-[#29464d]">
+      <strong className="ms-auto max-w-[55%] truncate text-[#29464d]">
         {value}
       </strong>
     </div>

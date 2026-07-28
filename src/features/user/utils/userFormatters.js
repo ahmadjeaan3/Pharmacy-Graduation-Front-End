@@ -1,6 +1,8 @@
+import { getActiveLocale } from "../../../shared/utils/formatters";
+
 export const formatDate = (value, withTime = false) => {
   if (!value) return "غير محدد";
-  return new Intl.DateTimeFormat("ar-SY", {
+  return new Intl.DateTimeFormat(getActiveLocale(), {
     dateStyle: "medium",
     ...(withTime ? { timeStyle: "short" } : {}),
   }).format(new Date(value));

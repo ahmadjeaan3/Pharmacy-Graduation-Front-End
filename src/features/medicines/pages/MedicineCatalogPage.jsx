@@ -142,7 +142,7 @@ export function MedicineCatalogPage() {
                   عرض التفاصيل{" "}
                   <ArrowLeft
                     size={16}
-                    className="mr-auto transition group-hover:-translate-x-1"
+                    className="ms-auto transition group-hover:-translate-x-1"
                   />
                 </div>
               </Link>

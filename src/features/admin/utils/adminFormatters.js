@@ -1,3 +1,5 @@
+import { getActiveLocale } from "../../../shared/utils/formatters";
+
 export const verificationStatuses = {
   PendingDocuments: {
     label: "بانتظار المستندات",
@@ -23,7 +25,7 @@ export function getVerificationStatus(status) {
 
 export function formatDate(value, withTime = false) {
   if (!value) return "—";
-  return new Intl.DateTimeFormat("ar-SY", {
+  return new Intl.DateTimeFormat(getActiveLocale(), {
     dateStyle: "medium",
     ...(withTime ? { timeStyle: "short" } : {}),
   }).format(new Date(value));

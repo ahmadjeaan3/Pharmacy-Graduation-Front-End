@@ -7,6 +7,9 @@ import {
 } from "../features/auth/components/RouteGuards";
 import { AdminApprovalsPage } from "../features/admin/pages/AdminApprovalsPage";
 import { AdminOrganizationReviewPage } from "../features/admin/pages/AdminOrganizationReviewPage";
+import { AdminHomeTickerPage } from "../features/admin/pages/AdminHomeTickerPage";
+import { AdminAccountsPage } from "../features/admin/pages/AdminAccountsPage";
+import { AdminAccountDetailsPage } from "../features/admin/pages/AdminAccountDetailsPage";
 import { LoginPage } from "../features/auth/pages/LoginPage";
 import { DashboardLayout } from "../features/dashboard/layouts/DashboardLayout";
 import { DashboardIndexPage } from "../features/dashboard/pages/DashboardIndexPage";
@@ -134,6 +137,16 @@ const SettingsPage = lazy(() =>
     default: module.SettingsPage,
   })),
 );
+const SmartPrescriptionsPage = lazy(() =>
+  import("../features/prescriptions/pages/SmartPrescriptionsPage").then(
+    (module) => ({ default: module.SmartPrescriptionsPage }),
+  ),
+);
+const PharmacyPrescriptionOrdersPage = lazy(() =>
+  import(
+    "../features/prescriptions/pages/PharmacyPrescriptionOrdersPage"
+  ).then((module) => ({ default: module.PharmacyPrescriptionOrdersPage })),
+);
 
 export function AppRouter() {
   return (
@@ -157,6 +170,9 @@ export function AppRouter() {
             <Route path="settings" element={<SettingsPage />} />
             <Route element={<RoleRoute allowedRoles={["Admin"]} />}>
               <Route path="approvals" element={<AdminApprovalsPage />} />
+              <Route path="home-ticker" element={<AdminHomeTickerPage />} />
+              <Route path="accounts" element={<AdminAccountsPage />} />
+              <Route path="accounts/:userId" element={<AdminAccountDetailsPage />} />
               <Route
                 path="organizations/:organizationId/review"
                 element={<AdminOrganizationReviewPage />}
@@ -180,6 +196,7 @@ export function AppRouter() {
                 element={<MedicineRequestDetailsPage />}
               />
               <Route path="health" element={<HealthProfilePage />} />
+              <Route path="prescriptions" element={<SmartPrescriptionsPage />} />
               <Route path="history" element={<SearchHistoryPage />} />
               <Route path="donations" element={<DonationsPage />} />
               <Route
@@ -200,6 +217,10 @@ export function AppRouter() {
               <Route
                 path="pharmacy/requests"
                 element={<PharmacyRequestsPage />}
+              />
+              <Route
+                path="pharmacy/prescriptions"
+                element={<PharmacyPrescriptionOrdersPage />}
               />
               <Route
                 path="pharmacy/requests/:requestId"

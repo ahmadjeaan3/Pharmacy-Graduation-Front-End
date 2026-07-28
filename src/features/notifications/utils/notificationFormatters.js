@@ -3,6 +3,7 @@ import {
   Building2,
   CircleHelp,
   ClipboardCheck,
+  FileText,
   Gift,
   HeartHandshake,
   Pill,
@@ -10,6 +11,27 @@ import {
 } from "lucide-react";
 
 export const notificationTypes = {
+  PrescriptionReserved: {
+    label: "الوصفات الذكية",
+    title: "تم حجز الوصفة",
+    icon: FileText,
+    tone: "bg-violet-50 text-violet-700",
+    dot: "bg-violet-500",
+  },
+  PrescriptionStatusUpdated: {
+    label: "الوصفات الذكية",
+    title: "تحديث حالة الوصفة",
+    icon: FileText,
+    tone: "bg-emerald-50 text-emerald-700",
+    dot: "bg-emerald-500",
+  },
+  PrescriptionExpired: {
+    label: "الوصفات الذكية",
+    title: "انتهت مهلة الحجز",
+    icon: FileText,
+    tone: "bg-amber-50 text-amber-700",
+    dot: "bg-amber-500",
+  },
   MedicineRequestCreated: {
     label: "طلبات الأدوية",
     title: "طلب دواء جديد",
@@ -110,6 +132,10 @@ export function formatNotificationDate(value) {
 
 export function notificationTarget(notification, roles = []) {
   if (!notification.relatedEntityId) return null;
+  if (notification.relatedEntityType === "PrescriptionOrder") {
+    if (roles.includes("Pharmacy")) return "/app/pharmacy/prescriptions";
+    if (roles.includes("User")) return "/app/prescriptions";
+  }
   if (notification.relatedEntityType === "MedicineRequest") {
     if (roles.includes("Pharmacy"))
       return `/app/pharmacy/requests/${notification.relatedEntityId}`;

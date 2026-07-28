@@ -9,7 +9,7 @@ export function PharmacyCard({ pharmacy }) {
         <span
           className={`rounded-full px-3 py-1.5 text-xs font-bold ${pharmacy.isOpenNow ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-500"}`}
         >
-          <Clock3 size={13} className="ml-1 inline" />
+          <Clock3 size={13} className="me-1 inline" />
           {pharmacy.statusText ||
             (pharmacy.isOpenNow ? "مفتوحة الآن" : "مغلقة الآن")}
         </span>
@@ -35,7 +35,7 @@ export function PharmacyCard({ pharmacy }) {
         </span>
         {pharmacy.hasDeliveryService && (
           <span className="rounded-full bg-[#fff8e9] px-3 py-1.5 text-amber-700">
-            <Bike size={13} className="ml-1 inline" />
+            <Bike size={13} className="me-1 inline" />
             توصيل متاح
           </span>
         )}

@@ -248,7 +248,7 @@ function FilterButton({ active, icon: Icon, label, count, onClick }) {
   return (
     <button
       onClick={onClick}
-      className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-right text-sm font-bold transition ${active ? "bg-[#174b57] text-white shadow-lg" : "text-[#60777c] hover:bg-[#f1f7f6]"}`}
+      className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-start text-sm font-bold transition ${active ? "bg-[#174b57] text-white shadow-lg" : "text-[#60777c] hover:bg-[#f1f7f6]"}`}
     >
       <Icon size={17} />
       <span className="flex-1">{label}</span>

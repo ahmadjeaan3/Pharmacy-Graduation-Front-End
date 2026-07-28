@@ -400,14 +400,14 @@ export function PharmacyProfilePage() {
               <div className="flex items-center gap-3">
                 <BadgeCheck className="text-[#216474]" size={17} />
                 <span className="text-[#829499]">رقم الترخيص</span>
-                <strong className="mr-auto" dir="ltr">
+                <strong className="ms-auto" dir="ltr">
                   {data.licenseNumber}
                 </strong>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="text-[#216474]" size={17} />
                 <span className="text-[#829499]">الهاتف</span>
-                <strong className="mr-auto" dir="ltr">
+                <strong className="ms-auto" dir="ltr">
                   {data.phoneNumber || "غير مسجل"}
                 </strong>
               </div>

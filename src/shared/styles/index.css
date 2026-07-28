@@ -48,6 +48,59 @@ body {
   min-height: 100vh;
   background: #f7faf9;
 }
+.dashboard-sidebar {
+  right: 0;
+  border-left: 1px solid rgb(255 255 255 / 10%);
+  transform: translateX(100%);
+}
+.dashboard-sidebar[data-open="true"] {
+  transform: translateX(0);
+}
+[dir="ltr"] .dashboard-sidebar {
+  right: auto;
+  left: 0;
+  border-right: 1px solid rgb(255 255 255 / 10%);
+  border-left: 0;
+  transform: translateX(-100%);
+}
+[dir="ltr"] .dashboard-sidebar[data-open="true"] {
+  transform: translateX(0);
+}
+[dir="ltr"] .text-start {
+  text-align: left;
+}
+[dir="ltr"] .field-icon-shell {
+  right: auto;
+  left: 0.45rem;
+  border-right: 1px solid #e2eaeb;
+  border-left: 0;
+}
+[dir="ltr"] .form-input.has-field-icon {
+  padding-right: 1rem;
+  padding-left: 3.75rem;
+}
+[dir="ltr"] .field-action {
+  right: 0.65rem;
+  left: auto;
+}
+[dir="ltr"] .form-input.has-field-action {
+  padding-right: 3.5rem;
+}
+[dir="ltr"] .dashboard-welcome {
+  margin-right: 0;
+  margin-left: 3.5rem;
+}
+@media (min-width: 64rem) {
+  .dashboard-sidebar {
+    transform: translateX(0) !important;
+  }
+  .dashboard-main {
+    margin-inline-start: 286px;
+  }
+  [dir="ltr"] .dashboard-welcome {
+    margin-left: 0;
+  }
+}
 button,
 input,
 select,
@@ -356,6 +409,121 @@ button {
 .noise {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 140 140' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
 }
+.print-only {
+  display: none;
+}
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+  html,
+  body {
+    min-width: 0;
+    background: #fff !important;
+  }
+  body * {
+    visibility: hidden;
+  }
+  .health-report,
+  .health-report * {
+    visibility: visible;
+  }
+  .health-report {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    overflow: visible !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    color: #142e35;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .health-report > div {
+    padding-inline: 0 !important;
+  }
+  .print-only {
+    display: flex !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .health-report-letterhead {
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8mm;
+    padding: 0 0 5mm !important;
+    border-bottom: 2px solid #174b57;
+  }
+  .health-report-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .health-report-logo {
+    display: grid;
+    width: 46px;
+    height: 46px;
+    place-items: center;
+    border-radius: 14px;
+    background: #174b57;
+    color: #fff;
+  }
+  .health-report-brand strong,
+  .health-report-brand small {
+    display: block;
+  }
+  .health-report-brand strong {
+    color: #102d34;
+    font-size: 18px;
+    font-weight: 900;
+  }
+  .health-report-brand small {
+    color: #668087;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+  }
+  .health-report-document-title {
+    text-align: left;
+  }
+  .health-report-document-title strong,
+  .health-report-document-title span {
+    display: block;
+  }
+  .health-report-document-title strong {
+    color: #174b57;
+    font-size: 15px;
+  }
+  .health-report-document-title span {
+    margin-top: 2px;
+    color: #71858a;
+    font-size: 10px;
+  }
+  .health-report-section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .health-report-footer {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .health-report-disclaimer {
+    display: block !important;
+    margin-top: 7mm;
+    padding-top: 4mm;
+    border-top: 1px solid #d9e4e5;
+    color: #71858a;
+    font-size: 9px;
+    line-height: 1.6;
+    text-align: center;
+  }
+  a {
+    color: inherit !important;
+    text-decoration: none !important;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -364,4 +532,31 @@ button {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
   }
+}
+@keyframes landing-ticker-rtl {
+  from { transform: translateX(0); }
+  to { transform: translateX(50%); }
+}
+
+@keyframes landing-ticker-ltr {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.landing-ticker-track {
+  animation: landing-ticker-ltr 24s linear infinite;
+  will-change: transform;
+}
+
+[dir="rtl"] .landing-ticker-track {
+  animation-name: landing-ticker-rtl;
+}
+
+.landing-ticker:hover .landing-ticker-track,
+.landing-ticker:focus-within .landing-ticker-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-ticker-track { animation: none; }
 }

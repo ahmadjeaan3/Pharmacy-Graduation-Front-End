@@ -2,9 +2,13 @@ import { apiClient } from "../../../shared/api/client";
 
 export const adminKeys = {
   root: ["admin"],
-  dashboard: ["admin", "dashboard"],
+  dashboard: (days = 7) => ["admin", "dashboard", days],
   pendingPharmacies: ["admin", "pharmacies", "pending"],
   pendingOrganizations: ["admin", "organizations", "pending"],
+  homeTicker: ["admin", "home-ticker"],
+  homeTickerPharmacies: ["admin", "home-ticker", "pharmacies"],
+  accounts: (params = {}) => ["admin", "accounts", params],
+  account: (userId) => ["admin", "accounts", userId],
   organizationVerification: (organizationId) => [
     "admin",
     "organizations",
@@ -13,8 +17,33 @@ export const adminKeys = {
   ],
 };
 
-export async function getAdminDashboard() {
-  return (await apiClient.get("/admin/dashboard")).data;
+export async function getHomeTickerItems() {
+  return (await apiClient.get("/admin/home-ticker")).data;
+}
+export async function getHomeTickerPharmacies() {
+  return (await apiClient.get("/admin/home-ticker/pharmacies")).data;
+}
+export async function createHomeTickerItem(payload) {
+  return (await apiClient.post("/admin/home-ticker", payload)).data;
+}
+export async function updateHomeTickerItem(id, payload) {
+  return (await apiClient.put(`/admin/home-ticker/${id}`, payload)).data;
+}
+export async function deleteHomeTickerItem(id) {
+  return apiClient.delete(`/admin/home-ticker/${id}`);
+}
+export async function getAdminAccounts(params = {}) {
+  return (await apiClient.get("/admin/accounts", { params })).data;
+}
+export async function getAdminAccount(userId) {
+  return (await apiClient.get(`/admin/accounts/${userId}`)).data;
+}
+export async function updateAdminAccountStatus(userId, isActive) {
+  return apiClient.put(`/admin/accounts/${userId}/status`, { isActive });
+}
+
+export async function getAdminDashboard(days = 7) {
+  return (await apiClient.get("/admin/dashboard", { params: { days } })).data;
 }
 
 export async function getPendingPharmacies() {

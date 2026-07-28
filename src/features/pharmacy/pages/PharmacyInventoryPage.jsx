@@ -154,7 +154,7 @@ function InventoryDialog({ item, onClose, onSave, pending }) {
                         unitPrice: medicine.sellingPrice || 0,
                       }))
                     }
-                    className={`flex items-center gap-3 rounded-2xl border p-3 text-right transition ${form.medicineId === medicine.id ? "border-[#216474] bg-[#eef7f6]" : "border-[#174b57]/9 hover:border-[#216474]/35"}`}
+                    className={`flex items-center gap-3 rounded-2xl border p-3 text-start transition ${form.medicineId === medicine.id ? "border-[#216474] bg-[#eef7f6]" : "border-[#174b57]/9 hover:border-[#216474]/35"}`}
                   >
                     <span
                       className={`grid size-9 shrink-0 place-items-center rounded-xl ${form.medicineId === medicine.id ? "bg-[#216474] text-white" : "bg-[#edf5f4] text-[#216474]"}`}
@@ -490,7 +490,7 @@ export function PharmacyInventoryPage() {
                     item.daysUntilExpiry <= 30 && (
                       <AlertTriangle
                         size={15}
-                        className="mr-auto text-rose-500"
+                        className="ms-auto text-rose-500"
                       />
                     )}
                 </div>

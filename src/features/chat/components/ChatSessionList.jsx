@@ -37,7 +37,7 @@ export function ChatSessionList({
               key={session.sessionId}
               type="button"
               onClick={() => onSelect(session.sessionId)}
-              className={`block w-full rounded-xl p-3 text-right transition ${activeSessionId === session.sessionId ? "bg-[#f2effa] text-violet-800" : "hover:bg-[#f7faf9]"}`}
+              className={`block w-full rounded-xl p-3 text-start transition ${activeSessionId === session.sessionId ? "bg-[#f2effa] text-violet-800" : "hover:bg-[#f7faf9]"}`}
             >
               <div className="flex items-center gap-2">
                 <MessageCircle size={15} className="shrink-0" />

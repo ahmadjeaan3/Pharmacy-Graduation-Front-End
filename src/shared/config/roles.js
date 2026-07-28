@@ -5,12 +5,14 @@ import {
   ClipboardList,
   Clock3,
   FileCheck2,
+  FileText,
   Gift,
   HandHeart,
   HeartHandshake,
   HeartPulse,
   LibraryBig,
   MapPin,
+  Megaphone,
   PackageSearch,
   UserRound,
 } from "lucide-react";
@@ -22,6 +24,7 @@ const roleDefinitions = {
     navigation: [
       { to: "/app/search", label: "البحث عن دواء", icon: PackageSearch },
       { to: "/app/chat", label: "المساعد الدوائي", icon: Bot },
+      { to: "/app/prescriptions", label: "الوصفة الذكية", icon: FileText },
       { to: "/app/requests", label: "طلباتي", icon: ClipboardList },
       { to: "/app/donations", label: "التبرعات والمساعدة", icon: HandHeart },
       { to: "/app/organizations", label: "المنظمات والحملات", icon: Building2 },
@@ -77,6 +80,11 @@ const roleDefinitions = {
         to: "/app/pharmacy/requests",
         label: "طلبات الأدوية",
         icon: ClipboardList,
+      },
+      {
+        to: "/app/pharmacy/prescriptions",
+        label: "الوصفات المحجوزة",
+        icon: FileText,
       },
       { to: "/app/pharmacy/profile", label: "الملف والموقع", icon: MapPin },
       { to: "/app/pharmacy/working-hours", label: "ساعات العمل", icon: Clock3 },
@@ -175,7 +183,9 @@ const roleDefinitions = {
     label: "الإدارة",
     navigation: [
       { to: "/app/approvals", label: "طلبات الاعتماد", icon: Building2 },
+      { to: "/app/accounts", label: "إدارة الحسابات", icon: UserRound },
       { to: "/app/medicines", label: "دليل الأدوية", icon: LibraryBig },
+      { to: "/app/home-ticker", label: "شريط الإعلانات", icon: Megaphone },
     ],
     dashboard: {
       title: "لوحة الإدارة",
