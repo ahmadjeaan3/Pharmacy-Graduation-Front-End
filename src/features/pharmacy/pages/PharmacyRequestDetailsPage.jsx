@@ -14,6 +14,7 @@ import {
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getApiErrorMessage } from "../../../shared/api/errors";
+import { MedicineAlternativesButton } from "../../intelligence/components/MedicineAlternativesButton";
 import {
   getPharmacyRequest,
   pharmacyKeys,
@@ -220,27 +221,33 @@ export function PharmacyRequestDetailsPage() {
                 </button>
               </div>
               {selectedStatus === "Unavailable" && (
-                <label className="mt-5 block">
-                  <span className="form-label">بديل متاح (اختياري)</span>
-                  <select
-                    className="form-input"
-                    value={form.suggestedAlternativeMedicineId}
-                    onChange={(e) =>
-                      setForm((f) => ({
-                        ...f,
-                        suggestedAlternativeMedicineId: e.target.value,
-                      }))
-                    }
-                  >
-                    <option value="">دون اقتراح بديل</option>
-                    {(data.alternativeCandidates || []).map((item) => (
-                      <option key={item.medicineId} value={item.medicineId}>
-                        {item.medicineName}
-                        {item.capacity ? ` — ${item.capacity}` : ""}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                <div className="mt-5">
+                  <label className="block">
+                    <span className="form-label">بديل متاح (اختياري)</span>
+                    <select
+                      className="form-input"
+                      value={form.suggestedAlternativeMedicineId}
+                      onChange={(e) =>
+                        setForm((f) => ({
+                          ...f,
+                          suggestedAlternativeMedicineId: e.target.value,
+                        }))
+                      }
+                    >
+                      <option value="">دون اقتراح بديل</option>
+                      {(data.alternativeCandidates || []).map((item) => (
+                        <option key={item.medicineId} value={item.medicineId}>
+                          {item.medicineName}
+                          {item.capacity ? ` — ${item.capacity}` : ""}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <MedicineAlternativesButton
+                    medicineName={data.medicineName}
+                    className="btn-secondary mt-3 w-full justify-center"
+                  />
+                </div>
               )}
               <label className="mt-5 block">
                 <span className="form-label">ملاحظة للمريض (اختيارية)</span>

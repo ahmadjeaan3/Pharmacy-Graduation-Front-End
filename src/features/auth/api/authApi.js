@@ -16,3 +16,6 @@ export async function registerPharmacy(payload) {
 export async function registerOrganization(payload) {
   return (await apiClient.post("/auth/register/organization", payload)).data;
 }
+export async function registerWarehouse(payload) {
+  return (await apiClient.post("/auth/register/warehouse", payload)).data;
+}

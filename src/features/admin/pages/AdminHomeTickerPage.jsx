@@ -112,9 +112,7 @@ export function AdminHomeTickerPage() {
 
   const save = useMutation({
     mutationFn: ({ id, payload }) =>
-      id
-        ? updateHomeTickerItem(id, payload)
-        : createHomeTickerItem(payload),
+      id ? updateHomeTickerItem(id, payload) : createHomeTickerItem(payload),
     onSuccess: async () => {
       await client.invalidateQueries({ queryKey: adminKeys.homeTicker });
       setForm(emptyForm);
@@ -156,7 +154,7 @@ export function AdminHomeTickerPage() {
       setNotice({ ok: false, text: getApiErrorMessage(error) }),
   });
 
-  const allItems = items.data || [];
+  const allItems = useMemo(() => items.data || [], [items.data]);
   const stats = useMemo(() => {
     const live = allItems.filter(
       (item) => getRuntimeStatus(item).label === "يظهر الآن",
@@ -220,8 +218,8 @@ export function AdminHomeTickerPage() {
               شريط الإعلانات والمناوبات
             </h2>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-white/60">
-              أنشئ إعلانًا أو انشر صيدلية مناوبة، وحدد وقت ظهوره وترتيبه من
-              لوحة واحدة واضحة.
+              أنشئ إعلانًا أو انشر صيدلية مناوبة، وحدد وقت ظهوره وترتيبه من لوحة
+              واحدة واضحة.
             </p>
           </div>
           <button
@@ -587,8 +585,7 @@ export function AdminHomeTickerPage() {
                       remove.mutate(item.id);
                   }}
                   busy={
-                    (remove.isPending &&
-                      remove.variables === item.id) ||
+                    (remove.isPending && remove.variables === item.id) ||
                     (toggle.isPending && toggle.variables?.id === item.id)
                   }
                 />
@@ -651,9 +648,7 @@ function TickerCard({ item, onEdit, onToggle, onDelete, busy }) {
       <div className="flex items-start gap-4">
         <span
           className={`grid size-12 shrink-0 place-items-center rounded-2xl ${
-            duty
-              ? "bg-amber-50 text-amber-700"
-              : "bg-[#eaf4f3] text-[#216474]"
+            duty ? "bg-amber-50 text-amber-700" : "bg-[#eaf4f3] text-[#216474]"
           }`}
         >
           {duty ? <Building2 size={21} /> : <BellRing size={21} />}

@@ -20,8 +20,9 @@ apiClient.interceptors.response.use(
     const isLoginRequest = error.config?.url?.includes("/auth/login");
     const authenticationChallenge =
       error.response?.headers?.["www-authenticate"] || "";
-    const tokenWasRejected =
-      /invalid_token|token.*expired|signature/i.test(authenticationChallenge);
+    const tokenWasRejected = /invalid_token|token.*expired|signature/i.test(
+      authenticationChallenge,
+    );
     const sessionIsMissing = !getAccessToken();
 
     // Do not destroy a valid local session for an application-level 401.

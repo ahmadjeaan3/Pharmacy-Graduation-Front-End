@@ -14,6 +14,10 @@ import {
   MapPin,
   Megaphone,
   PackageSearch,
+  Route,
+  ShieldCheck,
+  Truck,
+  Warehouse,
   UserRound,
 } from "lucide-react";
 
@@ -76,6 +80,7 @@ const roleDefinitions = {
     label: "الصيدلية",
     navigation: [
       { to: "/app/pharmacy/inventory", label: "المخزون", icon: PackageSearch },
+      { to: "/app/supply-chain", label: "توريد المستودعات", icon: Truck },
       {
         to: "/app/pharmacy/requests",
         label: "طلبات الأدوية",
@@ -85,6 +90,11 @@ const roleDefinitions = {
         to: "/app/pharmacy/prescriptions",
         label: "الوصفات المحجوزة",
         icon: FileText,
+      },
+      {
+        to: "/app/pharmacy/donations",
+        label: "تحقق التبرعات",
+        icon: ShieldCheck,
       },
       { to: "/app/pharmacy/profile", label: "الملف والموقع", icon: MapPin },
       { to: "/app/pharmacy/working-hours", label: "ساعات العمل", icon: Clock3 },
@@ -115,6 +125,39 @@ const roleDefinitions = {
       text: "لإدارة بيانات الصيدلية والمخزون وطلبات الأدوية.",
       icon: Building2,
       tone: "bg-amber-50 text-amber-600",
+    },
+  },
+  Warehouse: {
+    key: "Warehouse",
+    label: "المستودع",
+    navigation: [
+      { to: "/app/supply-chain", label: "مركز سلسلة التوريد", icon: Warehouse },
+    ],
+    dashboard: {
+      title: "لوحة المستودع",
+      description:
+        "إدارة الدفعات والطلبات والمندوبين والتوصيل والاستدعاءات الدوائية.",
+      actions: [],
+    },
+    registration: {
+      type: "warehouse",
+      title: "مستودع أدوية",
+      subtitle: "حساب مورّد",
+      text: "لإدارة الدُفعات وتوريد الصيدليات وتشغيل شبكة المندوبين.",
+      icon: Warehouse,
+      tone: "bg-cyan-50 text-cyan-700",
+    },
+  },
+  Representative: {
+    key: "Representative",
+    label: "المندوب",
+    navigation: [
+      { to: "/app/supply-chain", label: "مسار التوصيل", icon: Route },
+    ],
+    dashboard: {
+      title: "لوحة المندوب",
+      description: "استلام مهام التوصيل وتحديث مسار الشحنة وتأكيد التسليم.",
+      actions: [],
     },
   },
   Organization: {
@@ -185,6 +228,7 @@ const roleDefinitions = {
       { to: "/app/approvals", label: "طلبات الاعتماد", icon: Building2 },
       { to: "/app/accounts", label: "إدارة الحسابات", icon: UserRound },
       { to: "/app/medicines", label: "دليل الأدوية", icon: LibraryBig },
+      { to: "/app/supply-chain", label: "مراقبة التوريد", icon: Warehouse },
       { to: "/app/home-ticker", label: "شريط الإعلانات", icon: Megaphone },
     ],
     dashboard: {
@@ -208,7 +252,14 @@ const roleDefinitions = {
   },
 };
 
-const rolePriority = ["Admin", "Pharmacy", "Organization", "User"];
+const rolePriority = [
+  "Admin",
+  "Warehouse",
+  "Representative",
+  "Pharmacy",
+  "Organization",
+  "User",
+];
 
 export function normalizeRoles(roles = []) {
   const values = Array.isArray(roles) ? roles : [roles];

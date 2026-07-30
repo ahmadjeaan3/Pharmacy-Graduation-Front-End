@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   AlertTriangle,
+  BrainCircuit,
   CalendarClock,
   Check,
   ChevronLeft,
@@ -10,15 +11,18 @@ import {
   Pill,
   Plus,
   Search,
+  Sparkles,
   Trash2,
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getApiErrorMessage } from "../../../shared/api/errors";
+import { MedicineAlternativesButton } from "../../intelligence/components/MedicineAlternativesButton";
 import {
   addInventoryMedicine,
   getInventory,
   pharmacyKeys,
+  predictInventoryStockout,
   removeInventoryMedicine,
   searchMedicineCatalog,
   updateInventoryMedicine,
@@ -46,6 +50,147 @@ const blank = {
   expiryDateUtc: "",
   lowStockThreshold: 5,
 };
+
+function StockPredictionDialog({ item, onClose }) {
+  const [form, setForm] = useState({
+    quantitySold: 0,
+    avgDailyConsumption: 1,
+    last7DaysSales: 0,
+    last30DaysSales: 0,
+  });
+  const prediction = useMutation({
+    mutationFn: () =>
+      predictInventoryStockout({
+        stockQuantity: item.quantity,
+        quantitySold: Number(form.quantitySold),
+        avgDailyConsumption: Number(form.avgDailyConsumption),
+        last7DaysSales: Number(form.last7DaysSales),
+        last30DaysSales: Number(form.last30DaysSales),
+        month: new Date().getMonth() + 1,
+      }),
+  });
+  const change = (key) => (event) =>
+    setForm((current) => ({ ...current, [key]: event.target.value }));
+  const risk = {
+    Critical: ["حرج", "bg-rose-50 text-rose-700 border-rose-100"],
+    High: ["مرتفع", "bg-orange-50 text-orange-700 border-orange-100"],
+    Medium: ["متوسط", "bg-amber-50 text-amber-700 border-amber-100"],
+    Low: ["منخفض", "bg-emerald-50 text-emerald-700 border-emerald-100"],
+  }[prediction.data?.riskLevel];
+
+  return (
+    <div className="fixed inset-0 z-[110] grid place-items-center bg-[#071f25]/65 p-4 backdrop-blur-sm">
+      <div className="w-full max-w-xl rounded-[1.75rem] bg-white p-6 shadow-2xl">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-black text-[#216474]">
+              تحليل المخزون الذكي
+            </p>
+            <h3 className="mt-1 text-xl font-black">{item.medicineName}</h3>
+            <p className="mt-1 text-xs text-[#829499]">
+              الكمية الحالية: {formatNumber(item.quantity)}
+            </p>
+          </div>
+          <button
+            className="icon-button grid"
+            onClick={onClose}
+            aria-label="إغلاق"
+          >
+            <X size={18} />
+          </button>
+        </div>
+        <form
+          className="mt-6 grid gap-4 sm:grid-cols-2"
+          onSubmit={(event) => {
+            event.preventDefault();
+            prediction.mutate();
+          }}
+        >
+          <PredictionField
+            label="المباع إجمالًا"
+            value={form.quantitySold}
+            onChange={change("quantitySold")}
+          />
+          <PredictionField
+            label="متوسط الاستهلاك اليومي"
+            value={form.avgDailyConsumption}
+            onChange={change("avgDailyConsumption")}
+            step="0.1"
+          />
+          <PredictionField
+            label="مبيعات آخر 7 أيام"
+            value={form.last7DaysSales}
+            onChange={change("last7DaysSales")}
+          />
+          <PredictionField
+            label="مبيعات آخر 30 يومًا"
+            value={form.last30DaysSales}
+            onChange={change("last30DaysSales")}
+          />
+          <button
+            disabled={prediction.isPending}
+            className="btn-primary justify-center sm:col-span-2"
+          >
+            <Sparkles size={17} />
+            {prediction.isPending ? "جاري التحليل..." : "توقع موعد نفاد الدواء"}
+          </button>
+        </form>
+        {prediction.isError && (
+          <p className="mt-4 rounded-xl bg-rose-50 p-3 text-sm font-bold text-rose-700">
+            {getApiErrorMessage(prediction.error)}
+          </p>
+        )}
+        {prediction.data && (
+          <div
+            className={`mt-5 rounded-2xl border p-5 ${risk?.[1] || "bg-slate-50"}`}
+          >
+            <div className="flex items-center justify-between">
+              <strong>
+                درجة الخطورة: {risk?.[0] || prediction.data.riskLevel}
+              </strong>
+              <Sparkles size={20} />
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-3 text-center">
+              <div className="rounded-xl bg-white/70 p-3">
+                <span className="block text-xs">المدة المتوقعة</span>
+                <strong className="mt-1 block text-xl">
+                  {prediction.data.daysUntilStockout} يوم
+                </strong>
+              </div>
+              <div className="rounded-xl bg-white/70 p-3">
+                <span className="block text-xs">كمية إعادة الطلب</span>
+                <strong className="mt-1 block text-xl">
+                  {prediction.data.recommendedReorderQuantity}
+                </strong>
+              </div>
+            </div>
+          </div>
+        )}
+        <p className="mt-4 text-[11px] leading-5 text-[#829499]">
+          النتيجة تقديرية وتعتمد على دقة أرقام المبيعات المدخلة، ويجب مراجعتها
+          قبل اعتماد طلب التوريد.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function PredictionField({ label, value, onChange, step = "1" }) {
+  return (
+    <label>
+      <span className="form-label">{label}</span>
+      <input
+        type="number"
+        min="0"
+        step={step}
+        required
+        className="form-input"
+        value={value}
+        onChange={onChange}
+      />
+    </label>
+  );
+}
 function InventoryDialog({ item, onClose, onSave, pending }) {
   const [form, setForm] = useState(
     item
@@ -310,6 +455,7 @@ export function PharmacyInventoryPage() {
   });
   const [debounced, setDebounced] = useState(filters);
   const [editor, setEditor] = useState(null);
+  const [predictionItem, setPredictionItem] = useState(null);
   const [notice, setNotice] = useState(null);
   useEffect(() => {
     const timer = setTimeout(() => setDebounced(filters), 350);
@@ -499,7 +645,20 @@ export function PharmacyInventoryPage() {
                     يصرف بوصفة طبية
                   </p>
                 )}
-                <div className="mt-5 flex gap-2 border-t border-[#174b57]/8 pt-4">
+                <div className="mt-5 flex flex-wrap gap-2 border-t border-[#174b57]/8 pt-4">
+                  <MedicineAlternativesButton
+                    medicineName={item.medicineName}
+                    className="inline-flex min-h-10 basis-[calc(50%-0.25rem)] items-center justify-center gap-2 rounded-xl border border-violet-100 bg-violet-50 px-3 text-xs font-black text-violet-700 transition hover:-translate-y-0.5 hover:bg-violet-100"
+                  />
+                  <button
+                    className="inline-flex min-h-10 basis-[calc(50%-0.25rem)] items-center justify-center gap-2 rounded-xl border border-cyan-100 bg-cyan-50 px-3 text-xs font-black text-cyan-800 transition hover:-translate-y-0.5 hover:bg-cyan-100"
+                    onClick={() => setPredictionItem(item)}
+                    aria-label={`تحليل مخزون ${item.medicineName}`}
+                    title="تحليل المخزون الذكي"
+                  >
+                    <BrainCircuit size={16} />
+                    توقع النفاد
+                  </button>
                   <button
                     className="btn-secondary flex-1 justify-center"
                     onClick={() => setEditor(item)}
@@ -534,6 +693,12 @@ export function PharmacyInventoryPage() {
           pending={save.isPending}
           onClose={() => setEditor(null)}
           onSave={(payload) => save.mutate(payload)}
+        />
+      )}
+      {predictionItem && (
+        <StockPredictionDialog
+          item={predictionItem}
+          onClose={() => setPredictionItem(null)}
         />
       )}
     </div>

@@ -50,6 +50,8 @@ export const updateInventoryMedicine = async (id, payload) =>
   (await apiClient.put(`/pharmacy/me/medicines/${id}`, payload)).data;
 export const removeInventoryMedicine = async (id) =>
   apiClient.delete(`/pharmacy/me/medicines/${id}`);
+export const predictInventoryStockout = async (payload) =>
+  (await apiClient.post("/intelligence/stockout", payload)).data;
 export const getPharmacyRequests = async (params = {}) =>
   (await apiClient.get("/pharmacy/me/requests", { params: compact(params) }))
     .data;

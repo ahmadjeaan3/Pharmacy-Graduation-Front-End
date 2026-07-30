@@ -93,6 +93,19 @@ export function NotificationBell({ unreadCount = 0, roles = [] }) {
               <div className="p-8 text-center text-sm font-bold text-[#829499]">
                 جاري تحميل الإشعارات...
               </div>
+            ) : preview.isError ? (
+              <div className="p-8 text-center">
+                <p className="text-sm font-bold text-rose-700">
+                  تعذر تحميل الإشعارات
+                </p>
+                <button
+                  type="button"
+                  onClick={() => preview.refetch()}
+                  className="mt-3 text-xs font-black text-[#216474]"
+                >
+                  إعادة المحاولة
+                </button>
+              </div>
             ) : preview.data?.length ? (
               preview.data.map((item) => (
                 <button

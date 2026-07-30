@@ -1,12 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   CalendarDays,
+  Building2,
   Check,
   Gift,
   Package,
   Phone,
   Pill,
   Save,
+  ShieldCheck,
   UserRound,
 } from "lucide-react";
 import { useState } from "react";
@@ -64,6 +66,38 @@ export function OrganizationDonationOffersPage() {
         description="راجع بيانات الدواء وحالة العبوات، ثم وافق على العرض أو ارفضه أو أكد استلامه مع إرسال رد واضح للمتبرع."
         icon={Gift}
       />
+      <section className="rounded-[1.45rem] border border-[#216474]/12 bg-white p-5">
+        <div className="flex items-start gap-3">
+          <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[#eaf4f3] text-[#216474]">
+            <ShieldCheck size={21} />
+          </span>
+          <div>
+            <h2 className="font-black text-[#29464d]">
+              كيف تصل التبرعات إلى الجمعية؟
+            </h2>
+            <p className="mt-1 text-sm leading-7 text-[#71858a]">
+              تظهر هنا فقط الأدوية التي استلمتها صيدلية معتمدة وتحققت من سلامة
+              العبوة وتاريخ الصلاحية. بعدها تقرر الجمعية القبول والتوزيع. لا
+              يوجد تبرع مباشر بين مستخدمين.
+            </p>
+          </div>
+        </div>
+        <div className="mt-4 grid gap-2 text-center text-xs font-black sm:grid-cols-4">
+          {[
+            "1. تسجيل المستخدم",
+            "2. تحقق الصيدلية",
+            "3. مراجعة الجمعية",
+            "4. الاستلام والتوزيع",
+          ].map((step) => (
+            <span
+              key={step}
+              className="rounded-xl bg-[#f4f8f7] px-3 py-3 text-[#36565d]"
+            >
+              {step}
+            </span>
+          ))}
+        </div>
+      </section>
       {notice && (
         <div
           className={`rounded-2xl border p-4 text-sm font-bold ${notice.ok ? "border-emerald-100 bg-emerald-50 text-emerald-700" : "border-rose-100 bg-rose-50 text-rose-700"}`}
@@ -189,6 +223,20 @@ function OfferCard({ offer, pending, onReview }) {
           label="حالة العبوات"
           value={offer.isSealed ? "مغلقة بحالتها الأصلية" : "غير محددة كمغلقة"}
         />
+        <Info
+          icon={Building2}
+          label="صيدلية التحقق"
+          value={offer.reviewingPharmacyName || "غير محددة"}
+        />
+        <Info
+          icon={ShieldCheck}
+          label="توثيق الصيدلية"
+          value={
+            offer.pharmacyReviewStatus === "ReceivedByPharmacy"
+              ? "تم الاستلام والتحقق"
+              : "بانتظار التحقق"
+          }
+        />
         {offer.campaignTitle && (
           <Info icon={Pill} label="الحملة" value={offer.campaignTitle} />
         )}
@@ -197,6 +245,16 @@ function OfferCard({ offer, pending, onReview }) {
         <p className="mt-4 rounded-xl border border-[#174b57]/7 p-3 text-xs leading-6 text-[#71858a]">
           {offer.notes}
         </p>
+      )}
+      {offer.pharmacyReviewNote && (
+        <div className="mt-4 rounded-xl border border-[#216474]/10 bg-[#eaf4f3] p-3">
+          <p className="text-[10px] font-black text-[#216474]">
+            ملاحظة صيدلية التحقق
+          </p>
+          <p className="mt-1 text-xs leading-6 text-[#536d73]">
+            {offer.pharmacyReviewNote}
+          </p>
+        </div>
       )}
       {actionable ? (
         <div className="mt-5 border-t border-[#174b57]/8 pt-4">

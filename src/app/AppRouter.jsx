@@ -67,6 +67,11 @@ const PharmacyRequestsPage = lazy(() =>
     default: module.PharmacyRequestsPage,
   })),
 );
+const PharmacyDonationReviewsPage = lazy(() =>
+  import("../features/pharmacy/pages/PharmacyDonationReviewsPage").then(
+    (module) => ({ default: module.PharmacyDonationReviewsPage }),
+  ),
+);
 const PharmacyRequestDetailsPage = lazy(() =>
   import("../features/pharmacy/pages/PharmacyRequestDetailsPage").then(
     (module) => ({ default: module.PharmacyRequestDetailsPage }),
@@ -143,9 +148,14 @@ const SmartPrescriptionsPage = lazy(() =>
   ),
 );
 const PharmacyPrescriptionOrdersPage = lazy(() =>
-  import(
-    "../features/prescriptions/pages/PharmacyPrescriptionOrdersPage"
-  ).then((module) => ({ default: module.PharmacyPrescriptionOrdersPage })),
+  import("../features/prescriptions/pages/PharmacyPrescriptionOrdersPage").then(
+    (module) => ({ default: module.PharmacyPrescriptionOrdersPage }),
+  ),
+);
+const SupplyChainWorkspacePage = lazy(() =>
+  import("../features/supply-chain/pages/SupplyChainWorkspacePage").then(
+    (module) => ({ default: module.SupplyChainWorkspacePage }),
+  ),
 );
 
 export function AppRouter() {
@@ -168,11 +178,31 @@ export function AppRouter() {
             <Route index element={<DashboardIndexPage />} />
             <Route path="notifications" element={<NotificationsPage />} />
             <Route path="settings" element={<SettingsPage />} />
+            <Route
+              element={
+                <RoleRoute
+                  allowedRoles={[
+                    "Warehouse",
+                    "Representative",
+                    "Pharmacy",
+                    "Admin",
+                  ]}
+                />
+              }
+            >
+              <Route
+                path="supply-chain"
+                element={<SupplyChainWorkspacePage />}
+              />
+            </Route>
             <Route element={<RoleRoute allowedRoles={["Admin"]} />}>
               <Route path="approvals" element={<AdminApprovalsPage />} />
               <Route path="home-ticker" element={<AdminHomeTickerPage />} />
               <Route path="accounts" element={<AdminAccountsPage />} />
-              <Route path="accounts/:userId" element={<AdminAccountDetailsPage />} />
+              <Route
+                path="accounts/:userId"
+                element={<AdminAccountDetailsPage />}
+              />
               <Route
                 path="organizations/:organizationId/review"
                 element={<AdminOrganizationReviewPage />}
@@ -196,7 +226,10 @@ export function AppRouter() {
                 element={<MedicineRequestDetailsPage />}
               />
               <Route path="health" element={<HealthProfilePage />} />
-              <Route path="prescriptions" element={<SmartPrescriptionsPage />} />
+              <Route
+                path="prescriptions"
+                element={<SmartPrescriptionsPage />}
+              />
               <Route path="history" element={<SearchHistoryPage />} />
               <Route path="donations" element={<DonationsPage />} />
               <Route
@@ -221,6 +254,10 @@ export function AppRouter() {
               <Route
                 path="pharmacy/prescriptions"
                 element={<PharmacyPrescriptionOrdersPage />}
+              />
+              <Route
+                path="pharmacy/donations"
+                element={<PharmacyDonationReviewsPage />}
               />
               <Route
                 path="pharmacy/requests/:requestId"

@@ -11,6 +11,7 @@ import {
   Phone,
   Search,
   UserRound,
+  Warehouse,
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
@@ -19,8 +20,10 @@ import {
   adminKeys,
   getPendingOrganizations,
   getPendingPharmacies,
+  getPendingWarehouses,
   updateOrganizationApproval,
   updatePharmacyApproval,
+  updateWarehouseApproval,
 } from "../api/adminApi";
 import { ApprovalConfirmDialog } from "../components/ApprovalConfirmDialog";
 import {
@@ -32,10 +35,12 @@ import { formatDate, getVerificationStatus } from "../utils/adminFormatters";
 
 export function AdminApprovalsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const activeTab =
-    searchParams.get("tab") === "organizations"
-      ? "organizations"
-      : "pharmacies";
+  const requestedTab = searchParams.get("tab");
+  const activeTab = ["pharmacies", "organizations", "warehouses"].includes(
+    requestedTab,
+  )
+    ? requestedTab
+    : "pharmacies";
   const [search, setSearch] = useState("");
   const [approvalTarget, setApprovalTarget] = useState(null);
   const [notice, setNotice] = useState("");
@@ -48,11 +53,17 @@ export function AdminApprovalsPage() {
     queryKey: adminKeys.pendingOrganizations,
     queryFn: getPendingOrganizations,
   });
+  const warehouses = useQuery({
+    queryKey: adminKeys.pendingWarehouses,
+    queryFn: getPendingWarehouses,
+  });
   const approval = useMutation({
     mutationFn: () =>
       approvalTarget.type === "pharmacy"
         ? updatePharmacyApproval(approvalTarget.id, true)
-        : updateOrganizationApproval(approvalTarget.id, true),
+        : approvalTarget.type === "warehouse"
+          ? updateWarehouseApproval(approvalTarget.id, true)
+          : updateOrganizationApproval(approvalTarget.id, true),
     onSuccess: async () => {
       const approvedName = approvalTarget.name;
       setApprovalTarget(null);
@@ -60,7 +71,12 @@ export function AdminApprovalsPage() {
       await queryClient.invalidateQueries({ queryKey: adminKeys.root });
     },
   });
-  const activeQuery = activeTab === "pharmacies" ? pharmacies : organizations;
+  const activeQuery =
+    activeTab === "pharmacies"
+      ? pharmacies
+      : activeTab === "warehouses"
+        ? warehouses
+        : organizations;
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
     if (!term || !activeQuery.data) return activeQuery.data ?? [];
@@ -87,7 +103,7 @@ export function AdminApprovalsPage() {
               طلبات الاعتماد
             </h2>
             <p className="mt-2 max-w-2xl leading-7 text-[#71858a]">
-              مراجعة بيانات الصيدليات والمنظمات المسجلة قبل تفعيل اعتمادها.
+              مراجعة بيانات الصيدليات والمنظمات والمستودعات قبل تفعيل خدماتها.
             </p>
           </div>
           <div className="field-control w-full lg:w-80">
@@ -109,6 +125,13 @@ export function AdminApprovalsPage() {
             icon={Building2}
             label="الصيدليات"
             count={pharmacies.data?.length}
+          />
+          <TabButton
+            active={activeTab === "warehouses"}
+            onClick={() => switchTab("warehouses")}
+            icon={Warehouse}
+            label="المستودعات"
+            count={warehouses.data?.length}
           />
           <TabButton
             active={activeTab === "organizations"}
@@ -142,7 +165,9 @@ export function AdminApprovalsPage() {
               ? "لا توجد نتائج مطابقة"
               : activeTab === "pharmacies"
                 ? "لا توجد صيدليات معلّقة"
-                : "لا توجد منظمات معلّقة"
+                : activeTab === "warehouses"
+                  ? "لا توجد مستودعات معلّقة"
+                  : "لا توجد منظمات معلّقة"
           }
           description={
             search
@@ -169,22 +194,39 @@ export function AdminApprovalsPage() {
                   }}
                 />
               ))
-            : filtered.map((item, index) => (
-                <OrganizationApprovalCard
-                  key={item.organizationId}
-                  item={item}
-                  index={index}
-                  onApprove={() => {
-                    approval.reset();
-                    setApprovalTarget({
-                      type: "organization",
-                      id: item.organizationId,
-                      name: item.organizationName,
-                      kindLabel: "المنظمة",
-                    });
-                  }}
-                />
-              ))}
+            : activeTab === "warehouses"
+              ? filtered.map((item, index) => (
+                  <WarehouseApprovalCard
+                    key={item.warehouseId}
+                    item={item}
+                    index={index}
+                    onApprove={() => {
+                      approval.reset();
+                      setApprovalTarget({
+                        type: "warehouse",
+                        id: item.warehouseId,
+                        name: item.warehouseName,
+                        kindLabel: "المستودع",
+                      });
+                    }}
+                  />
+                ))
+              : filtered.map((item, index) => (
+                  <OrganizationApprovalCard
+                    key={item.organizationId}
+                    item={item}
+                    index={index}
+                    onApprove={() => {
+                      approval.reset();
+                      setApprovalTarget({
+                        type: "organization",
+                        id: item.organizationId,
+                        name: item.organizationName,
+                        kindLabel: "المنظمة",
+                      });
+                    }}
+                  />
+                ))}
         </div>
       )}
       <ApprovalConfirmDialog
@@ -197,6 +239,57 @@ export function AdminApprovalsPage() {
         onConfirm={() => approval.mutate()}
       />
     </div>
+  );
+}
+
+function WarehouseApprovalCard({ item, index, onApprove }) {
+  return (
+    <ApprovalCardShell
+      index={index}
+      icon={Warehouse}
+      title={item.warehouseName}
+      code={`ترخيص المستودع: ${item.licenseNumber}`}
+      badge={
+        <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
+          بانتظار المراجعة
+        </span>
+      }
+    >
+      <InfoLine icon={UserRound} value={item.ownerFullName} />
+      <InfoLine icon={Mail} value={item.ownerEmail} ltr />
+      <InfoLine
+        icon={Phone}
+        value={item.phoneNumber || "لا يوجد رقم هاتف"}
+        ltr
+      />
+      <InfoLine
+        icon={MapPin}
+        value={`${item.city}، ${item.area} — ${item.address}`}
+      />
+      <div className="grid grid-cols-2 gap-2 rounded-2xl bg-[#f7faf9] p-3 text-center text-xs text-[#65797e]">
+        <span>
+          <b className="block text-base text-[#17363e]">
+            {Number(item.minimumOrderAmount).toLocaleString("ar-SY")}
+          </b>
+          الحد الأدنى
+        </span>
+        <span>
+          <b className="block text-base text-[#17363e]">
+            {Number(item.deliveryFee).toLocaleString("ar-SY")}
+          </b>
+          أجور التوصيل
+        </span>
+      </div>
+      <div className="mt-5 border-t border-slate-100 pt-4">
+        <button
+          type="button"
+          onClick={onApprove}
+          className="btn-primary w-full justify-center"
+        >
+          <CheckCircle2 size={17} /> اعتماد المستودع وتفعيل خدماته
+        </button>
+      </div>
+    </ApprovalCardShell>
   );
 }
 

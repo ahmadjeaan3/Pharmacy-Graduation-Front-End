@@ -5,6 +5,7 @@ export const adminKeys = {
   dashboard: (days = 7) => ["admin", "dashboard", days],
   pendingPharmacies: ["admin", "pharmacies", "pending"],
   pendingOrganizations: ["admin", "organizations", "pending"],
+  pendingWarehouses: ["admin", "warehouses", "pending"],
   homeTicker: ["admin", "home-ticker"],
   homeTickerPharmacies: ["admin", "home-ticker", "pharmacies"],
   accounts: (params = {}) => ["admin", "accounts", params],
@@ -38,8 +39,8 @@ export async function getAdminAccounts(params = {}) {
 export async function getAdminAccount(userId) {
   return (await apiClient.get(`/admin/accounts/${userId}`)).data;
 }
-export async function updateAdminAccountStatus(userId, isActive) {
-  return apiClient.put(`/admin/accounts/${userId}/status`, { isActive });
+export async function updateAdminAccountStatus(userId, payload) {
+  return apiClient.put(`/admin/accounts/${userId}/status`, payload);
 }
 
 export async function getAdminDashboard(days = 7) {
@@ -65,6 +66,16 @@ export async function getPendingOrganizations() {
 export async function updateOrganizationApproval(organizationId, isApproved) {
   return (
     await apiClient.put(`/admin/organizations/${organizationId}/approval`, {
+      isApproved,
+    })
+  ).data;
+}
+export async function getPendingWarehouses() {
+  return (await apiClient.get("/admin/warehouses/pending")).data;
+}
+export async function updateWarehouseApproval(warehouseId, isApproved) {
+  return (
+    await apiClient.put(`/admin/warehouses/${warehouseId}/approval`, {
       isApproved,
     })
   ).data;

@@ -534,13 +534,21 @@ button {
   }
 }
 @keyframes landing-ticker-rtl {
-  from { transform: translateX(0); }
-  to { transform: translateX(50%); }
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(50%);
+  }
 }
 
 @keyframes landing-ticker-ltr {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 .landing-ticker-track {
@@ -558,5 +566,7 @@ button {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .landing-ticker-track { animation: none; }
+  .landing-ticker-track {
+    animation: none;
+  }
 }

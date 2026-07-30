@@ -13,6 +13,8 @@ import {
   ToggleLeft,
   X,
   UserRound,
+  Warehouse,
+  Truck,
 } from "lucide-react";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -21,8 +23,16 @@ import {
   getAdminAccount,
   updateAdminAccountStatus,
 } from "../api/adminApi";
+import { getApiErrorMessage } from "../../../shared/api/errors";
 
-const roleLabels = { User: "مستخدم", Pharmacy: "صيدلية", Organization: "منظمة", Admin: "إدارة" };
+const roleLabels = {
+  User: "مستخدم",
+  Pharmacy: "صيدلية",
+  Organization: "منظمة",
+  Warehouse: "مستودع",
+  Representative: "مندوب",
+  Admin: "إدارة",
+};
 
 const parseList = (value) => {
   if (!value) return "غير مضاف";
@@ -39,31 +49,44 @@ export function AdminAccountDetailsPage() {
   const client = useQueryClient();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [feedback, setFeedback] = useState("");
+  const [statusReason, setStatusReason] = useState("");
   const account = useQuery({
     queryKey: adminKeys.account(userId),
     queryFn: () => getAdminAccount(userId),
   });
   const status = useMutation({
-    mutationFn: (isActive) => updateAdminAccountStatus(userId, isActive),
+    mutationFn: (payload) => updateAdminAccountStatus(userId, payload),
     onSuccess: () => {
       client.invalidateQueries({ queryKey: adminKeys.account(userId) });
       client.invalidateQueries({ queryKey: ["admin", "accounts"] });
       setConfirmOpen(false);
-      setFeedback("تم تحديث حالة الحساب بنجاح.");
+      setStatusReason("");
+      setFeedback("تم تحديث حالة الحساب وإرسال إشعار إلى صاحبه بنجاح.");
     },
-    onError: () => setFeedback("تعذر تحديث حالة الحساب. حاول مرة أخرى."),
+    onError: (error) => setFeedback(getApiErrorMessage(error)),
   });
   if (account.isPending)
-    return <div className="rounded-2xl bg-white p-10 text-center">جاري تحميل الحساب...</div>;
+    return (
+      <div className="rounded-2xl bg-white p-10 text-center">
+        جاري تحميل الحساب...
+      </div>
+    );
   if (account.isError)
-    return <div className="rounded-2xl bg-rose-50 p-8 text-rose-700">تعذر تحميل الحساب.</div>;
+    return (
+      <div className="rounded-2xl bg-rose-50 p-8 text-rose-700">
+        تعذر تحميل الحساب.
+      </div>
+    );
   const item = account.data;
   const isAccountActive = item.isActive === true;
   const isUser = item.role === "User";
 
   return (
     <div className="space-y-7">
-      <Link to="/app/accounts" className="inline-flex items-center gap-2 rounded-xl bg-white px-3.5 py-2.5 text-sm font-bold text-[#216474] shadow-sm transition hover:-translate-x-1">
+      <Link
+        to="/app/accounts"
+        className="inline-flex items-center gap-2 rounded-xl bg-white px-3.5 py-2.5 text-sm font-bold text-[#216474] shadow-sm transition hover:-translate-x-1"
+      >
         <ArrowRight size={17} /> العودة إلى جميع الحسابات
       </Link>
       <section className="relative overflow-hidden rounded-[2rem] bg-[linear-gradient(125deg,#123f49,#216474)] p-6 text-white shadow-[0_25px_70px_rgba(23,75,87,.22)] md:p-8">
@@ -74,6 +97,10 @@ export function AdminAccountDetailsPage() {
             <span className="grid size-20 shrink-0 place-items-center rounded-[1.4rem] border border-white/10 bg-white/10 text-[#f5cb72] shadow-xl backdrop-blur">
               {item.role === "User" ? (
                 <UserRound size={34} />
+              ) : item.role === "Warehouse" ? (
+                <Warehouse size={34} />
+              ) : item.role === "Representative" ? (
+                <Truck size={34} />
               ) : (
                 <Building2 size={34} />
               )}
@@ -125,7 +152,9 @@ export function AdminAccountDetailsPage() {
                     item.isActive ? "text-emerald-300" : "text-rose-300"
                   }
                 />
-                {item.isActive ? "الحساب متاح للخدمات" : "الوصول إلى المنصة موقوف"}
+                {item.isActive
+                  ? "الحساب متاح للخدمات"
+                  : "الوصول إلى المنصة موقوف"}
               </strong>
               <p className="mt-2 text-[11px] leading-5 text-white/40">
                 {item.isActive
@@ -137,6 +166,7 @@ export function AdminAccountDetailsPage() {
               disabled={status.isPending}
               onClick={() => {
                 setFeedback("");
+                setStatusReason("");
                 setConfirmOpen(true);
               }}
               className={`group mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-black shadow-lg transition hover:-translate-y-0.5 disabled:opacity-50 ${
@@ -158,7 +188,9 @@ export function AdminAccountDetailsPage() {
       </section>
 
       {feedback && (
-        <div className={`rounded-2xl border px-5 py-4 text-sm font-bold ${feedback.startsWith("تم") ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-rose-200 bg-rose-50 text-rose-700"}`}>
+        <div
+          className={`rounded-2xl border px-5 py-4 text-sm font-bold ${feedback.startsWith("تم") ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-rose-200 bg-rose-50 text-rose-700"}`}
+        >
           {feedback}
         </div>
       )}
@@ -166,11 +198,15 @@ export function AdminAccountDetailsPage() {
       <section className="grid gap-4 lg:grid-cols-[1fr_320px]">
         <div className="rounded-[1.45rem] border border-[#174b57]/8 bg-white p-5 shadow-[0_10px_30px_rgba(23,75,87,.04)]">
           <div className="flex items-center gap-3">
-            <span className={`grid size-11 place-items-center rounded-xl ${item.isActive ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"}`}>
+            <span
+              className={`grid size-11 place-items-center rounded-xl ${item.isActive ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"}`}
+            >
               <ShieldCheck size={21} />
             </span>
             <div>
-              <h3 className="font-black text-[#29464d]">حالة الوصول إلى المنصة</h3>
+              <h3 className="font-black text-[#29464d]">
+                حالة الوصول إلى المنصة
+              </h3>
               <p className="mt-1 text-xs leading-5 text-[#71858a]">
                 {item.isActive
                   ? "الحساب يستطيع تسجيل الدخول واستخدام الخدمات المتاحة لدوره."
@@ -188,7 +224,9 @@ export function AdminAccountDetailsPage() {
           }`}
         >
           <div>
-            <span className="text-xs font-bold text-slate-500">الحالة الحالية</span>
+            <span className="text-xs font-bold text-slate-500">
+              الحالة الحالية
+            </span>
             <strong
               className={`mt-1 block text-lg font-black ${
                 isAccountActive ? "text-emerald-700" : "text-rose-700"
@@ -212,41 +250,105 @@ export function AdminAccountDetailsPage() {
       </section>
 
       <section className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]">
-        <Stat icon={Activity} label="طلبات الأدوية" value={item.medicineRequestsCount} tone="cyan" />
-        <Stat icon={Bell} label="الإشعارات" value={item.notificationsCount} tone="violet" />
-        {item.role === "Pharmacy" && <Stat icon={PackageSearch} label="عناصر المخزون" value={item.inventoryItemsCount} tone="amber" />}
-        {item.role === "Organization" && <Stat icon={Building2} label="الحملات" value={item.campaignsCount} tone="amber" />}
-        {isUser && <Stat icon={Search} label="عمليات البحث" value={item.searchHistoryCount} tone="green" />}
+        <Stat
+          icon={Activity}
+          label="طلبات الأدوية"
+          value={item.medicineRequestsCount}
+          tone="cyan"
+        />
+        <Stat
+          icon={Bell}
+          label="الإشعارات"
+          value={item.notificationsCount}
+          tone="violet"
+        />
+        {item.role === "Pharmacy" && (
+          <Stat
+            icon={PackageSearch}
+            label="عناصر المخزون"
+            value={item.inventoryItemsCount}
+            tone="amber"
+          />
+        )}
+        {item.role === "Organization" && (
+          <Stat
+            icon={Building2}
+            label="الحملات"
+            value={item.campaignsCount}
+            tone="amber"
+          />
+        )}
+        {isUser && (
+          <Stat
+            icon={Search}
+            label="عمليات البحث"
+            value={item.searchHistoryCount}
+            tone="green"
+          />
+        )}
       </section>
 
       <section className="grid gap-5 lg:grid-cols-2">
-        <Card icon={UserRound} title="بيانات الحساب" subtitle="معلومات الهوية والتواصل">
+        <Card
+          icon={UserRound}
+          title="بيانات الحساب"
+          subtitle="معلومات الهوية والتواصل"
+        >
           <Info label="الاسم الكامل" value={item.fullName} />
           <Info label="البريد الإلكتروني" value={item.email} />
           <Info label="رقم الهاتف" value={item.phoneNumber} />
           <Info label="نوع الحساب" value={roleLabels[item.role]} />
           <Info label="الحالة" value={item.isActive ? "فعال" : "موقوف"} />
         </Card>
-        <Card icon={MapPin} title="بيانات الملف والموقع" subtitle="تفاصيل الجهة والاعتماد">
+        <Card
+          icon={MapPin}
+          title="بيانات الملف والموقع"
+          subtitle="تفاصيل الجهة والاعتماد"
+        >
           <Info label="اسم الجهة" value={item.profileName} />
           <Info label="المدينة" value={item.city} />
           <Info label="المنطقة" value={item.area} />
           <Info label="العنوان" value={item.address} />
-          <Info label="رقم الترخيص/التسجيل" value={item.licenseOrRegistrationNumber} />
-          <Info label="حالة الاعتماد" value={item.isApproved == null ? null : item.isApproved ? "معتمد" : "غير معتمد"} />
+          <Info
+            label="رقم الترخيص/التسجيل"
+            value={item.licenseOrRegistrationNumber}
+          />
+          <Info
+            label="حالة الاعتماد"
+            value={
+              item.isApproved == null
+                ? null
+                : item.isApproved
+                  ? "معتمد"
+                  : "غير معتمد"
+            }
+          />
           <Info label="الوصف" value={item.description} />
         </Card>
       </section>
 
       {isUser && (
-        <Card icon={HeartPulse} title="الملف الصحي" subtitle="المعلومات الطبية المسجلة">
+        <Card
+          icon={HeartPulse}
+          title="الملف الصحي"
+          subtitle="المعلومات الطبية المسجلة"
+        >
           <div className="grid gap-4 md:grid-cols-2">
             <Info label="زمرة الدم" value={item.bloodType} />
             <Info label="الحساسيات" value={parseList(item.allergies)} />
-            <Info label="الأمراض المزمنة" value={parseList(item.chronicConditions)} />
-            <Info label="الأدوية الحالية" value={parseList(item.currentMedications)} />
+            <Info
+              label="الأمراض المزمنة"
+              value={parseList(item.chronicConditions)}
+            />
+            <Info
+              label="الأدوية الحالية"
+              value={parseList(item.currentMedications)}
+            />
             <Info label="جهة اتصال الطوارئ" value={item.emergencyContactName} />
-            <Info label="هاتف الطوارئ" value={item.emergencyContactPhoneNumber} />
+            <Info
+              label="هاتف الطوارئ"
+              value={item.emergencyContactPhoneNumber}
+            />
           </div>
         </Card>
       )}
@@ -274,7 +376,10 @@ export function AdminAccountDetailsPage() {
               >
                 <ShieldCheck size={24} />
               </span>
-              <h3 id="account-status-title" className="mt-4 text-2xl font-black">
+              <h3
+                id="account-status-title"
+                className="mt-4 text-2xl font-black"
+              >
                 {item.isActive ? "تأكيد إيقاف الحساب" : "تأكيد تفعيل الحساب"}
               </h3>
               <p className="mt-2 text-sm leading-6 text-white/70">
@@ -287,6 +392,30 @@ export function AdminAccountDetailsPage() {
                   ? "لن يتمكن صاحب الحساب من تسجيل الدخول أو استخدام خدمات المنصة حتى تعيد تفعيله."
                   : "سيتمكن صاحب الحساب مجددًا من تسجيل الدخول واستخدام الخدمات المتاحة لنوع حسابه."}
               </p>
+              <label className="mt-5 block">
+                <span className="form-label">
+                  {item.isActive
+                    ? "سبب إيقاف الحساب"
+                    : "ملاحظة إعادة التفعيل (اختياري)"}
+                </span>
+                <textarea
+                  rows={4}
+                  maxLength={500}
+                  required={item.isActive}
+                  value={statusReason}
+                  onChange={(event) => setStatusReason(event.target.value)}
+                  className="form-textarea"
+                  placeholder={
+                    item.isActive
+                      ? "اكتب سببًا واضحًا لصاحب الحساب (10 أحرف على الأقل)"
+                      : "اكتب ملاحظة توضيحية لصاحب الحساب إن لزم"
+                  }
+                />
+                <span className="mt-2 flex items-center gap-2 text-xs font-semibold text-[#71858a]">
+                  <Bell size={14} className="text-[#216474]" />
+                  سيصل إشعار إلى صاحب الحساب يوضح القرار وملاحظة الإدارة.
+                </span>
+              </label>
               <div className="mt-6 grid grid-cols-2 gap-3">
                 <button
                   onClick={() => setConfirmOpen(false)}
@@ -296,8 +425,16 @@ export function AdminAccountDetailsPage() {
                   إلغاء
                 </button>
                 <button
-                  onClick={() => status.mutate(!item.isActive)}
-                  disabled={status.isPending}
+                  onClick={() =>
+                    status.mutate({
+                      isActive: !item.isActive,
+                      reason: statusReason.trim() || null,
+                    })
+                  }
+                  disabled={
+                    status.isPending ||
+                    (item.isActive && statusReason.trim().length < 10)
+                  }
                   className={`rounded-xl border px-4 py-3 font-black transition disabled:opacity-60 ${
                     item.isActive
                       ? "border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100"
@@ -331,12 +468,23 @@ function Card({ icon: Icon, title, subtitle, children }) {
           <p className="mt-0.5 text-xs text-[#8a9a9e]">{subtitle}</p>
         </div>
       </div>
-      <div className="grid gap-0 divide-y divide-slate-100 px-6">{children}</div>
+      <div className="grid gap-0 divide-y divide-slate-100 px-6">
+        {children}
+      </div>
     </section>
   );
 }
 function Info({ label, value }) {
-  return <div className="flex items-start justify-between gap-5 py-3.5"><span className="shrink-0 text-xs font-semibold text-[#8a9a9e]">{label}</span><strong className="text-end text-sm text-[#29464d]">{value || "غير مضاف"}</strong></div>;
+  return (
+    <div className="flex items-start justify-between gap-5 py-3.5">
+      <span className="shrink-0 text-xs font-semibold text-[#8a9a9e]">
+        {label}
+      </span>
+      <strong className="text-end text-sm text-[#29464d]">
+        {value || "غير مضاف"}
+      </strong>
+    </div>
+  );
 }
 function Stat({ icon: Icon, label, value, tone }) {
   const tones = {
@@ -345,5 +493,19 @@ function Stat({ icon: Icon, label, value, tone }) {
     amber: "bg-amber-50 text-amber-700",
     green: "bg-emerald-50 text-emerald-700",
   };
-  return <div className="rounded-[1.35rem] border border-[#174b57]/8 bg-white p-4 shadow-[0_10px_30px_rgba(23,75,87,.04)] sm:p-5"><span className={`grid size-10 place-items-center rounded-xl ${tones[tone]}`}><Icon size={18} /></span><strong className="mt-4 block text-2xl font-black text-[#17363e]">{Number(value || 0).toLocaleString("ar-SY")}</strong><span className="mt-1 block text-xs font-semibold text-[#71858a]">{label}</span></div>;
+  return (
+    <div className="rounded-[1.35rem] border border-[#174b57]/8 bg-white p-4 shadow-[0_10px_30px_rgba(23,75,87,.04)] sm:p-5">
+      <span
+        className={`grid size-10 place-items-center rounded-xl ${tones[tone]}`}
+      >
+        <Icon size={18} />
+      </span>
+      <strong className="mt-4 block text-2xl font-black text-[#17363e]">
+        {Number(value || 0).toLocaleString("ar-SY")}
+      </strong>
+      <span className="mt-1 block text-xs font-semibold text-[#71858a]">
+        {label}
+      </span>
+    </div>
+  );
 }

@@ -18,9 +18,7 @@ export function ChatMessageBubble({ message }) {
       <div
         className={`max-w-[min(82%,720px)] rounded-2xl px-4 py-3 ${fromUser ? "rounded-bl-md bg-[#216474] text-white" : "rounded-br-md border border-[#174b57]/8 bg-white text-[#29464d] shadow-sm"}`}
       >
-        <p className="whitespace-pre-wrap text-sm leading-7">
-          {content}
-        </p>
+        <p className="whitespace-pre-wrap text-sm leading-7">{content}</p>
         <span
           className={`mt-2 flex items-center gap-1 text-[10px] ${fromUser ? "text-white/45" : "text-[#a0adb0]"}`}
         >
