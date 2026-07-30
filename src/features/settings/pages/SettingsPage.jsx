@@ -443,41 +443,41 @@ export function SettingsPage() {
 
           <aside className="space-y-6">
             <section className="surface h-fit p-6">
-            <ProfileAvatar
-              user={profileQuery.data}
-              sizeClass="size-16"
-              className="bg-[#173f49] text-xl text-white"
-              fallbackIcon
-            />
-            <h3 className="mt-4 text-xl font-black">
-              {profileQuery.data.fullName}
-            </h3>
-            <p className="mt-1 text-sm text-[#71858a]">
-              {profileQuery.data.email}
-            </p>
-            <div className="mt-6 space-y-3 border-t border-[#174b57]/8 pt-5">
-              <div className="flex items-center justify-between rounded-xl bg-[#f7faf9] p-3">
-                <span className="text-xs text-[#71858a]">نوع الحساب</span>
-                <strong className="text-sm">{role.label}</strong>
+              <ProfileAvatar
+                user={profileQuery.data}
+                sizeClass="size-16"
+                className="bg-[#173f49] text-xl text-white"
+                fallbackIcon
+              />
+              <h3 className="mt-4 text-xl font-black">
+                {profileQuery.data.fullName}
+              </h3>
+              <p className="mt-1 text-sm text-[#71858a]">
+                {profileQuery.data.email}
+              </p>
+              <div className="mt-6 space-y-3 border-t border-[#174b57]/8 pt-5">
+                <div className="flex items-center justify-between rounded-xl bg-[#f7faf9] p-3">
+                  <span className="text-xs text-[#71858a]">نوع الحساب</span>
+                  <strong className="text-sm">{role.label}</strong>
+                </div>
+                <div className="flex items-center justify-between rounded-xl bg-[#f7faf9] p-3">
+                  <span className="flex items-center gap-1.5 text-xs text-[#71858a]">
+                    <CalendarDays size={14} />
+                    تاريخ الانضمام
+                  </span>
+                  <strong className="text-xs">
+                    {new Intl.DateTimeFormat("ar-SY", {
+                      dateStyle: "medium",
+                    }).format(new Date(profileQuery.data.createdAtUtc))}
+                  </strong>
+                </div>
+                <div className="flex items-center justify-between rounded-xl bg-emerald-50 p-3">
+                  <span className="text-xs text-emerald-700">حالة الحساب</span>
+                  <strong className="text-xs text-emerald-700">
+                    {profileQuery.data.isActive ? "نشط" : "غير نشط"}
+                  </strong>
+                </div>
               </div>
-              <div className="flex items-center justify-between rounded-xl bg-[#f7faf9] p-3">
-                <span className="flex items-center gap-1.5 text-xs text-[#71858a]">
-                  <CalendarDays size={14} />
-                  تاريخ الانضمام
-                </span>
-                <strong className="text-xs">
-                  {new Intl.DateTimeFormat("ar-SY", {
-                    dateStyle: "medium",
-                  }).format(new Date(profileQuery.data.createdAtUtc))}
-                </strong>
-              </div>
-              <div className="flex items-center justify-between rounded-xl bg-emerald-50 p-3">
-                <span className="text-xs text-emerald-700">حالة الحساب</span>
-                <strong className="text-xs text-emerald-700">
-                  {profileQuery.data.isActive ? "نشط" : "غير نشط"}
-                </strong>
-              </div>
-            </div>
             </section>
 
             <section className="surface p-6">

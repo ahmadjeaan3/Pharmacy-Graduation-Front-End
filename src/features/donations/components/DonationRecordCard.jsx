@@ -5,6 +5,7 @@ import {
   HandHeart,
   Package,
   Pill,
+  ShieldCheck,
 } from "lucide-react";
 import { formatDonationDate, getStatusMeta } from "../utils/donationFormatters";
 
@@ -38,6 +39,20 @@ export function DonationRecordCard({ record, type }) {
         )}
       </div>
       <div className="mt-4 space-y-2 rounded-2xl bg-[#f8fbfa] p-4 text-xs">
+        {offer && (
+          <>
+            <Info
+              icon={ShieldCheck}
+              label="صيدلية التحقق"
+              value={record.reviewingPharmacyName || "بانتظار تحديد الصيدلية"}
+            />
+            <Info
+              icon={ShieldCheck}
+              label="حالة تحقق الصيدلية"
+              value={pharmacyStatusLabel(record.pharmacyReviewStatus)}
+            />
+          </>
+        )}
         <Info
           icon={Building2}
           label="الجهة"
@@ -71,10 +86,31 @@ export function DonationRecordCard({ record, type }) {
           <p className="mt-1 text-xs leading-6 text-[#536d73]">{response}</p>
         </div>
       )}
+      {offer && record.pharmacyReviewNote && (
+        <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3">
+          <p className="text-[10px] font-black text-amber-700">
+            ملاحظة الصيدلية
+          </p>
+          <p className="mt-1 text-xs leading-6 text-amber-900">
+            {record.pharmacyReviewNote}
+          </p>
+        </div>
+      )}
       <p className="mt-4 border-t border-[#174b57]/7 pt-3 text-[11px] text-[#9aabad]">
         أُرسل في {formatDonationDate(record.createdAtUtc)}
       </p>
     </article>
+  );
+}
+
+function pharmacyStatusLabel(status) {
+  return (
+    {
+      PendingPharmacyReview: "بانتظار تحقق الصيدلية",
+      PharmacyApproved: "وافقت الصيدلية — بانتظار التسليم",
+      PharmacyRejected: "رفضت الصيدلية",
+      ReceivedByPharmacy: "استلمت الصيدلية ووثّقت الدواء",
+    }[status] || "بانتظار تحقق الصيدلية"
   );
 }
 

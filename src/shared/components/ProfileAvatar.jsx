@@ -1,7 +1,7 @@
 import { UserRound } from "lucide-react";
 import { env } from "../config/env";
 
-export function getProfileAvatarUrl(user) {
+function getProfileAvatarUrl(user) {
   if (!user?.userId || !user?.hasProfileImage) return null;
   const version = user.profileImageUpdatedAtUtc
     ? new Date(user.profileImageUpdatedAtUtc).getTime()

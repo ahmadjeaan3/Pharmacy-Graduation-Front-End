@@ -12,6 +12,7 @@ import {
   ShieldCheck,
   TrendingUp,
   UsersRound,
+  Warehouse,
 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -73,7 +74,9 @@ export function AdminDashboardPage() {
     },
     {
       label: isAllTime ? "المنظمات" : "منظمات جديدة",
-      value: isAllTime ? data.totalOrganizations : data.newOrganizationsInPeriod,
+      value: isAllTime
+        ? data.totalOrganizations
+        : data.newOrganizationsInPeriod,
       detail: isAllTime
         ? t("{{count}} معتمدة", {
             count: data.approvedOrganizations.toLocaleString(locale),
@@ -83,6 +86,19 @@ export function AdminDashboardPage() {
           }),
       icon: HeartHandshake,
       tone: "bg-violet-50 text-violet-700",
+    },
+    {
+      label: isAllTime ? "المستودعات" : "مستودعات جديدة",
+      value: isAllTime ? data.totalWarehouses : data.newWarehousesInPeriod,
+      detail: isAllTime
+        ? t("{{count}} معتمدة", {
+            count: data.approvedWarehouses.toLocaleString(locale),
+          })
+        : t("من أصل {{count}} مستودع", {
+            count: data.totalWarehouses.toLocaleString(locale),
+          }),
+      icon: Warehouse,
+      tone: "bg-sky-50 text-sky-700",
     },
     {
       label: "طلبات الأدوية",
@@ -113,20 +129,46 @@ export function AdminDashboardPage() {
       to: "/app/approvals?tab=organizations",
       icon: ShieldCheck,
     },
+    {
+      label: "مستودعات بانتظار الاعتماد",
+      value: data.pendingWarehouses,
+      to: "/app/approvals?tab=warehouses",
+      icon: Warehouse,
+    },
   ];
   const requestSegments = [
-    { label: "قيد الانتظار", value: data.pendingMedicineRequests, color: "#f2b84b" },
+    {
+      label: "قيد الانتظار",
+      value: data.pendingMedicineRequests,
+      color: "#f2b84b",
+    },
     { label: "متوفر", value: data.availableMedicineRequests, color: "#10b981" },
-    { label: "غير متوفر", value: data.unavailableMedicineRequests, color: "#f43f5e" },
+    {
+      label: "غير متوفر",
+      value: data.unavailableMedicineRequests,
+      color: "#f43f5e",
+    },
     { label: "ملغي", value: data.cancelledMedicineRequests, color: "#94a3b8" },
   ];
   const accountSegments = [
     { label: "المستخدمون", value: data.totalUsers, color: "bg-cyan-500" },
     { label: "الصيدليات", value: data.totalPharmacies, color: "bg-amber-400" },
-    { label: "المنظمات", value: data.totalOrganizations, color: "bg-violet-500" },
+    {
+      label: "المنظمات",
+      value: data.totalOrganizations,
+      color: "bg-violet-500",
+    },
+    {
+      label: "المستودعات",
+      value: data.totalWarehouses,
+      color: "bg-sky-500",
+    },
   ];
   const totalAccounts =
-    data.totalUsers + data.totalPharmacies + data.totalOrganizations;
+    data.totalUsers +
+    data.totalPharmacies +
+    data.totalOrganizations +
+    data.totalWarehouses;
   const pharmacyApprovalRate = percentage(
     data.approvedPharmacies,
     data.totalPharmacies,
@@ -136,6 +178,10 @@ export function AdminDashboardPage() {
     data.totalOrganizations,
   );
   const activeUserRate = percentage(data.activeUsers, data.totalUsers);
+  const warehouseApprovalRate = percentage(
+    data.approvedWarehouses,
+    data.totalWarehouses,
+  );
 
   return (
     <div className="space-y-6">
@@ -155,8 +201,8 @@ export function AdminDashboardPage() {
               نظرة عامة على حياة دوائية
             </h2>
             <p className="mt-3 max-w-2xl leading-7 text-white/60">
-              إحصاءات النشاط والطلبات خلال {activePeriodLabel}، مع عرض
-              حالة الاعتمادات الحالية للمنصة.
+              إحصاءات النشاط والطلبات خلال {activePeriodLabel}، مع عرض حالة
+              الاعتمادات الحالية للمنصة.
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:items-end">
@@ -193,7 +239,7 @@ export function AdminDashboardPage() {
       </Motion.section>
 
       <section
-        className={`grid gap-4 transition sm:grid-cols-2 xl:grid-cols-4 ${
+        className={`grid gap-4 transition sm:grid-cols-2 xl:grid-cols-5 ${
           query.isFetching ? "pointer-events-none opacity-55" : ""
         }`}
       >
@@ -222,7 +268,7 @@ export function AdminDashboardPage() {
         ))}
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-3">
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {queues.map(({ label, value, to, icon: Icon }) => (
           <Link
             key={label}
@@ -325,7 +371,7 @@ export function AdminDashboardPage() {
               />
             ))}
           </div>
-          <div className="mt-4 grid grid-cols-3 gap-2">
+          <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
             {accountSegments.map((segment) => (
               <div key={segment.label} className="text-center">
                 <strong className="block text-lg font-black text-[#17363e]">
@@ -354,6 +400,12 @@ export function AdminDashboardPage() {
               label="اعتماد المنظمات"
               value={organizationApprovalRate}
               color="bg-violet-500"
+              locale={locale}
+            />
+            <ProgressMetric
+              label="اعتماد المستودعات"
+              value={warehouseApprovalRate}
+              color="bg-sky-500"
               locale={locale}
             />
           </div>
@@ -395,8 +447,7 @@ export function AdminDashboardPage() {
                 مؤشر جاهزية الطلبات — {activePeriodLabel}
               </h3>
               <p className="mt-1 text-sm text-slate-400">
-                متابعة سريعة للطلبات التي تحتاج تدخلاً خلال{" "}
-                {activePeriodLabel}
+                متابعة سريعة للطلبات التي تحتاج تدخلاً خلال {activePeriodLabel}
               </p>
             </div>
             <div className="rounded-2xl bg-[#eaf4f3] px-4 py-2 text-center">
@@ -637,8 +688,7 @@ function requestStatusTone(status) {
     return normalized.includes("unavailable")
       ? "bg-rose-50 text-rose-700"
       : "bg-emerald-50 text-emerald-700";
-  if (normalized.includes("cancel"))
-    return "bg-slate-100 text-slate-600";
+  if (normalized.includes("cancel")) return "bg-slate-100 text-slate-600";
   return "bg-amber-50 text-amber-700";
 }
 
@@ -655,7 +705,20 @@ function formatRequestDate(value) {
 function DonutChart({ segments, total, locale }) {
   const radius = 72;
   const circumference = 2 * Math.PI * radius;
-  let offset = 0;
+  const chartSegments = segments.map((segment, index) => {
+    const offset = segments
+      .slice(0, index)
+      .reduce(
+        (sum, previous) =>
+          sum + (previous.value / Math.max(total, 1)) * circumference,
+        0,
+      );
+    return {
+      ...segment,
+      offset,
+      length: (segment.value / Math.max(total, 1)) * circumference,
+    };
+  });
   return (
     <div className="relative mx-auto size-[210px]">
       <svg viewBox="0 0 180 180" className="-rotate-90">
@@ -667,29 +730,24 @@ function DonutChart({ segments, total, locale }) {
           stroke="#edf3f2"
           strokeWidth="17"
         />
-        {segments.map((segment) => {
-          const length = (segment.value / Math.max(total, 1)) * circumference;
-          const element = (
-            <Motion.circle
-              key={segment.label}
-              cx="90"
-              cy="90"
-              r={radius}
-              fill="none"
-              stroke={segment.color}
-              strokeWidth="17"
-              strokeLinecap="round"
-              initial={{ strokeDasharray: `0 ${circumference}` }}
-              animate={{
-                strokeDasharray: `${Math.max(length - 3, 0)} ${circumference}`,
-              }}
-              transition={{ duration: 0.8 }}
-              style={{ strokeDashoffset: -offset }}
-            />
-          );
-          offset += length;
-          return element;
-        })}
+        {chartSegments.map((segment) => (
+          <Motion.circle
+            key={segment.label}
+            cx="90"
+            cy="90"
+            r={radius}
+            fill="none"
+            stroke={segment.color}
+            strokeWidth="17"
+            strokeLinecap="round"
+            initial={{ strokeDasharray: `0 ${circumference}` }}
+            animate={{
+              strokeDasharray: `${Math.max(segment.length - 3, 0)} ${circumference}`,
+            }}
+            transition={{ duration: 0.8 }}
+            style={{ strokeDashoffset: -segment.offset }}
+          />
+        ))}
       </svg>
       <div className="absolute inset-0 grid place-items-center text-center">
         <div>
@@ -729,7 +787,9 @@ function ProgressMetric({ label, value, color, locale }) {
 function InsightCard({ icon: Icon, label, value, detail, tone, locale }) {
   return (
     <article className="group flex items-center gap-4 rounded-[1.4rem] border border-[#174b57]/8 bg-white p-5 shadow-[0_10px_30px_rgba(23,75,87,.04)] transition hover:-translate-y-1 hover:shadow-lg">
-      <span className={`grid size-12 shrink-0 place-items-center rounded-2xl ${tone}`}>
+      <span
+        className={`grid size-12 shrink-0 place-items-center rounded-2xl ${tone}`}
+      >
         <Icon size={21} />
       </span>
       <div className="min-w-0 flex-1">

@@ -139,27 +139,37 @@ export function LandingPage() {
           aria-label="إعلانات وتنبيهات المنصة"
         >
           <div className="mx-auto flex max-w-[1360px] items-center gap-3 px-5 py-3 lg:px-8">
-              <span className="relative grid size-9 shrink-0 place-items-center rounded-xl bg-[#f5cb72] text-[#173d46]">
-                <BellRing size={18} aria-hidden="true" />
-                <span className="absolute -left-0.5 -top-0.5 size-2.5 rounded-full border-2 border-[#174b57] bg-rose-400" />
-              </span>
-            <div className="landing-ticker min-w-0 flex-1 overflow-hidden" dir="ltr">
+            <span className="relative grid size-9 shrink-0 place-items-center rounded-xl bg-[#f5cb72] text-[#173d46]">
+              <BellRing size={18} aria-hidden="true" />
+              <span className="absolute -left-0.5 -top-0.5 size-2.5 rounded-full border-2 border-[#174b57] bg-rose-400" />
+            </span>
+            <div
+              className="landing-ticker min-w-0 flex-1 overflow-hidden"
+              dir="ltr"
+            >
               <div className="landing-ticker-track flex w-max items-center">
                 {[0, 1].map((copy) => (
-                  <div key={copy} className="flex shrink-0 items-center gap-8 px-4" aria-hidden={copy === 1 ? "true" : undefined} dir="rtl">
-                  {tickerItems.map((item) => (
-                    <span key={`${copy}-${item.id}`} className="contents">
-                      <strong
-                        className={`text-sm font-extrabold ${item.type === "DutyPharmacy" ? "text-[#f5cb72]" : "text-[#8bd0cb]"}`}
-                      >
-                        {item.title}
-                        {item.pharmacyName ? ` — ${item.pharmacyName}` : ""}
-                      </strong>
-                      <span className="text-white/30">•</span>
-                      <span className="text-sm font-semibold">{item.message}</span>
-                      <span className="text-white/30">•</span>
-                    </span>
-                  ))}
+                  <div
+                    key={copy}
+                    className="flex shrink-0 items-center gap-8 px-4"
+                    aria-hidden={copy === 1 ? "true" : undefined}
+                    dir="rtl"
+                  >
+                    {tickerItems.map((item) => (
+                      <span key={`${copy}-${item.id}`} className="contents">
+                        <strong
+                          className={`text-sm font-extrabold ${item.type === "DutyPharmacy" ? "text-[#f5cb72]" : "text-[#8bd0cb]"}`}
+                        >
+                          {item.title}
+                          {item.pharmacyName ? ` — ${item.pharmacyName}` : ""}
+                        </strong>
+                        <span className="text-white/30">•</span>
+                        <span className="text-sm font-semibold">
+                          {item.message}
+                        </span>
+                        <span className="text-white/30">•</span>
+                      </span>
+                    ))}
                   </div>
                 ))}
               </div>
@@ -197,8 +207,8 @@ export function LandingPage() {
                 </span>
               </h1>
               <p className="mt-7 max-w-xl text-base leading-8 text-[#5d7277] sm:text-lg">
-                ابحث في الصيدليات القريبة، ارفع وصفتك المطبوعة، احجز دواءك
-                وتابع طلبك لحظيًا ضمن منصة تربط المستخدم والصيدلية والمنظمة.
+                ابحث في الصيدليات القريبة، ارفع وصفتك المطبوعة، احجز دواءك وتابع
+                طلبك لحظيًا ضمن منصة تربط المستخدم والصيدلية والمنظمة.
               </p>
               <div className="mt-9 flex flex-wrap gap-3">
                 <Link to="/register" className="btn-primary px-6 py-3.5">
@@ -229,11 +239,11 @@ export function LandingPage() {
               className="relative mx-auto w-full max-w-[610px]"
             >
               <div className="absolute inset-[12%] -z-10 rounded-full bg-[#87c7c3]/35 blur-3xl" />
-              <div className="relative rounded-[2.6rem] border border-white/80 bg-white/45 p-4 shadow-[0_35px_90px_rgba(23,75,87,.16)] backdrop-blur-sm sm:p-7">
+              <div className="relative px-2 py-4 sm:p-4">
                 <img
                   src="/assets/app/home/hero.png"
                   alt="خدمات الصيدليات والأدوية"
-                  className="mx-auto w-full max-w-[540px] drop-shadow-[0_30px_30px_rgba(23,75,87,.16)]"
+                  className="mx-auto w-full max-w-[540px] drop-shadow-[0_28px_32px_rgba(23,75,87,.18)]"
                 />
                 <div className="absolute -right-2 top-[13%] flex items-center gap-3 rounded-2xl border border-white bg-white/95 p-3 shadow-xl sm:-right-8">
                   <span className="grid size-10 place-items-center rounded-xl bg-emerald-50 text-emerald-600">

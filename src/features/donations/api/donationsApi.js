@@ -8,6 +8,7 @@ const compact = (values = {}) =>
   );
 
 export const donationKeys = {
+  verificationPharmacies: ["donations", "verification-pharmacies"],
   offers: (params = {}) => ["donations", "offers", params],
   assistanceRequests: (params = {}) => [
     "donations",
@@ -25,6 +26,8 @@ export const donationKeys = {
 
 export const createDonationOffer = async (payload) =>
   (await apiClient.post("/donations/offers", payload)).data;
+export const getVerificationPharmacies = async () =>
+  (await apiClient.get("/donations/verification-pharmacies")).data;
 export const getMyDonationOffers = async (params = {}) =>
   (await apiClient.get("/donations/my/offers", { params: compact(params) }))
     .data;

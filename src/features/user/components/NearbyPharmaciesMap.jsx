@@ -1,6 +1,6 @@
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { ExternalLink, MapPin, Navigation, Star } from "lucide-react";
+import { MapPin, Navigation, Star } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import {
   MapContainer,
@@ -29,10 +29,15 @@ const pharmacyIcon = (number, active) =>
     popupAnchor: [0, -40],
   });
 
-export function NearbyPharmaciesMap({ locationContext, route }) {
+export function NearbyPharmaciesMap({
+  locationContext,
+  route,
+  limit = 3,
+  title = "الصيدليات الأقرب",
+}) {
   const pharmacies = useMemo(
-    () => locationContext.mapMarkers.slice(0, 3),
-    [locationContext.mapMarkers],
+    () => locationContext.mapMarkers.slice(0, limit),
+    [locationContext.mapMarkers, limit],
   );
   const routePoints = useMemo(
     () => route?.path?.map((point) => [point.latitude, point.longitude]) ?? [],
@@ -48,7 +53,10 @@ export function NearbyPharmaciesMap({ locationContext, route }) {
   );
 
   return (
-    <div className="overflow-hidden rounded-[1.65rem] border border-[#174b57]/8 bg-white shadow-[0_16px_45px_rgba(23,75,87,.07)]">
+    <section
+      aria-label={title}
+      className="overflow-hidden rounded-[1.65rem] border border-[#174b57]/8 bg-white shadow-[0_16px_45px_rgba(23,75,87,.07)]"
+    >
       <div className="grid lg:grid-cols-[1fr_330px]">
         <div className="relative min-h-[430px]">
           <MapContainer
@@ -56,10 +64,10 @@ export function NearbyPharmaciesMap({ locationContext, route }) {
             zoom={14}
             scrollWheelZoom
             className="h-[430px] w-full lg:h-full lg:min-h-[520px]"
-            zoomControl={false}
+            zoomControl
           >
             <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
               url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             <FitMap points={boundsPoints} />
@@ -74,7 +82,7 @@ export function NearbyPharmaciesMap({ locationContext, route }) {
                     موقعك الحالي
                   </strong>
                   <p className="mt-1 text-xs text-slate-500">
-                    نقطة انطلاق الطريق
+                    نقطة بداية المسار
                   </p>
                 </div>
               </Popup>
@@ -104,22 +112,23 @@ export function NearbyPharmaciesMap({ locationContext, route }) {
               />
             )}
           </MapContainer>
-          <div className="pointer-events-none absolute right-4 top-4 z-[500] rounded-xl border border-white/70 bg-white/92 px-3 py-2 text-xs font-bold text-[#29464d] shadow-lg backdrop-blur">
+          <div className="pointer-events-none absolute right-4 top-4 z-[500] rounded-xl border border-white/70 bg-white/95 px-3 py-2 text-xs font-bold text-[#29464d] shadow-lg backdrop-blur">
             <span className="me-2 inline-block size-2.5 rounded-full bg-[#216474]" />
-            الطريق إلى الأقرب
+            الخريطة داخل منصة حياة دوائية
           </div>
         </div>
-        <MapSidebar pharmacies={pharmacies} route={route} />
+        <MapSidebar pharmacies={pharmacies} route={route} title={title} />
       </div>
-    </div>
+    </section>
   );
 }
 
 function FitMap({ points }) {
   const map = useMap();
   useEffect(() => {
-    if (points.length > 1)
+    if (points.length > 1) {
       map.fitBounds(L.latLngBounds(points), { padding: [45, 45], maxZoom: 15 });
+    }
   }, [map, points]);
   return null;
 }
@@ -132,7 +141,11 @@ function PharmacyPopup({ pharmacy, number }) {
           {number}. {pharmacy.name}
         </strong>
         <span
-          className={`rounded-full px-2 py-1 text-[10px] font-bold ${pharmacy.isOpenNow ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-500"}`}
+          className={`rounded-full px-2 py-1 text-[10px] font-bold ${
+            pharmacy.isOpenNow
+              ? "bg-emerald-50 text-emerald-700"
+              : "bg-slate-100 text-slate-500"
+          }`}
         >
           {pharmacy.statusText}
         </span>
@@ -156,39 +169,45 @@ function PharmacyPopup({ pharmacy, number }) {
       {pharmacy.pharmacyId && (
         <Link
           to={`/app/pharmacies/${pharmacy.pharmacyId}`}
-          className="mt-3 inline-flex text-xs font-bold text-[#216474]"
+          className="mt-3 inline-flex items-center gap-1 text-xs font-black text-[#216474]"
         >
-          عرض الصيدلية
+          <MapPin size={13} />
+          عرض الصيدلية داخل المنصة
         </Link>
       )}
     </div>
   );
 }
 
-function MapSidebar({ pharmacies, route }) {
+function MapSidebar({ pharmacies, route, title }) {
   const nearest = pharmacies[0];
   const minutes = route?.durationSeconds
     ? Math.max(1, Math.round(route.durationSeconds / 60))
     : null;
+
   return (
     <aside className="flex flex-col p-5 lg:p-6">
-      <div>
-        <p className="text-sm font-bold text-[#216474]">بالقرب منك</p>
-        <h3 className="mt-1 text-xl font-black text-[#17363e]">
-          أقرب 3 صيدليات
-        </h3>
-        <p className="mt-2 text-sm leading-6 text-[#71858a]">
-          مرتبة حسب المسافة من موقعك الحالي.
-        </p>
-      </div>
+      <p className="text-sm font-bold text-[#216474]">بالقرب من موقعك</p>
+      <h3 className="mt-1 text-xl font-black text-[#17363e]">{title}</h3>
+      <p className="mt-2 text-sm leading-6 text-[#71858a]">
+        اختر العلامة على الخريطة أو افتح صفحة الصيدلية من هنا دون مغادرة المنصة.
+      </p>
       <div className="mt-5 space-y-2.5">
         {pharmacies.map((pharmacy, index) => (
           <div
             key={pharmacy.markerId}
-            className={`flex items-center gap-3 rounded-2xl border p-3 ${index === 0 ? "border-[#216474]/25 bg-[#eaf4f3]" : "border-[#174b57]/8 bg-[#f8fbfa]"}`}
+            className={`flex items-center gap-3 rounded-2xl border p-3 ${
+              index === 0
+                ? "border-[#216474]/25 bg-[#eaf4f3]"
+                : "border-[#174b57]/8 bg-[#f8fbfa]"
+            }`}
           >
             <span
-              className={`grid size-9 shrink-0 place-items-center rounded-xl text-sm font-black ${index === 0 ? "bg-[#216474] text-white" : "bg-white text-[#60777c]"}`}
+              className={`grid size-9 shrink-0 place-items-center rounded-xl text-sm font-black ${
+                index === 0
+                  ? "bg-[#216474] text-white"
+                  : "bg-white text-[#60777c]"
+              }`}
             >
               {index + 1}
             </span>
@@ -204,10 +223,11 @@ function MapSidebar({ pharmacies, route }) {
             {pharmacy.pharmacyId && (
               <Link
                 to={`/app/pharmacies/${pharmacy.pharmacyId}`}
-                className="grid size-8 shrink-0 place-items-center rounded-lg bg-white text-[#216474]"
-                aria-label={`عرض ${pharmacy.name}`}
+                className="grid size-9 shrink-0 place-items-center rounded-lg bg-white text-[#216474]"
+                aria-label={`عرض صيدلية ${pharmacy.name} داخل المنصة`}
+                title="عرض الصيدلية"
               >
-                <MapPin size={15} />
+                <MapPin size={16} />
               </Link>
             )}
           </div>
@@ -221,9 +241,9 @@ function MapSidebar({ pharmacies, route }) {
                 <Navigation size={19} />
               </span>
               <div>
-                <small className="text-white/45">الأقرب إليك</small>
+                <small className="text-white/55">الأقرب إليك</small>
                 <strong className="mt-1 block text-sm">{nearest.name}</strong>
-                <p className="mt-1 text-xs text-white/55">
+                <p className="mt-1 text-xs text-white/65">
                   {formatDistance(
                     route?.distanceMeters ?? nearest.distanceMeters,
                   )}
@@ -233,20 +253,15 @@ function MapSidebar({ pharmacies, route }) {
                 </p>
               </div>
             </div>
-            {route?.directionsUrl && (
-              <a
-                href={route.directionsUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-[#f5cb72] px-4 py-2.5 text-sm font-black text-[#173d46]"
-              >
-                بدء الاتجاهات <ExternalLink size={15} />
-              </a>
-            )}
+            <div className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-[#f5cb72] px-4 py-2.5 text-center text-sm font-black text-[#173d46]">
+              <Navigation size={15} />
+              المسار والموقع ضمن المنصة
+            </div>
           </div>
           {route && !route.routeAvailable && (
             <p className="mt-2 text-xs leading-5 text-amber-700">
-              يمكنك فتح الاتجاهات لمشاهدة الطريق التفصيلي.
+              تعذر رسم الطريق التفصيلي حالياً، لكن موقعك والصيدلية ظاهران على
+              الخريطة.
             </p>
           )}
         </div>

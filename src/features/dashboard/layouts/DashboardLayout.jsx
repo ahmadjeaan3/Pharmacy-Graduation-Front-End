@@ -44,7 +44,7 @@ export function DashboardLayout() {
   const unreadQuery = useQuery({
     queryKey: notificationKeys.unreadCount,
     queryFn: getUnreadNotificationCount,
-    refetchInterval: 30000,
+    refetchInterval: 5000,
     refetchOnWindowFocus: true,
   });
   const unreadCount = unreadQuery.data?.unreadCount || 0;

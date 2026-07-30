@@ -37,12 +37,14 @@ export function NotificationsPage() {
   const summary = useQuery({
     queryKey: notificationKeys.summary,
     queryFn: getNotificationSummary,
-    refetchInterval: 60000,
+    refetchInterval: 5000,
+    refetchOnWindowFocus: true,
   });
   const list = useQuery({
     queryKey: notificationKeys.list(filters),
     queryFn: () => getMyNotifications(filters),
-    refetchInterval: 60000,
+    refetchInterval: 5000,
+    refetchOnWindowFocus: true,
   });
   const refresh = async () =>
     client.invalidateQueries({ queryKey: notificationKeys.root });
@@ -55,7 +57,7 @@ export function NotificationsPage() {
     onSuccess: async (result) => {
       setNotice(
         result.updatedCount
-          ? `تم تحديد ${result.updatedCount.toLocaleString("ar-SA")} إشعارات كمقروءة.`
+          ? `تم تحديد ${formatNotificationCount(result.updatedCount)} إشعارات كمقروءة.`
           : "لا توجد إشعارات جديدة لتحديثها.",
       );
       await refresh();
@@ -231,14 +233,19 @@ export function NotificationsPage() {
 }
 function SummaryCard({ icon: Icon, label, value, tone }) {
   return (
-    <article className="surface flex items-center gap-4 p-5">
-      <span className={`grid size-11 place-items-center rounded-2xl ${tone}`}>
+    <article className="surface flex min-h-28 items-center gap-4 overflow-hidden p-5">
+      <span
+        className={`grid size-12 shrink-0 place-items-center rounded-2xl ${tone}`}
+      >
         <Icon size={20} />
       </span>
-      <div>
+      <div className="min-w-0 flex-1">
         <p className="text-xs font-bold text-[#829499]">{label}</p>
-        <strong className="mt-1 block text-2xl font-black">
-          {value.toLocaleString("ar-SA")}
+        <strong
+          dir="ltr"
+          className="mt-2 block w-fit font-sans text-3xl font-black leading-none tabular-nums text-[#17363e]"
+        >
+          {formatNotificationCount(value)}
         </strong>
       </div>
     </article>
@@ -256,9 +263,15 @@ function FilterButton({ active, icon: Icon, label, count, onClick }) {
         <span
           className={`grid min-w-6 place-items-center rounded-full px-1.5 text-[10px] leading-5 ${active ? "bg-white/15 text-white" : "bg-[#e7f1f0] text-[#216474]"}`}
         >
-          {count.toLocaleString("ar-SA")}
+          <span dir="ltr" className="font-sans tabular-nums">
+            {formatNotificationCount(count)}
+          </span>
         </span>
       )}
     </button>
   );
+}
+
+function formatNotificationCount(value) {
+  return Number(value || 0).toLocaleString("en-US");
 }

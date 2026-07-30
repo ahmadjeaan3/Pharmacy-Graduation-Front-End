@@ -28,6 +28,7 @@ import {
   registerOrganization,
   registerPharmacy,
   registerUser,
+  registerWarehouse,
 } from "../../auth/api/authApi";
 import { useAuth } from "../../auth/hooks/useAuth";
 import { registrationDefinitions as accountTypes } from "../../../shared/config/roles";
@@ -39,6 +40,7 @@ const initialForm = {
   password: "",
   confirmPassword: "",
   pharmacyName: "",
+  warehouseName: "",
   licenseNumber: "",
   organizationName: "",
   registrationNumber: "",
@@ -49,6 +51,8 @@ const initialForm = {
   hasDeliveryService: false,
   latitude: null,
   longitude: null,
+  minimumOrderAmount: 0,
+  deliveryFee: 0,
 };
 
 export function RegisterPage() {
@@ -284,7 +288,9 @@ function RegistrationForm({ type, onChangeType }) {
                   ? "أدخل بيانات الدخول الأساسية كما ستظهر في حسابك."
                   : type === "pharmacy"
                     ? "أدخل البيانات الرسمية وعنوان الصيدلية."
-                    : "أدخل البيانات الرسمية وعنوان المنظمة."}
+                    : type === "warehouse"
+                      ? "أدخل بيانات الترخيص والتغطية الخاصة بالمستودع."
+                      : "أدخل البيانات الرسمية وعنوان المنظمة."}
               </p>
             </div>
             <span
@@ -484,18 +490,41 @@ function BusinessFields({
   locationState,
 }) {
   const isPharmacy = type === "pharmacy";
+  const isWarehouse = type === "warehouse";
+  const businessName = isPharmacy
+    ? form.pharmacyName
+    : isWarehouse
+      ? form.warehouseName
+      : form.organizationName;
+  const businessNameField = isPharmacy
+    ? "pharmacyName"
+    : isWarehouse
+      ? "warehouseName"
+      : "organizationName";
   return (
     <>
       <div className="grid gap-5 sm:grid-cols-2">
-        <FormField label={isPharmacy ? "اسم الصيدلية" : "اسم المنظمة"}>
+        <FormField
+          label={
+            isPharmacy
+              ? "اسم الصيدلية"
+              : isWarehouse
+                ? "اسم المستودع"
+                : "اسم المنظمة"
+          }
+        >
           <input
             className="form-input has-field-icon"
             required
             maxLength={200}
-            value={isPharmacy ? form.pharmacyName : form.organizationName}
-            onChange={update(isPharmacy ? "pharmacyName" : "organizationName")}
+            value={businessName}
+            onChange={update(businessNameField)}
             placeholder={
-              isPharmacy ? "الاسم الرسمي للصيدلية" : "الاسم الرسمي للمنظمة"
+              isPharmacy
+                ? "الاسم الرسمي للصيدلية"
+                : isWarehouse
+                  ? "الاسم التجاري المرخص للمستودع"
+                  : "الاسم الرسمي للمنظمة"
             }
           />
           <span className="field-icon-shell">
@@ -506,14 +535,22 @@ function BusinessFields({
             )}
           </span>
         </FormField>
-        <FormField label={isPharmacy ? "رقم الترخيص" : "رقم التسجيل"}>
+        <FormField
+          label={isPharmacy || isWarehouse ? "رقم الترخيص" : "رقم التسجيل"}
+        >
           <input
             className="form-input has-field-icon"
             required
             maxLength={100}
-            value={isPharmacy ? form.licenseNumber : form.registrationNumber}
+            value={
+              isPharmacy || isWarehouse
+                ? form.licenseNumber
+                : form.registrationNumber
+            }
             onChange={update(
-              isPharmacy ? "licenseNumber" : "registrationNumber",
+              isPharmacy || isWarehouse
+                ? "licenseNumber"
+                : "registrationNumber",
             )}
             placeholder={
               isPharmacy ? "رقم ترخيص الصيدلية" : "رقم تسجيل المنظمة"
@@ -622,6 +659,30 @@ function BusinessFields({
           </div>
         </div>
       )}
+      {isWarehouse && (
+        <div className="grid gap-5 sm:grid-cols-2">
+          <FormField label="الحد الأدنى للطلب">
+            <input
+              className="form-input"
+              required
+              min="0"
+              type="number"
+              value={form.minimumOrderAmount}
+              onChange={update("minimumOrderAmount")}
+            />
+          </FormField>
+          <FormField label="أجور التوصيل">
+            <input
+              className="form-input"
+              required
+              min="0"
+              type="number"
+              value={form.deliveryFee}
+              onChange={update("deliveryFee")}
+            />
+          </FormField>
+        </div>
+      )}
     </>
   );
 }
@@ -714,6 +775,18 @@ function submitRegistration(type, form) {
       hasDeliveryService: form.hasDeliveryService,
       latitude: form.latitude,
       longitude: form.longitude,
+    });
+  if (type === "warehouse")
+    return registerWarehouse({
+      ...common,
+      ...address,
+      phoneNumber: form.phoneNumber.trim(),
+      warehouseName: form.warehouseName.trim(),
+      licenseNumber: form.licenseNumber.trim(),
+      latitude: form.latitude,
+      longitude: form.longitude,
+      minimumOrderAmount: Number(form.minimumOrderAmount),
+      deliveryFee: Number(form.deliveryFee),
     });
   return registerOrganization({
     ...common,

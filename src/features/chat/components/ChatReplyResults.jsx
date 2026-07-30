@@ -36,8 +36,8 @@ export function ChatReplyResults({ reply, onPrompt }) {
         <div className="flex items-start gap-2 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-xs font-bold leading-6 text-amber-900">
           <ShieldAlert className="mt-0.5 shrink-0" size={17} />
           <span>
-            هذه المعلومات للتثقيف ولا تغني عن مراجعة الطبيب أو الصيدلي،
-            خصوصًا قبل بدء الدواء أو إيقافه.
+            هذه المعلومات للتثقيف ولا تغني عن مراجعة الطبيب أو الصيدلي، خصوصًا
+            قبل بدء الدواء أو إيقافه.
           </span>
         </div>
       )}
@@ -54,7 +54,9 @@ export function ChatReplyResults({ reply, onPrompt }) {
                 className="rounded-xl bg-[#f7faf9] p-2.5 text-start"
               >
                 <strong className="block truncate text-xs text-[#29464d]">
-                  {source.medicineName || source.activeIngredient || `مصدر ${index + 1}`}
+                  {source.medicineName ||
+                    source.activeIngredient ||
+                    `مصدر ${index + 1}`}
                 </strong>
                 <p className="mt-1 line-clamp-2 text-[10px] leading-5 text-[#71858a]">
                   {[source.activeIngredient, source.strength, source.form]

@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import {
   Building2,
-  ExternalLink,
   Filter,
   LocateFixed,
   MapPin,
@@ -10,7 +9,7 @@ import {
   SlidersHorizontal,
   Star,
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
   getLocationContext,
@@ -28,6 +27,12 @@ import {
 import { PageHeader as UserPageHeader } from "../../../shared/components/PageHeader";
 import { formatDistance, formatPrice } from "../utils/userFormatters";
 import { getApiErrorMessage } from "../../../shared/api/errors";
+
+const NearbyPharmaciesMap = lazy(() =>
+  import("../components/NearbyPharmaciesMap").then((module) => ({
+    default: module.NearbyPharmaciesMap,
+  })),
+);
 
 const sortOptions = [
   { value: "BestMatch", label: "الأفضل تطابقاً" },
@@ -67,19 +72,17 @@ export function MedicineSearchPage() {
       }),
     enabled: activeView === "pharmacies",
   });
-  const [searchRequest, setSearchRequest] = useState(null);
-  const initialSearchStarted = useRef(false);
-  useEffect(() => {
+  const [searchRequest, setSearchRequest] = useState(() => {
     const initialQuery = searchParams.get("q")?.trim();
-    if (!initialQuery || initialSearchStarted.current) return;
-    initialSearchStarted.current = true;
-    setSearchRequest({
-      query: initialQuery,
-      radiusInMeters: radius,
-      maxResults: 50,
-      sortBy,
-    });
-  }, [radius, searchParams, sortBy]);
+    return initialQuery
+      ? {
+          query: initialQuery,
+          radiusInMeters: 5000,
+          maxResults: 50,
+          sortBy: "BestMatch",
+        }
+      : null;
+  });
   const medicineSearchQuery = useQuery({
     queryKey: ["user", "medicine-search", searchRequest],
     queryFn: () => searchMedicines(searchRequest),
@@ -102,6 +105,32 @@ export function MedicineSearchPage() {
     () => new Set(results.map((item) => item.pharmacy.pharmacyId)).size,
     [results],
   );
+  const resultsMapContext = useMemo(() => {
+    if (!locationQuery.data || !results.length) return null;
+    const pharmacies = new Map();
+    results.forEach(({ pharmacy }) => {
+      if (
+        pharmacy?.pharmacyId &&
+        pharmacy.latitude != null &&
+        pharmacy.longitude != null &&
+        !pharmacies.has(pharmacy.pharmacyId)
+      ) {
+        pharmacies.set(pharmacy.pharmacyId, {
+          markerId: pharmacy.pharmacyId,
+          pharmacyId: pharmacy.pharmacyId,
+          name: pharmacy.pharmacyName,
+          address: pharmacy.address,
+          latitude: pharmacy.latitude,
+          longitude: pharmacy.longitude,
+          distanceMeters: pharmacy.distanceMeters,
+          averageRating: pharmacy.averageRating,
+          isOpenNow: pharmacy.isOpenNow,
+          statusText: pharmacy.statusText,
+        });
+      }
+    });
+    return { ...locationQuery.data, mapMarkers: [...pharmacies.values()] };
+  }, [locationQuery.data, results]);
 
   const submit = (event) => {
     event.preventDefault();
@@ -224,60 +253,73 @@ export function MedicineSearchPage() {
         )}
       </section>
       {activeView === "medicines" ? (
-        <MedicineResults
-          mutation={searchMutation}
-          results={results}
-          groupedCount={groupedCount}
-        />
+        <>
+          <MedicineResults
+            mutation={searchMutation}
+            results={results}
+            groupedCount={groupedCount}
+          />
+          {resultsMapContext?.mapMarkers?.length > 0 && (
+            <Suspense
+              fallback={
+                <UserLoadingState label="جاري تجهيز الخريطة داخل المنصة..." />
+              }
+            >
+              <NearbyPharmaciesMap
+                locationContext={resultsMapContext}
+                route={null}
+                limit={12}
+                title="صيدليات يتوفر لديها الدواء"
+              />
+            </Suspense>
+          )}
+        </>
       ) : (
         <PharmaciesResults query={pharmaciesQuery} />
       )}
-      {locationQuery.data?.externalNearbyPharmacies?.length > 0 && (
-        <section>
-          <div className="mb-4">
-            <h3 className="text-xl font-black text-[#17363e]">
-              خيارات إضافية بالقرب منك
-            </h3>
-            <p className="mt-1 text-sm text-[#71858a]">
-              أماكن قريبة يمكنك الوصول إليها عبر الخريطة
-            </p>
-          </div>
-          <div className="grid gap-3 md:grid-cols-2">
-            {locationQuery.data.externalNearbyPharmacies.map((item) => (
-              <article
-                key={item.markerId}
-                className="flex items-center gap-4 rounded-[1.25rem] border border-[#174b57]/8 bg-white p-4"
-              >
-                <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-[#eaf4f3] text-[#216474]">
-                  <MapPin size={20} />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <h4 className="truncate font-extrabold text-[#29464d]">
-                    {item.name}
-                  </h4>
-                  <p className="mt-1 truncate text-xs text-[#71858a]">
-                    {item.address}
-                  </p>
-                  <p className="mt-1 text-xs font-semibold text-[#216474]">
-                    {formatDistance(item.distanceMeters)}
-                  </p>
-                </div>
-                {item.googleMapsUrl && (
-                  <a
-                    href={item.googleMapsUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="icon-button grid"
-                    aria-label={`فتح موقع ${item.name}`}
+      {activeView === "pharmacies" &&
+        locationQuery.data?.externalNearbyPharmacies?.length > 0 && (
+          <section>
+            <div className="mb-4">
+              <h3 className="text-xl font-black text-[#17363e]">
+                خيارات إضافية بالقرب منك
+              </h3>
+              <p className="mt-1 text-sm text-[#71858a]">
+                أماكن قريبة يمكنك الوصول إليها عبر الخريطة
+              </p>
+            </div>
+            <div className="grid gap-3 md:grid-cols-2">
+              {locationQuery.data.externalNearbyPharmacies.map((item) => (
+                <article
+                  key={item.markerId}
+                  className="flex items-center gap-4 rounded-[1.25rem] border border-[#174b57]/8 bg-white p-4"
+                >
+                  <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-[#eaf4f3] text-[#216474]">
+                    <MapPin size={20} />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <h4 className="truncate font-extrabold text-[#29464d]">
+                      {item.name}
+                    </h4>
+                    <p className="mt-1 truncate text-xs text-[#71858a]">
+                      {item.address}
+                    </p>
+                    <p className="mt-1 text-xs font-semibold text-[#216474]">
+                      {formatDistance(item.distanceMeters)}
+                    </p>
+                  </div>
+                  <span
+                    className="inline-flex items-center gap-2 rounded-xl bg-[#eaf4f3] px-3 py-2 text-xs font-black text-[#216474]"
+                    title="الموقع ظاهر على الخريطة داخل الصفحة"
                   >
-                    <ExternalLink size={17} />
-                  </a>
-                )}
-              </article>
-            ))}
-          </div>
-        </section>
-      )}
+                    <MapPin size={15} />
+                    داخل الخريطة
+                  </span>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
     </div>
   );
 }
@@ -334,11 +376,16 @@ function MedicineResults({ mutation, results, groupedCount }) {
                     .join(" • ")}
                 </p>
               </div>
-              {item.requiresPrescription && (
-                <span className="shrink-0 rounded-full bg-amber-50 px-3 py-1.5 text-xs font-bold text-amber-700">
-                  يتطلب وصفة
+              <div className="flex shrink-0 flex-col items-end gap-2">
+                <span className="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-black text-emerald-700">
+                  متوفر الآن
                 </span>
-              )}
+                {item.requiresPrescription && (
+                  <span className="rounded-full bg-amber-50 px-3 py-1.5 text-xs font-bold text-amber-700">
+                    يتطلب وصفة
+                  </span>
+                )}
+              </div>
             </div>
             <div className="mt-5 grid grid-cols-2 gap-3 rounded-2xl bg-[#f8fbfa] p-4 sm:grid-cols-4">
               <Info label="السعر" value={formatPrice(item.sellingPrice)} />

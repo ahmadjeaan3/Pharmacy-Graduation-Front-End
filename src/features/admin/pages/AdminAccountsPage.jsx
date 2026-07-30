@@ -8,6 +8,8 @@ import {
   Sparkles,
   UserRound,
   UsersRound,
+  Warehouse,
+  Truck,
 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -18,6 +20,8 @@ const roleLabels = {
   Pharmacy: "صيدلية",
   Organization: "منظمة",
   Admin: "إدارة",
+  Warehouse: "مستودع",
+  Representative: "مندوب",
 };
 
 const roleIcons = {
@@ -25,6 +29,8 @@ const roleIcons = {
   Pharmacy: Building2,
   Organization: Building2,
   Admin: ShieldCheck,
+  Warehouse,
+  Representative: Truck,
 };
 
 export function AdminAccountsPage() {
@@ -39,7 +45,9 @@ export function AdminAccountsPage() {
     active: allAccounts.filter((item) => item.isActive).length,
     users: allAccounts.filter((item) => item.role === "User").length,
     entities: allAccounts.filter((item) =>
-      ["Pharmacy", "Organization"].includes(item.role),
+      ["Pharmacy", "Organization", "Warehouse", "Representative"].includes(
+        item.role,
+      ),
     ).length,
   };
   const field = (name) => ({
@@ -74,10 +82,30 @@ export function AdminAccountsPage() {
       </section>
 
       <section className="grid grid-cols-2 gap-3 xl:grid-cols-4">
-        <StatCard icon={UsersRound} label="إجمالي الحسابات" value={stats.total} tone="cyan" />
-        <StatCard icon={CheckCircle2} label="الحسابات الفعالة" value={stats.active} tone="green" />
-        <StatCard icon={UserRound} label="المستخدمون" value={stats.users} tone="violet" />
-        <StatCard icon={Building2} label="الصيدليات والمنظمات" value={stats.entities} tone="amber" />
+        <StatCard
+          icon={UsersRound}
+          label="إجمالي الحسابات"
+          value={stats.total}
+          tone="cyan"
+        />
+        <StatCard
+          icon={CheckCircle2}
+          label="الحسابات الفعالة"
+          value={stats.active}
+          tone="green"
+        />
+        <StatCard
+          icon={UserRound}
+          label="المستخدمون"
+          value={stats.users}
+          tone="violet"
+        />
+        <StatCard
+          icon={Building2}
+          label="حسابات الجهات"
+          value={stats.entities}
+          tone="amber"
+        />
       </section>
 
       <section className="rounded-[1.6rem] border border-[#174b57]/8 bg-white p-5 shadow-[0_14px_40px_rgba(23,75,87,.055)]">
@@ -93,26 +121,30 @@ export function AdminAccountsPage() {
           </span>
         </div>
         <div className="grid gap-3 md:grid-cols-[1fr_190px_190px]">
-        <label className="field-control">
-          <input
-            {...field("search")}
-            className="form-input has-field-icon"
-            placeholder="ابحث بالاسم أو البريد أو اسم الجهة"
-          />
-          <span className="field-icon-shell"><Search size={18} /></span>
-        </label>
-        <select {...field("role")} className="form-input">
-          <option value="">كل أنواع الحسابات</option>
-          <option value="User">المستخدمون</option>
-          <option value="Pharmacy">الصيدليات</option>
-          <option value="Organization">المنظمات</option>
-          <option value="Admin">الإدارة</option>
-        </select>
-        <select {...field("status")} className="form-input">
-          <option value="">كل الحالات</option>
-          <option value="Active">الحسابات الفعالة</option>
-          <option value="Inactive">الحسابات الموقوفة</option>
-        </select>
+          <label className="field-control">
+            <input
+              {...field("search")}
+              className="form-input has-field-icon"
+              placeholder="ابحث بالاسم أو البريد أو اسم الجهة"
+            />
+            <span className="field-icon-shell">
+              <Search size={18} />
+            </span>
+          </label>
+          <select {...field("role")} className="form-input">
+            <option value="">كل أنواع الحسابات</option>
+            <option value="User">المستخدمون</option>
+            <option value="Pharmacy">الصيدليات</option>
+            <option value="Organization">المنظمات</option>
+            <option value="Warehouse">المستودعات</option>
+            <option value="Representative">المندوبون</option>
+            <option value="Admin">الإدارة</option>
+          </select>
+          <select {...field("status")} className="form-input">
+            <option value="">كل الحالات</option>
+            <option value="Active">الحسابات الفعالة</option>
+            <option value="Inactive">الحسابات الموقوفة</option>
+          </select>
         </div>
       </section>
       <section className="grid gap-4 xl:grid-cols-2">
@@ -123,7 +155,9 @@ export function AdminAccountsPage() {
               key={account.userId}
               className="group relative overflow-hidden rounded-[1.55rem] border border-[#174b57]/8 bg-white p-5 shadow-[0_12px_35px_rgba(23,75,87,.045)] transition duration-300 hover:-translate-y-1 hover:border-[#216474]/20 hover:shadow-[0_22px_50px_rgba(23,75,87,.09)]"
             >
-              <div className={`absolute inset-y-0 start-0 w-1 ${account.isActive ? "bg-emerald-400" : "bg-rose-400"}`} />
+              <div
+                className={`absolute inset-y-0 start-0 w-1 ${account.isActive ? "bg-emerald-400" : "bg-rose-400"}`}
+              />
               <div className="flex items-start gap-4">
                 <span className="grid size-13 shrink-0 place-items-center rounded-2xl bg-[#eaf4f3] text-[#216474] transition group-hover:bg-[#174b57] group-hover:text-white">
                   <Icon size={23} />
@@ -144,13 +178,17 @@ export function AdminAccountsPage() {
                     {account.email}
                   </p>
                 </div>
-                <span className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold ${account.isActive ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"}`}>
+                <span
+                  className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold ${account.isActive ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"}`}
+                >
                   {account.isActive ? "فعال" : "موقوف"}
                 </span>
               </div>
               <div className="mt-5 flex items-center justify-between gap-3 border-t border-slate-100 pt-4">
                 <p className="min-w-0 truncate text-xs text-slate-400">
-                  {[account.city, account.phoneNumber].filter(Boolean).join(" • ") || "لا توجد بيانات موقع"}
+                  {[account.city, account.phoneNumber]
+                    .filter(Boolean)
+                    .join(" • ") || "لا توجد بيانات موقع"}
                 </p>
                 <Link
                   to={`/app/accounts/${account.userId}`}
@@ -181,7 +219,9 @@ function StatCard({ icon: Icon, label, value, tone }) {
   };
   return (
     <article className="rounded-[1.4rem] border border-[#174b57]/8 bg-white p-4 shadow-[0_10px_30px_rgba(23,75,87,.04)] sm:p-5">
-      <span className={`grid size-10 place-items-center rounded-xl ${tones[tone]}`}>
+      <span
+        className={`grid size-10 place-items-center rounded-xl ${tones[tone]}`}
+      >
         <Icon size={19} />
       </span>
       <strong className="mt-4 block text-2xl font-black text-[#17363e]">

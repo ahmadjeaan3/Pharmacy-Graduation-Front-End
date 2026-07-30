@@ -4,18 +4,19 @@ import {
   Bike,
   CheckCircle2,
   Clock3,
-  ExternalLink,
   MapPin,
+  Navigation,
   PackagePlus,
   Phone,
   Pill,
   Send,
   Star,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { lazy, Suspense, useMemo, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import {
   createMedicineRequest,
+  getNearestPharmacyRoute,
   getPharmacyDetails,
   ratePharmacy,
   userKeys,
@@ -32,6 +33,12 @@ import {
 } from "../utils/userFormatters";
 import { getApiErrorMessage } from "../../../shared/api/errors";
 
+const NearbyPharmaciesMap = lazy(() =>
+  import("../components/NearbyPharmaciesMap").then((module) => ({
+    default: module.NearbyPharmaciesMap,
+  })),
+);
+
 export function PharmacyDetailsPage() {
   const { pharmacyId } = useParams();
   const [searchParams] = useSearchParams();
@@ -46,6 +53,12 @@ export function PharmacyDetailsPage() {
     note: "",
   });
   const [ratingDraft, setRatingDraft] = useState(null);
+  const [showDirections, setShowDirections] = useState(false);
+  const routeQuery = useQuery({
+    queryKey: userKeys.nearestPharmacyRoute({ pharmacyId }),
+    queryFn: () => getNearestPharmacyRoute({ pharmacyId }),
+    enabled: showDirections && Boolean(pharmacyId),
+  });
   const requestMutation = useMutation({
     mutationFn: (payload) => createMedicineRequest(pharmacyId, payload),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: userKeys.root }),
@@ -69,6 +82,14 @@ export function PharmacyDetailsPage() {
       ),
     [query.data, request.medicineId],
   );
+  const routeMapContext = useMemo(() => {
+    if (!routeQuery.data?.pharmacy) return null;
+    return {
+      latitude: routeQuery.data.originLatitude,
+      longitude: routeQuery.data.originLongitude,
+      mapMarkers: [routeQuery.data.pharmacy],
+    };
+  }, [routeQuery.data]);
 
   if (query.isPending)
     return <UserLoadingState label="جاري تحميل بيانات الصيدلية..." />;
@@ -147,20 +168,62 @@ export function PharmacyDetailsPage() {
                 اتصال
               </a>
             )}
-            {pharmacy.locationGoogleMapsUrl && (
-              <a
-                href={pharmacy.locationGoogleMapsUrl}
-                target="_blank"
-                rel="noreferrer"
+            {pharmacy.latitude != null && pharmacy.longitude != null && (
+              <button
+                type="button"
+                onClick={() => {
+                  if (showDirections) {
+                    setShowDirections(false);
+                    return;
+                  }
+                  setShowDirections(true);
+                  window.setTimeout(
+                    () =>
+                      document
+                        .getElementById("pharmacy-directions")
+                        ?.scrollIntoView({
+                          behavior: "smooth",
+                          block: "start",
+                        }),
+                    80,
+                  );
+                }}
                 className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/[.08] px-4 py-3 text-sm font-bold"
               >
-                <ExternalLink size={17} />
-                الاتجاهات
-              </a>
+                <Navigation size={17} />
+                {showDirections ? "إخفاء مسار الوصول" : "الذهاب إلى الصيدلية"}
+              </button>
             )}
           </div>
         </div>
       </section>
+      {showDirections && (
+        <section id="pharmacy-directions">
+          {routeQuery.isPending && (
+            <UserLoadingState label="جاري تجهيز مسار الوصول داخل المنصة..." />
+          )}
+          {routeQuery.isError && (
+            <UserErrorState
+              message={getApiErrorMessage(routeQuery.error)}
+              onRetry={routeQuery.refetch}
+            />
+          )}
+          {routeMapContext && (
+            <Suspense
+              fallback={
+                <UserLoadingState label="جاري تحميل خريطة الصيدلية..." />
+              }
+            >
+              <NearbyPharmaciesMap
+                locationContext={routeMapContext}
+                route={routeQuery.data}
+                limit={1}
+                title="مسار الوصول إلى الصيدلية"
+              />
+            </Suspense>
+          )}
+        </section>
+      )}
       <section className="grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
         <div>
           <div className="mb-4">

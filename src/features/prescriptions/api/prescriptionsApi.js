@@ -27,9 +27,5 @@ export const activatePrescriptionReminders = async (id, payload) =>
 export const getPharmacyPrescriptionOrders = async () =>
   (await apiClient.get("/prescriptions/pharmacy/orders")).data;
 export const updatePrescriptionStatus = async (id, payload) =>
-  (
-    await apiClient.post(
-      `/prescriptions/pharmacy/orders/${id}/status`,
-      payload,
-    )
-  ).data;
+  (await apiClient.post(`/prescriptions/pharmacy/orders/${id}/status`, payload))
+    .data;

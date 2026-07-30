@@ -7,7 +7,11 @@ import {
   Gift,
   HeartHandshake,
   Pill,
+  RotateCcw,
   ShieldCheck,
+  TriangleAlert,
+  Truck,
+  Warehouse,
 } from "lucide-react";
 
 export const notificationTypes = {
@@ -102,6 +106,55 @@ export const notificationTypes = {
     tone: "bg-teal-50 text-teal-700",
     dot: "bg-teal-500",
   },
+  AccountStatusUpdated: {
+    label: "حالة الحساب",
+    title: "تحديث حالة الحساب",
+    icon: ShieldCheck,
+    tone: "bg-rose-50 text-rose-700",
+    dot: "bg-rose-500",
+  },
+  WarehouseApprovalUpdated: {
+    label: "اعتماد المستودع",
+    title: "تحديث اعتماد المستودع",
+    icon: Warehouse,
+    tone: "bg-cyan-50 text-cyan-700",
+    dot: "bg-cyan-500",
+  },
+  SupplyOrder: {
+    label: "سلسلة التوريد",
+    title: "تحديث طلب التوريد",
+    icon: Warehouse,
+    tone: "bg-cyan-50 text-cyan-700",
+    dot: "bg-cyan-500",
+  },
+  Delivery: {
+    label: "التوصيل",
+    title: "تحديث الشحنة",
+    icon: Truck,
+    tone: "bg-emerald-50 text-emerald-700",
+    dot: "bg-emerald-500",
+  },
+  DeliveryTracking: {
+    label: "تتبع الشحنة",
+    title: "تحديث مسار التوصيل",
+    icon: Truck,
+    tone: "bg-sky-50 text-sky-700",
+    dot: "bg-sky-500",
+  },
+  SupplyReturn: {
+    label: "المرتجعات",
+    title: "تحديث طلب المرتجع",
+    icon: RotateCcw,
+    tone: "bg-amber-50 text-amber-700",
+    dot: "bg-amber-500",
+  },
+  MedicineRecall: {
+    label: "تنبيه دوائي",
+    title: "استدعاء دفعة دوائية",
+    icon: TriangleAlert,
+    tone: "bg-rose-50 text-rose-700",
+    dot: "bg-rose-500",
+  },
 };
 
 export const getNotificationMeta = (type) =>
@@ -160,6 +213,28 @@ export function notificationTarget(notification, roles = []) {
     if (roles.includes("Organization")) return "/app/organization/assistance";
     if (roles.includes("User")) return "/app/donations";
   }
+  if (
+    ["PharmacySupplyOrder", "DeliveryShipment", "SupplyReturn"].includes(
+      notification.relatedEntityType,
+    )
+  ) {
+    if (
+      roles.some((role) =>
+        ["Pharmacy", "Warehouse", "Representative", "Admin"].includes(role),
+      )
+    )
+      return "/app/supply-chain";
+  }
+  if (
+    notification.relatedEntityType === "WarehouseProfile" &&
+    roles.includes("Warehouse")
+  )
+    return "/app/supply-chain";
+  if (
+    notification.relatedEntityType === "MedicineBatch" &&
+    roles.some((role) => ["Pharmacy", "Warehouse"].includes(role))
+  )
+    return "/app/supply-chain";
   return null;
 }
 
