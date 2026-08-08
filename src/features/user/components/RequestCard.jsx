@@ -1,9 +1,11 @@
 import { ArrowLeft, Clock3, Hash, PackageSearch } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { formatDate, getRequestStatus } from "../utils/userFormatters";
 
 export function RequestCard({ request }) {
-  const status = getRequestStatus(request.status, request.statusDisplayText);
+  const { t, i18n } = useTranslation();
+  const status = getRequestStatus(request.status, request.statusDisplayText, t);
   return (
     <article className="rounded-[1.35rem] border border-[#174b57]/8 bg-white p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -31,7 +33,7 @@ export function RequestCard({ request }) {
           <Hash size={14} />
           {request.requestCode}
         </span>
-        <span>الكمية: {request.requestedQuantity.toLocaleString("ar-SY")}</span>
+        <span>{t("الكمية")}: {request.requestedQuantity.toLocaleString(i18n.language)}</span>
         <span className="flex items-center gap-1.5">
           <Clock3 size={14} />
           {formatDate(request.createdAtUtc, true)}
@@ -41,7 +43,7 @@ export function RequestCard({ request }) {
         to={`/app/requests/${request.requestId}`}
         className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-[#216474]"
       >
-        متابعة الطلب <ArrowLeft size={15} />
+        {t("متابعة الطلب")} <ArrowLeft size={15} className="rtl:rotate-0 ltr:rotate-180" />
       </Link>
     </article>
   );

@@ -39,11 +39,7 @@ export function OrganizationAssistanceRequestsPage() {
   const { t, i18n } = useTranslation();
   const client = useQueryClient();
 
-  const currentLanguage = (
-    i18n.resolvedLanguage ||
-    i18n.language ||
-    "ar"
-  )
+  const currentLanguage = (i18n.resolvedLanguage || i18n.language || "ar")
     .split("-")[0]
     .toLowerCase();
 
@@ -63,8 +59,7 @@ export function OrganizationAssistanceRequestsPage() {
 
   const query = useQuery({
     queryKey: organizationKeys.assistance(params),
-    queryFn: () =>
-      getOrganizationAssistanceRequests(params),
+    queryFn: () => getOrganizationAssistanceRequests(params),
   });
 
   const campaigns = useQuery({
@@ -79,29 +74,20 @@ export function OrganizationAssistanceRequestsPage() {
 
   const update = useMutation({
     mutationFn: ({ requestId, payload }) =>
-      updateOrganizationAssistanceStatus(
-        requestId,
-        payload,
-      ),
+      updateOrganizationAssistanceStatus(requestId, payload),
 
     onSuccess: async () => {
       setNotice({
         ok: true,
-        text: t(
-          "تم تحديث طلب المساعدة وإشعار صاحبه.",
-        ),
+        text: t("تم تحديث طلب المساعدة وإشعار صاحبه."),
       });
 
       await Promise.all([
         client.invalidateQueries({
-          queryKey: [
-            "organization",
-            "assistance",
-          ],
+          queryKey: ["organization", "assistance"],
         }),
         client.invalidateQueries({
-          queryKey:
-            organizationKeys.dashboard,
+          queryKey: organizationKeys.dashboard,
         }),
       ]);
     },
@@ -114,28 +100,21 @@ export function OrganizationAssistanceRequestsPage() {
   });
 
   const filteredRequests = useMemo(() => {
-    const normalized = search
-      .trim()
-      .toLowerCase();
+    const normalized = search.trim().toLowerCase();
 
     if (!normalized) {
       return query.data || [];
     }
 
-    return (query.data || []).filter(
-      (request) =>
-        [
-          request.medicineName,
-          request.scientificName,
-          request.requesterFullName,
-          request.requesterPhoneNumber,
-          request.campaignTitle,
-          request.notes,
-        ].some((value) =>
-          value
-            ?.toLowerCase()
-            .includes(normalized),
-        ),
+    return (query.data || []).filter((request) =>
+      [
+        request.medicineName,
+        request.scientificName,
+        request.requesterFullName,
+        request.requesterPhoneNumber,
+        request.campaignTitle,
+        request.notes,
+      ].some((value) => value?.toLowerCase().includes(normalized)),
     );
   }, [query.data, search]);
 
@@ -143,30 +122,22 @@ export function OrganizationAssistanceRequestsPage() {
     {
       number: "01",
       title: t("إرسال الطلب"),
-      text: t(
-        "المستخدم يحدد الدواء والكمية",
-      ),
+      text: t("المستخدم يحدد الدواء والكمية"),
     },
     {
       number: "02",
       title: t("مراجعة المنظمة"),
-      text: t(
-        "التحقق من البيانات والأولوية",
-      ),
+      text: t("التحقق من البيانات والأولوية"),
     },
     {
       number: "03",
       title: t("التنسيق"),
-      text: t(
-        "ربط الطلب بالحملة أو الجهة المناسبة",
-      ),
+      text: t("ربط الطلب بالحملة أو الجهة المناسبة"),
     },
     {
       number: "04",
       title: t("التلبية"),
-      text: t(
-        "تسليم الدواء وتوثيق النتيجة",
-      ),
+      text: t("تسليم الدواء وتوثيق النتيجة"),
     },
   ];
 
@@ -203,10 +174,7 @@ export function OrganizationAssistanceRequestsPage() {
           >
             <div className="flex items-center gap-3">
               <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-white/10 text-white backdrop-blur-sm">
-                <HandHeart
-                  size={22}
-                  strokeWidth={1.8}
-                />
+                <HandHeart size={22} strokeWidth={1.8} />
               </span>
 
               <h1 className="text-[28px] font-bold leading-none text-white">
@@ -225,13 +193,7 @@ export function OrganizationAssistanceRequestsPage() {
 
       {/* Flow */}
       <section className="rounded-xl border border-[#D8E6E8] bg-white p-5 shadow-[0_6px_24px_rgba(23,75,87,.035)]">
-        <div
-          className={
-            isArabic
-              ? "text-right"
-              : "text-left"
-          }
-        >
+        <div className={isArabic ? "text-right" : "text-left"}>
           <h2 className="font-bold text-[#29464D]">
             {t("مسار معالجة طلب المساعدة")}
           </h2>
@@ -264,7 +226,7 @@ export function OrganizationAssistanceRequestsPage() {
           ))}
         </div>
       </section>
-            {/* Notice */}
+      {/* Notice */}
       {notice && (
         <div
           className={`rounded-xl border px-4 py-3 text-sm font-bold ${
@@ -280,13 +242,7 @@ export function OrganizationAssistanceRequestsPage() {
       {/* Filters */}
       <section className="rounded-xl bg-white p-5 shadow-[0_6px_24px_rgba(23,75,87,.03)]">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
-          <div
-            className={
-              isArabic
-                ? "text-right"
-                : "text-left"
-            }
-          >
+          <div className={isArabic ? "text-right" : "text-left"}>
             <h2 className="text-xl font-bold text-[#333333]">
               {t("الطلبات الواردة")}
             </h2>
@@ -298,27 +254,16 @@ export function OrganizationAssistanceRequestsPage() {
 
           <div className="grid flex-1 gap-3 md:grid-cols-[minmax(240px,1fr)_180px_220px] xl:max-w-[760px]">
             <label className="flex h-11 items-center gap-2 rounded-lg border border-[#D8E6E8] bg-white px-3">
-              <Search
-                size={17}
-                className="text-[#9BAEB2]"
-              />
+              <Search size={17} className="text-[#9BAEB2]" />
 
               <input
                 dir={direction}
                 value={search}
-                onChange={(event) =>
-                  setSearch(event.target.value)
-                }
-                placeholder={t(
-                  "ابحث باسم الدواء أو صاحب الطلب...",
-                )}
-                aria-label={t(
-                  "ابحث باسم الدواء أو صاحب الطلب...",
-                )}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder={t("ابحث باسم الدواء أو صاحب الطلب...")}
+                aria-label={t("ابحث باسم الدواء أو صاحب الطلب...")}
                 className={`min-w-0 flex-1 bg-transparent text-sm text-[#36565D] outline-none placeholder:text-[#B6C2C4] ${
-                  isArabic
-                    ? "text-right"
-                    : "text-left"
+                  isArabic ? "text-right" : "text-left"
                 }`}
               />
             </label>
@@ -329,18 +274,11 @@ export function OrganizationAssistanceRequestsPage() {
               onChange={setStatus}
               ariaLabel={t("حالة الطلب")}
             >
-              {assistanceStatuses.map(
-                (item) => (
-                  <option
-                    key={
-                      item.value || "all"
-                    }
-                    value={item.value}
-                  >
-                    {t(item.label)}
-                  </option>
-                ),
-              )}
+              {assistanceStatuses.map((item) => (
+                <option key={item.value || "all"} value={item.value}>
+                  {t(item.label)}
+                </option>
+              ))}
             </SelectField>
 
             <SelectField
@@ -349,20 +287,13 @@ export function OrganizationAssistanceRequestsPage() {
               onChange={setCampaignId}
               ariaLabel={t("الحملة")}
             >
-              <option value="">
-                {t("جميع الحملات")}
-              </option>
+              <option value="">{t("جميع الحملات")}</option>
 
-              {(campaigns.data || []).map(
-                (campaign) => (
-                  <option
-                    key={campaign.campaignId}
-                    value={campaign.campaignId}
-                  >
-                    {campaign.title}
-                  </option>
-                ),
-              )}
+              {(campaigns.data || []).map((campaign) => (
+                <option key={campaign.campaignId} value={campaign.campaignId}>
+                  {campaign.title}
+                </option>
+              ))}
             </SelectField>
           </div>
         </div>
@@ -370,23 +301,15 @@ export function OrganizationAssistanceRequestsPage() {
 
       {/* Content */}
       {query.isLoading ? (
-        <UserLoadingState
-          label={t(
-            "جاري تحميل طلبات المساعدة...",
-          )}
-        />
+        <UserLoadingState label={t("جاري تحميل طلبات المساعدة...")} />
       ) : query.isError ? (
         <UserErrorState
-          message={getApiErrorMessage(
-            query.error,
-          )}
+          message={getApiErrorMessage(query.error)}
           onRetry={query.refetch}
         />
       ) : !filteredRequests.length ? (
         <UserEmptyState
-          title={t(
-            "لا توجد طلبات مطابقة",
-          )}
+          title={t("لا توجد طلبات مطابقة")}
           description={t(
             "ستظهر هنا طلبات المساعدة الموجهة إلى المنظمة أو حملاتها.",
           )}
@@ -394,34 +317,27 @@ export function OrganizationAssistanceRequestsPage() {
       ) : (
         <section
           className={`grid gap-4 xl:grid-cols-2 ${
-            query.isFetching
-              ? "opacity-60"
-              : ""
+            query.isFetching ? "opacity-60" : ""
           }`}
         >
-          {filteredRequests.map(
-            (request) => (
-              <RequestCard
-                key={request.requestId}
-                request={request}
-                pending={update.isPending}
-                direction={direction}
-                currentLanguage={
-                  currentLanguage
-                }
-                t={t}
-                onUpdate={(payload) => {
-                  setNotice(null);
+          {filteredRequests.map((request) => (
+            <RequestCard
+              key={request.requestId}
+              request={request}
+              pending={update.isPending}
+              direction={direction}
+              currentLanguage={currentLanguage}
+              t={t}
+              onUpdate={(payload) => {
+                setNotice(null);
 
-                  update.mutate({
-                    requestId:
-                      request.requestId,
-                    payload,
-                  });
-                }}
-              />
-            ),
-          )}
+                update.mutate({
+                  requestId: request.requestId,
+                  payload,
+                });
+              }}
+            />
+          ))}
         </section>
       )}
     </div>
@@ -435,16 +351,11 @@ function SelectField({
   direction = "rtl",
 }) {
   return (
-    <div
-      dir={direction}
-      className="relative"
-    >
+    <div dir={direction} className="relative">
       <select
         aria-label={ariaLabel}
         value={value}
-        onChange={(event) =>
-          onChange(event.target.value)
-        }
+        onChange={(event) => onChange(event.target.value)}
         className="h-11 w-full appearance-none rounded-lg border border-[#D8E6E8] bg-[#F8FBFB] pe-10 ps-3 text-sm font-medium text-[#47666D] outline-none transition hover:border-[#9ABCC1] focus:border-[#216474] focus:bg-white"
       >
         {children}
@@ -467,30 +378,19 @@ function RequestCard({
   direction,
   currentLanguage,
 }) {
-  const isArabic =
-    currentLanguage === "ar";
+  const isArabic = currentLanguage === "ar";
 
-  const [nextStatus, setNextStatus] =
-    useState(
-      request.status === "UnderReview"
-        ? "Fulfilled"
-        : "UnderReview",
-    );
-
-  const [note, setNote] = useState(
-    request.responseNote || "",
+  const [nextStatus, setNextStatus] = useState(
+    request.status === "UnderReview" ? "Fulfilled" : "UnderReview",
   );
 
-  const status = getStatusMeta(
+  const [note, setNote] = useState(request.responseNote || "");
+
+  const status = getStatusMeta(request.status, "assistance");
+
+  const actionable = !["Cancelled", "Fulfilled", "Rejected"].includes(
     request.status,
-    "assistance",
   );
-
-  const actionable = ![
-    "Cancelled",
-    "Fulfilled",
-    "Rejected",
-  ].includes(request.status);
 
   const numberLocale =
     currentLanguage === "ar"
@@ -510,28 +410,18 @@ function RequestCard({
             <HandHeart size={18} />
           </span>
 
-          <div
-            className={`min-w-0 ${
-              isArabic
-                ? "text-right"
-                : "text-left"
-            }`}
-          >
+          <div className={`min-w-0 ${isArabic ? "text-right" : "text-left"}`}>
             <h3 className="truncate text-base font-bold text-[#29464D]">
               {request.medicineName}
             </h3>
 
             <p className="mt-1 truncate text-[11px] text-[#93A4A8]">
-              {request.scientificName ||
-                t("الاسم العلمي غير محدد")}
+              {request.scientificName || t("الاسم العلمي غير محدد")}
             </p>
           </div>
         </div>
 
-        <StatusBadge
-          label={t(status.label)}
-          status={request.status}
-        />
+        <StatusBadge label={t(status.label)} status={request.status} />
       </div>
 
       <div className="p-5">
@@ -539,20 +429,14 @@ function RequestCard({
           <InfoCard
             icon={UserRound}
             label={t("صاحب الطلب")}
-            value={
-              request.requesterFullName ||
-              t("غير مسجل")
-            }
+            value={request.requesterFullName || t("غير مسجل")}
             direction={direction}
           />
 
           <InfoCard
             icon={Phone}
             label={t("الهاتف")}
-            value={
-              request.requesterPhoneNumber ||
-              t("غير مسجل")
-            }
+            value={request.requesterPhoneNumber || t("غير مسجل")}
             direction={direction}
           />
 
@@ -561,9 +445,8 @@ function RequestCard({
             label={t("الكمية المطلوبة")}
             value={t("{{count}} عبوة", {
               count:
-                request.requestedPackageCount?.toLocaleString(
-                  numberLocale,
-                ) ?? "0",
+                request.requestedPackageCount?.toLocaleString(numberLocale) ??
+                "0",
             })}
             direction={direction}
           />
@@ -571,9 +454,7 @@ function RequestCard({
           <InfoCard
             icon={CalendarClock}
             label={t("مطلوب قبل")}
-            value={formatOrgDate(
-              request.neededBeforeUtc,
-            )}
+            value={formatOrgDate(request.neededBeforeUtc)}
             direction={direction}
           />
 
@@ -589,14 +470,12 @@ function RequestCard({
 
         {request.notes && (
           <MessageBox
-            title={t(
-              "ملاحظة صاحب الطلب",
-            )}
+            title={t("ملاحظة صاحب الطلب")}
             text={request.notes}
             direction={direction}
           />
         )}
-                {actionable ? (
+        {actionable ? (
           <div className="mt-5 border-t border-[#E7EFF0] pt-5">
             <div className="grid gap-3 sm:grid-cols-[190px_1fr]">
               <SelectField
@@ -605,36 +484,22 @@ function RequestCard({
                 onChange={setNextStatus}
                 ariaLabel={t("تحديث حالة الطلب")}
               >
-                <option value="UnderReview">
-                  {t("بدء المراجعة")}
-                </option>
+                <option value="UnderReview">{t("بدء المراجعة")}</option>
 
-                <option value="Fulfilled">
-                  {t("تمت تلبية الطلب")}
-                </option>
+                <option value="Fulfilled">{t("تمت تلبية الطلب")}</option>
 
-                <option value="Rejected">
-                  {t("تعذر تلبية الطلب")}
-                </option>
+                <option value="Rejected">{t("تعذر تلبية الطلب")}</option>
               </SelectField>
 
               <input
                 dir={direction}
                 maxLength={1000}
                 value={note}
-                onChange={(event) =>
-                  setNote(event.target.value)
-                }
-                placeholder={t(
-                  "رد لصاحب الطلب (اختياري)",
-                )}
-                aria-label={t(
-                  "رد لصاحب الطلب (اختياري)",
-                )}
+                onChange={(event) => setNote(event.target.value)}
+                placeholder={t("رد لصاحب الطلب (اختياري)")}
+                aria-label={t("رد لصاحب الطلب (اختياري)")}
                 className={`h-11 w-full rounded-lg border border-[#D8E6E8] bg-white px-4 text-sm text-[#36565D] outline-none transition placeholder:text-[#B6C2C4] hover:border-[#9ABCC1] focus:border-[#216474] focus:ring-2 focus:ring-[#216474]/10 ${
-                  isArabic
-                    ? "text-right"
-                    : "text-left"
+                  isArabic ? "text-right" : "text-left"
                 }`}
               />
             </div>
@@ -644,8 +509,7 @@ function RequestCard({
               onClick={() =>
                 onUpdate({
                   status: nextStatus,
-                  responseNote:
-                    note.trim() || null,
+                  responseNote: note.trim() || null,
                 })
               }
               disabled={pending}
@@ -653,9 +517,7 @@ function RequestCard({
             >
               <Save size={16} />
 
-              {pending
-                ? t("جاري الحفظ...")
-                : t("حفظ التحديث")}
+              {pending ? t("جاري الحفظ...") : t("حفظ التحديث")}
             </button>
           </div>
         ) : (
@@ -673,10 +535,7 @@ function RequestCard({
           <Check size={13} />
 
           <span>
-            {t("وصل في")}{" "}
-            {formatOrgDate(
-              request.createdAtUtc,
-            )}
+            {t("وصل في")} {formatOrgDate(request.createdAtUtc)}
           </span>
         </p>
       </div>
@@ -684,32 +543,23 @@ function RequestCard({
   );
 }
 
-function StatusBadge({
-  label,
-  status,
-}) {
+function StatusBadge({ label, status }) {
   const styles = {
-    Pending:
-      "border-[#D5E3E6] bg-[#F2F6F7] text-[#60777D]",
+    Pending: "border-[#D5E3E6] bg-[#F2F6F7] text-[#60777D]",
 
-    UnderReview:
-      "border-[#C9E0E5] bg-[#E6F3F6] text-[#216474]",
+    UnderReview: "border-[#C9E0E5] bg-[#E6F3F6] text-[#216474]",
 
-    Fulfilled:
-      "border-[#BFD9DE] bg-[#EAF4F3] text-[#174B57]",
+    Fulfilled: "border-[#BFD9DE] bg-[#EAF4F3] text-[#174B57]",
 
-    Rejected:
-      "border-[#F1D4D7] bg-[#FFF1F2] text-[#C34A57]",
+    Rejected: "border-[#F1D4D7] bg-[#FFF1F2] text-[#C34A57]",
 
-    Cancelled:
-      "border-[#DCE4E6] bg-[#F4F7F8] text-[#72868B]",
+    Cancelled: "border-[#DCE4E6] bg-[#F4F7F8] text-[#72868B]",
   };
 
   return (
     <span
       className={`shrink-0 rounded-full border px-3 py-1.5 text-[11px] font-bold ${
-        styles[status] ||
-        "border-[#D5E3E6] bg-[#F2F6F7] text-[#60777D]"
+        styles[status] || "border-[#D5E3E6] bg-[#F2F6F7] text-[#60777D]"
       }`}
     >
       {label}
@@ -717,12 +567,7 @@ function StatusBadge({
   );
 }
 
-function InfoCard({
-  icon: Icon,
-  label,
-  value,
-  direction = "rtl",
-}) {
+function InfoCard({ icon: Icon, label, value, direction = "rtl" }) {
   return (
     <div
       dir={direction}
@@ -745,12 +590,7 @@ function InfoCard({
   );
 }
 
-function MessageBox({
-  title,
-  text,
-  accent = false,
-  direction = "rtl",
-}) {
+function MessageBox({ title, text, accent = false, direction = "rtl" }) {
   return (
     <div
       dir={direction}
@@ -762,17 +602,13 @@ function MessageBox({
     >
       <p
         className={`text-[10px] font-bold ${
-          accent
-            ? "text-[#216474]"
-            : "text-[#71858A]"
+          accent ? "text-[#216474]" : "text-[#71858A]"
         }`}
       >
         {title}
       </p>
 
-      <p className="mt-1 text-xs leading-6 text-[#536D73]">
-        {text}
-      </p>
+      <p className="mt-1 text-xs leading-6 text-[#536D73]">{text}</p>
     </div>
   );
 }

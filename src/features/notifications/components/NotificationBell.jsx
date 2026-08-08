@@ -20,11 +20,7 @@ export function NotificationBell({ unreadCount = 0, roles = [] }) {
   const language = i18n.resolvedLanguage || i18n.language || "ar";
 
   const locale =
-    language === "ar"
-      ? "ar-SY"
-      : language === "tr"
-        ? "tr-TR"
-        : "en-US";
+    language === "ar" ? "ar-SY" : language === "tr" ? "tr-TR" : "en-US";
 
   const [open, setOpen] = useState(false);
 
@@ -69,10 +65,7 @@ export function NotificationBell({ unreadCount = 0, roles = [] }) {
 
   useEffect(() => {
     const close = (event) => {
-      if (
-        shellRef.current &&
-        !shellRef.current.contains(event.target)
-      ) {
+      if (shellRef.current && !shellRef.current.contains(event.target)) {
         setOpen(false);
       }
     };
@@ -100,8 +93,7 @@ export function NotificationBell({ unreadCount = 0, roles = [] }) {
     }
   };
 
-  const formattedUnreadCount =
-    unreadCount.toLocaleString(locale);
+  const formattedUnreadCount = unreadCount.toLocaleString(locale);
 
   const notificationAriaLabel =
     unreadCount > 0
@@ -111,10 +103,7 @@ export function NotificationBell({ unreadCount = 0, roles = [] }) {
       : t("notifications.ariaLabel");
 
   return (
-    <div
-      ref={shellRef}
-      className="relative"
-    >
+    <div ref={shellRef} className="relative">
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
@@ -126,9 +115,7 @@ export function NotificationBell({ unreadCount = 0, roles = [] }) {
 
         {unreadCount > 0 && (
           <span className="absolute -end-1.5 -top-1.5 grid min-w-5 place-items-center rounded-full border-2 border-white bg-rose-500 px-1 text-[9px] font-black leading-4 text-white">
-            {unreadCount > 99
-              ? "+99"
-              : formattedUnreadCount}
+            {unreadCount > 99 ? "+99" : formattedUnreadCount}
           </span>
         )}
       </button>
@@ -137,9 +124,7 @@ export function NotificationBell({ unreadCount = 0, roles = [] }) {
         <div className="absolute end-0 top-[calc(100%+12px)] z-50 w-[min(390px,calc(100vw-2rem))] overflow-hidden rounded-[1.5rem] border border-[#174b57]/10 bg-white shadow-[0_24px_70px_rgba(9,42,49,.2)]">
           <div className="flex items-center justify-between border-b border-[#174b57]/8 p-4">
             <div>
-              <h3 className="font-black">
-                {t("notifications.title")}
-              </h3>
+              <h3 className="font-black">{t("notifications.title")}</h3>
 
               <p className="mt-0.5 text-[11px] text-[#829499]">
                 {unreadCount > 0
@@ -188,10 +173,7 @@ export function NotificationBell({ unreadCount = 0, roles = [] }) {
                   disabled={markOne.isPending}
                   className="block w-full text-start transition hover:bg-[#f7faf9] disabled:cursor-wait disabled:opacity-70"
                 >
-                  <NotificationItem
-                    notification={item}
-                    compact
-                  />
+                  <NotificationItem notification={item} compact />
                 </button>
               ))
             ) : (

@@ -11,11 +11,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Link,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { getApiErrorMessage } from "../../../shared/api/errors";
 import {
@@ -25,32 +21,22 @@ import {
 import { login } from "../api/authApi";
 import { useAuth } from "../hooks/useAuth";
 
-const LOGIN_BACKGROUND_IMAGE =
-  "/assets/app/auth/login.png";
+const LOGIN_BACKGROUND_IMAGE = "/assets/app/auth/login.png";
 
-const LOGIN_LOGO =
-  "/assets/app/brand/logo.png";
+const LOGIN_LOGO = "/assets/app/brand/logo.png";
 
 export function LoginPage() {
   const { t, i18n } = useTranslation();
 
   const currentLanguage = normalizeLanguage(
-    i18n.resolvedLanguage ||
-      i18n.language ||
-      "ar",
+    i18n.resolvedLanguage || i18n.language || "ar",
   );
 
-  const isArabic =
-    currentLanguage === "ar";
+  const isArabic = currentLanguage === "ar";
 
-  const direction =
-    getLanguageDirection(
-      currentLanguage,
-    );
+  const direction = getLanguageDirection(currentLanguage);
 
-  const textAlignClass = isArabic
-    ? "text-right"
-    : "text-left";
+  const textAlignClass = isArabic ? "text-right" : "text-left";
 
   const [form, setForm] = useState({
     email: "",
@@ -58,10 +44,7 @@ export function LoginPage() {
     remember: false,
   });
 
-  const [
-    showPassword,
-    setShowPassword,
-  ] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -75,26 +58,15 @@ export function LoginPage() {
       }),
 
     onSuccess: (response) => {
-      signIn(
-        response,
-        form.remember,
-      );
+      signIn(response, form.remember);
 
-      navigate(
-        location.state?.from ||
-          "/app",
-        {
-          replace: true,
-        },
-      );
+      navigate(location.state?.from || "/app", {
+        replace: true,
+      });
     },
   });
 
-  const features = [
-    t("دخول آمن"),
-    t("خصوصية محفوظة"),
-    t("خدمات مخصصة"),
-  ];
+  const features = [t("دخول آمن"), t("خصوصية محفوظة"), t("خدمات مخصصة")];
 
   return (
     <div
@@ -103,9 +75,7 @@ export function LoginPage() {
       className="min-h-screen bg-[#F4F8F8]"
     >
       <LoginHeader
-        currentLanguage={
-          currentLanguage
-        }
+        currentLanguage={currentLanguage}
         direction={direction}
         isArabic={isArabic}
         t={t}
@@ -119,17 +89,12 @@ export function LoginPage() {
         {/* Login form */}
         <section
           className={`relative flex min-h-[calc(100vh-72px)] items-center justify-center bg-[#F7FAFA] px-5 py-12 sm:px-10 lg:px-16 xl:px-24 ${
-            isArabic
-              ? "lg:order-2"
-              : "lg:order-1"
+            isArabic ? "lg:order-2" : "lg:order-1"
           }`}
         >
           <div className="w-full max-w-[510px]">
             {/* Heading */}
-            <div
-              dir={direction}
-              className={`mb-9 ${textAlignClass}`}
-            >
+            <div dir={direction} className={`mb-9 ${textAlignClass}`}>
               <p className="text-[12px] font-semibold text-[#216474]">
                 {t("تسجيل الدخول")}
               </p>
@@ -139,9 +104,7 @@ export function LoginPage() {
               </h1>
 
               <p className="mt-3 text-[13px] leading-7 text-[#A0ADB0]">
-                {t(
-                  "أدخل بيانات حسابك للوصول إلى لوحة التحكم.",
-                )}
+                {t("أدخل بيانات حسابك للوصول إلى لوحة التحكم.")}
               </p>
             </div>
 
@@ -154,13 +117,9 @@ export function LoginPage() {
             >
               {/* Email */}
               <Field
-                label={t(
-                  "البريد الإلكتروني",
-                )}
+                label={t("البريد الإلكتروني")}
                 direction={direction}
-                textAlignClass={
-                  textAlignClass
-                }
+                textAlignClass={textAlignClass}
               >
                 <div className="relative">
                   <input
@@ -169,14 +128,10 @@ export function LoginPage() {
                     required
                     value={form.email}
                     onChange={(event) =>
-                      setForm(
-                        (current) => ({
-                          ...current,
-                          email:
-                            event.target
-                              .value,
-                        }),
-                      )
+                      setForm((current) => ({
+                        ...current,
+                        email: event.target.value,
+                      }))
                     }
                     placeholder="name@example.com"
                     dir="ltr"
@@ -187,9 +142,7 @@ export function LoginPage() {
                     size={18}
                     strokeWidth={1.8}
                     className={`absolute top-1/2 -translate-y-1/2 text-[#216474] ${
-                      isArabic
-                        ? "right-4"
-                        : "left-4"
+                      isArabic ? "right-4" : "left-4"
                     }`}
                   />
                 </div>
@@ -197,35 +150,21 @@ export function LoginPage() {
 
               {/* Password */}
               <Field
-                label={t(
-                  "كلمة المرور",
-                )}
+                label={t("كلمة المرور")}
                 direction={direction}
-                textAlignClass={
-                  textAlignClass
-                }
+                textAlignClass={textAlignClass}
               >
                 <div className="relative">
                   <input
-                    type={
-                      showPassword
-                        ? "text"
-                        : "password"
-                    }
+                    type={showPassword ? "text" : "password"}
                     autoComplete="current-password"
                     required
-                    value={
-                      form.password
-                    }
+                    value={form.password}
                     onChange={(event) =>
-                      setForm(
-                        (current) => ({
-                          ...current,
-                          password:
-                            event.target
-                              .value,
-                        }),
-                      )
+                      setForm((current) => ({
+                        ...current,
+                        password: event.target.value,
+                      }))
                     }
                     placeholder="••••••••"
                     dir="ltr"
@@ -236,96 +175,62 @@ export function LoginPage() {
                     size={18}
                     strokeWidth={1.8}
                     className={`absolute top-1/2 -translate-y-1/2 text-[#216474] ${
-                      isArabic
-                        ? "right-4"
-                        : "left-4"
+                      isArabic ? "right-4" : "left-4"
                     }`}
                   />
 
                   <button
                     type="button"
-                    onClick={() =>
-                      setShowPassword(
-                        (current) =>
-                          !current,
-                      )
-                    }
+                    onClick={() => setShowPassword((current) => !current)}
                     aria-label={
                       showPassword
-                        ? t(
-                            "إخفاء كلمة المرور",
-                          )
-                        : t(
-                            "إظهار كلمة المرور",
-                          )
+                        ? t("إخفاء كلمة المرور")
+                        : t("إظهار كلمة المرور")
                     }
                     title={
                       showPassword
-                        ? t(
-                            "إخفاء كلمة المرور",
-                          )
-                        : t(
-                            "إظهار كلمة المرور",
-                          )
+                        ? t("إخفاء كلمة المرور")
+                        : t("إظهار كلمة المرور")
                     }
                     className={`absolute top-1/2 grid size-8 -translate-y-1/2 place-items-center rounded-md text-[#6E969E] transition hover:bg-[#EAF4F3] hover:text-[#216474] ${
-                      isArabic
-                        ? "left-3"
-                        : "right-3"
+                      isArabic ? "left-3" : "right-3"
                     }`}
                   >
                     {showPassword ? (
-                      <EyeOff
-                        size={17}
-                        strokeWidth={
-                          1.8
-                        }
-                      />
+                      <EyeOff size={17} strokeWidth={1.8} />
                     ) : (
-                      <Eye
-                        size={17}
-                        strokeWidth={
-                          1.8
-                        }
-                      />
+                      <Eye size={17} strokeWidth={1.8} />
                     )}
                   </button>
                 </div>
               </Field>
 
               {/* Remember me */}
-              <label
-                dir={direction}
-                className={`flex cursor-pointer items-center gap-2.5 text-[12px] text-[#71858A] ${
-                  isArabic
-                    ? "justify-start"
-                    : "justify-start"
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  checked={
-                    form.remember
-                  }
-                  onChange={(event) =>
-                    setForm(
-                      (current) => ({
+              <div className="flex items-center justify-between gap-3">
+                <label
+                  dir={direction}
+                  className="flex cursor-pointer items-center gap-2.5 text-[12px] text-[#71858A]"
+                >
+                  <input
+                    type="checkbox"
+                    checked={form.remember}
+                    onChange={(event) =>
+                      setForm((current) => ({
                         ...current,
-                        remember:
-                          event.target
-                            .checked,
-                      }),
-                    )
-                  }
-                  className="size-4 shrink-0 rounded border-[#9DB5B9] accent-[#216474]"
-                />
-
-                <span>
-                  {t(
-                    "تذكرني على هذا الجهاز",
-                  )}
-                </span>
-              </label>
+                        remember: event.target.checked,
+                      }))
+                    }
+                    className="size-4 shrink-0 rounded border-[#9DB5B9] accent-[#216474]"
+                  />
+                  <span>{t("تذكرني على هذا الجهاز")}</span>
+                </label>
+                <Link
+                  to="/forgot-password"
+                  className="text-[12px] font-bold text-[#216474] hover:underline"
+                >
+                  {t("نسيت كلمة المرور؟")}
+                </Link>
+              </div>
 
               {/* Error */}
               {mutation.isError && (
@@ -334,45 +239,27 @@ export function LoginPage() {
                   dir={direction}
                   className={`rounded-lg border border-rose-100 bg-rose-50 px-4 py-3 text-[13px] font-medium text-rose-700 ${textAlignClass}`}
                 >
-                  {getApiErrorMessage(
-                    mutation.error,
-                  )}
+                  {getApiErrorMessage(mutation.error)}
                 </div>
               )}
 
               {/* Submit */}
               <button
                 type="submit"
-                disabled={
-                  mutation.isPending
-                }
+                disabled={mutation.isPending}
                 dir="ltr"
                 className={`mt-3 flex h-[54px] w-full items-center justify-center gap-2 rounded-md bg-[#174B57] text-[15px] font-semibold text-white transition hover:bg-[#123F49] disabled:cursor-not-allowed disabled:opacity-60 ${
-                  isArabic
-                    ? "flex-row-reverse"
-                    : "flex-row"
+                  isArabic ? "flex-row-reverse" : "flex-row"
                 }`}
               >
                 <span dir={direction}>
-                  {mutation.isPending
-                    ? t(
-                        "جاري التحقق...",
-                      )
-                    : t(
-                        "تسجيل الدخول",
-                      )}
+                  {mutation.isPending ? t("جاري التحقق...") : t("تسجيل الدخول")}
                 </span>
 
                 {isArabic ? (
-                  <ArrowLeft
-                    size={18}
-                    strokeWidth={1.8}
-                  />
+                  <ArrowLeft size={18} strokeWidth={1.8} />
                 ) : (
-                  <ArrowRight
-                    size={18}
-                    strokeWidth={1.8}
-                  />
+                  <ArrowRight size={18} strokeWidth={1.8} />
                 )}
               </button>
             </form>
@@ -383,9 +270,7 @@ export function LoginPage() {
               className="mt-8 flex flex-wrap items-center justify-center gap-2 text-[12px]"
             >
               <span className="text-[#A0ADB0]">
-                {t(
-                  "لا تمتلك حسابًا مسبقًا؟",
-                )}
+                {t("لا تمتلك حسابًا مسبقًا؟")}
               </span>
 
               <Link
@@ -401,18 +286,12 @@ export function LoginPage() {
         {/* Visual side */}
         <section
           className={`relative hidden min-h-[calc(100vh-72px)] overflow-hidden bg-[#0D5360] lg:block ${
-            isArabic
-              ? "lg:order-1"
-              : "lg:order-2"
+            isArabic ? "lg:order-1" : "lg:order-2"
           }`}
         >
           <img
-            src={
-              LOGIN_BACKGROUND_IMAGE
-            }
-            alt={t(
-              "خدمات الصيدلية الرقمية",
-            )}
+            src={LOGIN_BACKGROUND_IMAGE}
+            alt={t("خدمات الصيدلية الرقمية")}
             className="absolute inset-0 h-full w-full object-cover"
           />
 
@@ -429,27 +308,15 @@ export function LoginPage() {
           >
             <div className="max-w-[620px]">
               <span className="mb-7 grid size-14 place-items-center rounded-xl border border-white/15 bg-white/10 text-white backdrop-blur-sm">
-                <ShieldCheck
-                  size={27}
-                  strokeWidth={1.7}
-                />
+                <ShieldCheck size={27} strokeWidth={1.7} />
               </span>
 
               <h2 className="text-[27px] font-bold leading-[1.6] xl:text-[32px]">
-                {t(
-                  "مرحبًا بعودتك إلى",
-                )}{" "}
-                <span
-                  dir="ltr"
-                  className="inline-flex"
-                >
-                  <span className="text-white">
-                    MEDICAL
-                  </span>
+                {t("مرحبًا بعودتك إلى")}{" "}
+                <span dir="ltr" className="inline-flex">
+                  <span className="text-white">MEDICAL</span>
 
-                  <span className="text-[#F0BC42]">
-                    LIFE
-                  </span>
+                  <span className="text-[#F0BC42]">LIFE</span>
                 </span>
               </h2>
 
@@ -462,37 +329,25 @@ export function LoginPage() {
               <div
                 dir="ltr"
                 className={`mt-7 flex flex-wrap gap-3 ${
-                  isArabic
-                    ? "justify-end"
-                    : "justify-start"
+                  isArabic ? "justify-end" : "justify-start"
                 }`}
               >
-                {features.map(
-                  (item) => (
-                    <span
-                      key={item}
-                      className={`flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.08] px-4 py-2 text-[11px] font-medium text-white/85 backdrop-blur-sm ${
-                        isArabic
-                          ? "flex-row-reverse"
-                          : "flex-row"
-                      }`}
-                    >
-                      <Check
-                        size={13}
-                        strokeWidth={2}
-                        className="text-[#F0BC42]"
-                      />
+                {features.map((item) => (
+                  <span
+                    key={item}
+                    className={`flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.08] px-4 py-2 text-[11px] font-medium text-white/85 backdrop-blur-sm ${
+                      isArabic ? "flex-row-reverse" : "flex-row"
+                    }`}
+                  >
+                    <Check
+                      size={13}
+                      strokeWidth={2}
+                      className="text-[#F0BC42]"
+                    />
 
-                      <span
-                        dir={
-                          direction
-                        }
-                      >
-                        {item}
-                      </span>
-                    </span>
-                  ),
-                )}
+                    <span dir={direction}>{item}</span>
+                  </span>
+                ))}
               </div>
             </div>
           </div>
@@ -502,12 +357,7 @@ export function LoginPage() {
   );
 }
 
-function LoginHeader({
-  currentLanguage,
-  direction,
-  isArabic,
-  t,
-}) {
+function LoginHeader({ direction, isArabic, t }) {
   return (
     <header
       dir="ltr"
@@ -515,23 +365,17 @@ function LoginHeader({
     >
       <div
         className={`mx-auto flex min-h-[72px] w-full max-w-[1200px] items-center justify-between gap-4 px-5 sm:px-8 xl:px-0 ${
-          isArabic
-            ? "flex-row-reverse"
-            : "flex-row"
+          isArabic ? "flex-row-reverse" : "flex-row"
         }`}
       >
         {/* Logo and home */}
         <div
-          dir={
-            isArabic ? "rtl" : "ltr"
-          }
+          dir={isArabic ? "rtl" : "ltr"}
           className="flex min-w-0 items-center gap-4 sm:gap-[34px]"
         >
           <Link
             to="/"
-            aria-label={t(
-              "العودة إلى الصفحة الرئيسية",
-            )}
+            aria-label={t("العودة إلى الصفحة الرئيسية")}
             className="flex h-[58px] w-[64px] shrink-0 items-center justify-center"
           >
             <img
@@ -559,31 +403,23 @@ function LoginHeader({
         {/* Header links */}
         <nav
           dir={direction}
-          aria-label={t(
-            "روابط الصفحة",
-          )}
+          aria-label={t("روابط الصفحة")}
           className={`flex items-center gap-4 text-sm sm:gap-5 sm:text-base ${
-            isArabic
-              ? "flex-row-reverse"
-              : "flex-row"
+            isArabic ? "flex-row-reverse" : "flex-row"
           }`}
         >
           <Link
             to="/privacy"
             className="whitespace-nowrap text-[#666666] transition hover:text-[#216474]"
           >
-            {t(
-              "سياسة الخصوصية",
-            )}
+            {t("سياسة الخصوصية")}
           </Link>
 
           <Link
             to="/support"
             className="whitespace-nowrap text-[#666666] transition hover:text-[#216474]"
           >
-            {t(
-              "الدعم والمساعدة",
-            )}
+            {t("الدعم والمساعدة")}
           </Link>
         </nav>
       </div>
@@ -591,17 +427,9 @@ function LoginHeader({
   );
 }
 
-function Field({
-  label,
-  children,
-  direction,
-  textAlignClass,
-}) {
+function Field({ label, children, direction, textAlignClass }) {
   return (
-    <label
-      dir={direction}
-      className="block"
-    >
+    <label dir={direction} className="block">
       <span
         className={`mb-2 block text-[11px] font-semibold text-[#216474] ${textAlignClass}`}
       >

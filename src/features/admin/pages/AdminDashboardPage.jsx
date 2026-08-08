@@ -26,22 +26,14 @@ import { formatDate, formatRequestStatus } from "../utils/adminFormatters";
 import { useTranslation } from "react-i18next";
 
 export function AdminDashboardPage() {
-const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
 
-const language = String(
-  i18n.resolvedLanguage ||
-    i18n.language ||
-    "ar",
-)
-  .split("-")[0]
-  .toLowerCase();
+  const language = String(i18n.resolvedLanguage || i18n.language || "ar")
+    .split("-")[0]
+    .toLowerCase();
 
-const locale =
-  language === "ar"
-    ? "ar-SY"
-    : language === "tr"
-      ? "tr-TR"
-      : "en-US";
+  const locale =
+    language === "ar" ? "ar-SY" : language === "tr" ? "tr-TR" : "en-US";
   const [periodDays, setPeriodDays] = useState(7);
   const query = useQuery({
     queryKey: adminKeys.dashboard(periodDays),
@@ -64,16 +56,8 @@ const locale =
       label: isAllTime ? "المستخدمون" : "مستخدمون جدد",
       value: isAllTime ? data.totalUsers : data.newUsersInPeriod,
       detail: isAllTime
-        ? formatActiveAccountsDetail(
-            data.activeUsers,
-            language,
-            locale,
-          )
-        : formatAccountsTotalDetail(
-            data.totalUsers,
-            language,
-            locale,
-          ),
+        ? formatActiveAccountsDetail(data.activeUsers, language, locale)
+        : formatAccountsTotalDetail(data.totalUsers, language, locale),
       icon: UsersRound,
       tone: "bg-[#EAF4F3] text-[#216474]",
     },
@@ -81,28 +65,18 @@ const locale =
       label: isAllTime ? "الصيدليات" : "صيدليات جديدة",
       value: isAllTime ? data.totalPharmacies : data.newPharmaciesInPeriod,
       detail: isAllTime
-        ? formatApprovedDetail(
-            data.approvedPharmacies,
-            language,
-            locale,
-          )
-        : formatPharmaciesTotalDetail(
-            data.totalPharmacies,
-            language,
-            locale,
-          ),
+        ? formatApprovedDetail(data.approvedPharmacies, language, locale)
+        : formatPharmaciesTotalDetail(data.totalPharmacies, language, locale),
       icon: Building2,
       tone: "bg-[#FFF7DF] text-[#DFAE0D]",
     },
     {
       label: isAllTime ? "المنظمات" : "منظمات جديدة",
-      value: isAllTime ? data.totalOrganizations : data.newOrganizationsInPeriod,
+      value: isAllTime
+        ? data.totalOrganizations
+        : data.newOrganizationsInPeriod,
       detail: isAllTime
-        ? formatApprovedDetail(
-            data.approvedOrganizations,
-            language,
-            locale,
-          )
+        ? formatApprovedDetail(data.approvedOrganizations, language, locale)
         : formatOrganizationsTotalDetail(
             data.totalOrganizations,
             language,
@@ -212,8 +186,8 @@ const locale =
               نظرة عامة على حياة دوائية
             </h2>
             <p className="mt-3 max-w-2xl leading-7 text-white/60">
-              إحصاءات النشاط والطلبات خلال {activePeriodLabel}، مع عرض
-              حالة الاعتمادات الحالية للمنصة.
+              إحصاءات النشاط والطلبات خلال {activePeriodLabel}، مع عرض حالة
+              الاعتمادات الحالية للمنصة.
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:items-end">
@@ -452,8 +426,7 @@ const locale =
                 مؤشر جاهزية الطلبات — {activePeriodLabel}
               </h3>
               <p className="mt-1 text-sm text-[#A5A5A5]">
-                متابعة سريعة للطلبات التي تحتاج تدخلاً خلال{" "}
-                {activePeriodLabel}
+                متابعة سريعة للطلبات التي تحتاج تدخلاً خلال {activePeriodLabel}
               </p>
             </div>
             <div className="rounded-2xl bg-[#eaf4f3] px-4 py-2 text-center">
@@ -553,9 +526,7 @@ const locale =
             ) : (
               <AdminEmptyState
                 title={t("لا توجد عمليات بحث")}
-                description={t(
-                  "لم تُسجل عبارات بحث حتى الآن.",
-                )}
+                description={t("لم تُسجل عبارات بحث حتى الآن.")}
               />
             )}
           </div>
@@ -681,15 +652,8 @@ const locale =
   );
 }
 
-function formatActiveAccountsDetail(
-  count,
-  language,
-  locale,
-) {
-  const formattedCount =
-    Number(count || 0).toLocaleString(
-      locale,
-    );
+function formatActiveAccountsDetail(count, language, locale) {
+  const formattedCount = Number(count || 0).toLocaleString(locale);
 
   if (language === "en") {
     return `${formattedCount} active accounts`;
@@ -702,15 +666,8 @@ function formatActiveAccountsDetail(
   return `${formattedCount} حساب نشط`;
 }
 
-function formatAccountsTotalDetail(
-  count,
-  language,
-  locale,
-) {
-  const formattedCount =
-    Number(count || 0).toLocaleString(
-      locale,
-    );
+function formatAccountsTotalDetail(count, language, locale) {
+  const formattedCount = Number(count || 0).toLocaleString(locale);
 
   if (language === "en") {
     return `Out of ${formattedCount} accounts`;
@@ -723,15 +680,8 @@ function formatAccountsTotalDetail(
   return `من أصل ${formattedCount} حساب`;
 }
 
-function formatPharmaciesTotalDetail(
-  count,
-  language,
-  locale,
-) {
-  const formattedCount =
-    Number(count || 0).toLocaleString(
-      locale,
-    );
+function formatPharmaciesTotalDetail(count, language, locale) {
+  const formattedCount = Number(count || 0).toLocaleString(locale);
 
   if (language === "en") {
     return `Out of ${formattedCount} pharmacies`;
@@ -744,15 +694,8 @@ function formatPharmaciesTotalDetail(
   return `من أصل ${formattedCount} صيدلية`;
 }
 
-function formatOrganizationsTotalDetail(
-  count,
-  language,
-  locale,
-) {
-  const formattedCount =
-    Number(count || 0).toLocaleString(
-      locale,
-    );
+function formatOrganizationsTotalDetail(count, language, locale) {
+  const formattedCount = Number(count || 0).toLocaleString(locale);
 
   if (language === "en") {
     return `Out of ${formattedCount} organizations`;
@@ -765,15 +708,8 @@ function formatOrganizationsTotalDetail(
   return `من أصل ${formattedCount} منظمة`;
 }
 
-function formatApprovedDetail(
-  count,
-  language,
-  locale,
-) {
-  const formattedCount =
-    Number(count || 0).toLocaleString(
-      locale,
-    );
+function formatApprovedDetail(count, language, locale) {
+  const formattedCount = Number(count || 0).toLocaleString(locale);
 
   if (language === "en") {
     return `${formattedCount} approved`;
@@ -786,15 +722,8 @@ function formatApprovedDetail(
   return `${formattedCount} معتمدة`;
 }
 
-function formatActiveRequestsDetail(
-  count,
-  language,
-  locale,
-) {
-  const formattedCount =
-    Number(count || 0).toLocaleString(
-      locale,
-    );
+function formatActiveRequestsDetail(count, language, locale) {
+  const formattedCount = Number(count || 0).toLocaleString(locale);
 
   if (language === "en") {
     return `${formattedCount} active`;
@@ -821,25 +750,15 @@ function periodLabel(days) {
 }
 
 function requestStatusTone(status) {
-  const normalized = String(
-    status || "",
-  ).toLowerCase();
+  const normalized = String(status || "").toLowerCase();
 
-  if (
-    normalized.includes(
-      "available",
-    )
-  ) {
-    return normalized.includes(
-      "unavailable",
-    )
+  if (normalized.includes("available")) {
+    return normalized.includes("unavailable")
       ? "bg-[#FFF1F2] text-[#E11D48]"
       : "bg-[#EAF4F3] text-[#174B57]";
   }
 
-  if (
-    normalized.includes("cancel")
-  ) {
+  if (normalized.includes("cancel")) {
     return "bg-[#F0F6F7] text-[#60777D]";
   }
 
@@ -859,7 +778,15 @@ function formatRequestDate(value) {
 function DonutChart({ segments, total, locale }) {
   const radius = 72;
   const circumference = 2 * Math.PI * radius;
-  let offset = 0;
+  const segmentsWithOffset = segments.map((segment, index) => ({
+    ...segment,
+    offset: segments
+      .slice(0, index)
+      .reduce(
+        (sum, item) => sum + (item.value / Math.max(total, 1)) * circumference,
+        0,
+      ),
+  }));
   return (
     <div className="relative mx-auto size-[210px]">
       <svg viewBox="0 0 180 180" className="-rotate-90">
@@ -871,7 +798,7 @@ function DonutChart({ segments, total, locale }) {
           stroke="#edf3f2"
           strokeWidth="17"
         />
-        {segments.map((segment) => {
+        {segmentsWithOffset.map((segment) => {
           const length = (segment.value / Math.max(total, 1)) * circumference;
           const element = (
             <Motion.circle
@@ -888,10 +815,9 @@ function DonutChart({ segments, total, locale }) {
                 strokeDasharray: `${Math.max(length - 3, 0)} ${circumference}`,
               }}
               transition={{ duration: 0.8 }}
-              style={{ strokeDashoffset: -offset }}
+              style={{ strokeDashoffset: -segment.offset }}
             />
           );
-          offset += length;
           return element;
         })}
       </svg>
@@ -933,7 +859,9 @@ function ProgressMetric({ label, value, color, locale }) {
 function InsightCard({ icon: Icon, label, value, detail, tone, locale }) {
   return (
     <article className="group flex items-center gap-4 rounded-[1.4rem] border border-[#174b57]/8 bg-white p-5 shadow-[0_10px_30px_rgba(23,75,87,.04)] transition hover:-translate-y-1 hover:shadow-lg">
-      <span className={`grid size-12 shrink-0 place-items-center rounded-2xl ${tone}`}>
+      <span
+        className={`grid size-12 shrink-0 place-items-center rounded-2xl ${tone}`}
+      >
         <Icon size={21} />
       </span>
       <div className="min-w-0 flex-1">

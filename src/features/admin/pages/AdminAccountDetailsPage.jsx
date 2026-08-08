@@ -1,8 +1,4 @@
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Activity,
   ArrowLeft,
@@ -23,10 +19,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Link,
-  useParams,
-} from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import { getApiErrorMessage } from "../../../shared/api/errors";
 import {
@@ -58,20 +51,13 @@ const roleIcons = {
 };
 
 const statTones = {
-  primary:
-    "bg-[#EAF4F3] text-[#216474]",
-  muted:
-    "bg-[#F0F6F7] text-[#60777D]",
-  warning:
-    "bg-[#FFF7DF] text-[#DFAE0D]",
-  success:
-    "bg-[#EAF4F3] text-[#174B57]",
+  primary: "bg-[#EAF4F3] text-[#216474]",
+  muted: "bg-[#F0F6F7] text-[#60777D]",
+  warning: "bg-[#FFF7DF] text-[#DFAE0D]",
+  success: "bg-[#EAF4F3] text-[#174B57]",
 };
 
-const parseList = (
-  value,
-  fallback,
-) => {
+const parseList = (value, fallback) => {
   if (!value) {
     return fallback;
   }
@@ -79,33 +65,22 @@ const parseList = (
   try {
     const parsed = JSON.parse(value);
 
-    return Array.isArray(parsed)
-      ? parsed.join("، ") ||
-          fallback
-      : value;
+    return Array.isArray(parsed) ? parsed.join("، ") || fallback : value;
   } catch {
     return value;
   }
 };
 
 export function AdminAccountDetailsPage() {
-  const { t, i18n } =
-    useTranslation();
+  const { t, i18n } = useTranslation();
 
-  const currentLanguage =
-    normalizeLanguage(
-      i18n.resolvedLanguage ||
-        i18n.language ||
-        "ar",
-    );
+  const currentLanguage = normalizeLanguage(
+    i18n.resolvedLanguage || i18n.language || "ar",
+  );
 
-  const isArabic =
-    currentLanguage === "ar";
+  const isArabic = currentLanguage === "ar";
 
-  const direction =
-    getLanguageDirection(
-      currentLanguage,
-    );
+  const direction = getLanguageDirection(currentLanguage);
 
   const locale =
     currentLanguage === "ar"
@@ -117,70 +92,42 @@ export function AdminAccountDetailsPage() {
   const { userId } = useParams();
   const client = useQueryClient();
 
-  const [
-    confirmOpen,
-    setConfirmOpen,
-  ] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
-  const [feedback, setFeedback] =
-    useState("");
+  const [feedback, setFeedback] = useState("");
 
-  const [
-    statusReason,
-    setStatusReason,
-  ] = useState("");
+  const [statusReason, setStatusReason] = useState("");
 
   const account = useQuery({
-    queryKey:
-      adminKeys.account(userId),
-    queryFn: () =>
-      getAdminAccount(userId),
+    queryKey: adminKeys.account(userId),
+    queryFn: () => getAdminAccount(userId),
   });
 
   const status = useMutation({
-    mutationFn: (payload) =>
-      updateAdminAccountStatus(
-        userId,
-        payload,
-      ),
+    mutationFn: (payload) => updateAdminAccountStatus(userId, payload),
 
     onSuccess: () => {
       client.invalidateQueries({
-        queryKey:
-          adminKeys.account(
-            userId,
-          ),
+        queryKey: adminKeys.account(userId),
       });
 
       client.invalidateQueries({
-        queryKey: [
-          "admin",
-          "accounts",
-        ],
+        queryKey: ["admin", "accounts"],
       });
 
       setConfirmOpen(false);
       setStatusReason("");
 
-      setFeedback(
-        t(
-          "تم تحديث حالة الحساب وإرسال إشعار إلى صاحبه بنجاح.",
-        ),
-      );
+      setFeedback(t("تم تحديث حالة الحساب وإرسال إشعار إلى صاحبه بنجاح."));
     },
 
-    onError: (error) =>
-      setFeedback(
-        getApiErrorMessage(error),
-      ),
+    onError: (error) => setFeedback(getApiErrorMessage(error)),
   });
 
   if (account.isPending) {
     return (
       <section className="grid min-h-[320px] place-items-center rounded-[1.5rem] border border-[#DCE8EA] bg-white text-sm font-bold text-[#71858A]">
-        {t(
-          "جاري تحميل الحساب...",
-        )}
+        {t("جاري تحميل الحساب...")}
       </section>
     );
   }
@@ -188,16 +135,10 @@ export function AdminAccountDetailsPage() {
   if (account.isError) {
     return (
       <section className="rounded-[1.5rem] border border-[#FECDD3] bg-[#FFF1F2] p-8 text-center">
-        <p className="font-bold text-[#BE123C]">
-          {t(
-            "تعذر تحميل الحساب",
-          )}
-        </p>
+        <p className="font-bold text-[#BE123C]">{t("تعذر تحميل الحساب")}</p>
 
         <p className="mt-2 text-sm text-[#E11D48]">
-          {getApiErrorMessage(
-            account.error,
-          )}
+          {getApiErrorMessage(account.error)}
         </p>
       </section>
     );
@@ -205,56 +146,33 @@ export function AdminAccountDetailsPage() {
 
   const item = account.data;
 
-  const isAccountActive =
-    item.isActive === true;
+  const isAccountActive = item.isActive === true;
 
-  const isUser =
-    item.role === "User";
+  const isUser = item.role === "User";
 
-  const RoleIcon =
-    roleIcons[item.role] ||
-    UserRound;
+  const RoleIcon = roleIcons[item.role] || UserRound;
 
-  const accountName =
-    item.profileName ||
-    item.fullName;
+  const accountName = item.profileName || item.fullName;
 
   const createdAt = item.createdAtUtc
-    ? new Intl.DateTimeFormat(
-        locale,
-        {
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        },
-      ).format(
-        new Date(
-          item.createdAtUtc,
-        ),
-      )
+    ? new Intl.DateTimeFormat(locale, {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }).format(new Date(item.createdAtUtc))
     : t("غير محدد");
 
   return (
-    <div
-      dir={direction}
-      lang={currentLanguage}
-      className="space-y-6"
-    >
+    <div dir={direction} lang={currentLanguage} className="space-y-6">
       {/* Back */}
       <div>
         <Link
           to="/app/accounts"
           className="inline-flex items-center gap-2 rounded-xl border border-[#DCE8EA] bg-white px-4 py-2.5 text-sm font-bold text-[#216474] shadow-[0_6px_20px_rgba(23,75,87,.04)] transition hover:border-[#AFC9CD] hover:bg-[#F8FBFB]"
         >
-          {isArabic ? (
-            <ArrowRight size={17} />
-          ) : (
-            <ArrowLeft size={17} />
-          )}
+          {isArabic ? <ArrowRight size={17} /> : <ArrowLeft size={17} />}
 
-          {t(
-            "العودة إلى جميع الحسابات",
-          )}
+          {t("العودة إلى جميع الحسابات")}
         </Link>
       </div>
 
@@ -275,7 +193,9 @@ export function AdminAccountDetailsPage() {
               <RoleIcon size={34} strokeWidth={1.8} />
             </span>
 
-            <div className={`min-w-0 flex-1 ${isArabic ? "text-right" : "text-left"}`}>
+            <div
+              className={`min-w-0 flex-1 ${isArabic ? "text-right" : "text-left"}`}
+            >
               <div className="flex flex-wrap items-center gap-2">
                 <span className="rounded-full border border-white/10 bg-white/[.07] px-3 py-1 text-xs font-bold text-[#BCE7E3]">
                   {t(roleLabels[item.role] || item.role)}
@@ -324,15 +244,15 @@ export function AdminAccountDetailsPage() {
 
           <div className="w-full rounded-[1.25rem] border border-white/10 bg-white/[.07] p-5 backdrop-blur-sm xl:w-[290px]">
             <div className="flex items-start gap-3">
-             <span
-  className={`grid size-10 shrink-0 place-items-center rounded-xl ${
-    isAccountActive
-      ? "bg-[#F5CB72]/10 text-[#F5CB72]"
-      : "bg-[#FFF1F2]/10 text-[#FCA5A5]"
-  }`}
->
-  <ShieldCheck size={19} strokeWidth={2} />
-</span>
+              <span
+                className={`grid size-10 shrink-0 place-items-center rounded-xl ${
+                  isAccountActive
+                    ? "bg-[#F5CB72]/10 text-[#F5CB72]"
+                    : "bg-[#FFF1F2]/10 text-[#FCA5A5]"
+                }`}
+              >
+                <ShieldCheck size={19} strokeWidth={2} />
+              </span>
 
               <div className="min-w-0 flex-1">
                 <p className="text-[10px] font-bold text-white/40">
@@ -348,7 +268,9 @@ export function AdminAccountDetailsPage() {
                 <p className="mt-2 text-[11px] leading-5 text-white/45">
                   {isAccountActive
                     ? t("يمكن لصاحب الحساب تسجيل الدخول واستخدام خدمات دوره.")
-                    : t("لن يتمكن صاحب الحساب من تسجيل الدخول حتى إعادة تفعيله.")}
+                    : t(
+                        "لن يتمكن صاحب الحساب من تسجيل الدخول حتى إعادة تفعيله.",
+                      )}
                 </p>
               </div>
             </div>
@@ -361,20 +283,20 @@ export function AdminAccountDetailsPage() {
                 setStatusReason("");
                 setConfirmOpen(true);
               }}
-          className={`group mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-black transition duration-300 hover:-translate-y-0.5 ${
-  isAccountActive
-    ? "border-[#F5CB72]/70 text-[#F5CB72] bg-transparent hover:bg-[#F5CB72]/10"
-    : "border-[#8BD0CB]/60 text-[#8BD0CB] bg-transparent hover:bg-[#8BD0CB]/10"
-}`}
+              className={`group mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-black transition duration-300 hover:-translate-y-0.5 ${
+                isAccountActive
+                  ? "border-[#F5CB72]/70 text-[#F5CB72] bg-transparent hover:bg-[#F5CB72]/10"
+                  : "border-[#8BD0CB]/60 text-[#8BD0CB] bg-transparent hover:bg-[#8BD0CB]/10"
+              }`}
             >
               <ToggleLeft
-  size={19}
-  className={`transition group-hover:scale-110 ${
-    isAccountActive
-      ? "text-[##F5CB72]"
-      : "text-[##F5CB72] rotate-180"
-  }`}
-/>
+                size={19}
+                className={`transition group-hover:scale-110 ${
+                  isAccountActive
+                    ? "text-[##F5CB72]"
+                    : "text-[##F5CB72] rotate-180"
+                }`}
+              />
 
               {isAccountActive ? t("إيقاف الحساب") : t("تفعيل الحساب")}
             </button>
@@ -386,9 +308,7 @@ export function AdminAccountDetailsPage() {
       {feedback && (
         <div
           className={`rounded-xl border px-5 py-4 text-sm font-bold ${
-            feedback.startsWith(
-              t("تم"),
-            )
+            feedback.startsWith(t("تم"))
               ? "border-[#CFE4E7] bg-[#EAF4F3] text-[#216474]"
               : "border-[#FECDD3] bg-[#FFF1F2] text-[#BE123C]"
           }`}
@@ -408,16 +328,12 @@ export function AdminAccountDetailsPage() {
                   : "bg-[#FFF1F2] text-[#E11D48]"
               }`}
             >
-              <ShieldCheck
-                size={21}
-              />
+              <ShieldCheck size={21} />
             </span>
 
             <div>
               <h2 className="font-black text-[#29464D]">
-                {t(
-                  "حالة الوصول إلى المنصة",
-                )}
+                {t("حالة الوصول إلى المنصة")}
               </h2>
 
               <p className="mt-1 text-xs leading-5 text-[#71858A]">
@@ -425,9 +341,7 @@ export function AdminAccountDetailsPage() {
                   ? t(
                       "الحساب يستطيع تسجيل الدخول واستخدام الخدمات المتاحة لدوره.",
                     )
-                  : t(
-                      "تم منع الحساب من تسجيل الدخول واستخدام خدمات المنصة.",
-                    )}
+                  : t("تم منع الحساب من تسجيل الدخول واستخدام خدمات المنصة.")}
               </p>
             </div>
           </div>
@@ -442,23 +356,15 @@ export function AdminAccountDetailsPage() {
         >
           <div>
             <span className="text-xs font-bold text-[#60777D]">
-              {t(
-                "الحالة الحالية",
-              )}
+              {t("الحالة الحالية")}
             </span>
 
             <strong
               className={`mt-1 block text-lg font-black ${
-                isAccountActive
-                  ? "text-[#174B57]"
-                  : "text-[#BE123C]"
+                isAccountActive ? "text-[#174B57]" : "text-[#BE123C]"
               }`}
             >
-              {isAccountActive
-                ? t(
-                    "نشط ومتاح",
-                  )
-                : t("موقوف")}
+              {isAccountActive ? t("نشط ومتاح") : t("موقوف")}
             </strong>
           </div>
 
@@ -480,51 +386,35 @@ export function AdminAccountDetailsPage() {
       <section className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]">
         <Stat
           icon={Activity}
-          label={t(
-            "طلبات الأدوية",
-          )}
-          value={
-            item.medicineRequestsCount
-          }
+          label={t("طلبات الأدوية")}
+          value={item.medicineRequestsCount}
           tone="primary"
           locale={locale}
         />
 
         <Stat
           icon={Bell}
-          label={t(
-            "الإشعارات",
-          )}
-          value={
-            item.notificationsCount
-          }
+          label={t("الإشعارات")}
+          value={item.notificationsCount}
           tone="muted"
           locale={locale}
         />
 
-        {item.role ===
-          "Pharmacy" && (
+        {item.role === "Pharmacy" && (
           <Stat
             icon={PackageSearch}
-            label={t(
-              "عناصر المخزون",
-            )}
-            value={
-              item.inventoryItemsCount
-            }
+            label={t("عناصر المخزون")}
+            value={item.inventoryItemsCount}
             tone="warning"
             locale={locale}
           />
         )}
 
-        {item.role ===
-          "Organization" && (
+        {item.role === "Organization" && (
           <Stat
             icon={Building2}
             label={t("الحملات")}
-            value={
-              item.campaignsCount
-            }
+            value={item.campaignsCount}
             tone="warning"
             locale={locale}
           />
@@ -533,12 +423,8 @@ export function AdminAccountDetailsPage() {
         {isUser && (
           <Stat
             icon={Search}
-            label={t(
-              "عمليات البحث",
-            )}
-            value={
-              item.searchHistoryCount
-            }
+            label={t("عمليات البحث")}
+            value={item.searchHistoryCount}
             tone="success"
             locale={locale}
           />
@@ -549,48 +435,27 @@ export function AdminAccountDetailsPage() {
       <section className="grid gap-5 lg:grid-cols-2">
         <Card
           icon={UserRound}
-          title={t(
-            "بيانات الحساب",
-          )}
-          subtitle={t(
-            "معلومات الهوية والتواصل",
-          )}
+          title={t("بيانات الحساب")}
+          subtitle={t("معلومات الهوية والتواصل")}
         >
           <InfoGrid>
+            <InfoBox label={t("الاسم الكامل")} value={item.fullName} t={t} />
+
             <InfoBox
-              label={t(
-                "الاسم الكامل",
-              )}
-              value={item.fullName}
+              label={t("نوع الحساب")}
+              value={t(roleLabels[item.role] || item.role)}
               t={t}
             />
 
             <InfoBox
-              label={t(
-                "نوع الحساب",
-              )}
-              value={t(
-                roleLabels[
-                  item.role
-                ] ||
-                  item.role,
-              )}
-              t={t}
-            />
-
-            <InfoBox
-              label={t(
-                "البريد الإلكتروني",
-              )}
+              label={t("البريد الإلكتروني")}
               value={item.email}
               dir="rtl"
               t={t}
             />
 
             <InfoBox
-              label={t(
-                "رقم الهاتف",
-              )}
+              label={t("رقم الهاتف")}
               value={item.phoneNumber}
               dir="rtl"
               t={t}
@@ -598,11 +463,7 @@ export function AdminAccountDetailsPage() {
 
             <InfoBox
               label={t("الحالة")}
-              value={
-                isAccountActive
-                  ? t("فعال")
-                  : t("موقوف")
-              }
+              value={isAccountActive ? t("فعال") : t("موقوف")}
               fullWidth
               t={t}
             />
@@ -611,63 +472,32 @@ export function AdminAccountDetailsPage() {
 
         <Card
           icon={MapPin}
-          title={t(
-            "بيانات الملف والموقع",
-          )}
-          subtitle={t(
-            "تفاصيل الجهة والاعتماد",
-          )}
+          title={t("بيانات الملف والموقع")}
+          subtitle={t("تفاصيل الجهة والاعتماد")}
         >
           <InfoGrid>
+            <InfoBox label={t("اسم الجهة")} value={item.profileName} t={t} />
+
+            <InfoBox label={t("المدينة")} value={item.city} t={t} />
+
+            <InfoBox label={t("المنطقة")} value={item.area} t={t} />
+
+            <InfoBox label={t("العنوان")} value={item.address} t={t} />
+
             <InfoBox
-              label={t(
-                "اسم الجهة",
-              )}
-              value={item.profileName}
+              label={t("رقم الترخيص/التسجيل")}
+              value={item.licenseOrRegistrationNumber}
               t={t}
             />
 
             <InfoBox
-              label={t("المدينة")}
-              value={item.city}
-              t={t}
-            />
-
-            <InfoBox
-              label={t("المنطقة")}
-              value={item.area}
-              t={t}
-            />
-
-            <InfoBox
-              label={t("العنوان")}
-              value={item.address}
-              t={t}
-            />
-
-            <InfoBox
-              label={t(
-                "رقم الترخيص/التسجيل",
-              )}
+              label={t("حالة الاعتماد")}
               value={
-                item.licenseOrRegistrationNumber
-              }
-              t={t}
-            />
-
-            <InfoBox
-              label={t(
-                "حالة الاعتماد",
-              )}
-              value={
-                item.isApproved ==
-                null
+                item.isApproved == null
                   ? null
                   : item.isApproved
                     ? t("معتمد")
-                    : t(
-                        "غير معتمد",
-                      )
+                    : t("غير معتمد")
               }
               t={t}
             />
@@ -686,72 +516,39 @@ export function AdminAccountDetailsPage() {
       {isUser && (
         <Card
           icon={HeartPulse}
-          title={t(
-            "الملف الصحي",
-          )}
-          subtitle={t(
-            "المعلومات الطبية المسجلة",
-          )}
+          title={t("الملف الصحي")}
+          subtitle={t("المعلومات الطبية المسجلة")}
         >
           <InfoGrid>
+            <InfoBox label={t("زمرة الدم")} value={item.bloodType} t={t} />
+
             <InfoBox
-              label={t(
-                "زمرة الدم",
-              )}
-              value={item.bloodType}
+              label={t("الحساسيات")}
+              value={parseList(item.allergies, t("غير مضاف"))}
               t={t}
             />
 
             <InfoBox
-              label={t(
-                "الحساسيات",
-              )}
-              value={parseList(
-                item.allergies,
-                t("غير مضاف"),
-              )}
+              label={t("الأمراض المزمنة")}
+              value={parseList(item.chronicConditions, t("غير مضاف"))}
               t={t}
             />
 
             <InfoBox
-              label={t(
-                "الأمراض المزمنة",
-              )}
-              value={parseList(
-                item.chronicConditions,
-                t("غير مضاف"),
-              )}
+              label={t("الأدوية الحالية")}
+              value={parseList(item.currentMedications, t("غير مضاف"))}
               t={t}
             />
 
             <InfoBox
-              label={t(
-                "الأدوية الحالية",
-              )}
-              value={parseList(
-                item.currentMedications,
-                t("غير مضاف"),
-              )}
+              label={t("جهة اتصال الطوارئ")}
+              value={item.emergencyContactName}
               t={t}
             />
 
             <InfoBox
-              label={t(
-                "جهة اتصال الطوارئ",
-              )}
-              value={
-                item.emergencyContactName
-              }
-              t={t}
-            />
-
-            <InfoBox
-              label={t(
-                "هاتف الطوارئ",
-              )}
-              value={
-                item.emergencyContactPhoneNumber
-              }
+              label={t("هاتف الطوارئ")}
+              value={item.emergencyContactPhoneNumber}
               dir="ltr"
               t={t}
             />
@@ -771,33 +568,21 @@ export function AdminAccountDetailsPage() {
             <div className="relative bg-[#174B57] px-6 py-7 text-white">
               <button
                 type="button"
-                onClick={() =>
-                  setConfirmOpen(
-                    false,
-                  )
-                }
+                onClick={() => setConfirmOpen(false)}
                 className={`absolute top-4 grid size-9 place-items-center rounded-xl bg-white/10 transition hover:bg-white/20 ${
-                  isArabic
-                    ? "left-4"
-                    : "right-4"
+                  isArabic ? "left-4" : "right-4"
                 }`}
-                aria-label={t(
-                  "إغلاق",
-                )}
+                aria-label={t("إغلاق")}
               >
                 <X size={18} />
               </button>
 
               <span
                 className={`grid size-12 place-items-center rounded-2xl border border-white/10 bg-white/[.08] ${
-                  isAccountActive
-                    ? "text-[#FFD7DF]"
-                    : "text-[#BCE7E3]"
+                  isAccountActive ? "text-[#FFD7DF]" : "text-[#BCE7E3]"
                 }`}
               >
-                <ShieldCheck
-                  size={24}
-                />
+                <ShieldCheck size={24} />
               </span>
 
               <h3
@@ -805,12 +590,8 @@ export function AdminAccountDetailsPage() {
                 className="mt-4 text-2xl font-black"
               >
                 {isAccountActive
-                  ? t(
-                      "تأكيد إيقاف الحساب",
-                    )
-                  : t(
-                      "تأكيد تفعيل الحساب",
-                    )}
+                  ? t("تأكيد إيقاف الحساب")
+                  : t("تأكيد تفعيل الحساب")}
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-white/70">
@@ -832,62 +613,36 @@ export function AdminAccountDetailsPage() {
               <label className="mt-5 block">
                 <span className="mb-2 block text-sm font-bold text-[#29464D]">
                   {isAccountActive
-                    ? t(
-                        "سبب إيقاف الحساب",
-                      )
-                    : t(
-                        "ملاحظة إعادة التفعيل (اختياري)",
-                      )}
+                    ? t("سبب إيقاف الحساب")
+                    : t("ملاحظة إعادة التفعيل (اختياري)")}
                 </span>
 
                 <textarea
                   rows={4}
                   maxLength={500}
-                  required={
-                    isAccountActive
-                  }
+                  required={isAccountActive}
                   value={statusReason}
-                  onChange={(event) =>
-                    setStatusReason(
-                      event.target
-                        .value,
-                    )
-                  }
+                  onChange={(event) => setStatusReason(event.target.value)}
                   className="w-full rounded-xl border border-[#DCE8EA] bg-white px-4 py-3 text-sm text-[#29464D] outline-none transition placeholder:text-[#A5A5A5] focus:border-[#216474] focus:ring-2 focus:ring-[#216474]/10"
                   placeholder={
                     isAccountActive
-                      ? t(
-                          "اكتب سببًا واضحًا لصاحب الحساب (10 أحرف على الأقل)",
-                        )
-                      : t(
-                          "اكتب ملاحظة توضيحية لصاحب الحساب إن لزم",
-                        )
+                      ? t("اكتب سببًا واضحًا لصاحب الحساب (10 أحرف على الأقل)")
+                      : t("اكتب ملاحظة توضيحية لصاحب الحساب إن لزم")
                   }
                 />
 
                 <span className="mt-2 flex items-center gap-2 text-xs font-semibold text-[#71858A]">
-                  <Bell
-                    size={14}
-                    className="text-[#216474]"
-                  />
+                  <Bell size={14} className="text-[#216474]" />
 
-                  {t(
-                    "سيصل إشعار إلى صاحب الحساب يوضح القرار وملاحظة الإدارة.",
-                  )}
+                  {t("سيصل إشعار إلى صاحب الحساب يوضح القرار وملاحظة الإدارة.")}
                 </span>
               </label>
 
               <div className="mt-6 grid grid-cols-2 gap-3">
                 <button
                   type="button"
-                  onClick={() =>
-                    setConfirmOpen(
-                      false,
-                    )
-                  }
-                  disabled={
-                    status.isPending
-                  }
+                  onClick={() => setConfirmOpen(false)}
+                  disabled={status.isPending}
                   className="rounded-xl border border-[#DCE8EA] px-4 py-3 font-bold text-[#60777D] transition hover:bg-[#F8FBFB]"
                 >
                   {t("إلغاء")}
@@ -897,19 +652,14 @@ export function AdminAccountDetailsPage() {
                   type="button"
                   onClick={() =>
                     status.mutate({
-                      isActive:
-                        !isAccountActive,
+                      isActive: !isAccountActive,
 
-                      reason:
-                        statusReason.trim() ||
-                        null,
+                      reason: statusReason.trim() || null,
                     })
                   }
                   disabled={
                     status.isPending ||
-                    (isAccountActive &&
-                      statusReason.trim()
-                        .length < 10)
+                    (isAccountActive && statusReason.trim().length < 10)
                   }
                   className={`rounded-xl border px-4 py-3 font-black transition disabled:cursor-not-allowed disabled:opacity-60 ${
                     isAccountActive
@@ -918,16 +668,10 @@ export function AdminAccountDetailsPage() {
                   }`}
                 >
                   {status.isPending
-                    ? t(
-                        "جاري الحفظ...",
-                      )
+                    ? t("جاري الحفظ...")
                     : isAccountActive
-                      ? t(
-                          "نعم، أوقف الحساب",
-                        )
-                      : t(
-                          "نعم، فعّل الحساب",
-                        )}
+                      ? t("نعم، أوقف الحساب")
+                      : t("نعم، فعّل الحساب")}
                 </button>
               </div>
             </div>
@@ -938,12 +682,7 @@ export function AdminAccountDetailsPage() {
   );
 }
 
-function Card({
-  icon: Icon,
-  title,
-  subtitle,
-  children,
-}) {
+function Card({ icon: Icon, title, subtitle, children }) {
   return (
     <section className="overflow-hidden rounded-[1.55rem] border border-[#DCE8EA] bg-white shadow-[0_12px_35px_rgba(23,75,87,.045)]">
       <div className="flex items-center gap-3 border-b border-[#E6EEF0] bg-[#FAFCFC] px-6 py-5">
@@ -952,44 +691,26 @@ function Card({
         </span>
 
         <div>
-          <h3 className="font-black text-[#29464D]">
-            {title}
-          </h3>
+          <h3 className="font-black text-[#29464D]">{title}</h3>
 
-          <p className="mt-0.5 text-xs text-[#829499]">
-            {subtitle}
-          </p>
+          <p className="mt-0.5 text-xs text-[#829499]">{subtitle}</p>
         </div>
       </div>
 
-      <div className="p-5">
-        {children}
-      </div>
+      <div className="p-5">{children}</div>
     </section>
   );
 }
 
 function InfoGrid({ children }) {
-  return (
-    <div className="grid gap-3 sm:grid-cols-2">
-      {children}
-    </div>
-  );
+  return <div className="grid gap-3 sm:grid-cols-2">{children}</div>;
 }
 
-function InfoBox({
-  label,
-  value,
-  dir,
-  fullWidth = false,
-  t,
-}) {
+function InfoBox({ label, value, dir, fullWidth = false, t }) {
   return (
     <div
       className={`rounded-xl border border-[#E6EEF0] bg-[#F8FBFB] px-4 py-3 text-start ${
-        fullWidth
-          ? "sm:col-span-2"
-          : ""
+        fullWidth ? "sm:col-span-2" : ""
       }`}
     >
       <span className="block text-[10px] font-medium text-[#829499]">
@@ -1017,14 +738,10 @@ function Stat({
     <article className="flex min-h-[108px] items-center gap-4 rounded-[1.35rem] border border-[#DCE8EA] bg-white px-5 py-4 shadow-[0_10px_30px_rgba(23,75,87,.04)]">
       <span
         className={`grid size-11 shrink-0 place-items-center rounded-xl ${
-          statTones[tone] ||
-          statTones.primary
+          statTones[tone] || statTones.primary
         }`}
       >
-        <Icon
-          size={20}
-          strokeWidth={1.8}
-        />
+        <Icon size={20} strokeWidth={1.8} />
       </span>
 
       <div className="min-w-0 flex-1">
@@ -1033,9 +750,7 @@ function Stat({
         </span>
 
         <strong className="mt-2 block text-[28px] font-black leading-none text-[#17363E]">
-          {Number(
-            value || 0,
-          ).toLocaleString(locale)}
+          {Number(value || 0).toLocaleString(locale)}
         </strong>
       </div>
     </article>

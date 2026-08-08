@@ -8,15 +8,13 @@ export const landingMessages = {
     "تسجيل دخول": "Sign in",
     "إنشاء حساب": "Create account",
 
-    "حل ذكي للعثور على الأدوية":
-      "A smart way to find medicines",
+    "حل ذكي للعثور على الأدوية": "A smart way to find medicines",
 
     "دواؤك...": "Your medicine...",
     أقرب: "closer",
     "مما تتوقع": "than you expect",
 
-    "دواؤك... أقرب مما تتوقع":
-      "Your medicine... closer than you expect",
+    "دواؤك... أقرب مما تتوقع": "Your medicine... closer than you expect",
 
     "نساعدك في العثور على الأدوية المتوفرة في الصيدليات القريبة منك بسرعة ودقة عالية":
       "We help you find available medicines in nearby pharmacies quickly and accurately.",
@@ -24,16 +22,13 @@ export const landingMessages = {
     "ابدأ تجربتك": "Get started",
 
     "صيدليات مسجلة": "Registered pharmacies",
-    "بيانات الصيدلية والدواء":
-      "Pharmacy and medicine data",
+    "بيانات الصيدلية والدواء": "Pharmacy and medicine data",
 
     "بحث سريع": "Quick search",
-    "وصول إلى أقرب صيدلية":
-      "Find the nearest pharmacy",
+    "وصول إلى أقرب صيدلية": "Find the nearest pharmacy",
 
     "وصول سريع": "Fast access",
-    "ابحث عن دوائك بسرعة":
-      "Find your medicine quickly",
+    "ابحث عن دوائك بسرعة": "Find your medicine quickly",
 
     "دقة عالية": "High accuracy",
 
@@ -47,11 +42,9 @@ export const landingMessages = {
 
     "معلومات محدثة": "Updated information",
 
-    "بيانات الصيدليات تحدث باستمرار":
-      "Pharmacy data is continuously updated.",
+    "بيانات الصيدليات تحدث باستمرار": "Pharmacy data is continuously updated.",
 
-    "تجربة مصممة لكل دور":
-      "An experience designed for every role",
+    "تجربة مصممة لكل دور": "An experience designed for every role",
 
     "نظامنا مصمم لأربع فئات رئيسية تعمل معاً لتوفير تجربة سهلة وفعالة.":
       "Our system serves four main roles working together for an easy and effective experience.",
@@ -97,7 +90,7 @@ export const landingMessages = {
 
     "نفتخر بثقة عملائنا، وهذه بعض آرائهم عن تجربتهم معنا.":
       "We value our users' trust. Here are some of their experiences.",
-          "تطبيق رائع وسهل الاستخدام، قدرت ألاقي دوائي وأقرب صيدلية خلال ثوانٍ، ووفر علي وقت وجهد كبير.":
+    "تطبيق رائع وسهل الاستخدام، قدرت ألاقي دوائي وأقرب صيدلية خلال ثوانٍ، ووفر علي وقت وجهد كبير.":
       "A wonderful and easy-to-use app. I found my medicine and the nearest pharmacy within seconds, saving me a lot of time and effort.",
 
     "البحث سريع والنتائج واضحة، وأكثر شيء أعجبني معرفة الصيدليات الأقرب بحسب موقعي مباشرة.":
@@ -151,16 +144,14 @@ export const landingMessages = {
 
     "حماية متقدمة": "Advanced protection",
 
-    "نستخدم أحدث التقنيات":
-      "We use the latest technologies.",
+    "نستخدم أحدث التقنيات": "We use the latest technologies.",
 
     "شفافية مطلقة": "Full transparency",
 
     "وضوح كامل باستخدام بياناتك":
       "Complete transparency in how your data is used.",
 
-    "ابدأ باستخدام المنصة الآن":
-      "Start using the platform now",
+    "ابدأ باستخدام المنصة الآن": "Start using the platform now",
 
     "سجل حسابك لتتمكن من البحث عن الصيدليات بسهولة وفر الوقت.":
       "Create your account to search pharmacies easily and save time.",
@@ -177,15 +168,13 @@ export const landingMessages = {
     "تواصل معنا": "Bize ulaşın",
     "تسجيل دخول": "Giriş yap",
     "إنشاء حساب": "Hesap oluştur",
-        "حل ذكي للعثور على الأدوية":
-      "İlaç bulmak için akıllı çözüm",
+    "حل ذكي للعثور على الأدوية": "İlaç bulmak için akıllı çözüm",
 
     "دواؤك...": "İlacınız...",
     أقرب: "daha yakın",
     "مما تتوقع": "sandığınızdan",
 
-    "دواؤك... أقرب مما تتوقع":
-      "İlacınız... sandığınızdan daha yakın",
+    "دواؤك... أقرب مما تتوقع": "İlacınız... sandığınızdan daha yakın",
 
     "نساعدك في العثور على الأدوية المتوفرة في الصيدليات القريبة منك بسرعة ودقة عالية":
       "Yakın eczanelerde bulunan ilaçları hızlı ve doğru şekilde bulmanıza yardımcı oluruz.",
@@ -193,16 +182,13 @@ export const landingMessages = {
     "ابدأ تجربتك": "Başlayın",
 
     "صيدليات مسجلة": "Kayıtlı eczaneler",
-    "بيانات الصيدلية والدواء":
-      "Eczane ve ilaç bilgileri",
+    "بيانات الصيدلية والدواء": "Eczane ve ilaç bilgileri",
 
     "بحث سريع": "Hızlı arama",
-    "وصول إلى أقرب صيدلية":
-      "En yakın eczaneyi bulun",
+    "وصول إلى أقرب صيدلية": "En yakın eczaneyi bulun",
 
     "وصول سريع": "Hızlı erişim",
-    "ابحث عن دوائك بسرعة":
-      "İlacınızı hızlıca bulun",
+    "ابحث عن دوائك بسرعة": "İlacınızı hızlıca bulun",
 
     "دقة عالية": "Yüksek doğruluk",
 
@@ -216,11 +202,9 @@ export const landingMessages = {
 
     "معلومات محدثة": "Güncel bilgiler",
 
-    "بيانات الصيدليات تحدث باستمرار":
-      "Eczane bilgileri sürekli güncellenir.",
+    "بيانات الصيدليات تحدث باستمرار": "Eczane bilgileri sürekli güncellenir.",
 
-    "تجربة مصممة لكل دور":
-      "Her rol için tasarlanmış deneyim",
+    "تجربة مصممة لكل دور": "Her rol için tasarlanmış deneyim",
 
     "نظامنا مصمم لأربع فئات رئيسية تعمل معاً لتوفير تجربة سهلة وفعالة.":
       "Sistemimiz kolay ve etkili bir deneyim için dört ana role göre tasarlanmıştır.",
@@ -266,7 +250,7 @@ export const landingMessages = {
 
     "نفتخر بثقة عملائنا، وهذه بعض آرائهم عن تجربتهم معنا.":
       "Kullanıcılarımızın güveniyle gurur duyuyoruz. İşte deneyimleri hakkında bazı yorumlar.",
-          "تطبيق رائع وسهل الاستخدام، قدرت ألاقي دوائي وأقرب صيدلية خلال ثوانٍ، ووفر علي وقت وجهد كبير.":
+    "تطبيق رائع وسهل الاستخدام، قدرت ألاقي دوائي وأقرب صيدلية خلال ثوانٍ، ووفر علي وقت وجهد كبير.":
       "Harika ve kullanımı kolay bir uygulama. İlacımı ve en yakın eczaneyi saniyeler içinde buldum, bana çok zaman ve emek kazandırdı.",
 
     "البحث سريع والنتائج واضحة، وأكثر شيء أعجبني معرفة الصيدليات الأقرب بحسب موقعي مباشرة.":
@@ -320,16 +304,14 @@ export const landingMessages = {
 
     "حماية متقدمة": "Gelişmiş koruma",
 
-    "نستخدم أحدث التقنيات":
-      "En son teknolojileri kullanıyoruz.",
+    "نستخدم أحدث التقنيات": "En son teknolojileri kullanıyoruz.",
 
     "شفافية مطلقة": "Tam şeffaflık",
 
     "وضوح كامل باستخدام بياناتك":
       "Verilerinizin kullanımı konusunda tam şeffaflık.",
 
-    "ابدأ باستخدام المنصة الآن":
-      "Platformu hemen kullanmaya başlayın",
+    "ابدأ باستخدام المنصة الآن": "Platformu hemen kullanmaya başlayın",
 
     "سجل حسابك لتتمكن من البحث عن الصيدليات بسهولة وفر الوقت.":
       "Eczaneleri kolayca aramak ve zamandan tasarruf etmek için hesabınızı oluşturun.",

@@ -1,3 +1,4 @@
+/* eslint-disable no-dupe-keys -- generated translations may repeat source keys; the final generated value wins */
 // Generated from visible Arabic UI copy. Regenerate with npm run translations:build.
 export const autoMessages = {
   en: {
@@ -10,827 +11,721 @@ export const autoMessages = {
     '= 8], ["حرف إنكليزي كبير", /[A-Z]/.test(form.password)], ["حرف إنكليزي صغير", /[a-z]/.test(form.password)], [ "رقم ورمز خاص", /\\d/.test(form.password) && /[^a-zA-Z0-9]/.test(form.password), ], ]; return (':
       "= 8]. return(",
     "8 أحرف على الأقل": "At least 8 characters",
-"لوحة التحكم": "Dashboard",
-  "حالة المنظمة": "State of the organization",
-  "طلبات المساعدة الدوائية":
-  "Medicine Assistance Requests",
-// Dashboard
-"{{count}} صنف متاح للمرضى":
-  "{{count}} medicines available for patients",
-  "صيدلية": "Pharmacy",
+    "لوحة التحكم": "Dashboard",
+    "حالة المنظمة": "State of the organization",
+    "طلبات المساعدة الدوائية": "Medicine Assistance Requests",
+    // Dashboard
+    "{{count}} صنف متاح للمرضى": "{{count}} medicines available for patients",
+    صيدلية: "Pharmacy",
 
-"سراقب، إدلب": "Saraqib, Idlib",
+    "سراقب، إدلب": "Saraqib, Idlib",
 
-"سراقب": "Saraqib",
+    سراقب: "Saraqib",
 
-"ادلب": "Idlib",
-"ابحث هنا باسم الدواء...":
-  "Search here by medicine name...",
+    ادلب: "Idlib",
+    "ابحث هنا باسم الدواء...": "Search here by medicine name...",
 
-"الانتهاء":
-  "Expiry",
+    الانتهاء: "Expiry",
 
-"غير محدد":
-  "Not specified",
+    "غير محدد": "Not specified",
 
-"الانتهاء: غير محدد":
-  "Expiry: Not specified",
+    "الانتهاء: غير محدد": "Expiry: Not specified",
 
-"ظاهر للمستخدمين":
-  "Visible to users",
+    "ظاهر للمستخدمين": "Visible to users",
 
-"مخفي عن المستخدمين":
-  "Hidden from users",
+    "مخفي عن المستخدمين": "Hidden from users",
 
-"يصرف بوصفة طبية":
-  "Prescription required",
+    "يصرف بوصفة طبية": "Prescription required",
 
-"لا توجد تفاصيل إضافية":
-  "No additional details",
+    "لا توجد تفاصيل إضافية": "No additional details",
 
+    "الوصفات المحجوزة": "Reserved Prescriptions",
 
+    "{{count}} أصناف منخفضة": "{{count}} low stock items",
+    "إضافة موقع الصيدلية وتحديد ساعات العمل":
+      "Add Pharmacy Location & Set Working Hours",
 
-"الوصفات المحجوزة": "Reserved Prescriptions",
+    "إضافة الأدوية للمخزون": "Add Medicines to Inventory",
+    "إضافة موقع الصيدلية": "Add Pharmacy Location",
 
-"{{count}} أصناف منخفضة":
-  "{{count}} low stock items",
-  "إضافة موقع الصيدلية وتحديد ساعات العمل":
-  "Add Pharmacy Location & Set Working Hours",
+    "تحديد ساعات العمل": "Set Working Hours",
 
-"إضافة الأدوية للمخزون":
-  "Add Medicines to Inventory",
-"إضافة موقع الصيدلية": "Add Pharmacy Location",
+    "إضافة الأدوية للمخزون": "Add Medicines to Inventory",
+    صيدلية: "Pharmacy",
 
-"تحديد ساعات العمل": "Set Working Hours",
+    "سراقب، إدلب": "Saraqib, Idlib",
 
-"إضافة الأدوية للمخزون": "Add Medicines to Inventory",
-"صيدلية":
-  "Pharmacy",
+    "توريد المستودعات": "Warehouse Supply",
 
-"سراقب، إدلب":
-  "Saraqib, Idlib",
+    "الطلبات المحجوزة": "Reserved Requests",
 
-"توريد المستودعات":
-  "Warehouse Supply",
+    "تحقق التبرعات": "Donation Verification",
 
-"الطلبات المحجوزة":
-  "Reserved Requests",
+    "{{count}} طلبات نشطة": "{{count}} active requests",
 
-"تحقق التبرعات":
-  "Donation Verification",
+    "{{count}} أصناف غير متوفرة": "{{count}} out of stock items",
 
-"{{count}} طلبات نشطة":
-  "{{count}} active requests",
+    "متبقي {{count}} يومًا على الانتهاء":
+      "{{count}} days remaining until expiry",
 
-"{{count}} أصناف غير متوفرة":
-  "{{count}} out of stock items",
+    "الكمية الحالية {{quantity}} والحد الأدنى {{threshold}}":
+      "Current quantity {{quantity}} and minimum stock {{threshold}}",
+    "تم تحديث طلب المساعدة وإشعار صاحبه.":
+      "The assistance request has been updated and the requester has been notified.",
 
-"متبقي {{count}} يومًا على الانتهاء":
-  "{{count}} days remaining until expiry",
+    "راجع تفاصيل الدواء والكمية ووقت الاحتياج، ثم حدّث حالة الطلب وأرسل ردًا واضحًا لصاحب الطلب.":
+      "Review the medicine details, requested quantity, and required date, then update the request status and send a clear response to the requester.",
 
-"الكمية الحالية {{quantity}} والحد الأدنى {{threshold}}":
-  "Current quantity {{quantity}} and minimum stock {{threshold}}",
-"تم تحديث طلب المساعدة وإشعار صاحبه.":
-  "The assistance request has been updated and the requester has been notified.",
+    "مسار معالجة طلب المساعدة": "Assistance Request Workflow",
 
-"راجع تفاصيل الدواء والكمية ووقت الاحتياج، ثم حدّث حالة الطلب وأرسل ردًا واضحًا لصاحب الطلب.":
-  "Review the medicine details, requested quantity, and required date, then update the request status and send a clear response to the requester.",
+    "يمر الطلب بعدة مراحل واضحة حتى تتم مراجعته واتخاذ القرار المناسب.":
+      "The request goes through clear stages before review and decision.",
 
-"مسار معالجة طلب المساعدة":
-  "Assistance Request Workflow",
+    "إرسال الطلب": "Submit Request",
 
-"يمر الطلب بعدة مراحل واضحة حتى تتم مراجعته واتخاذ القرار المناسب.":
-  "The request goes through clear stages before review and decision.",
+    "المستخدم يحدد الدواء والكمية":
+      "The user specifies the medicine and quantity",
 
-"إرسال الطلب":
-  "Submit Request",
+    "مراجعة المنظمة": "Organization Review",
 
-"المستخدم يحدد الدواء والكمية":
-  "The user specifies the medicine and quantity",
+    "التحقق من البيانات والأولوية": "Verify data and priority",
 
-"مراجعة المنظمة":
-  "Organization Review",
+    التنسيق: "Coordination",
 
-"التحقق من البيانات والأولوية":
-  "Verify data and priority",
-
-"التنسيق":
-  "Coordination",
-
-"ربط الطلب بالحملة أو الجهة المناسبة":
-  "Link the request to the appropriate campaign",
-
-"التلبية":
-  "Fulfillment",
-  "طلب جديد": "New request",
-"مقبول": "Accepted",
-"قيد التجهيز": "Preparing",
-"جاهز للإرسال": "Ready for dispatch",
-"في الطريق": "On the way",
-"تم التسليم": "Delivered",
-"مرفوض": "Rejected",
-"ملغي": "Cancelled",
-"مسند للمندوب": "Assigned to representative",
-"جاري التحميل": "Loading",
-"وصل للصيدلية": "Arrived at pharmacy",
-"تعذر التسليم": "Delivery failed",
-"أعيدت للمستودع": "Returned to warehouse",
-
-"عرض التفاصيل": "View details",
-"إسناد لمندوب متاح": "Assign to available representative",
-"لا يوجد مندوب متاح": "No representative available",
-
-"رمز استلام آمن — تحقق من الأدوية ثم أكد الاستلام":
-  "Secure pickup code — verify the medicines, then confirm receipt",
-
-"تأكيد الاستلام وإضافة الكمية للمخزون":
-  "Confirm receipt and add quantity to inventory",
-
-"الشحنة قيد التجهيز أو التوصيل":
-  "Shipment is being prepared or delivered",
-
-"سيظهر رمز التأكيد عند وصول المندوب إلى الصيدلية.":
-  "The confirmation code will appear when the representative arrives at the pharmacy.",
-
-"مركز قيادة سلسلة التوريد": "Supply Chain Command Center",
-"مسار المندوب الذكي": "Smart Representative Route",
-"مراقبة سلسلة التوريد": "Supply Chain Monitoring",
-"سوق توريد الصيدلية": "Pharmacy Supply Marketplace",
-
-"راقب الدُفعات والطلبات والتوصيل والاستدعاءات من لوحة موحّدة.":
-  "Monitor batches, orders, deliveries, and recalls from one dashboard.",
-
-"مهام واضحة، تتبّع لحظي وتسليم موثّق بالرمز.":
-  "Clear tasks, real-time tracking, and code-verified delivery.",
-
-"تابع طلبات التوريد والشحنات بين المستودعات والصيدليات.":
-  "Track supply orders and shipments between warehouses and pharmacies.",
-
-"قارن المستودعات، أعد تعبئة النواقص وتابع الشحنة حتى الاستلام.":
-  "Compare warehouses, replenish shortages, and track shipments until receipt.",
-
-"شبكة حياة دوائية B2B": "Hayat Pharmaceutical B2B Network",
-"شحنات جارية": "Active shipments",
-"تم تسليمها": "Delivered",
-
-"تعذر تحميل مؤشرات المستودع. تأكد من اعتماد الحساب وتطبيق تحديث قاعدة البيانات، ثم أعد المحاولة.":
-  "Could not load warehouse indicators. Make sure the account is approved and database updates are applied, then try again.",
-
-"دفعات فعالة": "Active batches",
-"تحتاج تعبئة": "Need restocking",
-"قريبة الانتهاء": "Near expiry",
-"خلال 90 يومًا": "Within 90 days",
-"طلبات معلقة": "Pending orders",
-"بانتظار الإجراء": "Awaiting action",
-"توصيلات فعالة": "Active deliveries",
-
-"الطلبات والشحنات": "Orders & Shipments",
-"الفواتير والمدفوعات": "Invoices & Payments",
-"مخزون الدُفعات": "Batch Inventory",
-"فريق المندوبين": "Representatives Team",
-"المستودعات": "Warehouses",
-"اقتراحات ذكية": "Smart Suggestions",
-
-"تعذر تنفيذ الإجراء. تحقق من حالة المندوب والطلب ثم حاول مجددًا.":
-  "Action failed. Check the representative and order status, then try again.",
-
-"رقم التتبع": "Tracking ID",
-"إخفاء رسالة الخطأ": "Dismiss error message",
-"جاري تحميل المهام...": "Loading tasks...",
-"تعذر تحميل الطلبات والشحنات": "Could not load orders and shipments",
-"تحقق من اتصال الباك وصلاحية الحساب.":
-  "Check backend connectivity and account permissions.",
-"إعادة المحاولة": "Try again",
-
-"لا توجد طلبات بعد": "No orders yet",
-"ستظهر هنا طلبات التوريد الواردة من الصيدليات.":
-  "Incoming pharmacy supply orders will appear here.",
-
-"لا توجد مهام مسندة حاليًا.": "No assigned tasks currently.",
-"تحديث المهام": "Refresh tasks",
-
-"دفعات الأدوية": "Medicine Batches",
-"الكميات المحجوزة والصلاحية والتسعير بالجملة":
-  "Reserved quantities, expiry, and wholesale pricing",
-
-"إضافة دفعة": "Add batch",
-"المتاح": "Available",
-"المحجوز": "Reserved",
-"الصلاحية": "Expiry",
-
-"لا توجد دفعات. أضف أول دفعة لتصبح الأدوية متاحة للصيدليات.":
-  "No batches yet. Add the first batch to make medicines available to pharmacies.",
-
-"فريق التوزيع": "Distribution Team",
-"حساب مستقل وآمن لكل مندوب":
-  "A separate and secure account for each representative",
-"إضافة مندوب": "Add representative",
-
-"موقوف": "Suspended",
-"متاح للتكليف": "Available for assignment",
-"مشغول": "Busy",
-"خارج الوردية": "Off shift",
-"دون مركبة": "No vehicle",
-"شحنات فعالة": "Active deliveries",
-"مكتملة": "Completed",
-"الوردية": "Shift",
-"دوام مفتوح": "Open shift",
-"إدارة الحساب والدوام": "Manage account & shift",
-
-"لم تتم إضافة مندوبين بعد.":
-  "No representatives have been added yet.",
-
-"المتوفر": "Available",
-"المقترح": "Suggested",
-"لا يوجد مستودع متاح": "No warehouse available",
-
-"إدارة المستودع": "Warehouse Management",
-"إضافة دفعة دوائية": "Add medicine batch",
-"إنشاء حساب مندوب": "Create representative account",
-
-"الدواء": "Medicine",
-"اختر من دليل الأدوية": "Choose from medicine catalog",
-"رقم الدفعة": "Batch number",
-"موقع التخزين": "Storage location",
-"الكمية": "Quantity",
-"سعر الشراء": "Purchase price",
-"سعر الجملة": "Wholesale price",
-"تاريخ الإنتاج": "Production date",
-"تاريخ الصلاحية": "Expiry date",
-
-"اسم المندوب": "Representative name",
-"البريد الإلكتروني": "Email",
-"كلمة المرور": "Password",
-"الرمز الوظيفي": "Employee code",
-"رقم المركبة": "Vehicle plate number",
-
-"تعذر الحفظ. راجع البيانات وحاول مجددًا.":
-  "Could not save. Review the data and try again.",
-
-"إلغاء": "Cancel",
-"جاري الحفظ...": "Saving...",
-"حفظ وتفعيل": "Save & activate",
-
-"إجمالي الفواتير": "Total invoices",
-"مرتبطة بطلبات التوريد": "Linked to supply orders",
-"فواتير مسددة": "Paid invoices",
-"مغلقة ماليًا": "Financially closed",
-"الرصيد المستحق": "Outstanding balance",
-"بانتظار التحصيل أو التحويل": "Awaiting collection or transfer",
-
-"طلب": "Order",
-"غير مدفوعة": "Unpaid",
-"مدفوعة جزئيًا": "Partially paid",
-"مدفوعة": "Paid",
-"مستردة": "Refunded",
-
-"نقدًا عند الاستلام": "Cash on delivery",
-"تحويل بنكي": "Bank transfer",
-"حساب آجل": "Credit account",
-
-"الإجمالي": "Total",
-"المدفوع": "Paid",
-"المتبقي": "Remaining",
-"الاستحقاق": "Due date",
-"عرض وإدارة": "View & manage",
-
-"لا توجد فواتير بعد": "No invoices yet",
-"تُنشأ الفاتورة تلقائيًا عند قبول طلب التوريد.":
-  "An invoice is created automatically when a supply order is accepted.",
-
-"إدارة فريق التوزيع": "Distribution Team Management",
-"الحساب مفعّل": "Account enabled",
-"الحساب موقوف": "Account suspended",
-"غير متاح": "Unavailable",
-
-"أيام العمل": "Working days",
-"الأحد": "Sunday",
-"الاثنين": "Monday",
-"الثلاثاء": "Tuesday",
-"الأربعاء": "Wednesday",
-"الخميس": "Thursday",
-"الجمعة": "Friday",
-"السبت": "Saturday",
-
-"بداية الوردية": "Shift start",
-"نهاية الوردية": "Shift end",
-"ملاحظة الحالة": "Status note",
-
-"اختر يوم عمل واحدًا على الأقل عند تفعيل حساب المندوب. يمكن حفظ الحساب الموقوف دون تحديد أيام.":
-  "Select at least one working day when enabling the representative account. A suspended account can be saved without working days.",
-
-"أدخل بداية الوردية ونهايتها معًا، أو اترك الحقلين فارغين لدوام مفتوح.":
-  "Enter both shift start and end, or leave both empty for an open shift.",
-
-"تعذر تحديث المندوب.": "Could not update representative.",
-"حفظ إعدادات المندوب": "Save representative settings",
-
-"فاتورة طلب": "Order invoice",
-"قيمة الأدوية": "Medicine value",
-"التوصيل": "Delivery",
-"الخصم": "Discount",
-"الضريبة": "Tax",
-
-"مبلغ الدفعة": "Payment amount",
-"طريقة الدفع": "Payment method",
-"رقم الحوالة / المرجع": "Transfer / reference number",
-"ملاحظة": "Note",
-"تسجيل الدفعة": "Record payment",
-"تاريخ الاستحقاق": "Due date",
-"ملاحظة المستودع": "Warehouse note",
-"حفظ بيانات الفاتورة": "Save invoice details",
-
-"تعذر تنفيذ الإجراء المالي.": "Financial action failed.",
-"حالة الفاتورة": "Invoice status",
-"تسجيل دفعة": "Record payment",
-"تعديل الفاتورة": "Edit invoice",
-"طباعة الفاتورة": "Print invoice",
-"سجل الدفعات": "Payment history",
-
-"مراحل معالجة الطلب": "Order processing stages",
-"تفاصيل الأدوية": "Medicine details",
-"بنود ضمن الطلب": "Items in the order",
-"لم تحدد الدفعة": "Batch not specified",
-
-"بيانات الشحنة والتتبع": "Shipment & tracking details",
-"رقم الشحنة": "Shipment number",
-"المندوب": "Representative",
-"لم يحدد": "Not specified",
-"حالة الشحنة": "Shipment status",
-"وقت الانطلاق": "Dispatch time",
-"لم تنطلق": "Not dispatched",
-
-"بيانات الصيدلية": "Pharmacy details",
-"رقم الهاتف غير مضاف": "Phone number not added",
-"العنوان غير مضاف": "Address not added",
-"اتصال بالصيدلية": "Call pharmacy",
-"بدء الملاحة": "Start navigation",
-
-"الصيدلية لم تثبت إحداثيات موقعها بعد.":
-  "The pharmacy has not set its location coordinates yet.",
-
-"ملخص التكلفة": "Cost summary",
-"إجراءات المستودع": "Warehouse actions",
-"اختر المندوب": "Choose representative",
-"اختر مندوبًا": "Choose a representative",
-"متاح": "Available",
-
-"إعادة إسناد الشحنة": "Reassign shipment",
-"إسناد وتجهيز الشحنة": "Assign & prepare shipment",
-"اكتمل تسليم الطلب": "Order delivery completed",
-"الطلب مسند وجاهز للمتابعة":
-  "Order assigned and ready for tracking",
-
-"اختر مستودع التوريد": "Choose supply warehouse",
-
-"تظهر فقط المستودعات المعتمدة والفعالة. افتح الكتالوج لتحديد الأدوية والكميات.":
-  "Only approved and active warehouses are shown. Open the catalog to select medicines and quantities.",
-
-"كم": "km",
-"دواء": "Medicine",
-"الحد الأدنى": "Minimum",
-"فتح الكتالوج والطلب": "Open catalog & order",
-"لا يوجد مخزون متاح": "No stock available",
-
-"لا توجد مستودعات جاهزة للتوريد":
-  "No warehouses ready for supply",
-
-"يجب اعتماد المستودع وإضافة دفعات متاحة أولًا.":
-  "The warehouse must be approved and have available batches first.",
-
-"المسافة غير محددة": "Distance not specified",
-"ابحث ضمن أدوية المستودع": "Search warehouse medicines",
-"جاري تحميل كتالوج المستودع...":
-  "Loading warehouse catalog...",
-
-"لا يوجد اسم علمي": "No scientific name",
-"أقرب صلاحية": "Nearest expiry",
-
-"لا توجد أدوية مطابقة في هذا المستودع.":
-  "No matching medicines in this warehouse.",
-
-"ملخص طلب التوريد": "Supply order summary",
-"السلة": "Cart",
-"اختر الأدوية وحدد الكميات.":
-  "Select medicines and quantities.",
-"الأدوية": "Medicines",
-
-"الحد الأدنى لهذا المستودع":
-  "Minimum order for this warehouse",
-
-"أضف أدوية بقيمة": "Add medicines worth",
-
-"تعذر إرسال الطلب. راجع المخزون والكميات.":
-  "Could not submit the order. Review stock and quantities.",
-
-"جاري إرسال الطلب...": "Submitting order...",
-"تأكيد وإرسال الطلب": "Confirm & submit order",
-
-"تُحجز الكميات فورًا ويصل الطلب للمستودع لمراجعته وتجهيزه.":
-  "Quantities are reserved immediately and the order is sent to the warehouse for review and preparation.",
-
-"دفعة": "Batch",
-"تم التحقق والاستلام": "Verified and received",
-"طلب توريد من سوق حياة دوائية":
-  "Supply order from Hayat Pharmaceutical marketplace",
-
-"تسليم الدواء وتوثيق النتيجة":
-  "Deliver medicine and document the result",
-
-"الطلبات الواردة":
-  "Incoming Requests",
-
-"راجع الطلبات حسب الحالة والحملة":
-  "Review requests by status and campaign",
-
-"ابحث باسم الدواء أو صاحب الطلب...":
-  "Search by medicine or requester name...",
-
-"جاري تحميل طلبات المساعدة...":
-  "Loading assistance requests...",
-
-"لا توجد طلبات مطابقة":
-  "No matching requests found",
-
-"ستظهر هنا طلبات المساعدة الموجهة إلى المنظمة أو حملاتها.":
-  "Assistance requests assigned to the organization or its campaigns will appear here.",
-
-"صاحب الطلب":
-  "Requester",
-
-"الكمية المطلوبة":
-  "Requested Quantity",
-
-"مطلوب قبل":
-  "Needed Before",
-
-"ملاحظة صاحب الطلب":
-  "Requester Note",
-
-"تحديث حالة الطلب":
-  "Update Request Status",
-
-"بدء المراجعة":
-  "Start Review",
-
-"تمت تلبية الطلب":
-  "Request Fulfilled",
-
-"تعذر تلبية الطلب":
-  "Unable to Fulfill Request",
-
-"رد لصاحب الطلب (اختياري)":
-  "Reply to requester (optional)",
-  "الملف والتحقق":
-  "Profile & Verification",
-
-"حدّث بيانات المنظمة وارفع المستندات الرسمية المطلوبة ليتمكن فريق الإدارة من مراجعتها واعتماد الحساب.":
-  "Update your organization information and upload the required official documents so the administration team can review and approve your account.",
+    "ربط الطلب بالحملة أو الجهة المناسبة":
+      "Link the request to the appropriate campaign",
 
-"تم حفظ بيانات المنظمة بنجاح.":
-  "Organization information has been saved successfully.",
+    التلبية: "Fulfillment",
+    "طلب جديد": "New request",
+    مقبول: "Accepted",
+    "قيد التجهيز": "Preparing",
+    "جاهز للإرسال": "Ready for dispatch",
+    "في الطريق": "On the way",
+    "تم التسليم": "Delivered",
+    مرفوض: "Rejected",
+    ملغي: "Cancelled",
+    "مسند للمندوب": "Assigned to representative",
+    "جاري التحميل": "Loading",
+    "وصل للصيدلية": "Arrived at pharmacy",
+    "تعذر التسليم": "Delivery failed",
+    "أعيدت للمستودع": "Returned to warehouse",
 
-"تم رفع المستند وإرساله للمراجعة بنجاح.":
-  "The document has been uploaded and submitted for review successfully.",
+    "عرض التفاصيل": "View details",
+    "إسناد لمندوب متاح": "Assign to available representative",
+    "لا يوجد مندوب متاح": "No representative available",
+
+    "رمز استلام آمن — تحقق من الأدوية ثم أكد الاستلام":
+      "Secure pickup code — verify the medicines, then confirm receipt",
+
+    "تأكيد الاستلام وإضافة الكمية للمخزون":
+      "Confirm receipt and add quantity to inventory",
+
+    "الشحنة قيد التجهيز أو التوصيل": "Shipment is being prepared or delivered",
+
+    "سيظهر رمز التأكيد عند وصول المندوب إلى الصيدلية.":
+      "The confirmation code will appear when the representative arrives at the pharmacy.",
+
+    "مركز قيادة سلسلة التوريد": "Supply Chain Command Center",
+    "مسار المندوب الذكي": "Smart Representative Route",
+    "مراقبة سلسلة التوريد": "Supply Chain Monitoring",
+    "سوق توريد الصيدلية": "Pharmacy Supply Marketplace",
+
+    "راقب الدُفعات والطلبات والتوصيل والاستدعاءات من لوحة موحّدة.":
+      "Monitor batches, orders, deliveries, and recalls from one dashboard.",
+
+    "مهام واضحة، تتبّع لحظي وتسليم موثّق بالرمز.":
+      "Clear tasks, real-time tracking, and code-verified delivery.",
+
+    "تابع طلبات التوريد والشحنات بين المستودعات والصيدليات.":
+      "Track supply orders and shipments between warehouses and pharmacies.",
+
+    "قارن المستودعات، أعد تعبئة النواقص وتابع الشحنة حتى الاستلام.":
+      "Compare warehouses, replenish shortages, and track shipments until receipt.",
+
+    "شبكة حياة دوائية B2B": "Hayat Pharmaceutical B2B Network",
+    "شحنات جارية": "Active shipments",
+    "تم تسليمها": "Delivered",
+
+    "تعذر تحميل مؤشرات المستودع. تأكد من اعتماد الحساب وتطبيق تحديث قاعدة البيانات، ثم أعد المحاولة.":
+      "Could not load warehouse indicators. Make sure the account is approved and database updates are applied, then try again.",
+
+    "دفعات فعالة": "Active batches",
+    "تحتاج تعبئة": "Need restocking",
+    "قريبة الانتهاء": "Near expiry",
+    "خلال 90 يومًا": "Within 90 days",
+    "طلبات معلقة": "Pending orders",
+    "بانتظار الإجراء": "Awaiting action",
+    "توصيلات فعالة": "Active deliveries",
+
+    "الطلبات والشحنات": "Orders & Shipments",
+    "الفواتير والمدفوعات": "Invoices & Payments",
+    "مخزون الدُفعات": "Batch Inventory",
+    "فريق المندوبين": "Representatives Team",
+    المستودعات: "Warehouses",
+    "اقتراحات ذكية": "Smart Suggestions",
+
+    "تعذر تنفيذ الإجراء. تحقق من حالة المندوب والطلب ثم حاول مجددًا.":
+      "Action failed. Check the representative and order status, then try again.",
+
+    "رقم التتبع": "Tracking ID",
+    "إخفاء رسالة الخطأ": "Dismiss error message",
+    "جاري تحميل المهام...": "Loading tasks...",
+    "تعذر تحميل الطلبات والشحنات": "Could not load orders and shipments",
+    "تحقق من اتصال الباك وصلاحية الحساب.":
+      "Check backend connectivity and account permissions.",
+    "إعادة المحاولة": "Try again",
+
+    "لا توجد طلبات بعد": "No orders yet",
+    "ستظهر هنا طلبات التوريد الواردة من الصيدليات.":
+      "Incoming pharmacy supply orders will appear here.",
+
+    "لا توجد مهام مسندة حاليًا.": "No assigned tasks currently.",
+    "تحديث المهام": "Refresh tasks",
+
+    "دفعات الأدوية": "Medicine Batches",
+    "الكميات المحجوزة والصلاحية والتسعير بالجملة":
+      "Reserved quantities, expiry, and wholesale pricing",
+
+    "إضافة دفعة": "Add batch",
+    المتاح: "Available",
+    المحجوز: "Reserved",
+    الصلاحية: "Expiry",
+
+    "لا توجد دفعات. أضف أول دفعة لتصبح الأدوية متاحة للصيدليات.":
+      "No batches yet. Add the first batch to make medicines available to pharmacies.",
+
+    "فريق التوزيع": "Distribution Team",
+    "حساب مستقل وآمن لكل مندوب":
+      "A separate and secure account for each representative",
+    "إضافة مندوب": "Add representative",
+
+    موقوف: "Suspended",
+    "متاح للتكليف": "Available for assignment",
+    مشغول: "Busy",
+    "خارج الوردية": "Off shift",
+    "دون مركبة": "No vehicle",
+    "شحنات فعالة": "Active deliveries",
+    مكتملة: "Completed",
+    الوردية: "Shift",
+    "دوام مفتوح": "Open shift",
+    "إدارة الحساب والدوام": "Manage account & shift",
+
+    "لم تتم إضافة مندوبين بعد.": "No representatives have been added yet.",
+
+    المتوفر: "Available",
+    المقترح: "Suggested",
+    "لا يوجد مستودع متاح": "No warehouse available",
+
+    "إدارة المستودع": "Warehouse Management",
+    "إضافة دفعة دوائية": "Add medicine batch",
+    "إنشاء حساب مندوب": "Create representative account",
+
+    الدواء: "Medicine",
+    "اختر من دليل الأدوية": "Choose from medicine catalog",
+    "رقم الدفعة": "Batch number",
+    "موقع التخزين": "Storage location",
+    الكمية: "Quantity",
+    "سعر الشراء": "Purchase price",
+    "سعر الجملة": "Wholesale price",
+    "تاريخ الإنتاج": "Production date",
+    "تاريخ الصلاحية": "Expiry date",
+
+    "اسم المندوب": "Representative name",
+    "البريد الإلكتروني": "Email",
+    "كلمة المرور": "Password",
+    "الرمز الوظيفي": "Employee code",
+    "رقم المركبة": "Vehicle plate number",
+
+    "تعذر الحفظ. راجع البيانات وحاول مجددًا.":
+      "Could not save. Review the data and try again.",
+
+    إلغاء: "Cancel",
+    "جاري الحفظ...": "Saving...",
+    "حفظ وتفعيل": "Save & activate",
+
+    "إجمالي الفواتير": "Total invoices",
+    "مرتبطة بطلبات التوريد": "Linked to supply orders",
+    "فواتير مسددة": "Paid invoices",
+    "مغلقة ماليًا": "Financially closed",
+    "الرصيد المستحق": "Outstanding balance",
+    "بانتظار التحصيل أو التحويل": "Awaiting collection or transfer",
+
+    طلب: "Order",
+    "غير مدفوعة": "Unpaid",
+    "مدفوعة جزئيًا": "Partially paid",
+    مدفوعة: "Paid",
+    مستردة: "Refunded",
+
+    "نقدًا عند الاستلام": "Cash on delivery",
+    "تحويل بنكي": "Bank transfer",
+    "حساب آجل": "Credit account",
+
+    الإجمالي: "Total",
+    المدفوع: "Paid",
+    المتبقي: "Remaining",
+    الاستحقاق: "Due date",
+    "عرض وإدارة": "View & manage",
+
+    "لا توجد فواتير بعد": "No invoices yet",
+    "تُنشأ الفاتورة تلقائيًا عند قبول طلب التوريد.":
+      "An invoice is created automatically when a supply order is accepted.",
+
+    "إدارة فريق التوزيع": "Distribution Team Management",
+    "الحساب مفعّل": "Account enabled",
+    "الحساب موقوف": "Account suspended",
+    "غير متاح": "Unavailable",
+
+    "أيام العمل": "Working days",
+    الأحد: "Sunday",
+    الاثنين: "Monday",
+    الثلاثاء: "Tuesday",
+    الأربعاء: "Wednesday",
+    الخميس: "Thursday",
+    الجمعة: "Friday",
+    السبت: "Saturday",
+
+    "بداية الوردية": "Shift start",
+    "نهاية الوردية": "Shift end",
+    "ملاحظة الحالة": "Status note",
+
+    "اختر يوم عمل واحدًا على الأقل عند تفعيل حساب المندوب. يمكن حفظ الحساب الموقوف دون تحديد أيام.":
+      "Select at least one working day when enabling the representative account. A suspended account can be saved without working days.",
+
+    "أدخل بداية الوردية ونهايتها معًا، أو اترك الحقلين فارغين لدوام مفتوح.":
+      "Enter both shift start and end, or leave both empty for an open shift.",
+
+    "تعذر تحديث المندوب.": "Could not update representative.",
+    "حفظ إعدادات المندوب": "Save representative settings",
+
+    "فاتورة طلب": "Order invoice",
+    "قيمة الأدوية": "Medicine value",
+    التوصيل: "Delivery",
+    الخصم: "Discount",
+    الضريبة: "Tax",
+
+    "مبلغ الدفعة": "Payment amount",
+    "طريقة الدفع": "Payment method",
+    "رقم الحوالة / المرجع": "Transfer / reference number",
+    ملاحظة: "Note",
+    "تسجيل الدفعة": "Record payment",
+    "تاريخ الاستحقاق": "Due date",
+    "ملاحظة المستودع": "Warehouse note",
+    "حفظ بيانات الفاتورة": "Save invoice details",
+
+    "تعذر تنفيذ الإجراء المالي.": "Financial action failed.",
+    "حالة الفاتورة": "Invoice status",
+    "تسجيل دفعة": "Record payment",
+    "تعديل الفاتورة": "Edit invoice",
+    "طباعة الفاتورة": "Print invoice",
+    "سجل الدفعات": "Payment history",
+
+    "مراحل معالجة الطلب": "Order processing stages",
+    "تفاصيل الأدوية": "Medicine details",
+    "بنود ضمن الطلب": "Items in the order",
+    "لم تحدد الدفعة": "Batch not specified",
+
+    "بيانات الشحنة والتتبع": "Shipment & tracking details",
+    "رقم الشحنة": "Shipment number",
+    المندوب: "Representative",
+    "لم يحدد": "Not specified",
+    "حالة الشحنة": "Shipment status",
+    "وقت الانطلاق": "Dispatch time",
+    "لم تنطلق": "Not dispatched",
+
+    "بيانات الصيدلية": "Pharmacy details",
+    "رقم الهاتف غير مضاف": "Phone number not added",
+    "العنوان غير مضاف": "Address not added",
+    "اتصال بالصيدلية": "Call pharmacy",
+    "بدء الملاحة": "Start navigation",
+
+    "الصيدلية لم تثبت إحداثيات موقعها بعد.":
+      "The pharmacy has not set its location coordinates yet.",
+
+    "ملخص التكلفة": "Cost summary",
+    "إجراءات المستودع": "Warehouse actions",
+    "اختر المندوب": "Choose representative",
+    "اختر مندوبًا": "Choose a representative",
+    متاح: "Available",
 
-"اختر المستند الذي تريد رفعه.":
-  "Please choose the document you want to upload.",
+    "إعادة إسناد الشحنة": "Reassign shipment",
+    "إسناد وتجهيز الشحنة": "Assign & prepare shipment",
+    "اكتمل تسليم الطلب": "Order delivery completed",
+    "الطلب مسند وجاهز للمتابعة": "Order assigned and ready for tracking",
 
-"الصيغ المقبولة هي PDF وPNG وJPG فقط.":
-  "Accepted formats are PDF, PNG and JPG only.",
+    "اختر مستودع التوريد": "Choose supply warehouse",
 
-"يجب ألا يتجاوز حجم المستند 10 ميغابايت.":
-  "The document size must not exceed 10 MB.",
-  "إشعاراتك في مكان واحد":
-  "Your Notifications in One Place",
+    "تظهر فقط المستودعات المعتمدة والفعالة. افتح الكتالوج لتحديد الأدوية والكميات.":
+      "Only approved and active warehouses are shown. Open the catalog to select medicines and quantities.",
 
-"تابع الطلبات والاعتمادات والتحديثات المهمة، وانتقل مباشرة إلى التفاصيل عندما تكون متاحة.":
-  "Track requests, approvals, and important updates, and go directly to the details when available.",
+    كم: "km",
+    دواء: "Medicine",
+    "الحد الأدنى": "Minimum",
+    "فتح الكتالوج والطلب": "Open catalog & order",
+    "لا يوجد مخزون متاح": "No stock available",
 
-"تم تحديد {{count}} إشعارات كمقروءة.":
-  "{{count}} notifications were marked as read.",
+    "لا توجد مستودعات جاهزة للتوريد": "No warehouses ready for supply",
 
-"لا توجد إشعارات جديدة لتحديثها.":
-  "There are no new notifications to update.",
+    "يجب اعتماد المستودع وإضافة دفعات متاحة أولًا.":
+      "The warehouse must be approved and have available batches first.",
 
-"تحديد الكل كمقروء":
-  "Mark All as Read",
+    "المسافة غير محددة": "Distance not specified",
+    "ابحث ضمن أدوية المستودع": "Search warehouse medicines",
+    "جاري تحميل كتالوج المستودع...": "Loading warehouse catalog...",
 
-"جميع الإشعارات":
-  "All Notifications",
+    "لا يوجد اسم علمي": "No scientific name",
+    "أقرب صلاحية": "Nearest expiry",
 
-"غير المقروءة":
-  "Unread",
+    "لا توجد أدوية مطابقة في هذا المستودع.":
+      "No matching medicines in this warehouse.",
 
-"تمت قراءتها":
-  "Read",
+    "ملخص طلب التوريد": "Supply order summary",
+    السلة: "Cart",
+    "اختر الأدوية وحدد الكميات.": "Select medicines and quantities.",
+    الأدوية: "Medicines",
 
-"جاري تحميل الإشعارات...":
-  "Loading notifications...",
+    "الحد الأدنى لهذا المستودع": "Minimum order for this warehouse",
 
-"تعذر تحميل الإشعارات":
-  "Unable to Load Notifications",
+    "أضف أدوية بقيمة": "Add medicines worth",
 
-"لا توجد إشعارات هنا":
-  "No Notifications Here",
+    "تعذر إرسال الطلب. راجع المخزون والكميات.":
+      "Could not submit the order. Review stock and quantities.",
 
-"ستظهر التحديثات المهمة فور حدوثها.":
-  "Important updates will appear as soon as they happen.",
+    "جاري إرسال الطلب...": "Submitting order...",
+    "تأكيد وإرسال الطلب": "Confirm & submit order",
 
-"إشعار جديد":
-  "New Notification",
+    "تُحجز الكميات فورًا ويصل الطلب للمستودع لمراجعته وتجهيزه.":
+      "Quantities are reserved immediately and the order is sent to the warehouse for review and preparation.",
 
-"لديك تحديث جديد ضمن حسابك.":
-  "You have a new update in your account.",
+    دفعة: "Batch",
+    "تم التحقق والاستلام": "Verified and received",
+    "طلب توريد من سوق حياة دوائية":
+      "Supply order from Hayat Pharmaceutical marketplace",
 
-"جديد":
-  "New",
+    "تسليم الدواء وتوثيق النتيجة": "Deliver medicine and document the result",
 
-"عرض التفاصيل":
-  "View Details",
+    "الطلبات الواردة": "Incoming Requests",
 
-"تمييز كمقروء":
-  "Mark as Read",
+    "راجع الطلبات حسب الحالة والحملة": "Review requests by status and campaign",
 
-"منذ وقت قريب":
-  "A short while ago",
+    "ابحث باسم الدواء أو صاحب الطلب...":
+      "Search by medicine or requester name...",
 
-"جاري تحميل ملف المنظمة...":
-  "Loading organization profile...",
+    "جاري تحميل طلبات المساعدة...": "Loading assistance requests...",
 
-"بيانات المنظمة":
-  "Organization Information",
+    "لا توجد طلبات مطابقة": "No matching requests found",
 
-"تظهر هذه البيانات للمستفيدين والمتبرعين":
-  "This information is visible to beneficiaries and donors.",
+    "ستظهر هنا طلبات المساعدة الموجهة إلى المنظمة أو حملاتها.":
+      "Assistance requests assigned to the organization or its campaigns will appear here.",
 
-"اسم المنظمة":
-  "Organization Name",
+    "صاحب الطلب": "Requester",
 
-"رقم التسجيل":
-  "Registration Number",
+    "الكمية المطلوبة": "Requested Quantity",
 
-"رقم الهاتف":
-  "Phone Number",
+    "مطلوب قبل": "Needed Before",
 
-"المدينة":
-  "City",
+    "ملاحظة صاحب الطلب": "Requester Note",
 
-"المنطقة أو الحي":
-  "Area / District",
+    "تحديث حالة الطلب": "Update Request Status",
 
-"العنوان":
-  "Address",
+    "بدء المراجعة": "Start Review",
 
-"نبذة عن المنظمة":
-  "Organization Description",
+    "تمت تلبية الطلب": "Request Fulfilled",
 
-"اكتب نبذة مختصرة عن المنظمة ونشاطها...":
-  "Write a short description about the organization and its activities...",
+    "تعذر تلبية الطلب": "Unable to Fulfill Request",
 
-"حفظ بيانات المنظمة":
-  "Save Organization Information",
+    "رد لصاحب الطلب (اختياري)": "Reply to requester (optional)",
+    "الملف والتحقق": "Profile & Verification",
 
-"حالة التحقق":
-  "Verification Status",
+    "حدّث بيانات المنظمة وارفع المستندات الرسمية المطلوبة ليتمكن فريق الإدارة من مراجعتها واعتماد الحساب.":
+      "Update your organization information and upload the required official documents so the administration team can review and approve your account.",
 
-"آخر حالة لملف المنظمة":
-  "Latest verification status",
+    "تم حفظ بيانات المنظمة بنجاح.":
+      "Organization information has been saved successfully.",
 
-"تم اعتماد المنظمة ويمكنها إدارة الحملات والطلبات.":
-  "The organization has been approved and can manage campaigns and requests.",
+    "تم رفع المستند وإرساله للمراجعة بنجاح.":
+      "The document has been uploaded and submitted for review successfully.",
 
-"ارفع المستندات الرسمية الواضحة ليتم إرسال الملف إلى المراجعة.":
-  "Upload clear official documents to submit your profile for review.",
+    "اختر المستند الذي تريد رفعه.":
+      "Please choose the document you want to upload.",
 
-"المستندات":
-  "Documents",
+    "الصيغ المقبولة هي PDF وPNG وJPG فقط.":
+      "Accepted formats are PDF, PNG and JPG only.",
 
-"تاريخ الإرسال":
-  "Submission Date",
+    "يجب ألا يتجاوز حجم المستند 10 ميغابايت.":
+      "The document size must not exceed 10 MB.",
+    "إشعاراتك في مكان واحد": "Your Notifications in One Place",
 
-"رفع مستند تحقق":
-  "Upload Verification Document",
+    "تابع الطلبات والاعتمادات والتحديثات المهمة، وانتقل مباشرة إلى التفاصيل عندما تكون متاحة.":
+      "Track requests, approvals, and important updates, and go directly to the details when available.",
 
-"PDF أو صورة واضحة، بحد أقصى 10 ميغابايت. رفع مستند جديد من النوع نفسه يستبدل السابق.":
-  "Upload a PDF or clear image up to 10 MB. Uploading a new document of the same type replaces the previous one.",
+    "تم تحديد {{count}} إشعارات كمقروءة.":
+      "{{count}} notifications were marked as read.",
 
-"نوع المستند":
-  "Document Type",
+    "لا توجد إشعارات جديدة لتحديثها.":
+      "There are no new notifications to update.",
 
-"اختر ملفًا من جهازك":
-  "Choose a file from your device",
+    "تحديد الكل كمقروء": "Mark All as Read",
 
-"PDF، PNG، JPG، JPEG":
-  "PDF, PNG, JPG, JPEG",
+    "جميع الإشعارات": "All Notifications",
 
-"جاري الرفع...":
-  "Uploading...",
+    "غير المقروءة": "Unread",
 
-"رفع وإرسال للمراجعة":
-  "Upload and Submit for Review",
+    "تمت قراءتها": "Read",
 
-"المستندات المرفوعة":
-  "Uploaded Documents",
+    "جاري تحميل الإشعارات...": "Loading notifications...",
 
-"النسخة الفعالة من كل مستند في ملف المنظمة":
-  "Current version of each document in the organization profile.",
+    "تعذر تحميل الإشعارات": "Unable to Load Notifications",
 
-"تنزيل":
-  "Download",
+    "لا توجد إشعارات هنا": "No Notifications Here",
 
-"تنزيل {{fileName}}":
-  "Download {{fileName}}",
+    "ستظهر التحديثات المهمة فور حدوثها.":
+      "Important updates will appear as soon as they happen.",
 
-"لم تُرفع مستندات تحقق بعد.":
-  "No verification documents have been uploaded yet.",
+    "إشعار جديد": "New Notification",
 
-"حفظ التحديث":
-  "Save Update",
-  "راجع تفاصيل الأدوية وحالة العبوات وتحقق الصيدلية، ثم اتخذ القرار المناسب وأرسل ملاحظة واضحة للمتبرع.":
-  "Review the medicine details, package condition, and pharmacy verification, then make the appropriate decision and send a clear note to the donor.",
+    "لديك تحديث جديد ضمن حسابك.": "You have a new update in your account.",
 
-"مسار التحقق والاستلام":
-  "Verification and Receiving Process",
+    جديد: "New",
 
-"تمر التبرعات بمراحل واضحة قبل اعتمادها وتوزيعها لضمان السلامة وسهولة التتبع.":
-  "Donations go through clear stages before approval and distribution to ensure safety and easy tracking.",
+    "عرض التفاصيل": "View Details",
 
-"فحص العبوة والصلاحية":
-  "Check Package and Expiry",
+    "تمييز كمقروء": "Mark as Read",
 
-"المراجعة واتخاذ القرار":
-  "Review and Decision",
+    "منذ وقت قريب": "A short while ago",
 
-"الاستلام":
-  "Receiving",
+    "جاري تحميل ملف المنظمة...": "Loading organization profile...",
 
-"التوثيق والتوزيع":
-  "Documentation and Distribution",
+    "بيانات المنظمة": "Organization Information",
 
-"راجع العروض حسب الحالة والحملة":
-  "Review offers by status and campaign",
+    "تظهر هذه البيانات للمستفيدين والمتبرعين":
+      "This information is visible to beneficiaries and donors.",
 
-"ابحث باسم الدواء أو المتبرع...":
-  "Search by medicine or donor name...",
+    "اسم المنظمة": "Organization Name",
 
-"{{count}} عبوة":
-  "{{count}} packages",
+    "رقم التسجيل": "Registration Number",
 
-"صيدلية التحقق":
-  "Verification Pharmacy",
+    "رقم الهاتف": "Phone Number",
 
-"توثيق الصيدلية":
-  "Pharmacy Verification",
+    المدينة: "City",
 
-"تم الاستلام والتحقق":
-  "Received and Verified",
+    "المنطقة أو الحي": "Area / District",
 
-"بانتظار التحقق":
-  "Awaiting Verification",
+    العنوان: "Address",
 
-"ملاحظة المتبرع":
-  "Donor Note",
+    "نبذة عن المنظمة": "Organization Description",
 
-"ملاحظة صيدلية التحقق":
-  "Verification Pharmacy Note",
+    "اكتب نبذة مختصرة عن المنظمة ونشاطها...":
+      "Write a short description about the organization and its activities...",
 
-"وصل في":
-  "Received on",
-  "معتمدة وجاهزة للعمل": "Certified and ready to work",
-  "مراجعة الملف والتحقق منه": "Review and verify the profile",
+    "حفظ بيانات المنظمة": "Save Organization Information",
 
-  "إدارة الحملات": "Campaign management",
-  "العروض الواردة": "Incoming offers",
+    "حالة التحقق": "Verification Status",
 
-  "الحملات النشطة": "Active campaigns",
-  "عروض بانتظار المراجعة": "Offers awaiting review",
-  "طلبات المساعدة المفتوحة": "Open requests for help",
-  "وثائق التحقق": "Verification documents",
+    "آخر حالة لملف المنظمة": "Latest verification status",
 
-  "آخر الحملات": "Latest campaigns",
-  "آخر الحملات المسجلة باسم المنظمة": "The latest campaigns registered under the organization",
+    "تم اعتماد المنظمة ويمكنها إدارة الحملات والطلبات.":
+      "The organization has been approved and can manage campaigns and requests.",
 
-  "عرض الكل": "View all",
-  "التفاصيل": "Details",
+    "ارفع المستندات الرسمية الواضحة ليتم إرسال الملف إلى المراجعة.":
+      "Upload clear official documents to submit your profile for review.",
 
-  "تم التحقق منها ومراجعتها": "Verified and reviewed",
-  "لا توجد زيادة عن الشهر الفائت": "No increase from last month",
-  "حملة مسجلة": "Registered campaign",
-  "حملات مسجلة": "Registered campaigns",
+    المستندات: "Documents",
 
-  "مساعدة إدارة المنظمة": "Organization management workspace",
-  "أكمل اعتماد المنظمة": "Complete organization verification",
-  "يجب اعتماد الحساب قبل إنشاء الحملات أو مراجعة عروض التبرع وطلبات المساعدة.": "The account must be verified before creating campaigns or reviewing donation offers and help requests.",
+    "تاريخ الإرسال": "Submission Date",
+
+    "رفع مستند تحقق": "Upload Verification Document",
+
+    "PDF أو صورة واضحة، بحد أقصى 10 ميغابايت. رفع مستند جديد من النوع نفسه يستبدل السابق.":
+      "Upload a PDF or clear image up to 10 MB. Uploading a new document of the same type replaces the previous one.",
+
+    "نوع المستند": "Document Type",
+
+    "اختر ملفًا من جهازك": "Choose a file from your device",
+
+    "PDF، PNG، JPG، JPEG": "PDF, PNG, JPG, JPEG",
+
+    "جاري الرفع...": "Uploading...",
+
+    "رفع وإرسال للمراجعة": "Upload and Submit for Review",
+
+    "المستندات المرفوعة": "Uploaded Documents",
+
+    "النسخة الفعالة من كل مستند في ملف المنظمة":
+      "Current version of each document in the organization profile.",
+
+    تنزيل: "Download",
+
+    "تنزيل {{fileName}}": "Download {{fileName}}",
+
+    "لم تُرفع مستندات تحقق بعد.":
+      "No verification documents have been uploaded yet.",
+
+    "حفظ التحديث": "Save Update",
+    "راجع تفاصيل الأدوية وحالة العبوات وتحقق الصيدلية، ثم اتخذ القرار المناسب وأرسل ملاحظة واضحة للمتبرع.":
+      "Review the medicine details, package condition, and pharmacy verification, then make the appropriate decision and send a clear note to the donor.",
+
+    "مسار التحقق والاستلام": "Verification and Receiving Process",
+
+    "تمر التبرعات بمراحل واضحة قبل اعتمادها وتوزيعها لضمان السلامة وسهولة التتبع.":
+      "Donations go through clear stages before approval and distribution to ensure safety and easy tracking.",
+
+    "فحص العبوة والصلاحية": "Check Package and Expiry",
+
+    "المراجعة واتخاذ القرار": "Review and Decision",
+
+    الاستلام: "Receiving",
+
+    "التوثيق والتوزيع": "Documentation and Distribution",
+
+    "راجع العروض حسب الحالة والحملة": "Review offers by status and campaign",
+
+    "ابحث باسم الدواء أو المتبرع...": "Search by medicine or donor name...",
+
+    "{{count}} عبوة": "{{count}} packages",
+
+    "صيدلية التحقق": "Verification Pharmacy",
+
+    "توثيق الصيدلية": "Pharmacy Verification",
+
+    "تم الاستلام والتحقق": "Received and Verified",
+
+    "بانتظار التحقق": "Awaiting Verification",
+
+    "ملاحظة المتبرع": "Donor Note",
+
+    "ملاحظة صيدلية التحقق": "Verification Pharmacy Note",
+
+    "وصل في": "Received on",
+    "معتمدة وجاهزة للعمل": "Certified and ready to work",
+    "مراجعة الملف والتحقق منه": "Review and verify the profile",
+
+    "إدارة الحملات": "Campaign management",
+    "العروض الواردة": "Incoming offers",
+
+    "الحملات النشطة": "Active campaigns",
+    "عروض بانتظار المراجعة": "Offers awaiting review",
+    "طلبات المساعدة المفتوحة": "Open requests for help",
+    "وثائق التحقق": "Verification documents",
+
+    "آخر الحملات": "Latest campaigns",
+    "آخر الحملات المسجلة باسم المنظمة":
+      "The latest campaigns registered under the organization",
+
+    "عرض الكل": "View all",
+    التفاصيل: "Details",
+
+    "تم التحقق منها ومراجعتها": "Verified and reviewed",
+    "لا توجد زيادة عن الشهر الفائت": "No increase from last month",
+    "حملة مسجلة": "Registered campaign",
+    "حملات مسجلة": "Registered campaigns",
+
+    "مساعدة إدارة المنظمة": "Organization management workspace",
+    "أكمل اعتماد المنظمة": "Complete organization verification",
+    "يجب اعتماد الحساب قبل إنشاء الحملات أو مراجعة عروض التبرع وطلبات المساعدة.":
+      "The account must be verified before creating campaigns or reviewing donation offers and help requests.",
     "إنشاء حساب جديد": "Create a new account",
-"اختر نوع الحساب": "Choose account type",
-"يحدد نوع الحساب البيانات المطلوبة والصلاحيات المتاحة داخل المنصة":
-  "The account type determines the required information and available permissions on the platform.",
-"اختر الحساب": "Choose account",
-"لدي حساب بالفعل": "I already have an account",
-"العودة لتسجيل الدخول": "Back to login",
-"العودة إلى الصفحة الرئيسية": "Back to the home page",
-"سياسة الخصوصية": "Privacy policy",
-"الدعم والمساعدة": "Support and help",
+    "اختر نوع الحساب": "Choose account type",
+    "يحدد نوع الحساب البيانات المطلوبة والصلاحيات المتاحة داخل المنصة":
+      "The account type determines the required information and available permissions on the platform.",
+    "اختر الحساب": "Choose account",
+    "لدي حساب بالفعل": "I already have an account",
+    "العودة لتسجيل الدخول": "Back to login",
+    "العودة إلى الصفحة الرئيسية": "Back to the home page",
+    "سياسة الخصوصية": "Privacy policy",
+    "الدعم والمساعدة": "Support and help",
 
-"تغيير نوع الحساب": "Change account type",
-"بيانات الحساب": "Account information",
-"بيانات {{account}}": "{{account}} information",
-"خصوصيتك تهمنا": "Your privacy matters",
-"نحافظ على بيانات حسابك ونستخدمها فقط لتقديم الخدمات المناسبة لك.":
-  "We protect your account data and use it only to provide the services that suit you.",
-"الخطوة {{step}} من {{total}}": "Step {{step}} of {{total}}",
-"أدخل بيانات الدخول الأساسية كما ستظهر في حسابك.":
-  "Enter the basic login information as it will appear in your account.",
-"أدخل البيانات الرسمية وعنوان الصيدلية.":
-  "Enter the pharmacy's official information and address.",
-"أدخل بيانات الترخيص والتوصيل الخاصة بالمستودع.":
-  "Enter the warehouse licensing and delivery information.",
-"أدخل البيانات الرسمية وعنوان المنظمة.":
-  "Enter the organization's official information and address.",
-"صورة تسجيل {{account}}": "{{account}} registration image",
+    "تغيير نوع الحساب": "Change account type",
+    "بيانات الحساب": "Account information",
+    "بيانات {{account}}": "{{account}} information",
+    "خصوصيتك تهمنا": "Your privacy matters",
+    "نحافظ على بيانات حسابك ونستخدمها فقط لتقديم الخدمات المناسبة لك.":
+      "We protect your account data and use it only to provide the services that suit you.",
+    "الخطوة {{step}} من {{total}}": "Step {{step}} of {{total}}",
+    "أدخل بيانات الدخول الأساسية كما ستظهر في حسابك.":
+      "Enter the basic login information as it will appear in your account.",
+    "أدخل البيانات الرسمية وعنوان الصيدلية.":
+      "Enter the pharmacy's official information and address.",
+    "أدخل بيانات الترخيص والتوصيل الخاصة بالمستودع.":
+      "Enter the warehouse licensing and delivery information.",
+    "أدخل البيانات الرسمية وعنوان المنظمة.":
+      "Enter the organization's official information and address.",
+    "صورة تسجيل {{account}}": "{{account}} registration image",
 
-"الاسم الكامل": "Full name",
-"الاسم كما سيظهر في الحساب": "Name as it will appear in the account",
-"رقم الهاتف": "Phone number",
-"رقم الهاتف (اختياري)": "Phone number (optional)",
-"البريد الإلكتروني": "Email address",
-"كلمة المرور": "Password",
-"تأكيد كلمة المرور": "Confirm password",
-"8 أحرف على الأقل": "At least 8 characters",
-"حرف إنكليزي كبير": "One uppercase letter",
-"حرف إنكليزي صغير": "One lowercase letter",
-"رقم ورمز خاص": "A number and special character",
-"إخفاء كلمة المرور": "Hide password",
-"إظهار كلمة المرور": "Show password",
+    "الاسم الكامل": "Full name",
+    "الاسم كما سيظهر في الحساب": "Name as it will appear in the account",
+    "رقم الهاتف": "Phone number",
+    "رقم الهاتف (اختياري)": "Phone number (optional)",
+    "البريد الإلكتروني": "Email address",
+    "كلمة المرور": "Password",
+    "تأكيد كلمة المرور": "Confirm password",
+    "8 أحرف على الأقل": "At least 8 characters",
+    "حرف إنكليزي كبير": "One uppercase letter",
+    "حرف إنكليزي صغير": "One lowercase letter",
+    "رقم ورمز خاص": "A number and special character",
+    "إخفاء كلمة المرور": "Hide password",
+    "إظهار كلمة المرور": "Show password",
 
-"اسم الصيدلية": "Pharmacy name",
-"اسم المستودع": "Warehouse name",
-"اسم المنظمة": "Organization name",
-"الاسم الرسمي للصيدلية": "Official pharmacy name",
-"الاسم التجاري المرخص للمستودع": "Licensed warehouse trade name",
-"الاسم الرسمي للمنظمة": "Official organization name",
-"رقم الترخيص": "License number",
-"رقم التسجيل": "Registration number",
-"رقم ترخيص الصيدلية": "Pharmacy license number",
-"رقم ترخيص المستودع": "Warehouse license number",
-"رقم تسجيل المنظمة": "Organization registration number",
-"المدينة": "City",
-"المنطقة": "Area",
-"المنطقة أو الحي": "Area or neighborhood",
-"العنوان التفصيلي": "Detailed address",
-"الشارع، البناء وأقرب نقطة دالة":
-  "Street, building, and nearest landmark",
-"وصف مختصر (اختياري)": "Short description (optional)",
-"معلومات إضافية عن الصيدلية وخدماتها":
-  "Additional information about the pharmacy and its services",
-"معلومات إضافية عن المستودع وتغطيته وخدماته":
-  "Additional information about the warehouse, coverage, and services",
-"معلومات إضافية عن المنظمة ونشاطها":
-  "Additional information about the organization and its activities",
+    "اسم الصيدلية": "Pharmacy name",
+    "اسم المستودع": "Warehouse name",
+    "اسم المنظمة": "Organization name",
+    "الاسم الرسمي للصيدلية": "Official pharmacy name",
+    "الاسم التجاري المرخص للمستودع": "Licensed warehouse trade name",
+    "الاسم الرسمي للمنظمة": "Official organization name",
+    "رقم الترخيص": "License number",
+    "رقم التسجيل": "Registration number",
+    "رقم ترخيص الصيدلية": "Pharmacy license number",
+    "رقم ترخيص المستودع": "Warehouse license number",
+    "رقم تسجيل المنظمة": "Organization registration number",
+    المدينة: "City",
+    المنطقة: "Area",
+    "المنطقة أو الحي": "Area or neighborhood",
+    "العنوان التفصيلي": "Detailed address",
+    "الشارع، البناء وأقرب نقطة دالة": "Street, building, and nearest landmark",
+    "وصف مختصر (اختياري)": "Short description (optional)",
+    "معلومات إضافية عن الصيدلية وخدماتها":
+      "Additional information about the pharmacy and its services",
+    "معلومات إضافية عن المستودع وتغطيته وخدماته":
+      "Additional information about the warehouse, coverage, and services",
+    "معلومات إضافية عن المنظمة ونشاطها":
+      "Additional information about the organization and its activities",
 
-"يوفر المستودع خدمة التوصيل":
-  "The warehouse provides delivery service",
-"خدمة توصيل تابعة للصيدلية":
-  "Pharmacy delivery service",
-"حدد الخيار عند توفر خدمة التوصيل":
-  "Select this option when delivery service is available",
-"جاري تحديد الموقع...": "Detecting location...",
-"إضافة إحداثيات {{owner}}": "Add {{owner}} coordinates",
-"خدمة تحديد الموقع غير مدعومة في هذا المتصفح.":
-  "Location services are not supported in this browser.",
-"تمت إضافة إحداثيات موقع {{owner}}.":
-  "{{owner}} location coordinates were added.",
-"تعذر الوصول إلى الموقع. يمكنك متابعة التسجيل من دون إحداثيات.":
-  "Unable to access the location. You may continue registration without coordinates.",
-"الصيدلية": "the pharmacy",
-"المستودع": "the warehouse",
-"المنظمة": "the organization",
+    "يوفر المستودع خدمة التوصيل": "The warehouse provides delivery service",
+    "خدمة توصيل تابعة للصيدلية": "Pharmacy delivery service",
+    "حدد الخيار عند توفر خدمة التوصيل":
+      "Select this option when delivery service is available",
+    "جاري تحديد الموقع...": "Detecting location...",
+    "إضافة إحداثيات {{owner}}": "Add {{owner}} coordinates",
+    "خدمة تحديد الموقع غير مدعومة في هذا المتصفح.":
+      "Location services are not supported in this browser.",
+    "تمت إضافة إحداثيات موقع {{owner}}.":
+      "{{owner}} location coordinates were added.",
+    "تعذر الوصول إلى الموقع. يمكنك متابعة التسجيل من دون إحداثيات.":
+      "Unable to access the location. You may continue registration without coordinates.",
+    الصيدلية: "the pharmacy",
+    المستودع: "the warehouse",
+    المنظمة: "the organization",
 
-"إعدادات طلبات المستودع": "Warehouse order settings",
-"حدد قيمة الطلب والتوصيل ونطاق التغطية":
-  "Set the order value, delivery fee, and coverage range",
-"الحد الأدنى للطلب": "Minimum order amount",
-"أجور التوصيل": "Delivery fee",
-"نطاق التوصيل (كم)": "Delivery range (km)",
-"يعمل على مدار 24 ساعة": "Open 24 hours",
-"استقبال الطلبات في جميع الأوقات":
-  "Receive orders at all times",
-"يدعم الطلبات المستعجلة": "Supports urgent orders",
-"معالجة الطلبات ذات الأولوية":
-  "Process priority orders",
-"يقبل الدفع الآجل": "Accepts deferred payment",
-"إتاحة الدفع المؤجل للصيدليات":
-  "Allow deferred payment for pharmacies",
+    "إعدادات طلبات المستودع": "Warehouse order settings",
+    "حدد قيمة الطلب والتوصيل ونطاق التغطية":
+      "Set the order value, delivery fee, and coverage range",
+    "الحد الأدنى للطلب": "Minimum order amount",
+    "أجور التوصيل": "Delivery fee",
+    "نطاق التوصيل (كم)": "Delivery range (km)",
+    "يعمل على مدار 24 ساعة": "Open 24 hours",
+    "استقبال الطلبات في جميع الأوقات": "Receive orders at all times",
+    "يدعم الطلبات المستعجلة": "Supports urgent orders",
+    "معالجة الطلبات ذات الأولوية": "Process priority orders",
+    "يقبل الدفع الآجل": "Accepts deferred payment",
+    "إتاحة الدفع المؤجل للصيدليات": "Allow deferred payment for pharmacies",
 
-"السابق": "Previous",
-"متابعة": "Continue",
-"جاري إنشاء الحساب...": "Creating account...",
-"إنشاء الحساب": "Create account",
-"كلمة المرور لا تحقق جميع متطلبات الأمان الموضحة.":
-  "The password does not meet all the displayed security requirements.",
-"كلمة المرور وتأكيدها غير متطابقين.":
-  "The password and confirmation do not match.",
+    السابق: "Previous",
+    متابعة: "Continue",
+    "جاري إنشاء الحساب...": "Creating account...",
+    "إنشاء الحساب": "Create account",
+    "كلمة المرور لا تحقق جميع متطلبات الأمان الموضحة.":
+      "The password does not meet all the displayed security requirements.",
+    "كلمة المرور وتأكيدها غير متطابقين.":
+      "The password and confirmation do not match.",
     "8 أحرف على الأقل تتضمن حرفًا كبيرًا وصغيرًا ورقمًا ورمزًا خاصًا.":
       "At least 8 characters including an uppercase and lowercase letter, a number, and a special symbol.",
     '90) return setValidationError("يجب أن يكون خط العرض رقمًا بين ‎-90 و90."); if (!Number.isFinite(longitude) || longitude':
@@ -1185,14 +1080,11 @@ export const autoMessages = {
     اللغة: "Language",
     "المادة أو الاسم العلمي": "Substance or scientific name",
     "المتاح فقط": "Available only",
-    "مرحبًا بعودتك إلى":
-  "Welcome back to",
+    "مرحبًا بعودتك إلى": "Welcome back to",
 
-"لا تمتلك حسابًا مسبقًا؟":
-  "Don't have an account?",
+    "لا تمتلك حسابًا مسبقًا؟": "Don't have an account?",
 
-"خدمات مخصصة":
-  "Personalized services",
+    "خدمات مخصصة": "Personalized services",
     المتبرع: "The donor",
     "المحادثات السابقة": "Previous conversations",
     "المحادثة نشطة": "The conversation is active",
@@ -1278,37 +1170,43 @@ export const autoMessages = {
     "بانتظار الرد": "Waiting for reply",
     "بانتظار الصيدلية": "Waiting for the pharmacy",
     "تم اعتماد المنظمة {{name}}.":
-  "The organization {{name}} has been approved.",
+      "The organization {{name}} has been approved.",
 
-"تم تحديث حالة اعتماد المنظمة من إدارة المنصة.":
-  "The organization approval status has been updated by the platform administration.",
-  "إعدادات الحساب": "Account Settings",
-"حدّث بيانات التواصل وكلمة المرور المرتبطة بحسابك.": "Update your contact information and account password.",
-"جاري تحميل بيانات الحساب...": "Loading account information...",
-"البيانات الشخصية": "Personal Information",
-"عدّل معلومات الحساب الأساسية وبيانات التواصل.": "Update your basic account information and contact details.",
-"الاسم الكامل": "Full Name",
-"أدخل الاسم الكامل": "Enter full name",
-"أدخل رقم الهاتف": "Enter phone number",
-"أدخل البريد الإلكتروني": "Enter email address",
-"تم حفظ بيانات الحساب بنجاح.": "Account information has been saved successfully.",
-"حفظ البيانات": "Save Changes",
-"تغيير كلمة المرور": "Change Password",
-"كلمة المرور الحالية": "Current Password",
-"كلمة المرور الجديدة": "New Password",
-"تأكيد كلمة المرور": "Confirm Password",
-"أدخل كلمة المرور": "Enter password",
-"إظهار كلمة المرور": "Show Password",
-"إخفاء كلمة المرور": "Hide Password",
-"تم تغيير كلمة المرور بنجاح.": "Password changed successfully.",
-"يجب ألا تقل كلمة المرور الجديدة عن 8 أحرف.": "The new password must be at least 8 characters.",
-"استخدم حرفًا إنكليزيًا كبيرًا وصغيرًا ورقمًا ورمزًا خاصًا على الأقل.": "Use at least one uppercase letter, one lowercase letter, one number and one special character.",
-"تأكيد كلمة المرور غير مطابق.": "Password confirmation does not match.",
-"جاري التغيير...": "Updating...",
-"الدور": "Role",
-"تاريخ إنشاء الحساب": "Account Created",
-"حماية الحساب": "Account Security",
-"احرص على استخدام كلمة مرور قوية وعدم مشاركتها مع أي شخص. ننصح بتغييرها بشكل دوري.": "Use a strong password and never share it with anyone. We recommend changing it regularly.",
+    "تم تحديث حالة اعتماد المنظمة من إدارة المنصة.":
+      "The organization approval status has been updated by the platform administration.",
+    "إعدادات الحساب": "Account Settings",
+    "حدّث بيانات التواصل وكلمة المرور المرتبطة بحسابك.":
+      "Update your contact information and account password.",
+    "جاري تحميل بيانات الحساب...": "Loading account information...",
+    "البيانات الشخصية": "Personal Information",
+    "عدّل معلومات الحساب الأساسية وبيانات التواصل.":
+      "Update your basic account information and contact details.",
+    "الاسم الكامل": "Full Name",
+    "أدخل الاسم الكامل": "Enter full name",
+    "أدخل رقم الهاتف": "Enter phone number",
+    "أدخل البريد الإلكتروني": "Enter email address",
+    "تم حفظ بيانات الحساب بنجاح.":
+      "Account information has been saved successfully.",
+    "حفظ البيانات": "Save Changes",
+    "تغيير كلمة المرور": "Change Password",
+    "كلمة المرور الحالية": "Current Password",
+    "كلمة المرور الجديدة": "New Password",
+    "تأكيد كلمة المرور": "Confirm Password",
+    "أدخل كلمة المرور": "Enter password",
+    "إظهار كلمة المرور": "Show Password",
+    "إخفاء كلمة المرور": "Hide Password",
+    "تم تغيير كلمة المرور بنجاح.": "Password changed successfully.",
+    "يجب ألا تقل كلمة المرور الجديدة عن 8 أحرف.":
+      "The new password must be at least 8 characters.",
+    "استخدم حرفًا إنكليزيًا كبيرًا وصغيرًا ورقمًا ورمزًا خاصًا على الأقل.":
+      "Use at least one uppercase letter, one lowercase letter, one number and one special character.",
+    "تأكيد كلمة المرور غير مطابق.": "Password confirmation does not match.",
+    "جاري التغيير...": "Updating...",
+    الدور: "Role",
+    "تاريخ إنشاء الحساب": "Account Created",
+    "حماية الحساب": "Account Security",
+    "احرص على استخدام كلمة مرور قوية وعدم مشاركتها مع أي شخص. ننصح بتغييرها بشكل دوري.":
+      "Use a strong password and never share it with anyone. We recommend changing it regularly.",
     "بانتظار المراجعة": "Waiting for review",
     "بانتظار المستندات": "Waiting for documents",
     "بانتظار مراجعة الصيدلية والرد على طلبك.":
@@ -1350,91 +1248,71 @@ export const autoMessages = {
       "Follow pharmacies' responses and the status of each order, and refer to its details at any time.",
     "تاريخ إرسال التحقق": "Verification submission date",
     "طلبات الأدوية": "Medicine Requests",
-"راجع الطلبات الواردة وتحقق من المخزون ثم أرسل للمريض إجابة دقيقة أو اقترح بديلًا متاحًا.":
-  "Review incoming requests, check inventory, then send the patient an accurate response or suggest an available alternative.",
+    "راجع الطلبات الواردة وتحقق من المخزون ثم أرسل للمريض إجابة دقيقة أو اقترح بديلًا متاحًا.":
+      "Review incoming requests, check inventory, then send the patient an accurate response or suggest an available alternative.",
 
-"ابحث هنا في طلبات الأدوية ...":
-  "Search medicine requests...",
+    "ابحث هنا في طلبات الأدوية ...": "Search medicine requests...",
 
-"ترتيب حسب": "Sort by",
-"جاري تحميل الطلبات...": "Loading requests...",
-"لا توجد طلبات مطابقة": "No matching requests",
-"ستظهر طلبات المرضى الجديدة هنا فور وصولها إلى الصيدلية.":
-  "New patient requests will appear here as soon as they reach the pharmacy.",
-  "فعّلها فقط إذا كانت الخدمة متاحة فعليًا":
-  "Enable it only if the service is actually available.",
-  "ساعات العمل":
-  "Working Hours",
+    "ترتيب حسب": "Sort by",
+    "جاري تحميل الطلبات...": "Loading requests...",
+    "لا توجد طلبات مطابقة": "No matching requests",
+    "ستظهر طلبات المرضى الجديدة هنا فور وصولها إلى الصيدلية.":
+      "New patient requests will appear here as soon as they reach the pharmacy.",
+    "فعّلها فقط إذا كانت الخدمة متاحة فعليًا":
+      "Enable it only if the service is actually available.",
+    "ساعات العمل": "Working Hours",
 
-"اضبط جدول الأسبوع بدقة؛ تستخدم المنصة هذه الأوقات لإظهار حالة الصيدلية الحالية للمستخدمين.":
-  "Set the weekly schedule accurately. The platform uses these hours to show the pharmacy's current status to users.",
+    "اضبط جدول الأسبوع بدقة؛ تستخدم المنصة هذه الأوقات لإظهار حالة الصيدلية الحالية للمستخدمين.":
+      "Set the weekly schedule accurately. The platform uses these hours to show the pharmacy's current status to users.",
 
-"مفتوحة الآن":
-  "Open Now",
+    "مفتوحة الآن": "Open Now",
 
-"مغلقة الآن":
-  "Closed Now",
+    "مغلقة الآن": "Closed Now",
 
-"تم حفظ جدول ساعات العمل وتحديث حالة الصيدلية.":
-  "Working hours have been saved and the pharmacy status has been updated.",
+    "تم حفظ جدول ساعات العمل وتحديث حالة الصيدلية.":
+      "Working hours have been saved and the pharmacy status has been updated.",
 
-"جاري تحميل ساعات العمل...":
-  "Loading working hours...",
+    "جاري تحميل ساعات العمل...": "Loading working hours...",
 
-"الجدول الأسبوعي":
-  "Weekly Schedule",
+    "الجدول الأسبوعي": "Weekly Schedule",
 
-"يمكنك إغلاق أي يوم من زر الحالة المقابل، وتحديد وقت إغلاق في صباح اليوم التالي للدوام الليلي.":
-  "You can mark any day as closed using its status switch and set a closing time on the following morning for overnight shifts.",
+    "يمكنك إغلاق أي يوم من زر الحالة المقابل، وتحديد وقت إغلاق في صباح اليوم التالي للدوام الليلي.":
+      "You can mark any day as closed using its status switch and set a closing time on the following morning for overnight shifts.",
 
-"الأحد":
-  "Sunday",
+    الأحد: "Sunday",
 
-"الاثنين":
-  "Monday",
+    الاثنين: "Monday",
 
-"الثلاثاء":
-  "Tuesday",
+    الثلاثاء: "Tuesday",
 
-"الأربعاء":
-  "Wednesday",
+    الأربعاء: "Wednesday",
 
-"الخميس":
-  "Thursday",
+    الخميس: "Thursday",
 
-"الجمعة":
-  "Friday",
+    الجمعة: "Friday",
 
-"السبت":
-  "Saturday",
+    السبت: "Saturday",
 
-"يوم مغلق":
-  "Closed Day",
+    "يوم مغلق": "Closed Day",
 
-"يوم عمل":
-  "Working Day",
+    "يوم عمل": "Working Day",
 
-"يمتد لليوم التالي":
-  "Continues to the Next Day",
+    "يمتد لليوم التالي": "Continues to the Next Day",
 
-"من":
-  "From",
+    من: "From",
 
-"إلى":
-  "To",
+    إلى: "To",
 
-"إذا كان وقت الإغلاق أسبق من وقت الفتح، يُحتسب الإغلاق في اليوم التالي.":
-  "If the closing time is earlier than the opening time, the closing time is considered to be on the next day.",
+    "إذا كان وقت الإغلاق أسبق من وقت الفتح، يُحتسب الإغلاق في اليوم التالي.":
+      "If the closing time is earlier than the opening time, the closing time is considered to be on the next day.",
 
-"جاري الحفظ...":
-  "Saving...",
+    "جاري الحفظ...": "Saving...",
 
-"حفظ ساعات العمل":
-  "Save Working Hours",
+    "حفظ ساعات العمل": "Save Working Hours",
 
-"الكمية": "Quantity",
-"ملاحظة": "Note",
-"عرض الطلب": "View Request",
+    الكمية: "Quantity",
+    ملاحظة: "Note",
+    "عرض الطلب": "View Request",
     "تاريخ الإرسال": "Posting date",
     "تاريخ الانتهاء": "End date",
     "تاريخ الانضمام": "Joining date",
@@ -1539,8 +1417,8 @@ export const autoMessages = {
     تم: "Done",
     "مستودع أدوية": "Medicine Warehouse",
 
-"يدير مخزون الأدوية ويستقبل طلبات الصيدليات ويتابع عمليات التوريد والتوصيل بين المستودعات والصيدليات.":
-  "Manages medicine inventory, receives pharmacy orders, and oversees supply and delivery operations between warehouses and pharmacies.",
+    "يدير مخزون الأدوية ويستقبل طلبات الصيدليات ويتابع عمليات التوريد والتوصيل بين المستودعات والصيدليات.":
+      "Manages medicine inventory, receives pharmacy orders, and oversees supply and delivery operations between warehouses and pharmacies.",
     "تم إرسال الرد إلى المريض بنجاح.":
       "The response has been sent to the patient successfully.",
     "تم إرسال طلب المساعدة إلى المنظمة ويمكنك متابعة حالته من سجلك.":
@@ -1596,161 +1474,125 @@ export const autoMessages = {
       "Pharmacy location coordinates have been added.",
     "تمت إضافة الدواء إلى الدليل بنجاح.":
       "The medication has been successfully added to the directory.",
-      "الملف والموقع":
-  "Profile & Location",
+    "الملف والموقع": "Profile & Location",
 
-"حافظ على بيانات الصيدلية وموقعها محدثين كي يصل المرضى إليك بسهولة .":
-  "Keep your pharmacy information and location up to date so patients can easily reach you.",
+    "حافظ على بيانات الصيدلية وموقعها محدثين كي يصل المرضى إليك بسهولة .":
+      "Keep your pharmacy information and location up to date so patients can easily reach you.",
 
-"تم حفظ بيانات الصيدلية بنجاح.":
-  "Pharmacy information saved successfully.",
+    "تم حفظ بيانات الصيدلية بنجاح.": "Pharmacy information saved successfully.",
 
-"تم حفظ موقع الجهاز، ويمكنك الآن مراجعة نتيجة المطابقة أدناه.":
-  "Your device location has been saved. You can now review the matching results below.",
+    "تم حفظ موقع الجهاز، ويمكنك الآن مراجعة نتيجة المطابقة أدناه.":
+      "Your device location has been saved. You can now review the matching results below.",
 
-"تم حفظ الإحداثيات اليدوية بنجاح، ويمكنك مطابقة الصيدلية مع الموقع الصحيح أدناه.":
-  "The coordinates have been saved successfully. You can now match the pharmacy with the correct location below.",
+    "تم حفظ الإحداثيات اليدوية بنجاح، ويمكنك مطابقة الصيدلية مع الموقع الصحيح أدناه.":
+      "The coordinates have been saved successfully. You can now match the pharmacy with the correct location below.",
 
-"تم ربط الصيدلية بالموقع المعتمد بنجاح.":
-  "The pharmacy has been successfully linked to the verified location.",
+    "تم ربط الصيدلية بالموقع المعتمد بنجاح.":
+      "The pharmacy has been successfully linked to the verified location.",
 
-"تحديد الموقع غير مدعوم في هذا المتصفح.":
-  "Location services are not supported by this browser.",
+    "تحديد الموقع غير مدعوم في هذا المتصفح.":
+      "Location services are not supported by this browser.",
 
-"لم نتمكن من قراءة موقعك. اسمح للمتصفح بالوصول إلى الموقع ثم أعد المحاولة.":
-  "We could not access your location. Allow the browser to access your location and try again.",
+    "لم نتمكن من قراءة موقعك. اسمح للمتصفح بالوصول إلى الموقع ثم أعد المحاولة.":
+      "We could not access your location. Allow the browser to access your location and try again.",
 
-"بيانات التعريف":
-  "Pharmacy Information",
+    "بيانات التعريف": "Pharmacy Information",
 
-"تظهر هذه المعلومات للمرضى عند فتح صفحة الصيدلية":
-  "This information is shown to patients when they open the pharmacy page.",
+    "تظهر هذه المعلومات للمرضى عند فتح صفحة الصيدلية":
+      "This information is shown to patients when they open the pharmacy page.",
 
-"اسم الصيدلية":
-  "Pharmacy Name",
+    "اسم الصيدلية": "Pharmacy Name",
 
-"المدينة":
-  "City",
+    المدينة: "City",
 
-"المنطقة أو الحي":
-  "Area or Neighborhood",
+    "المنطقة أو الحي": "Area or Neighborhood",
 
-"المنطقة الزمنية":
-  "Time Zone",
+    "المنطقة الزمنية": "Time Zone",
 
-"توقيت الرياض":
-  "Riyadh Time",
+    "توقيت الرياض": "Riyadh Time",
 
-"توقيت دمشق":
-  "Damascus Time",
+    "توقيت دمشق": "Damascus Time",
 
-"توقيت بغداد":
-  "Baghdad Time",
+    "توقيت بغداد": "Baghdad Time",
 
-"العنوان التفصيلي":
-  "Detailed Address",
+    "العنوان التفصيلي": "Detailed Address",
 
-"نبذة عن الصيدلية":
-  "About the Pharmacy",
+    "نبذة عن الصيدلية": "About the Pharmacy",
 
-"الخدمات والتخصصات التي تميز الصيدلية":
-  "Services and specialties that distinguish the pharmacy",
+    "الخدمات والتخصصات التي تميز الصيدلية":
+      "Services and specialties that distinguish the pharmacy",
 
-"خدمة توصيل الأدوية":
-  "Medicine Delivery Service",
+    "خدمة توصيل الأدوية": "Medicine Delivery Service",
 
-"فعّلها فقط إذا كانت الخدمة متاحة فعليًا":
-  "Enable this only if the service is actually available.",
+    "فعّلها فقط إذا كانت الخدمة متاحة فعليًا":
+      "Enable this only if the service is actually available.",
 
-"جاري الحفظ...":
-  "Saving...",
+    "جاري الحفظ...": "Saving...",
 
-"حفظ البيانات":
-  "Save Information",
+    "حفظ البيانات": "Save Information",
 
-"موقع الصيدلية":
-  "Pharmacy Location",
+    "موقع الصيدلية": "Pharmacy Location",
 
-"لم يحدد موقع الصيدلية بعد":
-  "The pharmacy location has not been set yet.",
+    "لم يحدد موقع الصيدلية بعد": "The pharmacy location has not been set yet.",
 
-"اختر طريقة تحديد الموقع":
-  "Choose a Location Method",
+    "اختر طريقة تحديد الموقع": "Choose a Location Method",
 
-"استخدم موقع الجهاز أو أدخل الإحداثيات بنفسك":
-  "Use your device location or enter the coordinates manually.",
+    "استخدم موقع الجهاز أو أدخل الإحداثيات بنفسك":
+      "Use your device location or enter the coordinates manually.",
 
-"الموقع الحالي":
-  "Current Location",
+    "الموقع الحالي": "Current Location",
 
-"يتطلب السماح للمتصفح بمعرفة موقع الجهاز":
-  "Requires permission for the browser to access the device location.",
+    "يتطلب السماح للمتصفح بمعرفة موقع الجهاز":
+      "Requires permission for the browser to access the device location.",
 
-"جاري تحديد الموقع...":
-  "Detecting location...",
+    "جاري تحديد الموقع...": "Detecting location...",
 
-"استخدام موقعي الحالي":
-  "Use My Current Location",
+    "استخدام موقعي الحالي": "Use My Current Location",
 
-"أو":
-  "OR",
+    أو: "OR",
 
-"فتح الموقع على الخريطة":
-  "Open Location on Map",
+    "فتح الموقع على الخريطة": "Open Location on Map",
 
-"بيانات ثابتة":
-  "Fixed Information",
+    "بيانات ثابتة": "Fixed Information",
 
-"رقم الترخيص":
-  "License Number",
+    "رقم الترخيص": "License Number",
 
-"الهاتف":
-  "Phone",
+    الهاتف: "Phone",
 
-"غير مسجل":
-  "Not registered",
+    "غير مسجل": "Not registered",
 
-"مطابقة الموقع":
-  "Location Matching",
+    "مطابقة الموقع": "Location Matching",
 
-"اختر النتيجة التي تمثل صيدليتك بدقة لتثبيت الاسم والعنوان على الخريطة":
-  "Choose the result that accurately represents your pharmacy to confirm its name and address on the map.",
+    "اختر النتيجة التي تمثل صيدليتك بدقة لتثبيت الاسم والعنوان على الخريطة":
+      "Choose the result that accurately represents your pharmacy to confirm its name and address on the map.",
 
-"الأقرب للموقع":
-  "Closest Match",
+    "الأقرب للموقع": "Closest Match",
 
-"الموقع مرتبط":
-  "Location Linked",
+    "الموقع مرتبط": "Location Linked",
 
-"اعتماد هذا الموقع":
-  "Confirm This Location",
+    "اعتماد هذا الموقع": "Confirm This Location",
 
-"م":
-  "m",
+    م: "m",
 
-"إدخال الإحداثيات يدويًا":
-  "Enter Coordinates Manually",
+    "إدخال الإحداثيات يدويًا": "Enter Coordinates Manually",
 
-"انسخ القيم الدقيقة من تطبيق الخرائط":
-  "Copy the exact coordinates from your maps application.",
+    "انسخ القيم الدقيقة من تطبيق الخرائط":
+      "Copy the exact coordinates from your maps application.",
 
-"خط العرض":
-  "Latitude",
+    "خط العرض": "Latitude",
 
-"خط الطول":
-  "Longitude",
+    "خط الطول": "Longitude",
 
-"أدخل خط العرض وخط الطول قبل الحفظ.":
-  "Enter the latitude and longitude before saving.",
+    "أدخل خط العرض وخط الطول قبل الحفظ.":
+      "Enter the latitude and longitude before saving.",
 
-"يجب أن يكون خط العرض رقمًا بين ‎-90 و90.":
-  "Latitude must be a number between -90 and 90.",
+    "يجب أن يكون خط العرض رقمًا بين ‎-90 و90.":
+      "Latitude must be a number between -90 and 90.",
 
-"يجب أن يكون خط الطول رقمًا بين ‎-180 و180.":
-  "Longitude must be a number between -180 and 180.",
+    "يجب أن يكون خط الطول رقمًا بين ‎-180 و180.":
+      "Longitude must be a number between -180 and 180.",
 
-"حفظ الإحداثيات":
-  "Save Coordinates",
+    "حفظ الإحداثيات": "Save Coordinates",
     "تمت تلبية الطلب": "The request has been fulfilled",
     "تمت تلبيته": "It was met",
     "تمت قراءتها": "It has been read",
@@ -1920,17 +1762,15 @@ export const autoMessages = {
       "A medicine registered in the central directory",
     "دواء يصل لمن يحتاجه": "Medicine reaches those who need it",
     // English
-"طلب {{user}} دواء {{medicine}} من {{pharmacy}}.":
-  "{{user}} requested {{medicine}} from {{pharmacy}}.",
+    "طلب {{user}} دواء {{medicine}} من {{pharmacy}}.":
+      "{{user}} requested {{medicine}} from {{pharmacy}}.",
 
-"تم اعتماد صيدلية {{name}}.":
-  "{{name}} pharmacy has been approved.",
+    "تم اعتماد صيدلية {{name}}.": "{{name}} pharmacy has been approved.",
 
-"تم تحديث حالة اعتماد الصيدلية من إدارة المنصة.":
-  "The pharmacy approval status has been updated by the platform administration.",
+    "تم تحديث حالة اعتماد الصيدلية من إدارة المنصة.":
+      "The pharmacy approval status has been updated by the platform administration.",
 
-"تم إنشاء طلب دواء جديد.":
-  "A new medicine request has been created.",
+    "تم إنشاء طلب دواء جديد.": "A new medicine request has been created.",
     "دواؤك يصلك": "Your medicine arrives",
     "دون اقتراح بديل": "Without suggesting an alternative",
     "دون حملة محددة": "Without a specific campaign",
@@ -2125,94 +1965,72 @@ export const autoMessages = {
     "قريبة الانتهاء": "Close to completion",
     "شبكة تبرع آمنة": "Secure Donation Network",
 
-"التحقق من التبرعات الدوائية":
-  "Medicine Donation Verification",
+    "التحقق من التبرعات الدوائية": "Medicine Donation Verification",
 
-"استلم الدواء من المتبرع، افحص سلامة العبوة والصلاحية، ثم وثّق الاستلام ليظهر العرض للجمعية المستفيدة.":
-  "Receive the medicine from the donor, inspect the package condition and expiry date, then document the receipt so the offer becomes available to the beneficiary organization.",
+    "استلم الدواء من المتبرع، افحص سلامة العبوة والصلاحية، ثم وثّق الاستلام ليظهر العرض للجمعية المستفيدة.":
+      "Receive the medicine from the donor, inspect the package condition and expiry date, then document the receipt so the offer becomes available to the beneficiary organization.",
 
-"الخطوة": "Step",
+    الخطوة: "Step",
 
-"تواصل واستلام":
-  "Contact and Receive",
+    "تواصل واستلام": "Contact and Receive",
 
-"تتواصل الصيدلية مع المتبرع وتستلم الدواء فقط داخل مسار موثق.":
-  "The pharmacy contacts the donor and receives the medicine only through a documented process.",
+    "تتواصل الصيدلية مع المتبرع وتستلم الدواء فقط داخل مسار موثق.":
+      "The pharmacy contacts the donor and receives the medicine only through a documented process.",
 
-"فحص مهني":
-  "Professional Inspection",
+    "فحص مهني": "Professional Inspection",
 
-"تأكد من الإغلاق، الصلاحية، التخزين وسلامة العبوة.":
-  "Check the seal, expiry date, storage conditions, and package integrity.",
+    "تأكد من الإغلاق، الصلاحية، التخزين وسلامة العبوة.":
+      "Check the seal, expiry date, storage conditions, and package integrity.",
 
-"تحويل للجمعية":
-  "Transfer to Organization",
+    "تحويل للجمعية": "Transfer to Organization",
 
-"بعد توثيق الاستلام يظهر العرض للجمعية لتقرر القبول والتوزيع.":
-  "After the receipt is documented, the offer becomes available to the organization to decide whether to accept and distribute it.",
+    "بعد توثيق الاستلام يظهر العرض للجمعية لتقرر القبول والتوزيع.":
+      "After the receipt is documented, the offer becomes available to the organization to decide whether to accept and distribute it.",
 
-"تم حفظ قرار الصيدلية وإرسال الإشعارات اللازمة.":
-  "The pharmacy decision has been saved and the required notifications have been sent.",
+    "تم حفظ قرار الصيدلية وإرسال الإشعارات اللازمة.":
+      "The pharmacy decision has been saved and the required notifications have been sent.",
 
-"جاري تحميل عروض التبرع...":
-  "Loading donation offers...",
+    "جاري تحميل عروض التبرع...": "Loading donation offers...",
 
-"لا توجد عروض بانتظار الصيدلية":
-  "No offers awaiting pharmacy review",
+    "لا توجد عروض بانتظار الصيدلية": "No offers awaiting pharmacy review",
 
-"عندما يختار مستخدم صيدليتك للتحقق من تبرعه سيظهر العرض هنا.":
-  "When a user selects your pharmacy to verify a donation, the offer will appear here.",
+    "عندما يختار مستخدم صيدليتك للتحقق من تبرعه سيظهر العرض هنا.":
+      "When a user selects your pharmacy to verify a donation, the offer will appear here.",
 
-"بانتظار الفحص":
-  "Awaiting Inspection",
+    "بانتظار الفحص": "Awaiting Inspection",
 
-"مقبول — بانتظار التسليم":
-  "Accepted — Awaiting Delivery",
+    "مقبول — بانتظار التسليم": "Accepted — Awaiting Delivery",
 
-"مرفوض من الصيدلية":
-  "Rejected by Pharmacy",
+    "مرفوض من الصيدلية": "Rejected by Pharmacy",
 
-"مستلم وموثّق":
-  "Received and Documented",
+    "مستلم وموثّق": "Received and Documented",
 
-"الاسم العلمي غير محدد":
-  "Scientific name not specified",
+    "الاسم العلمي غير محدد": "Scientific name not specified",
 
-"المتبرع":
-  "Donor",
+    المتبرع: "Donor",
 
-"مستخدم المنصة":
-  "Platform User",
+    "مستخدم المنصة": "Platform User",
 
-"الهاتف":
-  "Phone",
+    الهاتف: "Phone",
 
-"غير مسجل":
-  "Not registered",
+    "غير مسجل": "Not registered",
 
-"عدد العبوات":
-  "Number of Packages",
+    "عدد العبوات": "Number of Packages",
 
-"الصلاحية":
-  "Expiry",
+    الصلاحية: "Expiry",
 
-"غير محددة":
-  "Not specified",
+    "غير محددة": "Not specified",
 
-"ملاحظة التحقق أو سبب الرفض":
-  "Verification Note or Rejection Reason",
+    "ملاحظة التحقق أو سبب الرفض": "Verification Note or Rejection Reason",
 
-"دوّن نتيجة فحص العبوة والصلاحية وحالة التخزين":
-  "Enter the result of the package, expiry, and storage condition inspection",
+    "دوّن نتيجة فحص العبوة والصلاحية وحالة التخزين":
+      "Enter the result of the package, expiry, and storage condition inspection",
 
-"قبول مبدئي وتحديد التسليم":
-  "Preliminary Approval and Arrange Delivery",
+    "قبول مبدئي وتحديد التسليم": "Preliminary Approval and Arrange Delivery",
 
-"رفض بعد الفحص":
-  "Reject After Inspection",
+    "رفض بعد الفحص": "Reject After Inspection",
 
-"تأكيد الاستلام والتوثيق":
-  "Confirm Receipt and Documentation",
+    "تأكيد الاستلام والتوثيق": "Confirm Receipt and Documentation",
     "قيد المراجعة": "Under review",
     "قيم الدليل العامة وليست مخزون صيدلية بعينها":
       "General directory values and not specific pharmacy inventory",
@@ -2481,7 +2299,7 @@ export const autoMessages = {
     "نشاطك الأخير": "Your recent activity",
     نشط: "Active",
     نشطة: "Active",
-    
+
     "نظرة عامة": "Overview",
     "نظرة عامة على حياة دوائية": "Overview of a pharmaceutical life",
     "نقطة انطلاق الطريق": "The starting point of the route",
@@ -2517,116 +2335,120 @@ export const autoMessages = {
       "The business status is updated according to the hours of each pharmacy",
     "يتوقف تلقائيًا عندما تصبح الكمية صفرًا":
       "It stops automatically when the quantity becomes zero",
-        "مساحة إدارة المنظمة": "Organization Management Workspace",
-  "توجد زيادة عن الشهر الفائت": "There is an increase compared to last month",
-  "ابحث هنا": "Search here",
-  "غير محدد":
-  "Not Specified",
+    "مساحة إدارة المنظمة": "Organization Management Workspace",
+    "توجد زيادة عن الشهر الفائت": "There is an increase compared to last month",
+    "ابحث هنا": "Search here",
+    "غير محدد": "Not Specified",
 
-"تحديث اعتماد المنظمة":
-  "Update Organization Approval",
+    "تحديث اعتماد المنظمة": "Update Organization Approval",
 
-"اعتماد المنظمة":
-  "Organization Approval",
-  "الاعتماد":
-  "Accreditation",
+    "اعتماد المنظمة": "Organization Approval",
+    الاعتماد: "Accreditation",
 
-"تحديث اعتماد المنظمة":
-  "Organization Accreditation Updated",
+    "تحديث اعتماد المنظمة": "Organization Accreditation Updated",
 
-"اعتماد المنظمة":
-  "Organization Accreditation",
+    "اعتماد المنظمة": "Organization Accreditation",
 
-"تم تحديث حالة اعتماد المنظمة من إدارة المنصة.":
-  "The organization accreditation status has been updated by the platform administration.",
+    "تم تحديث حالة اعتماد المنظمة من إدارة المنصة.":
+      "The organization accreditation status has been updated by the platform administration.",
 
-"غير محدد":
-  "Not Specified",
-  "تم إنشاء الحملة بنجاح.": "Campaign created successfully.",
-  "واجهة تعديل الحملات غير مضافة بعد داخل organizationApi.js.": "The campaign update API has not been added to organizationApi.js yet.",
-  "تم تعديل الحملة بنجاح.": "Campaign updated successfully.",
-  "واجهة حذف الحملات غير مضافة بعد داخل organizationApi.js.": "The campaign delete API has not been added to organizationApi.js yet.",
-  "تم حذف الحملة بنجاح.": "Campaign deleted successfully.",
-  "تم تحديث حالة الحملة.": "Campaign status updated.",
-  "هل أنت متأكد من حذف الحملة \"{{title}}\"؟": "Are you sure you want to delete the campaign \"{{title}}\"?",
+    "غير محدد": "Not Specified",
+    "تم إنشاء الحملة بنجاح.": "Campaign created successfully.",
+    "واجهة تعديل الحملات غير مضافة بعد داخل organizationApi.js.":
+      "The campaign update API has not been added to organizationApi.js yet.",
+    "تم تعديل الحملة بنجاح.": "Campaign updated successfully.",
+    "واجهة حذف الحملات غير مضافة بعد داخل organizationApi.js.":
+      "The campaign delete API has not been added to organizationApi.js yet.",
+    "تم حذف الحملة بنجاح.": "Campaign deleted successfully.",
+    "تم تحديث حالة الحملة.": "Campaign status updated.",
+    'هل أنت متأكد من حذف الحملة "{{title}}"؟':
+      'Are you sure you want to delete the campaign "{{title}}"?',
 
-  "إغلاق النموذج": "Close form",
-  "حملة جديدة": "New campaign",
-  "الحملات الدوائية": "Medication Campaigns",
-  "أنشئ الحملات وحدد احتياجاتها وموقعها وفترة استقبال التبرعات، ثم تابع حالتها من مكان واحد.": "Create campaigns, define their needs, location and donation period, then manage them from one place.",
+    "إغلاق النموذج": "Close form",
+    "حملة جديدة": "New campaign",
+    "الحملات الدوائية": "Medication Campaigns",
+    "أنشئ الحملات وحدد احتياجاتها وموقعها وفترة استقبال التبرعات، ثم تابع حالتها من مكان واحد.":
+      "Create campaigns, define their needs, location and donation period, then manage them from one place.",
 
-  "تعديل الحملة": "Edit Campaign",
-  "إضافة حملة جديدة": "Add New Campaign",
-  "تعديل بيانات الحملة": "Edit Campaign Information",
-  "إنشاء حملة جديدة": "Create New Campaign",
+    "تعديل الحملة": "Edit Campaign",
+    "إضافة حملة جديدة": "Add New Campaign",
+    "تعديل بيانات الحملة": "Edit Campaign Information",
+    "إنشاء حملة جديدة": "Create New Campaign",
 
-  "عدّل البيانات المطلوبة ثم احفظ التغييرات.": "Update the required information and save your changes.",
-  "أدخل المعلومات الأساسية للحملة لتظهر للمستخدمين بشكل واضح ومنظم.": "Enter the basic campaign information so it appears clearly to users.",
+    "عدّل البيانات المطلوبة ثم احفظ التغييرات.":
+      "Update the required information and save your changes.",
+    "أدخل المعلومات الأساسية للحملة لتظهر للمستخدمين بشكل واضح ومنظم.":
+      "Enter the basic campaign information so it appears clearly to users.",
 
-  "عنوان الحملة": "Campaign Title",
-  "مثال: حملة دعم مرضى الأمراض المزمنة": "Example: Chronic Disease Support Campaign",
+    "عنوان الحملة": "Campaign Title",
+    "مثال: حملة دعم مرضى الأمراض المزمنة":
+      "Example: Chronic Disease Support Campaign",
 
-  "وصف الحملة": "Campaign Description",
-  "اكتب وصفًا واضحًا ومختصرًا للحملة وأهدافها...": "Write a clear and concise description of the campaign and its goals...",
+    "وصف الحملة": "Campaign Description",
+    "اكتب وصفًا واضحًا ومختصرًا للحملة وأهدافها...":
+      "Write a clear and concise description of the campaign and its goals...",
 
-  "الأدوية المطلوبة": "Required Medicines",
-  "اختياري": "Optional",
-  "أسماء الأدوية أو الفئات ذات الأولوية": "Medicine names or priority categories",
+    "الأدوية المطلوبة": "Required Medicines",
+    اختياري: "Optional",
+    "أسماء الأدوية أو الفئات ذات الأولوية":
+      "Medicine names or priority categories",
 
-  "المدينة": "City",
-  "أدخل المدينة": "Enter city",
+    المدينة: "City",
+    "أدخل المدينة": "Enter city",
 
-  "المنطقة أو الحي": "District or Neighborhood",
-  "أدخل المنطقة أو الحي": "Enter district or neighborhood",
+    "المنطقة أو الحي": "District or Neighborhood",
+    "أدخل المنطقة أو الحي": "Enter district or neighborhood",
 
-  "تاريخ البدء": "Start Date",
-  "تاريخ الانتهاء": "End Date",
+    "تاريخ البدء": "Start Date",
+    "تاريخ الانتهاء": "End Date",
 
-  "حملة عاجلة": "Urgent Campaign",
-  "إظهار الحملة كأولوية": "Mark campaign as priority",
+    "حملة عاجلة": "Urgent Campaign",
+    "إظهار الحملة كأولوية": "Mark campaign as priority",
 
-  "استقبال تبرعات عامة": "Accept Public Donations",
-  "السماح للمستخدمين بالتبرع": "Allow users to donate",
+    "استقبال تبرعات عامة": "Accept Public Donations",
+    "السماح للمستخدمين بالتبرع": "Allow users to donate",
 
-  "جاري الحفظ...": "Saving...",
-  "حفظ التعديلات": "Save Changes",
-  "إنشاء الحملة": "Create Campaign",
-  "إلغاء": "Cancel",
+    "جاري الحفظ...": "Saving...",
+    "حفظ التعديلات": "Save Changes",
+    "إنشاء الحملة": "Create Campaign",
+    إلغاء: "Cancel",
 
-  "حملات المنظمة": "Organization Campaigns",
-  "إدارة الحالة ومراجعة تفاصيل كل حملة": "Manage campaign status and review details",
+    "حملات المنظمة": "Organization Campaigns",
+    "إدارة الحالة ومراجعة تفاصيل كل حملة":
+      "Manage campaign status and review details",
 
-  "ابحث عن حملة...": "Search campaigns...",
-  "خيارات التصفية": "Filter Options",
+    "ابحث عن حملة...": "Search campaigns...",
+    "خيارات التصفية": "Filter Options",
 
-  "جاري تحميل الحملات...": "Loading campaigns...",
-  "لا توجد حملات مطابقة": "No matching campaigns found.",
-  "أنشئ حملة جديدة أو غيّر مرشح الحالة أو البحث.": "Create a new campaign or change the search or status filter.",
+    "جاري تحميل الحملات...": "Loading campaigns...",
+    "لا توجد حملات مطابقة": "No matching campaigns found.",
+    "أنشئ حملة جديدة أو غيّر مرشح الحالة أو البحث.":
+      "Create a new campaign or change the search or status filter.",
 
-  "اسم الحملة": "Campaign Name",
-  "نوع الحملة": "Campaign Type",
-  "استقبال التبرع": "Donation",
-  "موعد الانتهاء": "End Date",
-  "الموقع": "Location",
-  "الحالة": "Status",
-  "الإجراءات": "Actions",
+    "اسم الحملة": "Campaign Name",
+    "نوع الحملة": "Campaign Type",
+    "استقبال التبرع": "Donation",
+    "موعد الانتهاء": "End Date",
+    الموقع: "Location",
+    الحالة: "Status",
+    الإجراءات: "Actions",
 
-  "حملة دوائية": "Medication Campaign",
-  "بالأدوية": "Medicine Donations",
-  "مغلق": "Closed",
-  "غير محدد": "Not Specified",
+    "حملة دوائية": "Medication Campaign",
+    بالأدوية: "Medicine Donations",
+    مغلق: "Closed",
+    "غير محدد": "Not Specified",
 
-  "تعديل": "Edit",
-  "حذف": "Delete",
-  "تعديل {{title}}": "Edit {{title}}",
-  "حذف {{title}}": "Delete {{title}}",
-  "تغيير حالة {{title}}": "Change status of {{title}}",
+    تعديل: "Edit",
+    حذف: "Delete",
+    "تعديل {{title}}": "Edit {{title}}",
+    "حذف {{title}}": "Delete {{title}}",
+    "تغيير حالة {{title}}": "Change status of {{title}}",
 
-  "عاجلة": "Urgent",
-  "حتى": "Until",
+    عاجلة: "Urgent",
+    حتى: "Until",
 
-  "تستقبل تبرعات عامة": "Accepts Public Donations",
-  "لا تستقبل تبرعات عامة": "Does Not Accept Public Donations",
+    "تستقبل تبرعات عامة": "Accepts Public Donations",
+    "لا تستقبل تبرعات عامة": "Does Not Accept Public Donations",
 
     "يجب إرسال خط العرض وخط الطول معاً.":
       "Latitude and longitude must be sent together.",
@@ -2680,20 +2502,6 @@ export const autoMessages = {
     "PDF، PNG، JPG، JPEG": "PDF, PNG, JPG, JPEG",
   },
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   tr: {
     "— عاجلة": "- Acil",
     "،": ",",
@@ -2710,552 +2518,449 @@ export const autoMessages = {
       '90) return setValidationError("Enlem -90 ile 90 arasında bir sayı olmalıdır."); if (!Number.isFinite(boylam) || boylam',
     "آخر الحملات المسجلة باسم المنظمة":
       "Kuruluş adına kayıtlı en son kampanyalar",
-      "مستودع أدوية": "İlaç Deposu",
-      "راجع تفاصيل الأدوية وحالة العبوات وتحقق الصيدلية، ثم اتخذ القرار المناسب وأرسل ملاحظة واضحة للمتبرع.":
-  "İlaç ayrıntılarını, paket durumunu ve eczane doğrulamasını inceleyin; ardından uygun kararı verip bağışçıya açık bir not gönderin.",
+    "مستودع أدوية": "İlaç Deposu",
+    "راجع تفاصيل الأدوية وحالة العبوات وتحقق الصيدلية، ثم اتخذ القرار المناسب وأرسل ملاحظة واضحة للمتبرع.":
+      "İlaç ayrıntılarını, paket durumunu ve eczane doğrulamasını inceleyin; ardından uygun kararı verip bağışçıya açık bir not gönderin.",
 
-"مسار التحقق والاستلام":
-  "Doğrulama ve Teslim Alma Süreci",
+    "مسار التحقق والاستلام": "Doğrulama ve Teslim Alma Süreci",
 
-"تمر التبرعات بمراحل واضحة قبل اعتمادها وتوزيعها لضمان السلامة وسهولة التتبع.":
-  "Bağışlar, güvenliği ve kolay takibi sağlamak için onay ve dağıtımdan önce açık aşamalardan geçer.",
+    "تمر التبرعات بمراحل واضحة قبل اعتمادها وتوزيعها لضمان السلامة وسهولة التتبع.":
+      "Bağışlar, güvenliği ve kolay takibi sağlamak için onay ve dağıtımdan önce açık aşamalardan geçer.",
 
-"فحص العبوة والصلاحية":
-  "Paket ve Son Kullanma Kontrolü",
+    "فحص العبوة والصلاحية": "Paket ve Son Kullanma Kontrolü",
 
-"المراجعة واتخاذ القرار":
-  "İnceleme ve Karar",
+    "المراجعة واتخاذ القرار": "İnceleme ve Karar",
 
-"الاستلام":
-  "Teslim Alma",
+    الاستلام: "Teslim Alma",
 
-"التوثيق والتوزيع":
-  "Belgeleme ve Dağıtım",
+    "التوثيق والتوزيع": "Belgeleme ve Dağıtım",
 
-"راجع العروض حسب الحالة والحملة":
-  "Teklifleri duruma ve kampanyaya göre inceleyin",
+    "راجع العروض حسب الحالة والحملة":
+      "Teklifleri duruma ve kampanyaya göre inceleyin",
 
-"ابحث باسم الدواء أو المتبرع...":
-  "İlaç veya bağışçı adına göre ara...",
+    "ابحث باسم الدواء أو المتبرع...": "İlaç veya bağışçı adına göre ara...",
 
-"{{count}} عبوة":
-  "{{count}} paket",
-  "الملف والتحقق":
-  "Profil ve Doğrulama",
+    "{{count}} عبوة": "{{count}} paket",
+    "الملف والتحقق": "Profil ve Doğrulama",
 
-"حدّث بيانات المنظمة وارفع المستندات الرسمية المطلوبة ليتمكن فريق الإدارة من مراجعتها واعتماد الحساب.":
-  "Kuruluş bilgilerini güncelleyin ve yönetim ekibinin hesabınızı inceleyip onaylayabilmesi için gerekli resmi belgeleri yükleyin.",
+    "حدّث بيانات المنظمة وارفع المستندات الرسمية المطلوبة ليتمكن فريق الإدارة من مراجعتها واعتماد الحساب.":
+      "Kuruluş bilgilerini güncelleyin ve yönetim ekibinin hesabınızı inceleyip onaylayabilmesi için gerekli resmi belgeleri yükleyin.",
 
-"تم حفظ بيانات المنظمة بنجاح.":
-  "Kuruluş bilgileri başarıyla kaydedildi.",
+    "تم حفظ بيانات المنظمة بنجاح.": "Kuruluş bilgileri başarıyla kaydedildi.",
 
-"تم رفع المستند وإرساله للمراجعة بنجاح.":
-  "Belge başarıyla yüklendi ve incelemeye gönderildi.",
+    "تم رفع المستند وإرساله للمراجعة بنجاح.":
+      "Belge başarıyla yüklendi ve incelemeye gönderildi.",
 
-"اختر المستند الذي تريد رفعه.":
-  "Lütfen yüklemek istediğiniz belgeyi seçin.",
+    "اختر المستند الذي تريد رفعه.":
+      "Lütfen yüklemek istediğiniz belgeyi seçin.",
 
-"الصيغ المقبولة هي PDF وPNG وJPG فقط.":
-  "Kabul edilen formatlar yalnızca PDF, PNG ve JPG'dir.",
+    "الصيغ المقبولة هي PDF وPNG وJPG فقط.":
+      "Kabul edilen formatlar yalnızca PDF, PNG ve JPG'dir.",
 
-"يجب ألا يتجاوز حجم المستند 10 ميغابايت.":
-  "Belge boyutu 10 MB'ı geçmemelidir.",
+    "يجب ألا يتجاوز حجم المستند 10 ميغابايت.":
+      "Belge boyutu 10 MB'ı geçmemelidir.",
 
-"جاري تحميل ملف المنظمة...":
-  "Kuruluş profili yükleniyor...",
+    "جاري تحميل ملف المنظمة...": "Kuruluş profili yükleniyor...",
 
-"بيانات المنظمة":
-  "Kuruluş Bilgileri",
+    "بيانات المنظمة": "Kuruluş Bilgileri",
 
-"تظهر هذه البيانات للمستفيدين والمتبرعين":
-  "Bu bilgiler bağışçılar ve yararlanıcılar tarafından görülebilir.",
+    "تظهر هذه البيانات للمستفيدين والمتبرعين":
+      "Bu bilgiler bağışçılar ve yararlanıcılar tarafından görülebilir.",
 
-"اسم المنظمة":
-  "Kuruluş Adı",
+    "اسم المنظمة": "Kuruluş Adı",
 
-"رقم التسجيل":
-  "Kayıt Numarası",
+    "رقم التسجيل": "Kayıt Numarası",
 
-"رقم الهاتف":
-  "Telefon Numarası",
+    "رقم الهاتف": "Telefon Numarası",
 
-"المدينة":
-  "Şehir",
+    المدينة: "Şehir",
 
-"المنطقة أو الحي":
-  "Bölge / Mahalle",
+    "المنطقة أو الحي": "Bölge / Mahalle",
 
-"العنوان":
-  "Adres",
+    العنوان: "Adres",
 
-"نبذة عن المنظمة":
-  "Kuruluş Hakkında",
+    "نبذة عن المنظمة": "Kuruluş Hakkında",
 
-"اكتب نبذة مختصرة عن المنظمة ونشاطها...":
-  "Kuruluş ve faaliyetleri hakkında kısa bir açıklama yazın...",
+    "اكتب نبذة مختصرة عن المنظمة ونشاطها...":
+      "Kuruluş ve faaliyetleri hakkında kısa bir açıklama yazın...",
 
-"حفظ بيانات المنظمة":
-  "Kuruluş Bilgilerini Kaydet",
+    "حفظ بيانات المنظمة": "Kuruluş Bilgilerini Kaydet",
 
-"حالة التحقق":
-  "Doğrulama Durumu",
+    "حالة التحقق": "Doğrulama Durumu",
 
-"آخر حالة لملف المنظمة":
-  "Son doğrulama durumu",
+    "آخر حالة لملف المنظمة": "Son doğrulama durumu",
 
-"تم اعتماد المنظمة ويمكنها إدارة الحملات والطلبات.":
-  "Kuruluş onaylandı ve kampanyaları ile talepleri yönetebilir.",
+    "تم اعتماد المنظمة ويمكنها إدارة الحملات والطلبات.":
+      "Kuruluş onaylandı ve kampanyaları ile talepleri yönetebilir.",
 
-"ارفع المستندات الرسمية الواضحة ليتم إرسال الملف إلى المراجعة.":
-  "Profilinizi incelemeye göndermek için resmi belgeleri yükleyin.",
+    "ارفع المستندات الرسمية الواضحة ليتم إرسال الملف إلى المراجعة.":
+      "Profilinizi incelemeye göndermek için resmi belgeleri yükleyin.",
 
-"المستندات":
-  "Belgeler",
+    المستندات: "Belgeler",
 
-"تاريخ الإرسال":
-  "Gönderim Tarihi",
+    "تاريخ الإرسال": "Gönderim Tarihi",
 
-"رفع مستند تحقق":
-  "Doğrulama Belgesi Yükle",
+    "رفع مستند تحقق": "Doğrulama Belgesi Yükle",
 
-"PDF أو صورة واضحة، بحد أقصى 10 ميغابايت. رفع مستند جديد من النوع نفسه يستبدل السابق.":
-  "En fazla 10 MB boyutunda PDF veya net bir görsel yükleyin. Aynı türde yeni bir belge yüklemek eskisini değiştirir.",
+    "PDF أو صورة واضحة، بحد أقصى 10 ميغابايت. رفع مستند جديد من النوع نفسه يستبدل السابق.":
+      "En fazla 10 MB boyutunda PDF veya net bir görsel yükleyin. Aynı türde yeni bir belge yüklemek eskisini değiştirir.",
 
-"نوع المستند":
-  "Belge Türü",
+    "نوع المستند": "Belge Türü",
 
-"اختر ملفًا من جهازك":
-  "Cihazınızdan bir dosya seçin",
+    "اختر ملفًا من جهازك": "Cihazınızdan bir dosya seçin",
 
-"PDF، PNG، JPG، JPEG":
-  "PDF, PNG, JPG, JPEG",
+    "PDF، PNG، JPG، JPEG": "PDF, PNG, JPG, JPEG",
 
-"جاري الرفع...":
-  "Yükleniyor...",
+    "جاري الرفع...": "Yükleniyor...",
 
-"رفع وإرسال للمراجعة":
-  "Yükle ve İncelemeye Gönder",
+    "رفع وإرسال للمراجعة": "Yükle ve İncelemeye Gönder",
 
-"المستندات المرفوعة":
-  "Yüklenen Belgeler",
+    "المستندات المرفوعة": "Yüklenen Belgeler",
 
-"النسخة الفعالة من كل مستند في ملف المنظمة":
-  "Kuruluş profilindeki her belgenin güncel sürümü.",
+    "النسخة الفعالة من كل مستند في ملف المنظمة":
+      "Kuruluş profilindeki her belgenin güncel sürümü.",
 
-"تنزيل":
-  "İndir",
+    تنزيل: "İndir",
 
-"تنزيل {{fileName}}":
-  "{{fileName}} dosyasını indir",
+    "تنزيل {{fileName}}": "{{fileName}} dosyasını indir",
 
-"لم تُرفع مستندات تحقق بعد.":
-  "Henüz doğrulama belgesi yüklenmedi.",
+    "لم تُرفع مستندات تحقق بعد.": "Henüz doğrulama belgesi yüklenmedi.",
 
-"صيدلية التحقق":
-  "Doğrulama Eczanesi",
+    "صيدلية التحقق": "Doğrulama Eczanesi",
 
-"توثيق الصيدلية":
-  "Eczane Doğrulaması",
+    "توثيق الصيدلية": "Eczane Doğrulaması",
 
-"تم الاستلام والتحقق":
-  "Teslim Alındı ve Doğrulandı",
+    "تم الاستلام والتحقق": "Teslim Alındı ve Doğrulandı",
 
-"بانتظار التحقق":
-  "Doğrulama Bekleniyor",
+    "بانتظار التحقق": "Doğrulama Bekleniyor",
 
-"ملاحظة المتبرع":
-  "Bağışçı Notu",
+    "ملاحظة المتبرع": "Bağışçı Notu",
 
-"ملاحظة صيدلية التحقق":
-  "Doğrulama Eczanesi Notu",
+    "ملاحظة صيدلية التحقق": "Doğrulama Eczanesi Notu",
 
-"وصل في":
-  "Alınma tarihi","طلبات المساعدة الدوائية":
-  "İlaç Yardım Talepleri",
+    "وصل في": "Alınma tarihi",
+    "طلبات المساعدة الدوائية": "İlaç Yardım Talepleri",
 
-"تم تحديث طلب المساعدة وإشعار صاحبه.":
-  "Yardım talebi güncellendi ve talep sahibine bildirim gönderildi.",
+    "تم تحديث طلب المساعدة وإشعار صاحبه.":
+      "Yardım talebi güncellendi ve talep sahibine bildirim gönderildi.",
 
-"راجع تفاصيل الدواء والكمية ووقت الاحتياج، ثم حدّث حالة الطلب وأرسل ردًا واضحًا لصاحب الطلب.":
-  "İlaç bilgilerini, miktarı ve ihtiyaç tarihini inceleyin; ardından talep durumunu güncelleyip talep sahibine açık bir yanıt gönderin.",
+    "راجع تفاصيل الدواء والكمية ووقت الاحتياج، ثم حدّث حالة الطلب وأرسل ردًا واضحًا لصاحب الطلب.":
+      "İlaç bilgilerini, miktarı ve ihtiyaç tarihini inceleyin; ardından talep durumunu güncelleyip talep sahibine açık bir yanıt gönderin.",
 
-"مسار معالجة طلب المساعدة":
-  "Yardım Talebi Süreci",
+    "مسار معالجة طلب المساعدة": "Yardım Talebi Süreci",
 
-"يمر الطلب بعدة مراحل واضحة حتى تتم مراجعته واتخاذ القرار المناسب.":
-  "Talep, incelenip uygun karar verilmeden önce belirli aşamalardan geçer.",
+    "يمر الطلب بعدة مراحل واضحة حتى تتم مراجعته واتخاذ القرار المناسب.":
+      "Talep, incelenip uygun karar verilmeden önce belirli aşamalardan geçer.",
 
-"إرسال الطلب":
-  "Talebi Gönder",
+    "إرسال الطلب": "Talebi Gönder",
 
-"المستخدم يحدد الدواء والكمية":
-  "Kullanıcı ilacı ve miktarı belirler",
+    "المستخدم يحدد الدواء والكمية": "Kullanıcı ilacı ve miktarı belirler",
 
-"مراجعة المنظمة":
-  "Kuruluş İncelemesi",
+    "مراجعة المنظمة": "Kuruluş İncelemesi",
 
-"التحقق من البيانات والأولوية":
-  "Bilgileri ve önceliği doğrula",
+    "التحقق من البيانات والأولوية": "Bilgileri ve önceliği doğrula",
 
-"التنسيق":
-  "Koordinasyon",
+    التنسيق: "Koordinasyon",
 
-"ربط الطلب بالحملة أو الجهة المناسبة":
-  "Talebi uygun kampanya ile eşleştir",
+    "ربط الطلب بالحملة أو الجهة المناسبة": "Talebi uygun kampanya ile eşleştir",
 
-"التلبية":
-  "Karşılama",
+    التلبية: "Karşılama",
 
-"تسليم الدواء وتوثيق النتيجة":
-  "İlacı teslim et ve sonucu belgele",
+    "تسليم الدواء وتوثيق النتيجة": "İlacı teslim et ve sonucu belgele",
 
-"الطلبات الواردة":
-  "Gelen Talepler",
-
-"راجع الطلبات حسب الحالة والحملة":
-  "Talepleri duruma ve kampanyaya göre incele",
-
-"ابحث باسم الدواء أو صاحب الطلب...":
-  "İlaç veya talep sahibi adına göre ara...",
-
-"جاري تحميل طلبات المساعدة...":
-  "Yardım talepleri yükleniyor...",
-
-"لا توجد طلبات مطابقة":
-  "Eşleşen talep bulunamadı",
-
-"ستظهر هنا طلبات المساعدة الموجهة إلى المنظمة أو حملاتها.":
-  "Kuruluşa veya kampanyalarına ait yardım talepleri burada görüntülenecektir.",
-
-"صاحب الطلب":
-  "Talep Sahibi",
-
-"الكمية المطلوبة":
-  "İstenen Miktar",
-
-"مطلوب قبل":
-  "Gerekli Tarih",
-
-"ملاحظة صاحب الطلب":
-  "Talep Sahibinin Notu",
-
-"تحديث حالة الطلب":
-  "Talep Durumunu Güncelle",
-
-"بدء المراجعة":
-  "İncelemeyi Başlat",
-
-"تمت تلبية الطلب":
-  "Talep Karşılandı",
-
-"تعذر تلبية الطلب":
-  "Talep Karşılanamadı",
-
-"رد لصاحب الطلب (اختياري)":
-  "Talep sahibine yanıt (isteğe bağlı)",
-"ادلب": "İdlib",
-"حفظ التحديث":
-  "Güncellemeyi Kaydet",
-"إنشاء حساب جديد": "Yeni hesap oluştur",
-"اختر نوع الحساب": "Hesap türünü seçin",
-"يحدد نوع الحساب البيانات المطلوبة والصلاحيات المتاحة داخل المنصة":
-  "Hesap türü, platformda gerekli bilgileri ve kullanılabilir yetkileri belirler.",
-"اختر الحساب": "Hesabı seç",
-"لدي حساب بالفعل": "Zaten bir hesabım var",
-"العودة لتسجيل الدخول": "Girişe dön",
-"العودة إلى الصفحة الرئيسية": "Ana sayfaya dön",
-"سياسة الخصوصية": "Gizlilik politikası",
-"الدعم والمساعدة": "Destek ve yardım",
-
-"تغيير نوع الحساب": "Hesap türünü değiştir",
-"بيانات الحساب": "Hesap bilgileri",
-"بيانات {{account}}": "{{account}} bilgileri",
-"خصوصيتك تهمنا": "Gizliliğiniz bizim için önemlidir",
-"نحافظ على بيانات حسابك ونستخدمها فقط لتقديم الخدمات المناسبة لك.":
-  "Hesap verilerinizi korur ve yalnızca size uygun hizmetleri sunmak için kullanırız.",
-"الخطوة {{step}} من {{total}}": "Adım {{step}} / {{total}}",
-"أدخل بيانات الدخول الأساسية كما ستظهر في حسابك.":
-  "Hesabınızda görünecek temel giriş bilgilerini girin.",
-"أدخل البيانات الرسمية وعنوان الصيدلية.":
-  "Eczanenin resmî bilgilerini ve adresini girin.",
-"أدخل بيانات الترخيص والتوصيل الخاصة بالمستودع.":
-  "Deponun lisans ve teslimat bilgilerini girin.",
-"أدخل البيانات الرسمية وعنوان المنظمة.":
-  "Kuruluşun resmî bilgilerini ve adresini girin.",
-"صورة تسجيل {{account}}": "{{account}} kayıt görseli",
-
-"الاسم الكامل": "Ad soyad",
-"الاسم كما سيظهر في الحساب": "Hesapta görünecek ad",
-"رقم الهاتف": "Telefon numarası",
-"رقم الهاتف (اختياري)": "Telefon numarası (isteğe bağlı)",
-"البريد الإلكتروني": "E-posta adresi",
-"كلمة المرور": "Şifre",
-"تأكيد كلمة المرور": "Şifreyi doğrula",
-"8 أحرف على الأقل": "En az 8 karakter",
-"حرف إنكليزي كبير": "Bir büyük İngilizce harf",
-"حرف إنكليزي صغير": "Bir küçük İngilizce harf",
-"رقم ورمز خاص": "Bir sayı ve özel karakter",
-"إخفاء كلمة المرور": "Şifreyi gizle",
-"إظهار كلمة المرور": "Şifreyi göster",
-
-"اسم الصيدلية": "Eczane adı",
-"اسم المستودع": "Depo adı",
-"اسم المنظمة": "Kuruluş adı",
-"الاسم الرسمي للصيدلية": "Eczanenin resmî adı",
-"الاسم التجاري المرخص للمستودع": "Deponun lisanslı ticari adı",
-"الاسم الرسمي للمنظمة": "Kuruluşun resmî adı",
-"رقم الترخيص": "Lisans numarası",
-"رقم التسجيل": "Kayıt numarası",
-"رقم ترخيص الصيدلية": "Eczane lisans numarası",
-"رقم ترخيص المستودع": "Depo lisans numarası",
-"رقم تسجيل المنظمة": "Kuruluş kayıt numarası",
-"المدينة": "Şehir",
-"المنطقة": "Bölge",
-"المنطقة أو الحي": "Bölge veya mahalle",
-"العنوان التفصيلي": "Ayrıntılı adres",
-"الشارع، البناء وأقرب نقطة دالة":
-  "Sokak, bina ve en yakın bilinen nokta",
-"وصف مختصر (اختياري)": "Kısa açıklama (isteğe bağlı)",
-"معلومات إضافية عن الصيدلية وخدماتها":
-  "Eczane ve hizmetleri hakkında ek bilgiler",
-"معلومات إضافية عن المستودع وتغطيته وخدماته":
-  "Depo, kapsama alanı ve hizmetleri hakkında ek bilgiler",
-"معلومات إضافية عن المنظمة ونشاطها":
-  "Kuruluş ve faaliyetleri hakkında ek bilgiler",
-
-"يوفر المستودع خدمة التوصيل":
-  "Depo teslimat hizmeti sunar",
-"خدمة توصيل تابعة للصيدلية":
-  "Eczaneye ait teslimat hizmeti",
-"حدد الخيار عند توفر خدمة التوصيل":
-  "Teslimat hizmeti mevcutsa bu seçeneği işaretleyin",
-"جاري تحديد الموقع...": "Konum belirleniyor...",
-"إضافة إحداثيات {{owner}}": "{{owner}} koordinatlarını ekle",
-"خدمة تحديد الموقع غير مدعومة في هذا المتصفح.":
-  "Konum hizmetleri bu tarayıcıda desteklenmiyor.",
-"تمت إضافة إحداثيات موقع {{owner}}.":
-  "{{owner}} konum koordinatları eklendi.",
-"تعذر الوصول إلى الموقع. يمكنك متابعة التسجيل من دون إحداثيات.":
-  "Konuma erişilemedi. Koordinatlar olmadan kayda devam edebilirsiniz.",
-  "لوحة التحكم": "Kontrol Paneli",
-  "حالة المنظمة": "Kuruluş durumu",
-  "معتمدة وجاهزة للعمل": "Onaylandı ve çalışmaya hazır",
-  "مراجعة الملف والتحقق منه": "Profili incele ve doğrula",
+    "الطلبات الواردة": "Gelen Talepler",
 
-  "إدارة الحملات": "Kampanya yönetimi",
-  "العروض الواردة": "Gelen teklifler",
+    "راجع الطلبات حسب الحالة والحملة":
+      "Talepleri duruma ve kampanyaya göre incele",
 
-  "الحملات النشطة": "Aktif kampanyalar",
-  "عروض بانتظار المراجعة": "İnceleme bekleyen teklifler",
-  "طلبات المساعدة المفتوحة": "Açık yardım talepleri",
-  "وثائق التحقق": "Doğrulama belgeleri",
+    "ابحث باسم الدواء أو صاحب الطلب...":
+      "İlaç veya talep sahibi adına göre ara...",
 
-  "آخر الحملات": "Son kampanyalar",
-  "آخر الحملات المسجلة باسم المنظمة": "Kuruluş adına kaydedilen son kampanyalar",
+    "جاري تحميل طلبات المساعدة...": "Yardım talepleri yükleniyor...",
 
-  "عرض الكل": "Tümünü görüntüle",
-  "التفاصيل": "Detaylar",
+    "لا توجد طلبات مطابقة": "Eşleşen talep bulunamadı",
 
-  "تم التحقق منها ومراجعتها": "Doğrulandı ve incelendi",
-  "لا توجد زيادة عن الشهر الفائت": "Geçen aya göre artış yok",
-  "حملة مسجلة": "Kayıtlı kampanya",
-  "حملات مسجلة": "Kayıtlı kampanyalar",
-  "الملف والموقع":
-  "Profil ve Konum",
+    "ستظهر هنا طلبات المساعدة الموجهة إلى المنظمة أو حملاتها.":
+      "Kuruluşa veya kampanyalarına ait yardım talepleri burada görüntülenecektir.",
 
-"حافظ على بيانات الصيدلية وموقعها محدثين كي يصل المرضى إليك بسهولة .":
-  "Hastaların size kolayca ulaşabilmesi için eczane bilgilerinizi ve konumunuzu güncel tutun.",
+    "صاحب الطلب": "Talep Sahibi",
+
+    "الكمية المطلوبة": "İstenen Miktar",
 
-"تم حفظ بيانات الصيدلية بنجاح.":
-  "Eczane bilgileri başarıyla kaydedildi.",
+    "مطلوب قبل": "Gerekli Tarih",
 
-"تم حفظ موقع الجهاز، ويمكنك الآن مراجعة نتيجة المطابقة أدناه.":
-  "Cihaz konumu kaydedildi. Şimdi aşağıdaki eşleştirme sonuçlarını inceleyebilirsiniz.",
+    "ملاحظة صاحب الطلب": "Talep Sahibinin Notu",
 
-"تم حفظ الإحداثيات اليدوية بنجاح، ويمكنك مطابقة الصيدلية مع الموقع الصحيح أدناه.":
-  "Koordinatlar başarıyla kaydedildi. Şimdi eczaneyi aşağıdaki doğru konumla eşleştirebilirsiniz.",
+    "تحديث حالة الطلب": "Talep Durumunu Güncelle",
+
+    "بدء المراجعة": "İncelemeyi Başlat",
 
-"تم ربط الصيدلية بالموقع المعتمد بنجاح.":
-  "Eczane doğrulanmış konumla başarıyla eşleştirildi.",
+    "تمت تلبية الطلب": "Talep Karşılandı",
+
+    "تعذر تلبية الطلب": "Talep Karşılanamadı",
 
-"تحديد الموقع غير مدعوم في هذا المتصفح.":
-  "Konum hizmetleri bu tarayıcı tarafından desteklenmiyor.",
+    "رد لصاحب الطلب (اختياري)": "Talep sahibine yanıt (isteğe bağlı)",
+    ادلب: "İdlib",
+    "حفظ التحديث": "Güncellemeyi Kaydet",
+    "إنشاء حساب جديد": "Yeni hesap oluştur",
+    "اختر نوع الحساب": "Hesap türünü seçin",
+    "يحدد نوع الحساب البيانات المطلوبة والصلاحيات المتاحة داخل المنصة":
+      "Hesap türü, platformda gerekli bilgileri ve kullanılabilir yetkileri belirler.",
+    "اختر الحساب": "Hesabı seç",
+    "لدي حساب بالفعل": "Zaten bir hesabım var",
+    "العودة لتسجيل الدخول": "Girişe dön",
+    "العودة إلى الصفحة الرئيسية": "Ana sayfaya dön",
+    "سياسة الخصوصية": "Gizlilik politikası",
+    "الدعم والمساعدة": "Destek ve yardım",
 
-"لم نتمكن من قراءة موقعك. اسمح للمتصفح بالوصول إلى الموقع ثم أعد المحاولة.":
-  "Konumunuza erişilemedi. Tarayıcının konumunuza erişmesine izin verin ve tekrar deneyin.",
+    "تغيير نوع الحساب": "Hesap türünü değiştir",
+    "بيانات الحساب": "Hesap bilgileri",
+    "بيانات {{account}}": "{{account}} bilgileri",
+    "خصوصيتك تهمنا": "Gizliliğiniz bizim için önemlidir",
+    "نحافظ على بيانات حسابك ونستخدمها فقط لتقديم الخدمات المناسبة لك.":
+      "Hesap verilerinizi korur ve yalnızca size uygun hizmetleri sunmak için kullanırız.",
+    "الخطوة {{step}} من {{total}}": "Adım {{step}} / {{total}}",
+    "أدخل بيانات الدخول الأساسية كما ستظهر في حسابك.":
+      "Hesabınızda görünecek temel giriş bilgilerini girin.",
+    "أدخل البيانات الرسمية وعنوان الصيدلية.":
+      "Eczanenin resmî bilgilerini ve adresini girin.",
+    "أدخل بيانات الترخيص والتوصيل الخاصة بالمستودع.":
+      "Deponun lisans ve teslimat bilgilerini girin.",
+    "أدخل البيانات الرسمية وعنوان المنظمة.":
+      "Kuruluşun resmî bilgilerini ve adresini girin.",
+    "صورة تسجيل {{account}}": "{{account}} kayıt görseli",
 
-"بيانات التعريف":
-  "Eczane Bilgileri",
+    "الاسم الكامل": "Ad soyad",
+    "الاسم كما سيظهر في الحساب": "Hesapta görünecek ad",
+    "رقم الهاتف": "Telefon numarası",
+    "رقم الهاتف (اختياري)": "Telefon numarası (isteğe bağlı)",
+    "البريد الإلكتروني": "E-posta adresi",
+    "كلمة المرور": "Şifre",
+    "تأكيد كلمة المرور": "Şifreyi doğrula",
+    "8 أحرف على الأقل": "En az 8 karakter",
+    "حرف إنكليزي كبير": "Bir büyük İngilizce harf",
+    "حرف إنكليزي صغير": "Bir küçük İngilizce harf",
+    "رقم ورمز خاص": "Bir sayı ve özel karakter",
+    "إخفاء كلمة المرور": "Şifreyi gizle",
+    "إظهار كلمة المرور": "Şifreyi göster",
 
-"تظهر هذه المعلومات للمرضى عند فتح صفحة الصيدلية":
-  "Bu bilgiler hastalar eczane sayfasını açtığında gösterilir.",
+    "اسم الصيدلية": "Eczane adı",
+    "اسم المستودع": "Depo adı",
+    "اسم المنظمة": "Kuruluş adı",
+    "الاسم الرسمي للصيدلية": "Eczanenin resmî adı",
+    "الاسم التجاري المرخص للمستودع": "Deponun lisanslı ticari adı",
+    "الاسم الرسمي للمنظمة": "Kuruluşun resmî adı",
+    "رقم الترخيص": "Lisans numarası",
+    "رقم التسجيل": "Kayıt numarası",
+    "رقم ترخيص الصيدلية": "Eczane lisans numarası",
+    "رقم ترخيص المستودع": "Depo lisans numarası",
+    "رقم تسجيل المنظمة": "Kuruluş kayıt numarası",
+    المدينة: "Şehir",
+    المنطقة: "Bölge",
+    "المنطقة أو الحي": "Bölge veya mahalle",
+    "العنوان التفصيلي": "Ayrıntılı adres",
+    "الشارع، البناء وأقرب نقطة دالة": "Sokak, bina ve en yakın bilinen nokta",
+    "وصف مختصر (اختياري)": "Kısa açıklama (isteğe bağlı)",
+    "معلومات إضافية عن الصيدلية وخدماتها":
+      "Eczane ve hizmetleri hakkında ek bilgiler",
+    "معلومات إضافية عن المستودع وتغطيته وخدماته":
+      "Depo, kapsama alanı ve hizmetleri hakkında ek bilgiler",
+    "معلومات إضافية عن المنظمة ونشاطها":
+      "Kuruluş ve faaliyetleri hakkında ek bilgiler",
 
-"اسم الصيدلية":
-  "Eczane Adı",
+    "يوفر المستودع خدمة التوصيل": "Depo teslimat hizmeti sunar",
+    "خدمة توصيل تابعة للصيدلية": "Eczaneye ait teslimat hizmeti",
+    "حدد الخيار عند توفر خدمة التوصيل":
+      "Teslimat hizmeti mevcutsa bu seçeneği işaretleyin",
+    "جاري تحديد الموقع...": "Konum belirleniyor...",
+    "إضافة إحداثيات {{owner}}": "{{owner}} koordinatlarını ekle",
+    "خدمة تحديد الموقع غير مدعومة في هذا المتصفح.":
+      "Konum hizmetleri bu tarayıcıda desteklenmiyor.",
+    "تمت إضافة إحداثيات موقع {{owner}}.":
+      "{{owner}} konum koordinatları eklendi.",
+    "تعذر الوصول إلى الموقع. يمكنك متابعة التسجيل من دون إحداثيات.":
+      "Konuma erişilemedi. Koordinatlar olmadan kayda devam edebilirsiniz.",
+    "لوحة التحكم": "Kontrol Paneli",
+    "حالة المنظمة": "Kuruluş durumu",
+    "معتمدة وجاهزة للعمل": "Onaylandı ve çalışmaya hazır",
+    "مراجعة الملف والتحقق منه": "Profili incele ve doğrula",
 
-"المدينة":
-  "Şehir",
+    "إدارة الحملات": "Kampanya yönetimi",
+    "العروض الواردة": "Gelen teklifler",
 
-"المنطقة أو الحي":
-  "Bölge veya Mahalle",
+    "الحملات النشطة": "Aktif kampanyalar",
+    "عروض بانتظار المراجعة": "İnceleme bekleyen teklifler",
+    "طلبات المساعدة المفتوحة": "Açık yardım talepleri",
+    "وثائق التحقق": "Doğrulama belgeleri",
 
-"المنطقة الزمنية":
-  "Saat Dilimi",
+    "آخر الحملات": "Son kampanyalar",
+    "آخر الحملات المسجلة باسم المنظمة":
+      "Kuruluş adına kaydedilen son kampanyalar",
 
-"توقيت الرياض":
-  "Riyad Saati",
+    "عرض الكل": "Tümünü görüntüle",
+    التفاصيل: "Detaylar",
 
-"توقيت دمشق":
-  "Şam Saati",
+    "تم التحقق منها ومراجعتها": "Doğrulandı ve incelendi",
+    "لا توجد زيادة عن الشهر الفائت": "Geçen aya göre artış yok",
+    "حملة مسجلة": "Kayıtlı kampanya",
+    "حملات مسجلة": "Kayıtlı kampanyalar",
+    "الملف والموقع": "Profil ve Konum",
 
-"توقيت بغداد":
-  "Bağdat Saati",
+    "حافظ على بيانات الصيدلية وموقعها محدثين كي يصل المرضى إليك بسهولة .":
+      "Hastaların size kolayca ulaşabilmesi için eczane bilgilerinizi ve konumunuzu güncel tutun.",
 
-"العنوان التفصيلي":
-  "Ayrıntılı Adres",
+    "تم حفظ بيانات الصيدلية بنجاح.": "Eczane bilgileri başarıyla kaydedildi.",
 
-"نبذة عن الصيدلية":
-  "Eczane Hakkında",
+    "تم حفظ موقع الجهاز، ويمكنك الآن مراجعة نتيجة المطابقة أدناه.":
+      "Cihaz konumu kaydedildi. Şimdi aşağıdaki eşleştirme sonuçlarını inceleyebilirsiniz.",
 
-"الخدمات والتخصصات التي تميز الصيدلية":
-  "Eczaneyi öne çıkaran hizmetler ve uzmanlıklar",
+    "تم حفظ الإحداثيات اليدوية بنجاح، ويمكنك مطابقة الصيدلية مع الموقع الصحيح أدناه.":
+      "Koordinatlar başarıyla kaydedildi. Şimdi eczaneyi aşağıdaki doğru konumla eşleştirebilirsiniz.",
 
-"خدمة توصيل الأدوية":
-  "İlaç Teslimat Hizmeti",
+    "تم ربط الصيدلية بالموقع المعتمد بنجاح.":
+      "Eczane doğrulanmış konumla başarıyla eşleştirildi.",
 
-"فعّلها فقط إذا كانت الخدمة متاحة فعليًا":
-  "Yalnızca hizmet gerçekten mevcutsa etkinleştirin.",
+    "تحديد الموقع غير مدعوم في هذا المتصفح.":
+      "Konum hizmetleri bu tarayıcı tarafından desteklenmiyor.",
 
-"جاري الحفظ...":
-  "Kaydediliyor...",
+    "لم نتمكن من قراءة موقعك. اسمح للمتصفح بالوصول إلى الموقع ثم أعد المحاولة.":
+      "Konumunuza erişilemedi. Tarayıcının konumunuza erişmesine izin verin ve tekrar deneyin.",
 
-"حفظ البيانات":
-  "Bilgileri Kaydet",
+    "بيانات التعريف": "Eczane Bilgileri",
 
-"موقع الصيدلية":
-  "Eczane Konumu",
+    "تظهر هذه المعلومات للمرضى عند فتح صفحة الصيدلية":
+      "Bu bilgiler hastalar eczane sayfasını açtığında gösterilir.",
 
-"لم يحدد موقع الصيدلية بعد":
-  "Eczane konumu henüz belirlenmedi.",
+    "اسم الصيدلية": "Eczane Adı",
 
-"اختر طريقة تحديد الموقع":
-  "Konum Belirleme Yöntemini Seçin",
+    المدينة: "Şehir",
 
-"استخدم موقع الجهاز أو أدخل الإحداثيات بنفسك":
-  "Cihaz konumunu kullanın veya koordinatları manuel olarak girin.",
+    "المنطقة أو الحي": "Bölge veya Mahalle",
 
-"الموقع الحالي":
-  "Mevcut Konum",
+    "المنطقة الزمنية": "Saat Dilimi",
 
-"يتطلب السماح للمتصفح بمعرفة موقع الجهاز":
-  "Tarayıcının cihaz konumuna erişmesine izin verilmesi gerekir.",
+    "توقيت الرياض": "Riyad Saati",
 
-"جاري تحديد الموقع...":
-  "Konum belirleniyor...",
+    "توقيت دمشق": "Şam Saati",
 
-"استخدام موقعي الحالي":
-  "Mevcut Konumumu Kullan",
-
-"أو":
-  "VEYA",
-
-"فتح الموقع على الخريطة":
-  "Konumu Haritada Aç",
-
-"بيانات ثابتة":
-  "Sabit Bilgiler",
-
-"رقم الترخيص":
-  "Lisans Numarası",
-
-"الهاتف":
-  "Telefon",
-
-"غير مسجل":
-  "Kayıtlı değil",
-
-"مطابقة الموقع":
-  "Konum Eşleştirme",
-
-"اختر النتيجة التي تمثل صيدليتك بدقة لتثبيت الاسم والعنوان على الخريطة":
-  "Eczanenizi doğru şekilde temsil eden sonucu seçerek adını ve adresini haritada doğrulayın.",
-
-"الأقرب للموقع":
-  "En Yakın Eşleşme",
-
-"الموقع مرتبط":
-  "Konum Bağlandı",
-
-"اعتماد هذا الموقع":
-  "Bu Konumu Onayla",
-
-"م":
-  "m",
-
-"إدخال الإحداثيات يدويًا":
-  "Koordinatları Manuel Gir",
-
-"انسخ القيم الدقيقة من تطبيق الخرائط":
-  "Kesin koordinat değerlerini harita uygulamasından kopyalayın.",
-
-"خط العرض":
-  "Enlem",
-
-"خط الطول":
-  "Boylam",
-
-"أدخل خط العرض وخط الطول قبل الحفظ.":
-  "Kaydetmeden önce enlem ve boylam değerlerini girin.",
-
-"يجب أن يكون خط العرض رقمًا بين ‎-90 و90.":
-  "Enlem -90 ile 90 arasında bir sayı olmalıdır.",
-
-"يجب أن يكون خط الطول رقمًا بين ‎-180 و180.":
-  "Boylam -180 ile 180 arasında bir sayı olmalıdır.",
-
-"حفظ الإحداثيات":
-  "Koordinatları Kaydet",
-  "فعّلها فقط إذا كانت الخدمة متاحة فعليًا":
-  "Yalnızca hizmet gerçekten mevcutsa etkinleştirin.",
-
-  "مساعدة إدارة المنظمة": "Kuruluş yönetim alanı",
-  "أكمل اعتماد المنظمة": "Kuruluş doğrulamasını tamamla",
-  "يجب اعتماد الحساب قبل إنشاء الحملات أو مراجعة عروض التبرع وطلبات المساعدة.": "Kampanya oluşturmadan veya bağış teklifleri ile yardım taleplerini incelemeden önce hesabın doğrulanması gerekir.",
-  
-  "مساحة إدارة المنظمة": "Kuruluş Yönetim Alanı",
-  "توجد زيادة عن الشهر الفائت": "Geçen aya göre artış var",
-  "ابحث هنا": "Burada ara...",
-
-"الصيدلية": "eczane",
-"المستودع": "depo",
-"المنظمة": "kuruluş",
-
-"إعدادات طلبات المستودع": "Depo sipariş ayarları",
-"حدد قيمة الطلب والتوصيل ونطاق التغطية":
-  "Sipariş tutarını, teslimat ücretini ve kapsama alanını belirleyin",
-"الحد الأدنى للطلب": "Minimum sipariş tutarı",
-"أجور التوصيل": "Teslimat ücreti",
-"نطاق التوصيل (كم)": "Teslimat alanı (km)",
-"يعمل على مدار 24 ساعة": "24 saat açık",
-"استقبال الطلبات في جميع الأوقات":
-  "Her zaman sipariş kabul et",
-"يدعم الطلبات المستعجلة": "Acil siparişleri destekler",
-"معالجة الطلبات ذات الأولوية":
-  "Öncelikli siparişleri işle",
-"يقبل الدفع الآجل": "Vadeli ödemeyi kabul eder",
-"إتاحة الدفع المؤجل للصيدليات":
-  "Eczanelere vadeli ödeme imkânı sun",
-
-"السابق": "Önceki",
-"متابعة": "Devam et",
-"جاري إنشاء الحساب...": "Hesap oluşturuluyor...",
-"إنشاء الحساب": "Hesap oluştur",
-"كلمة المرور لا تحقق جميع متطلبات الأمان الموضحة.":
-  "Şifre, gösterilen tüm güvenlik gereksinimlerini karşılamıyor.",
-"كلمة المرور وتأكيدها غير متطابقين.":
-  "Şifre ve doğrulaması eşleşmiyor.",
-"يدير مخزون الأدوية ويستقبل طلبات الصيدليات ويتابع عمليات التوريد والتوصيل بين المستودعات والصيدليات.":
-  "İlaç stoklarını yönetir, eczanelerden gelen siparişleri alır ve depolar ile eczaneler arasındaki tedarik ve teslimat süreçlerini takip eder.",
+    "توقيت بغداد": "Bağdat Saati",
+
+    "العنوان التفصيلي": "Ayrıntılı Adres",
+
+    "نبذة عن الصيدلية": "Eczane Hakkında",
+
+    "الخدمات والتخصصات التي تميز الصيدلية":
+      "Eczaneyi öne çıkaran hizmetler ve uzmanlıklar",
+
+    "خدمة توصيل الأدوية": "İlaç Teslimat Hizmeti",
+
+    "فعّلها فقط إذا كانت الخدمة متاحة فعليًا":
+      "Yalnızca hizmet gerçekten mevcutsa etkinleştirin.",
+
+    "جاري الحفظ...": "Kaydediliyor...",
+
+    "حفظ البيانات": "Bilgileri Kaydet",
+
+    "موقع الصيدلية": "Eczane Konumu",
+
+    "لم يحدد موقع الصيدلية بعد": "Eczane konumu henüz belirlenmedi.",
+
+    "اختر طريقة تحديد الموقع": "Konum Belirleme Yöntemini Seçin",
+
+    "استخدم موقع الجهاز أو أدخل الإحداثيات بنفسك":
+      "Cihaz konumunu kullanın veya koordinatları manuel olarak girin.",
+
+    "الموقع الحالي": "Mevcut Konum",
+
+    "يتطلب السماح للمتصفح بمعرفة موقع الجهاز":
+      "Tarayıcının cihaz konumuna erişmesine izin verilmesi gerekir.",
+
+    "جاري تحديد الموقع...": "Konum belirleniyor...",
+
+    "استخدام موقعي الحالي": "Mevcut Konumumu Kullan",
+
+    أو: "VEYA",
+
+    "فتح الموقع على الخريطة": "Konumu Haritada Aç",
+
+    "بيانات ثابتة": "Sabit Bilgiler",
+
+    "رقم الترخيص": "Lisans Numarası",
+
+    الهاتف: "Telefon",
+
+    "غير مسجل": "Kayıtlı değil",
+
+    "مطابقة الموقع": "Konum Eşleştirme",
+
+    "اختر النتيجة التي تمثل صيدليتك بدقة لتثبيت الاسم والعنوان على الخريطة":
+      "Eczanenizi doğru şekilde temsil eden sonucu seçerek adını ve adresini haritada doğrulayın.",
+
+    "الأقرب للموقع": "En Yakın Eşleşme",
+
+    "الموقع مرتبط": "Konum Bağlandı",
+
+    "اعتماد هذا الموقع": "Bu Konumu Onayla",
+
+    م: "m",
+
+    "إدخال الإحداثيات يدويًا": "Koordinatları Manuel Gir",
+
+    "انسخ القيم الدقيقة من تطبيق الخرائط":
+      "Kesin koordinat değerlerini harita uygulamasından kopyalayın.",
+
+    "خط العرض": "Enlem",
+
+    "خط الطول": "Boylam",
+
+    "أدخل خط العرض وخط الطول قبل الحفظ.":
+      "Kaydetmeden önce enlem ve boylam değerlerini girin.",
+
+    "يجب أن يكون خط العرض رقمًا بين ‎-90 و90.":
+      "Enlem -90 ile 90 arasında bir sayı olmalıdır.",
+
+    "يجب أن يكون خط الطول رقمًا بين ‎-180 و180.":
+      "Boylam -180 ile 180 arasında bir sayı olmalıdır.",
+
+    "حفظ الإحداثيات": "Koordinatları Kaydet",
+    "فعّلها فقط إذا كانت الخدمة متاحة فعليًا":
+      "Yalnızca hizmet gerçekten mevcutsa etkinleştirin.",
+
+    "مساعدة إدارة المنظمة": "Kuruluş yönetim alanı",
+    "أكمل اعتماد المنظمة": "Kuruluş doğrulamasını tamamla",
+    "يجب اعتماد الحساب قبل إنشاء الحملات أو مراجعة عروض التبرع وطلبات المساعدة.":
+      "Kampanya oluşturmadan veya bağış teklifleri ile yardım taleplerini incelemeden önce hesabın doğrulanması gerekir.",
+
+    "مساحة إدارة المنظمة": "Kuruluş Yönetim Alanı",
+    "توجد زيادة عن الشهر الفائت": "Geçen aya göre artış var",
+    "ابحث هنا": "Burada ara...",
+
+    الصيدلية: "eczane",
+    المستودع: "depo",
+    المنظمة: "kuruluş",
+
+    "إعدادات طلبات المستودع": "Depo sipariş ayarları",
+    "حدد قيمة الطلب والتوصيل ونطاق التغطية":
+      "Sipariş tutarını, teslimat ücretini ve kapsama alanını belirleyin",
+    "الحد الأدنى للطلب": "Minimum sipariş tutarı",
+    "أجور التوصيل": "Teslimat ücreti",
+    "نطاق التوصيل (كم)": "Teslimat alanı (km)",
+    "يعمل على مدار 24 ساعة": "24 saat açık",
+    "استقبال الطلبات في جميع الأوقات": "Her zaman sipariş kabul et",
+    "يدعم الطلبات المستعجلة": "Acil siparişleri destekler",
+    "معالجة الطلبات ذات الأولوية": "Öncelikli siparişleri işle",
+    "يقبل الدفع الآجل": "Vadeli ödemeyi kabul eder",
+    "إتاحة الدفع المؤجل للصيدليات": "Eczanelere vadeli ödeme imkânı sun",
+
+    السابق: "Önceki",
+    متابعة: "Devam et",
+    "جاري إنشاء الحساب...": "Hesap oluşturuluyor...",
+    "إنشاء الحساب": "Hesap oluştur",
+    "كلمة المرور لا تحقق جميع متطلبات الأمان الموضحة.":
+      "Şifre, gösterilen tüm güvenlik gereksinimlerini karşılamıyor.",
+    "كلمة المرور وتأكيدها غير متطابقين.": "Şifre ve doğrulaması eşleşmiyor.",
+    "يدير مخزون الأدوية ويستقبل طلبات الصيدليات ويتابع عمليات التوريد والتوصيل بين المستودعات والصيدليات.":
+      "İlaç stoklarını yönetir, eczanelerden gelen siparişleri alır ve depolar ile eczaneler arasındaki tedarik ve teslimat süreçlerini takip eder.",
     "آخر المستجدات على طلبات الأدوية":
       "İlaç talepleriyle ilgili son güncellemeler",
     "آخر تحديث": "En son güncelleme",
@@ -3331,20 +3036,20 @@ export const autoMessages = {
       "Onayların, ilaç kataloğunun yönetilmesi ve platform operasyonlarının takibi.",
     "إدارة الحالة ومراجعة تفاصيل كل حملة":
       "Her kampanyanın durumunu yönetin ve ayrıntılarını inceleyin",
-      "إضافة موقع الصيدلية": "Eczane Konumunu Ekle",
+    "إضافة موقع الصيدلية": "Eczane Konumunu Ekle",
 
-"تحديد ساعات العمل": "Çalışma Saatlerini Ayarla",
+    "تحديد ساعات العمل": "Çalışma Saatlerini Ayarla",
 
-"إضافة الأدوية للمخزون": "İlaçları Stoğa Ekle",
-"صيدلية": "Eczane",
+    "إضافة الأدوية للمخزون": "İlaçları Stoğa Ekle",
+    صيدلية: "Eczane",
 
-"سراقب، إدلب": "Sarakib, İdlib",
+    "سراقب، إدلب": "Sarakib, İdlib",
 
-"سراقب": "Sarakib",
+    سراقب: "Sarakib",
 
-"إدلب": "İdlib",
+    إدلب: "İdlib",
 
-"الوصفات المحجوزة": "Rezerve Reçeteler",
+    "الوصفات المحجوزة": "Rezerve Reçeteler",
     "إدارة الحسابات": "Hesap yönetimi",
     "إدارة الحملات": "Kampanya yönetimi",
     "إدارة المبادرات": "Girişim yönetimi",
@@ -3449,66 +3154,48 @@ export const autoMessages = {
     "اقتراحات:": "Öneriler:",
     "أقراص، شراب، حقن...": "Tabletler, şuruplar, enjeksiyonlar...",
     "أقرب 3 صيدليات": "En yakın 3 eczane",
-    "{{count}} صنف متاح للمرضى":
-  "{{count}} ilaç hastalar için mevcut",
+    "{{count}} صنف متاح للمرضى": "{{count}} ilaç hastalar için mevcut",
 
-"{{count}} أصناف منخفضة":
-  "{{count}} düşük stoklu ürün",
+    "{{count}} أصناف منخفضة": "{{count}} düşük stoklu ürün",
 
-"{{count}} طلبات نشطة":
-  "{{count}} aktif istek",
+    "{{count}} طلبات نشطة": "{{count}} aktif istek",
 
-"{{count}} أصناف غير متوفرة":
-  "{{count}} stokta olmayan ürün",
+    "{{count}} أصناف غير متوفرة": "{{count}} stokta olmayan ürün",
 
-"متبقي {{count}} يومًا على الانتهاء":
-  "Son kullanma tarihine {{count}} gün kaldı",
+    "متبقي {{count}} يومًا على الانتهاء":
+      "Son kullanma tarihine {{count}} gün kaldı",
 
-"الكمية الحالية {{quantity}} والحد الأدنى {{threshold}}":
-  "Mevcut miktar {{quantity}}, minimum stok {{threshold}}",
-  "إضافة موقع الصيدلية وتحديد ساعات العمل":
-  "Eczane Konumunu Ekle ve Çalışma Saatlerini Ayarla",
+    "الكمية الحالية {{quantity}} والحد الأدنى {{threshold}}":
+      "Mevcut miktar {{quantity}}, minimum stok {{threshold}}",
+    "إضافة موقع الصيدلية وتحديد ساعات العمل":
+      "Eczane Konumunu Ekle ve Çalışma Saatlerini Ayarla",
 
-"إضافة الأدوية للمخزون":
-  "İlaçları Stoğa Ekle",
+    "إضافة الأدوية للمخزون": "İlaçları Stoğa Ekle",
 
-"صيدلية":
-  "Eczane",
+    صيدلية: "Eczane",
 
-"سراقب، إدلب":
-  "Sarakib, İdlib",
-  "ابحث هنا باسم الدواء...":
-  "İlacı adına göre burada ara...",
+    "سراقب، إدلب": "Sarakib, İdlib",
+    "ابحث هنا باسم الدواء...": "İlacı adına göre burada ara...",
 
-"الانتهاء":
-  "Son Kullanma Tarihi",
+    الانتهاء: "Son Kullanma Tarihi",
 
-"غير محدد":
-  "Belirtilmemiş",
+    "غير محدد": "Belirtilmemiş",
 
-"الانتهاء: غير محدد":
-  "Son Kullanma Tarihi: Belirtilmemiş",
+    "الانتهاء: غير محدد": "Son Kullanma Tarihi: Belirtilmemiş",
 
-"ظاهر للمستخدمين":
-  "Kullanıcılara görünür",
+    "ظاهر للمستخدمين": "Kullanıcılara görünür",
 
-"مخفي عن المستخدمين":
-  "Kullanıcılardan gizli",
+    "مخفي عن المستخدمين": "Kullanıcılardan gizli",
 
-"يصرف بوصفة طبية":
-  "Reçete gerektirir",
+    "يصرف بوصفة طبية": "Reçete gerektirir",
 
-"لا توجد تفاصيل إضافية":
-  "Ek bilgi bulunmuyor",
+    "لا توجد تفاصيل إضافية": "Ek bilgi bulunmuyor",
 
-"توريد المستودعات":
-  "Depo Tedariki",
+    "توريد المستودعات": "Depo Tedariki",
 
-"الطلبات المحجوزة":
-  "Rezerve Edilmiş Talepler",
+    "الطلبات المحجوزة": "Rezerve Edilmiş Talepler",
 
-"تحقق التبرعات":
-  "Bağış Doğrulaması",
+    "تحقق التبرعات": "Bağış Doğrulaması",
     "اكتب اسم الدواء": "İlacın adını yazın",
     "اكتب اسم الدواء أو الاسم العلمي": "İlacın adını veya bilimsel adını yazın",
     "اكتب اسم الدواء وشاهد توفره وأسعاره في الصيدليات القريبة منك.":
@@ -3758,534 +3445,455 @@ export const autoMessages = {
     "بانتظار الرد": "Cevap bekliyorum",
     "بانتظار الصيدلية": "Eczaneyi bekliyorum",
     "طلب جديد": "Yeni talep",
-"مقبول": "Kabul edildi",
-"قيد التجهيز": "Hazırlanıyor",
-"جاهز للإرسال": "Gönderime hazır",
-"في الطريق": "Yolda",
-"تم التسليم": "Teslim edildi",
-"مرفوض": "Reddedildi",
-"ملغي": "İptal edildi",
-"مسند للمندوب": "Temsilciye atandı",
-"جاري التحميل": "Yükleniyor",
-"وصل للصيدلية": "Eczaneye ulaştı",
-"تعذر التسليم": "Teslimat başarısız",
-"أعيدت للمستودع": "Depoya iade edildi",
+    مقبول: "Kabul edildi",
+    "قيد التجهيز": "Hazırlanıyor",
+    "جاهز للإرسال": "Gönderime hazır",
+    "في الطريق": "Yolda",
+    "تم التسليم": "Teslim edildi",
+    مرفوض: "Reddedildi",
+    ملغي: "İptal edildi",
+    "مسند للمندوب": "Temsilciye atandı",
+    "جاري التحميل": "Yükleniyor",
+    "وصل للصيدلية": "Eczaneye ulaştı",
+    "تعذر التسليم": "Teslimat başarısız",
+    "أعيدت للمستودع": "Depoya iade edildi",
 
-"عرض التفاصيل": "Detayları görüntüle",
-"إسناد لمندوب متاح": "Uygun temsilciye ata",
-"لا يوجد مندوب متاح": "Uygun temsilci yok",
+    "عرض التفاصيل": "Detayları görüntüle",
+    "إسناد لمندوب متاح": "Uygun temsilciye ata",
+    "لا يوجد مندوب متاح": "Uygun temsilci yok",
 
-"رمز استلام آمن — تحقق من الأدوية ثم أكد الاستلام":
-  "Güvenli teslim alma kodu — ilaçları kontrol edin ve teslimatı onaylayın",
+    "رمز استلام آمن — تحقق من الأدوية ثم أكد الاستلام":
+      "Güvenli teslim alma kodu — ilaçları kontrol edin ve teslimatı onaylayın",
 
-"تأكيد الاستلام وإضافة الكمية للمخزون":
-  "Teslimatı onayla ve miktarı stoğa ekle",
+    "تأكيد الاستلام وإضافة الكمية للمخزون":
+      "Teslimatı onayla ve miktarı stoğa ekle",
 
-"الشحنة قيد التجهيز أو التوصيل":
-  "Gönderi hazırlanıyor veya teslim ediliyor",
+    "الشحنة قيد التجهيز أو التوصيل":
+      "Gönderi hazırlanıyor veya teslim ediliyor",
 
-"سيظهر رمز التأكيد عند وصول المندوب إلى الصيدلية.":
-  "Temsilci eczaneye ulaştığında onay kodu görünecektir.",
+    "سيظهر رمز التأكيد عند وصول المندوب إلى الصيدلية.":
+      "Temsilci eczaneye ulaştığında onay kodu görünecektir.",
 
-"مركز قيادة سلسلة التوريد": "Tedarik Zinciri Komuta Merkezi",
-"مسار المندوب الذكي": "Akıllı Temsilci Rotası",
-"مراقبة سلسلة التوريد": "Tedarik Zinciri İzleme",
-"سوق توريد الصيدلية": "Eczane Tedarik Pazarı",
+    "مركز قيادة سلسلة التوريد": "Tedarik Zinciri Komuta Merkezi",
+    "مسار المندوب الذكي": "Akıllı Temsilci Rotası",
+    "مراقبة سلسلة التوريد": "Tedarik Zinciri İzleme",
+    "سوق توريد الصيدلية": "Eczane Tedarik Pazarı",
 
-"راقب الدُفعات والطلبات والتوصيل والاستدعاءات من لوحة موحّدة.":
-  "Partileri, siparişleri, teslimatları ve geri çağırmaları tek panelden izleyin.",
+    "راقب الدُفعات والطلبات والتوصيل والاستدعاءات من لوحة موحّدة.":
+      "Partileri, siparişleri, teslimatları ve geri çağırmaları tek panelden izleyin.",
 
-"مهام واضحة، تتبّع لحظي وتسليم موثّق بالرمز.":
-  "Net görevler, anlık takip ve kodla doğrulanmış teslimat.",
+    "مهام واضحة، تتبّع لحظي وتسليم موثّق بالرمز.":
+      "Net görevler, anlık takip ve kodla doğrulanmış teslimat.",
 
-"تابع طلبات التوريد والشحنات بين المستودعات والصيدليات.":
-  "Depolar ve eczaneler arasındaki tedarik siparişlerini ve gönderileri takip edin.",
+    "تابع طلبات التوريد والشحنات بين المستودعات والصيدليات.":
+      "Depolar ve eczaneler arasındaki tedarik siparişlerini ve gönderileri takip edin.",
 
-"قارن المستودعات، أعد تعبئة النواقص وتابع الشحنة حتى الاستلام.":
-  "Depoları karşılaştırın, eksikleri tamamlayın ve gönderiyi teslimata kadar takip edin.",
+    "قارن المستودعات، أعد تعبئة النواقص وتابع الشحنة حتى الاستلام.":
+      "Depoları karşılaştırın, eksikleri tamamlayın ve gönderiyi teslimata kadar takip edin.",
 
-"شبكة حياة دوائية B2B": "Hayat İlaç B2B Ağı",
-"شحنات جارية": "Aktif gönderiler",
-"تم تسليمها": "Teslim edildi",
+    "شبكة حياة دوائية B2B": "Hayat İlaç B2B Ağı",
+    "شحنات جارية": "Aktif gönderiler",
+    "تم تسليمها": "Teslim edildi",
 
-"تعذر تحميل مؤشرات المستودع. تأكد من اعتماد الحساب وتطبيق تحديث قاعدة البيانات، ثم أعد المحاولة.":
-  "Depo göstergeleri yüklenemedi. Hesabın onaylandığından ve veritabanı güncellemelerinin uygulandığından emin olup tekrar deneyin.",
+    "تعذر تحميل مؤشرات المستودع. تأكد من اعتماد الحساب وتطبيق تحديث قاعدة البيانات، ثم أعد المحاولة.":
+      "Depo göstergeleri yüklenemedi. Hesabın onaylandığından ve veritabanı güncellemelerinin uygulandığından emin olup tekrar deneyin.",
 
-"دفعات فعالة": "Aktif partiler",
-"تحتاج تعبئة": "Stok takviyesi gerekiyor",
-"قريبة الانتهاء": "Son kullanma tarihi yaklaşıyor",
-"خلال 90 يومًا": "90 gün içinde",
-"طلبات معلقة": "Bekleyen siparişler",
-"بانتظار الإجراء": "İşlem bekliyor",
-"توصيلات فعالة": "Aktif teslimatlar",
+    "دفعات فعالة": "Aktif partiler",
+    "تحتاج تعبئة": "Stok takviyesi gerekiyor",
+    "قريبة الانتهاء": "Son kullanma tarihi yaklaşıyor",
+    "خلال 90 يومًا": "90 gün içinde",
+    "طلبات معلقة": "Bekleyen siparişler",
+    "بانتظار الإجراء": "İşlem bekliyor",
+    "توصيلات فعالة": "Aktif teslimatlar",
 
-"الطلبات والشحنات": "Siparişler ve Gönderiler",
-"الفواتير والمدفوعات": "Faturalar ve Ödemeler",
-"مخزون الدُفعات": "Parti Stoğu",
-"فريق المندوبين": "Temsilci Ekibi",
-"المستودعات": "Depolar",
-"اقتراحات ذكية": "Akıllı Öneriler",
+    "الطلبات والشحنات": "Siparişler ve Gönderiler",
+    "الفواتير والمدفوعات": "Faturalar ve Ödemeler",
+    "مخزون الدُفعات": "Parti Stoğu",
+    "فريق المندوبين": "Temsilci Ekibi",
+    المستودعات: "Depolar",
+    "اقتراحات ذكية": "Akıllı Öneriler",
 
-"تعذر تنفيذ الإجراء. تحقق من حالة المندوب والطلب ثم حاول مجددًا.":
-  "İşlem gerçekleştirilemedi. Temsilci ve sipariş durumunu kontrol edip tekrar deneyin.",
+    "تعذر تنفيذ الإجراء. تحقق من حالة المندوب والطلب ثم حاول مجددًا.":
+      "İşlem gerçekleştirilemedi. Temsilci ve sipariş durumunu kontrol edip tekrar deneyin.",
 
-"رقم التتبع": "Takip numarası",
-"إخفاء رسالة الخطأ": "Hata mesajını kapat",
-"جاري تحميل المهام...": "Görevler yükleniyor...",
-"تعذر تحميل الطلبات والشحنات":
-  "Siparişler ve gönderiler yüklenemedi",
+    "رقم التتبع": "Takip numarası",
+    "إخفاء رسالة الخطأ": "Hata mesajını kapat",
+    "جاري تحميل المهام...": "Görevler yükleniyor...",
+    "تعذر تحميل الطلبات والشحنات": "Siparişler ve gönderiler yüklenemedi",
 
-"تحقق من اتصال الباك وصلاحية الحساب.":
-  "Backend bağlantısını ve hesap yetkilerini kontrol edin.",
+    "تحقق من اتصال الباك وصلاحية الحساب.":
+      "Backend bağlantısını ve hesap yetkilerini kontrol edin.",
 
-"إعادة المحاولة": "Tekrar dene",
-"لا توجد طلبات بعد": "Henüz sipariş yok",
+    "إعادة المحاولة": "Tekrar dene",
+    "لا توجد طلبات بعد": "Henüz sipariş yok",
 
-"ستظهر هنا طلبات التوريد الواردة من الصيدليات.":
-  "Eczanelerden gelen tedarik siparişleri burada görünecek.",
+    "ستظهر هنا طلبات التوريد الواردة من الصيدليات.":
+      "Eczanelerden gelen tedarik siparişleri burada görünecek.",
 
-"لا توجد مهام مسندة حاليًا.":
-  "Şu anda atanmış görev bulunmuyor.",
-  "ساعات العمل":
-  "Çalışma Saatleri",
+    "لا توجد مهام مسندة حاليًا.": "Şu anda atanmış görev bulunmuyor.",
+    "ساعات العمل": "Çalışma Saatleri",
 
-"اضبط جدول الأسبوع بدقة؛ تستخدم المنصة هذه الأوقات لإظهار حالة الصيدلية الحالية للمستخدمين.":
-  "Haftalık çalışma programını doğru şekilde ayarlayın. Platform, eczanenin mevcut durumunu kullanıcılara göstermek için bu saatleri kullanır.",
+    "اضبط جدول الأسبوع بدقة؛ تستخدم المنصة هذه الأوقات لإظهار حالة الصيدلية الحالية للمستخدمين.":
+      "Haftalık çalışma programını doğru şekilde ayarlayın. Platform, eczanenin mevcut durumunu kullanıcılara göstermek için bu saatleri kullanır.",
 
-"مفتوحة الآن":
-  "Şu Anda Açık",
+    "مفتوحة الآن": "Şu Anda Açık",
 
-"مغلقة الآن":
-  "Şu Anda Kapalı",
+    "مغلقة الآن": "Şu Anda Kapalı",
 
-"تم حفظ جدول ساعات العمل وتحديث حالة الصيدلية.":
-  "Çalışma saatleri kaydedildi ve eczanenin durumu güncellendi.",
+    "تم حفظ جدول ساعات العمل وتحديث حالة الصيدلية.":
+      "Çalışma saatleri kaydedildi ve eczanenin durumu güncellendi.",
 
-"جاري تحميل ساعات العمل...":
-  "Çalışma saatleri yükleniyor...",
+    "جاري تحميل ساعات العمل...": "Çalışma saatleri yükleniyor...",
 
-"الجدول الأسبوعي":
-  "Haftalık Program",
+    "الجدول الأسبوعي": "Haftalık Program",
 
-"يمكنك إغلاق أي يوم من زر الحالة المقابل، وتحديد وقت إغلاق في صباح اليوم التالي للدوام الليلي.":
-  "Durum anahtarını kullanarak herhangi bir günü kapalı olarak işaretleyebilir ve gece çalışmaları için kapanış saatini ertesi sabah olarak belirleyebilirsiniz.",
+    "يمكنك إغلاق أي يوم من زر الحالة المقابل، وتحديد وقت إغلاق في صباح اليوم التالي للدوام الليلي.":
+      "Durum anahtarını kullanarak herhangi bir günü kapalı olarak işaretleyebilir ve gece çalışmaları için kapanış saatini ertesi sabah olarak belirleyebilirsiniz.",
 
-"الأحد":
-  "Pazar",
+    الأحد: "Pazar",
 
-"الاثنين":
-  "Pazartesi",
+    الاثنين: "Pazartesi",
 
-"الثلاثاء":
-  "Salı",
+    الثلاثاء: "Salı",
 
-"الأربعاء":
-  "Çarşamba",
+    الأربعاء: "Çarşamba",
 
-"الخميس":
-  "Perşembe",
+    الخميس: "Perşembe",
 
-"الجمعة":
-  "Cuma",
+    الجمعة: "Cuma",
 
-"السبت":
-  "Cumartesi",
+    السبت: "Cumartesi",
 
-"يوم مغلق":
-  "Kapalı Gün",
+    "يوم مغلق": "Kapalı Gün",
 
-"يوم عمل":
-  "Çalışma Günü",
+    "يوم عمل": "Çalışma Günü",
 
-"يمتد لليوم التالي":
-  "Ertesi Güne Devam Eder",
+    "يمتد لليوم التالي": "Ertesi Güne Devam Eder",
 
-"من":
-  "Başlangıç",
+    من: "Başlangıç",
 
-"إلى":
-  "Bitiş",
+    إلى: "Bitiş",
 
-"إذا كان وقت الإغلاق أسبق من وقت الفتح، يُحتسب الإغلاق في اليوم التالي.":
-  "Kapanış saati açılış saatinden daha erkense, kapanış saati ertesi gün olarak kabul edilir.",
-  "طلب {{user}} دواء {{medicine}} من {{pharmacy}}.":
-  "{{user}}, {{pharmacy}} üzerinden {{medicine}} ilacını talep etti.",
+    "إذا كان وقت الإغلاق أسبق من وقت الفتح، يُحتسب الإغلاق في اليوم التالي.":
+      "Kapanış saati açılış saatinden daha erkense, kapanış saati ertesi gün olarak kabul edilir.",
+    "طلب {{user}} دواء {{medicine}} من {{pharmacy}}.":
+      "{{user}}, {{pharmacy}} üzerinden {{medicine}} ilacını talep etti.",
 
-"تم اعتماد صيدلية {{name}}.":
-  "{{name}} eczanesi onaylandı.",
+    "تم اعتماد صيدلية {{name}}.": "{{name}} eczanesi onaylandı.",
 
-"تم تحديث حالة اعتماد الصيدلية من إدارة المنصة.":
-  "Eczanenin onay durumu platform yönetimi tarafından güncellendi.",
+    "تم تحديث حالة اعتماد الصيدلية من إدارة المنصة.":
+      "Eczanenin onay durumu platform yönetimi tarafından güncellendi.",
 
-"تم إنشاء طلب دواء جديد.":
-  "Yeni bir ilaç talebi oluşturuldu.",
+    "تم إنشاء طلب دواء جديد.": "Yeni bir ilaç talebi oluşturuldu.",
 
-"جاري الحفظ...":
-  "Kaydediliyor...",
+    "جاري الحفظ...": "Kaydediliyor...",
 
-"حفظ ساعات العمل":
-  "Çalışma Saatlerini Kaydet",
+    "حفظ ساعات العمل": "Çalışma Saatlerini Kaydet",
 
-"تحديث المهام": "Görevleri yenile",
+    "تحديث المهام": "Görevleri yenile",
 
-"دفعات الأدوية": "İlaç Partileri",
-"الكميات المحجوزة والصلاحية والتسعير بالجملة":
-  "Ayrılmış miktarlar, son kullanma tarihleri ve toptan fiyatlandırma",
+    "دفعات الأدوية": "İlaç Partileri",
+    "الكميات المحجوزة والصلاحية والتسعير بالجملة":
+      "Ayrılmış miktarlar, son kullanma tarihleri ve toptan fiyatlandırma",
 
-"إضافة دفعة": "Parti ekle",
-"المتاح": "Mevcut",
-"المحجوز": "Ayrılmış",
-"الصلاحية": "Son kullanma tarihi",
+    "إضافة دفعة": "Parti ekle",
+    المتاح: "Mevcut",
+    المحجوز: "Ayrılmış",
+    الصلاحية: "Son kullanma tarihi",
 
-"لا توجد دفعات. أضف أول دفعة لتصبح الأدوية متاحة للصيدليات.":
-  "Henüz parti yok. İlaçları eczanelere sunmak için ilk partiyi ekleyin.",
+    "لا توجد دفعات. أضف أول دفعة لتصبح الأدوية متاحة للصيدليات.":
+      "Henüz parti yok. İlaçları eczanelere sunmak için ilk partiyi ekleyin.",
 
-"فريق التوزيع": "Dağıtım Ekibi",
+    "فريق التوزيع": "Dağıtım Ekibi",
 
-"حساب مستقل وآمن لكل مندوب":
-  "Her temsilci için ayrı ve güvenli hesap",
+    "حساب مستقل وآمن لكل مندوب": "Her temsilci için ayrı ve güvenli hesap",
 
-"إضافة مندوب": "Temsilci ekle",
+    "إضافة مندوب": "Temsilci ekle",
 
-"موقوف": "Askıya alındı",
-"متاح للتكليف": "Atamaya uygun",
-"مشغول": "Meşgul",
-"خارج الوردية": "Vardiya dışında",
-"دون مركبة": "Araç yok",
-"شحنات فعالة": "Aktif teslimatlar",
-"مكتملة": "Tamamlandı",
-"الوردية": "Vardiya",
-"دوام مفتوح": "Açık vardiya",
-"إدارة الحساب والدوام": "Hesap ve vardiya yönetimi",
+    موقوف: "Askıya alındı",
+    "متاح للتكليف": "Atamaya uygun",
+    مشغول: "Meşgul",
+    "خارج الوردية": "Vardiya dışında",
+    "دون مركبة": "Araç yok",
+    "شحنات فعالة": "Aktif teslimatlar",
+    مكتملة: "Tamamlandı",
+    الوردية: "Vardiya",
+    "دوام مفتوح": "Açık vardiya",
+    "إدارة الحساب والدوام": "Hesap ve vardiya yönetimi",
 
-"لم تتم إضافة مندوبين بعد.":
-  "Henüz temsilci eklenmedi.",
+    "لم تتم إضافة مندوبين بعد.": "Henüz temsilci eklenmedi.",
 
-"المتوفر": "Mevcut",
-"المقترح": "Önerilen",
-"لا يوجد مستودع متاح": "Uygun depo yok",
+    المتوفر: "Mevcut",
+    المقترح: "Önerilen",
+    "لا يوجد مستودع متاح": "Uygun depo yok",
 
-"إدارة المستودع": "Depo Yönetimi",
-"إضافة دفعة دوائية": "İlaç partisi ekle",
-"إنشاء حساب مندوب": "Temsilci hesabı oluştur",
-"شبكة تبرع آمنة":
-  "Güvenli Bağış Ağı",
+    "إدارة المستودع": "Depo Yönetimi",
+    "إضافة دفعة دوائية": "İlaç partisi ekle",
+    "إنشاء حساب مندوب": "Temsilci hesabı oluştur",
+    "شبكة تبرع آمنة": "Güvenli Bağış Ağı",
 
-"التحقق من التبرعات الدوائية":
-  "İlaç Bağışlarını Doğrulama",
+    "التحقق من التبرعات الدوائية": "İlaç Bağışlarını Doğrulama",
 
-"استلم الدواء من المتبرع، افحص سلامة العبوة والصلاحية، ثم وثّق الاستلام ليظهر العرض للجمعية المستفيدة.":
-  "İlacı bağışçıdan teslim alın, ambalajın durumunu ve son kullanma tarihini kontrol edin, ardından teklifin yararlanıcı kuruluşa görünmesi için teslimatı kaydedin.",
+    "استلم الدواء من المتبرع، افحص سلامة العبوة والصلاحية، ثم وثّق الاستلام ليظهر العرض للجمعية المستفيدة.":
+      "İlacı bağışçıdan teslim alın, ambalajın durumunu ve son kullanma tarihini kontrol edin, ardından teklifin yararlanıcı kuruluşa görünmesi için teslimatı kaydedin.",
 
-"الخطوة":
-  "Adım",
+    الخطوة: "Adım",
 
-"تواصل واستلام":
-  "İletişim ve Teslim Alma",
+    "تواصل واستلام": "İletişim ve Teslim Alma",
 
-"تتواصل الصيدلية مع المتبرع وتستلم الدواء فقط داخل مسار موثق.":
-  "Eczane bağışçıyla iletişime geçer ve ilacı yalnızca kayıtlı bir süreç üzerinden teslim alır.",
+    "تتواصل الصيدلية مع المتبرع وتستلم الدواء فقط داخل مسار موثق.":
+      "Eczane bağışçıyla iletişime geçer ve ilacı yalnızca kayıtlı bir süreç üzerinden teslim alır.",
 
-"فحص مهني":
-  "Profesyonel Kontrol",
+    "فحص مهني": "Profesyonel Kontrol",
 
-"تأكد من الإغلاق، الصلاحية، التخزين وسلامة العبوة.":
-  "Mührü, son kullanma tarihini, saklama koşullarını ve ambalaj bütünlüğünü kontrol edin.",
+    "تأكد من الإغلاق، الصلاحية، التخزين وسلامة العبوة.":
+      "Mührü, son kullanma tarihini, saklama koşullarını ve ambalaj bütünlüğünü kontrol edin.",
 
-"تحويل للجمعية":
-  "Kuruluşa Aktarma",
+    "تحويل للجمعية": "Kuruluşa Aktarma",
 
-"بعد توثيق الاستلام يظهر العرض للجمعية لتقرر القبول والتوزيع.":
-  "Teslimat kaydedildikten sonra teklif, kabul ve dağıtım kararı vermesi için kuruluşa görünür.",
+    "بعد توثيق الاستلام يظهر العرض للجمعية لتقرر القبول والتوزيع.":
+      "Teslimat kaydedildikten sonra teklif, kabul ve dağıtım kararı vermesi için kuruluşa görünür.",
 
-"تم حفظ قرار الصيدلية وإرسال الإشعارات اللازمة.":
-  "Eczanenin kararı kaydedildi ve gerekli bildirimler gönderildi.",
+    "تم حفظ قرار الصيدلية وإرسال الإشعارات اللازمة.":
+      "Eczanenin kararı kaydedildi ve gerekli bildirimler gönderildi.",
 
-"جاري تحميل عروض التبرع...":
-  "Bağış teklifleri yükleniyor...",
+    "جاري تحميل عروض التبرع...": "Bağış teklifleri yükleniyor...",
 
-"لا توجد عروض بانتظار الصيدلية":
-  "Eczane incelemesini bekleyen teklif yok",
+    "لا توجد عروض بانتظار الصيدلية": "Eczane incelemesini bekleyen teklif yok",
 
-"عندما يختار مستخدم صيدليتك للتحقق من تبرعه سيظهر العرض هنا.":
-  "Bir kullanıcı bağışını doğrulamak için eczanenizi seçtiğinde teklif burada görünecektir.",
+    "عندما يختار مستخدم صيدليتك للتحقق من تبرعه سيظهر العرض هنا.":
+      "Bir kullanıcı bağışını doğrulamak için eczanenizi seçtiğinde teklif burada görünecektir.",
 
-"بانتظار الفحص":
-  "Kontrol Bekliyor",
+    "بانتظار الفحص": "Kontrol Bekliyor",
 
-"مقبول — بانتظار التسليم":
-  "Kabul Edildi — Teslimat Bekleniyor",
+    "مقبول — بانتظار التسليم": "Kabul Edildi — Teslimat Bekleniyor",
 
-"مرفوض من الصيدلية":
-  "Eczane Tarafından Reddedildi",
+    "مرفوض من الصيدلية": "Eczane Tarafından Reddedildi",
 
-"مستلم وموثّق":
-  "Teslim Alındı ve Kaydedildi",
+    "مستلم وموثّق": "Teslim Alındı ve Kaydedildi",
 
-"الاسم العلمي غير محدد":
-  "Bilimsel ad belirtilmemiş",
+    "الاسم العلمي غير محدد": "Bilimsel ad belirtilmemiş",
 
-"المتبرع":
-  "Bağışçı",
+    المتبرع: "Bağışçı",
 
-"مستخدم المنصة":
-  "Platform Kullanıcısı",
+    "مستخدم المنصة": "Platform Kullanıcısı",
 
-"الهاتف":
-  "Telefon",
+    الهاتف: "Telefon",
 
-"غير مسجل":
-  "Kayıtlı değil",
+    "غير مسجل": "Kayıtlı değil",
 
-"عدد العبوات":
-  "Paket Sayısı",
+    "عدد العبوات": "Paket Sayısı",
 
-"الصلاحية":
-  "Son Kullanma Tarihi",
+    الصلاحية: "Son Kullanma Tarihi",
 
-"غير محددة":
-  "Belirtilmemiş",
+    "غير محددة": "Belirtilmemiş",
 
-"ملاحظة التحقق أو سبب الرفض":
-  "Doğrulama Notu veya Ret Nedeni",
+    "ملاحظة التحقق أو سبب الرفض": "Doğrulama Notu veya Ret Nedeni",
 
-"دوّن نتيجة فحص العبوة والصلاحية وحالة التخزين":
-  "Ambalaj, son kullanma tarihi ve saklama koşulu kontrolünün sonucunu yazın",
+    "دوّن نتيجة فحص العبوة والصلاحية وحالة التخزين":
+      "Ambalaj, son kullanma tarihi ve saklama koşulu kontrolünün sonucunu yazın",
 
-"قبول مبدئي وتحديد التسليم":
-  "Ön Onay ve Teslimatı Planla",
+    "قبول مبدئي وتحديد التسليم": "Ön Onay ve Teslimatı Planla",
 
-"رفض بعد الفحص":
-  "Kontrolden Sonra Reddet",
+    "رفض بعد الفحص": "Kontrolden Sonra Reddet",
 
-"تأكيد الاستلام والتوثيق":
-  "Teslimatı ve Kaydı Onayla",
+    "تأكيد الاستلام والتوثيق": "Teslimatı ve Kaydı Onayla",
 
-"الدواء": "İlaç",
-"اختر من دليل الأدوية": "İlaç kataloğundan seç",
-"رقم الدفعة": "Parti numarası",
-"موقع التخزين": "Depolama konumu",
-"الكمية": "Miktar",
-"سعر الشراء": "Alış fiyatı",
-"سعر الجملة": "Toptan fiyat",
-"تاريخ الإنتاج": "Üretim tarihi",
-"تاريخ الصلاحية": "Son kullanma tarihi",
+    الدواء: "İlaç",
+    "اختر من دليل الأدوية": "İlaç kataloğundan seç",
+    "رقم الدفعة": "Parti numarası",
+    "موقع التخزين": "Depolama konumu",
+    الكمية: "Miktar",
+    "سعر الشراء": "Alış fiyatı",
+    "سعر الجملة": "Toptan fiyat",
+    "تاريخ الإنتاج": "Üretim tarihi",
+    "تاريخ الصلاحية": "Son kullanma tarihi",
 
-"اسم المندوب": "Temsilci adı",
-"البريد الإلكتروني": "E-posta",
-"كلمة المرور": "Şifre",
-"الرمز الوظيفي": "Çalışan kodu",
-"رقم المركبة": "Araç plakası",
+    "اسم المندوب": "Temsilci adı",
+    "البريد الإلكتروني": "E-posta",
+    "كلمة المرور": "Şifre",
+    "الرمز الوظيفي": "Çalışan kodu",
+    "رقم المركبة": "Araç plakası",
 
-"تعذر الحفظ. راجع البيانات وحاول مجددًا.":
-  "Kaydedilemedi. Bilgileri kontrol edip tekrar deneyin.",
+    "تعذر الحفظ. راجع البيانات وحاول مجددًا.":
+      "Kaydedilemedi. Bilgileri kontrol edip tekrar deneyin.",
 
-"إلغاء": "İptal",
-"جاري الحفظ...": "Kaydediliyor...",
-"حفظ وتفعيل": "Kaydet ve etkinleştir",
+    إلغاء: "İptal",
+    "جاري الحفظ...": "Kaydediliyor...",
+    "حفظ وتفعيل": "Kaydet ve etkinleştir",
 
-"إجمالي الفواتير": "Toplam faturalar",
-"مرتبطة بطلبات التوريد": "Tedarik siparişlerine bağlı",
-"فواتير مسددة": "Ödenmiş faturalar",
-"مغلقة ماليًا": "Finansal olarak kapatıldı",
-"الرصيد المستحق": "Ödenmemiş bakiye",
-"بانتظار التحصيل أو التحويل":
-  "Tahsilat veya transfer bekleniyor",
+    "إجمالي الفواتير": "Toplam faturalar",
+    "مرتبطة بطلبات التوريد": "Tedarik siparişlerine bağlı",
+    "فواتير مسددة": "Ödenmiş faturalar",
+    "مغلقة ماليًا": "Finansal olarak kapatıldı",
+    "الرصيد المستحق": "Ödenmemiş bakiye",
+    "بانتظار التحصيل أو التحويل": "Tahsilat veya transfer bekleniyor",
 
-"طلب": "Sipariş",
-"غير مدفوعة": "Ödenmedi",
-"مدفوعة جزئيًا": "Kısmen ödendi",
-"مدفوعة": "Ödendi",
-"مستردة": "İade edildi",
+    طلب: "Sipariş",
+    "غير مدفوعة": "Ödenmedi",
+    "مدفوعة جزئيًا": "Kısmen ödendi",
+    مدفوعة: "Ödendi",
+    مستردة: "İade edildi",
 
-"نقدًا عند الاستلام": "Teslimatta nakit",
-"تحويل بنكي": "Banka havalesi",
-"حساب آجل": "Vadeli hesap",
+    "نقدًا عند الاستلام": "Teslimatta nakit",
+    "تحويل بنكي": "Banka havalesi",
+    "حساب آجل": "Vadeli hesap",
 
-"الإجمالي": "Toplam",
-"المدفوع": "Ödenen",
-"المتبقي": "Kalan",
-"الاستحقاق": "Vade tarihi",
-"عرض وإدارة": "Görüntüle ve yönet",
+    الإجمالي: "Toplam",
+    المدفوع: "Ödenen",
+    المتبقي: "Kalan",
+    الاستحقاق: "Vade tarihi",
+    "عرض وإدارة": "Görüntüle ve yönet",
 
-"لا توجد فواتير بعد": "Henüz fatura yok",
+    "لا توجد فواتير بعد": "Henüz fatura yok",
 
-"تُنشأ الفاتورة تلقائيًا عند قبول طلب التوريد.":
-  "Tedarik siparişi kabul edildiğinde fatura otomatik olarak oluşturulur.",
+    "تُنشأ الفاتورة تلقائيًا عند قبول طلب التوريد.":
+      "Tedarik siparişi kabul edildiğinde fatura otomatik olarak oluşturulur.",
 
-"إدارة فريق التوزيع": "Dağıtım Ekibi Yönetimi",
-"الحساب مفعّل": "Hesap etkin",
-"الحساب موقوف": "Hesap askıda",
-"غير متاح": "Uygun değil",
+    "إدارة فريق التوزيع": "Dağıtım Ekibi Yönetimi",
+    "الحساب مفعّل": "Hesap etkin",
+    "الحساب موقوف": "Hesap askıda",
+    "غير متاح": "Uygun değil",
 
-"أيام العمل": "Çalışma günleri",
-"الأحد": "Pazar",
-"الاثنين": "Pazartesi",
-"الثلاثاء": "Salı",
-"الأربعاء": "Çarşamba",
-"الخميس": "Perşembe",
-"الجمعة": "Cuma",
-"السبت": "Cumartesi",
+    "أيام العمل": "Çalışma günleri",
+    الأحد: "Pazar",
+    الاثنين: "Pazartesi",
+    الثلاثاء: "Salı",
+    الأربعاء: "Çarşamba",
+    الخميس: "Perşembe",
+    الجمعة: "Cuma",
+    السبت: "Cumartesi",
 
-"بداية الوردية": "Vardiya başlangıcı",
-"نهاية الوردية": "Vardiya bitişi",
-"ملاحظة الحالة": "Durum notu",
+    "بداية الوردية": "Vardiya başlangıcı",
+    "نهاية الوردية": "Vardiya bitişi",
+    "ملاحظة الحالة": "Durum notu",
 
-"اختر يوم عمل واحدًا على الأقل عند تفعيل حساب المندوب. يمكن حفظ الحساب الموقوف دون تحديد أيام.":
-  "Temsilci hesabını etkinleştirirken en az bir çalışma günü seçin. Askıya alınmış hesap çalışma günü seçilmeden kaydedilebilir.",
+    "اختر يوم عمل واحدًا على الأقل عند تفعيل حساب المندوب. يمكن حفظ الحساب الموقوف دون تحديد أيام.":
+      "Temsilci hesabını etkinleştirirken en az bir çalışma günü seçin. Askıya alınmış hesap çalışma günü seçilmeden kaydedilebilir.",
 
-"أدخل بداية الوردية ونهايتها معًا، أو اترك الحقلين فارغين لدوام مفتوح.":
-  "Vardiya başlangıç ve bitiş saatlerini birlikte girin veya açık vardiya için iki alanı da boş bırakın.",
+    "أدخل بداية الوردية ونهايتها معًا، أو اترك الحقلين فارغين لدوام مفتوح.":
+      "Vardiya başlangıç ve bitiş saatlerini birlikte girin veya açık vardiya için iki alanı da boş bırakın.",
 
-"تعذر تحديث المندوب.":
-  "Temsilci güncellenemedi.",
+    "تعذر تحديث المندوب.": "Temsilci güncellenemedi.",
 
-"حفظ إعدادات المندوب":
-  "Temsilci ayarlarını kaydet",
+    "حفظ إعدادات المندوب": "Temsilci ayarlarını kaydet",
 
-"فاتورة طلب": "Sipariş faturası",
-"قيمة الأدوية": "İlaç bedeli",
-"التوصيل": "Teslimat",
-"الخصم": "İndirim",
-"الضريبة": "Vergi",
+    "فاتورة طلب": "Sipariş faturası",
+    "قيمة الأدوية": "İlaç bedeli",
+    التوصيل: "Teslimat",
+    الخصم: "İndirim",
+    الضريبة: "Vergi",
 
-"مبلغ الدفعة": "Ödeme tutarı",
-"طريقة الدفع": "Ödeme yöntemi",
-"رقم الحوالة / المرجع":
-  "Havale / referans numarası",
-"ملاحظة": "Not",
-"تسجيل الدفعة": "Ödemeyi kaydet",
-"تاريخ الاستحقاق": "Vade tarihi",
-"ملاحظة المستودع": "Depo notu",
-"حفظ بيانات الفاتورة":
-  "Fatura bilgilerini kaydet",
+    "مبلغ الدفعة": "Ödeme tutarı",
+    "طريقة الدفع": "Ödeme yöntemi",
+    "رقم الحوالة / المرجع": "Havale / referans numarası",
+    ملاحظة: "Not",
+    "تسجيل الدفعة": "Ödemeyi kaydet",
+    "تاريخ الاستحقاق": "Vade tarihi",
+    "ملاحظة المستودع": "Depo notu",
+    "حفظ بيانات الفاتورة": "Fatura bilgilerini kaydet",
 
-"تعذر تنفيذ الإجراء المالي.":
-  "Finansal işlem gerçekleştirilemedi.",
+    "تعذر تنفيذ الإجراء المالي.": "Finansal işlem gerçekleştirilemedi.",
 
-"حالة الفاتورة": "Fatura durumu",
-"تسجيل دفعة": "Ödeme kaydet",
-"تعديل الفاتورة": "Faturayı düzenle",
-"طباعة الفاتورة": "Faturayı yazdır",
-"سجل الدفعات": "Ödeme geçmişi",
+    "حالة الفاتورة": "Fatura durumu",
+    "تسجيل دفعة": "Ödeme kaydet",
+    "تعديل الفاتورة": "Faturayı düzenle",
+    "طباعة الفاتورة": "Faturayı yazdır",
+    "سجل الدفعات": "Ödeme geçmişi",
 
-"مراحل معالجة الطلب": "Sipariş işlem aşamaları",
-"تفاصيل الأدوية": "İlaç detayları",
-"بنود ضمن الطلب": "Siparişteki ürünler",
-"لم تحدد الدفعة": "Parti belirtilmedi",
+    "مراحل معالجة الطلب": "Sipariş işlem aşamaları",
+    "تفاصيل الأدوية": "İlaç detayları",
+    "بنود ضمن الطلب": "Siparişteki ürünler",
+    "لم تحدد الدفعة": "Parti belirtilmedi",
 
-"بيانات الشحنة والتتبع":
-  "Gönderi ve takip bilgileri",
+    "بيانات الشحنة والتتبع": "Gönderi ve takip bilgileri",
 
-"رقم الشحنة": "Gönderi numarası",
-"المندوب": "Temsilci",
-"لم يحدد": "Belirtilmedi",
-"حالة الشحنة": "Gönderi durumu",
-"وقت الانطلاق": "Çıkış zamanı",
-"لم تنطلق": "Henüz çıkmadı",
+    "رقم الشحنة": "Gönderi numarası",
+    المندوب: "Temsilci",
+    "لم يحدد": "Belirtilmedi",
+    "حالة الشحنة": "Gönderi durumu",
+    "وقت الانطلاق": "Çıkış zamanı",
+    "لم تنطلق": "Henüz çıkmadı",
 
-"بيانات الصيدلية": "Eczane bilgileri",
-"رقم الهاتف غير مضاف":
-  "Telefon numarası eklenmemiş",
-"العنوان غير مضاف": "Adres eklenmemiş",
-"اتصال بالصيدلية": "Eczaneyi ara",
-"بدء الملاحة": "Navigasyonu başlat",
+    "بيانات الصيدلية": "Eczane bilgileri",
+    "رقم الهاتف غير مضاف": "Telefon numarası eklenmemiş",
+    "العنوان غير مضاف": "Adres eklenmemiş",
+    "اتصال بالصيدلية": "Eczaneyi ara",
+    "بدء الملاحة": "Navigasyonu başlat",
 
-"الصيدلية لم تثبت إحداثيات موقعها بعد.":
-  "Eczane henüz konum koordinatlarını belirlemedi.",
+    "الصيدلية لم تثبت إحداثيات موقعها بعد.":
+      "Eczane henüz konum koordinatlarını belirlemedi.",
 
-"ملخص التكلفة": "Maliyet özeti",
-"إجراءات المستودع": "Depo işlemleri",
-"اختر المندوب": "Temsilci seç",
-"اختر مندوبًا": "Bir temsilci seç",
-"متاح": "Uygun",
+    "ملخص التكلفة": "Maliyet özeti",
+    "إجراءات المستودع": "Depo işlemleri",
+    "اختر المندوب": "Temsilci seç",
+    "اختر مندوبًا": "Bir temsilci seç",
+    متاح: "Uygun",
 
-"إعادة إسناد الشحنة":
-  "Gönderiyi yeniden ata",
+    "إعادة إسناد الشحنة": "Gönderiyi yeniden ata",
 
-"إسناد وتجهيز الشحنة":
-  "Gönderiyi ata ve hazırla",
+    "إسناد وتجهيز الشحنة": "Gönderiyi ata ve hazırla",
 
-"اكتمل تسليم الطلب":
-  "Sipariş teslimatı tamamlandı",
+    "اكتمل تسليم الطلب": "Sipariş teslimatı tamamlandı",
 
-"الطلب مسند وجاهز للمتابعة":
-  "Sipariş atandı ve takibe hazır",
+    "الطلب مسند وجاهز للمتابعة": "Sipariş atandı ve takibe hazır",
 
-"اختر مستودع التوريد":
-  "Tedarik deposu seç",
+    "اختر مستودع التوريد": "Tedarik deposu seç",
 
-"تظهر فقط المستودعات المعتمدة والفعالة. افتح الكتالوج لتحديد الأدوية والكميات.":
-  "Yalnızca onaylı ve aktif depolar gösterilir. İlaçları ve miktarları seçmek için kataloğu açın.",
+    "تظهر فقط المستودعات المعتمدة والفعالة. افتح الكتالوج لتحديد الأدوية والكميات.":
+      "Yalnızca onaylı ve aktif depolar gösterilir. İlaçları ve miktarları seçmek için kataloğu açın.",
 
-"كم": "km",
-"دواء": "İlaç",
-"الحد الأدنى": "Minimum",
+    كم: "km",
+    دواء: "İlaç",
+    "الحد الأدنى": "Minimum",
 
-"فتح الكتالوج والطلب":
-  "Kataloğu aç ve sipariş ver",
+    "فتح الكتالوج والطلب": "Kataloğu aç ve sipariş ver",
 
-"لا يوجد مخزون متاح":
-  "Mevcut stok yok",
+    "لا يوجد مخزون متاح": "Mevcut stok yok",
 
-"لا توجد مستودعات جاهزة للتوريد":
-  "Tedarike hazır depo yok",
+    "لا توجد مستودعات جاهزة للتوريد": "Tedarike hazır depo yok",
 
-"يجب اعتماد المستودع وإضافة دفعات متاحة أولًا.":
-  "Önce deponun onaylanması ve mevcut ilaç partilerinin eklenmesi gerekir.",
+    "يجب اعتماد المستودع وإضافة دفعات متاحة أولًا.":
+      "Önce deponun onaylanması ve mevcut ilaç partilerinin eklenmesi gerekir.",
 
-"المسافة غير محددة":
-  "Mesafe belirtilmedi",
+    "المسافة غير محددة": "Mesafe belirtilmedi",
 
-"ابحث ضمن أدوية المستودع":
-  "Depo ilaçlarında ara",
+    "ابحث ضمن أدوية المستودع": "Depo ilaçlarında ara",
 
-"جاري تحميل كتالوج المستودع...":
-  "Depo kataloğu yükleniyor...",
+    "جاري تحميل كتالوج المستودع...": "Depo kataloğu yükleniyor...",
 
-"لا يوجد اسم علمي":
-  "Bilimsel ad yok",
+    "لا يوجد اسم علمي": "Bilimsel ad yok",
 
-"أقرب صلاحية":
-  "En yakın son kullanma tarihi",
+    "أقرب صلاحية": "En yakın son kullanma tarihi",
 
-"لا توجد أدوية مطابقة في هذا المستودع.":
-  "Bu depoda eşleşen ilaç yok.",
+    "لا توجد أدوية مطابقة في هذا المستودع.": "Bu depoda eşleşen ilaç yok.",
 
-"ملخص طلب التوريد":
-  "Tedarik siparişi özeti",
+    "ملخص طلب التوريد": "Tedarik siparişi özeti",
 
-"السلة": "Sepet",
+    السلة: "Sepet",
 
-"اختر الأدوية وحدد الكميات.":
-  "İlaçları seçin ve miktarları belirleyin.",
+    "اختر الأدوية وحدد الكميات.": "İlaçları seçin ve miktarları belirleyin.",
 
-"الأدوية": "İlaçlar",
+    الأدوية: "İlaçlar",
 
-"الحد الأدنى لهذا المستودع":
-  "Bu depo için minimum sipariş",
+    "الحد الأدنى لهذا المستودع": "Bu depo için minimum sipariş",
 
-"أضف أدوية بقيمة":
-  "Şu tutarda ilaç ekleyin",
+    "أضف أدوية بقيمة": "Şu tutarda ilaç ekleyin",
 
-"تعذر إرسال الطلب. راجع المخزون والكميات.":
-  "Sipariş gönderilemedi. Stok ve miktarları kontrol edin.",
+    "تعذر إرسال الطلب. راجع المخزون والكميات.":
+      "Sipariş gönderilemedi. Stok ve miktarları kontrol edin.",
 
-"جاري إرسال الطلب...":
-  "Sipariş gönderiliyor...",
+    "جاري إرسال الطلب...": "Sipariş gönderiliyor...",
 
-"تأكيد وإرسال الطلب":
-  "Siparişi onayla ve gönder",
+    "تأكيد وإرسال الطلب": "Siparişi onayla ve gönder",
 
-"تُحجز الكميات فورًا ويصل الطلب للمستودع لمراجعته وتجهيزه.":
-  "Miktarlar hemen ayrılır ve sipariş incelenip hazırlanmak üzere depoya gönderilir.",
+    "تُحجز الكميات فورًا ويصل الطلب للمستودع لمراجعته وتجهيزه.":
+      "Miktarlar hemen ayrılır ve sipariş incelenip hazırlanmak üzere depoya gönderilir.",
 
-"دفعة": "Parti",
-"تم التحقق والاستلام":
-  "Doğrulandı ve teslim alındı",
+    دفعة: "Parti",
+    "تم التحقق والاستلام": "Doğrulandı ve teslim alındı",
 
-"طلب توريد من سوق حياة دوائية":
-  "Hayat İlaç pazarından tedarik siparişi",
+    "طلب توريد من سوق حياة دوائية": "Hayat İlaç pazarından tedarik siparişi",
     "بانتظار المراجعة": "İnceleme bekleniyor",
     "بانتظار المستندات": "Belgeler bekleniyor",
     "بانتظار مراجعة الصيدلية والرد على طلبك.":
@@ -4383,67 +3991,49 @@ export const autoMessages = {
     "تعذر العثور على الدواء في الدليل المعتمد.":
       "İlaç onaylı dizinde bulunamadı.",
     "تعذر العثور على الصيدلية المطلوبة.": "İstenilen eczane bulunamadı.",
-    "إشعاراتك في مكان واحد":
-  "Bildirimleriniz Tek Yerde",
+    "إشعاراتك في مكان واحد": "Bildirimleriniz Tek Yerde",
 
-"تابع الطلبات والاعتمادات والتحديثات المهمة، وانتقل مباشرة إلى التفاصيل عندما تكون متاحة.":
-  "Talepleri, onayları ve önemli güncellemeleri takip edin; ayrıntılar mevcut olduğunda doğrudan görüntüleyin.",
+    "تابع الطلبات والاعتمادات والتحديثات المهمة، وانتقل مباشرة إلى التفاصيل عندما تكون متاحة.":
+      "Talepleri, onayları ve önemli güncellemeleri takip edin; ayrıntılar mevcut olduğunda doğrudan görüntüleyin.",
 
-"تم تحديد {{count}} إشعارات كمقروءة.":
-  "{{count}} bildirim okundu olarak işaretlendi.",
+    "تم تحديد {{count}} إشعارات كمقروءة.":
+      "{{count}} bildirim okundu olarak işaretlendi.",
 
-"لا توجد إشعارات جديدة لتحديثها.":
-  "Güncellenecek yeni bildirim yok.",
+    "لا توجد إشعارات جديدة لتحديثها.": "Güncellenecek yeni bildirim yok.",
 
-"تحديد الكل كمقروء":
-  "Tümünü Okundu Olarak İşaretle",
+    "تحديد الكل كمقروء": "Tümünü Okundu Olarak İşaretle",
 
-"جميع الإشعارات":
-  "Tüm Bildirimler",
+    "جميع الإشعارات": "Tüm Bildirimler",
 
-"غير المقروءة":
-  "Okunmamış",
+    "غير المقروءة": "Okunmamış",
 
-"تمت قراءتها":
-  "Okundu",
+    "تمت قراءتها": "Okundu",
 
-"جاري تحميل الإشعارات...":
-  "Bildirimler yükleniyor...",
+    "جاري تحميل الإشعارات...": "Bildirimler yükleniyor...",
 
-"تعذر تحميل الإشعارات":
-  "Bildirimler Yüklenemedi",
+    "تعذر تحميل الإشعارات": "Bildirimler Yüklenemedi",
 
-"لا توجد إشعارات هنا":
-  "Burada Bildirim Yok",
+    "لا توجد إشعارات هنا": "Burada Bildirim Yok",
 
-"ستظهر التحديثات المهمة فور حدوثها.":
-  "Önemli güncellemeler gerçekleştiği anda burada görünecektir.",
+    "ستظهر التحديثات المهمة فور حدوثها.":
+      "Önemli güncellemeler gerçekleştiği anda burada görünecektir.",
 
-"إشعار جديد":
-  "Yeni Bildirim",
+    "إشعار جديد": "Yeni Bildirim",
 
-"لديك تحديث جديد ضمن حسابك.":
-  "Hesabınızda yeni bir güncelleme var.",
+    "لديك تحديث جديد ضمن حسابك.": "Hesabınızda yeni bir güncelleme var.",
 
-"جديد":
-  "Yeni",
+    جديد: "Yeni",
 
-"عرض التفاصيل":
-  "Ayrıntıları Görüntüle",
+    "عرض التفاصيل": "Ayrıntıları Görüntüle",
 
-"تمييز كمقروء":
-  "Okundu Olarak İşaretle",
+    "تمييز كمقروء": "Okundu Olarak İşaretle",
 
-"منذ وقت قريب":
-  "Kısa süre önce",
-  "غير محدد":
-  "Belirtilmedi",
+    "منذ وقت قريب": "Kısa süre önce",
+    "غير محدد": "Belirtilmedi",
 
-"تحديث اعتماد المنظمة":
-  "Kuruluş Onayını Güncelle",
+    "تحديث اعتماد المنظمة": "Kuruluş Onayını Güncelle",
 
-"اعتماد المنظمة":
-  "Kuruluş Onayı",
+    "اعتماد المنظمة": "Kuruluş Onayı",
     "تعذر العثور على المحادثة المطلوبة.": "İstenilen görüşme bulunamadı.",
     "تعذر العثور على المنظمة المختارة.": "Seçilen kuruluş bulunamadı.",
     "تعذر العثور على المنظمة المطلوبة.": "İstenilen kuruluş bulunamadı.",
@@ -4457,25 +4047,20 @@ export const autoMessages = {
       "İstenilen envanter öğesi bulunamadı.",
     "تعذر العثور على مستند التحقق المطلوب.":
       "Gerekli doğrulama belgesi bulunamadı.",
-      "الاعتماد":
-  "Onay",
+    الاعتماد: "Onay",
 
-"تحديث اعتماد المنظمة":
-  "Kuruluş Onayı Güncellendi",
+    "تحديث اعتماد المنظمة": "Kuruluş Onayı Güncellendi",
 
-"اعتماد المنظمة":
-  "Kuruluş Onayı",
+    "اعتماد المنظمة": "Kuruluş Onayı",
 
-"تم تحديث حالة اعتماد المنظمة من إدارة المنصة.":
-  "Kuruluşun onay durumu platform yönetimi tarafından güncellendi.",
+    "تم تحديث حالة اعتماد المنظمة من إدارة المنصة.":
+      "Kuruluşun onay durumu platform yönetimi tarafından güncellendi.",
 
-"غير محدد":
-  "Belirtilmedi",
-  "تم اعتماد المنظمة {{name}}.":
-  "{{name}} kuruluşu onaylandı.",
+    "غير محدد": "Belirtilmedi",
+    "تم اعتماد المنظمة {{name}}.": "{{name}} kuruluşu onaylandı.",
 
-"تم تحديث حالة اعتماد المنظمة من إدارة المنصة.":
-  "Kuruluşun onay durumu platform yönetimi tarafından güncellendi.",
+    "تم تحديث حالة اعتماد المنظمة من إدارة المنصة.":
+      "Kuruluşun onay durumu platform yönetimi tarafından güncellendi.",
     "تعذر العثور على ملف المنظمة المرتبط بالحساب.":
       "Hesapla ilişkili organizasyon dosyası bulunamadı.",
     "تعذر الوصول إلى الموقع. يمكنك متابعة التسجيل من دون إحداثيات.":
@@ -4497,21 +4082,20 @@ export const autoMessages = {
     "تغيير كلمة المرور": "Şifreyi değiştir",
     "تغيير نوع الحساب": "Hesap türünü değiştir",
     "طلبات الأدوية": "İlaç Talepleri",
-"راجع الطلبات الواردة وتحقق من المخزون ثم أرسل للمريض إجابة دقيقة أو اقترح بديلًا متاحًا.":
-  "Gelen talepleri inceleyin, stoğu kontrol edin ve hastaya doğru bir yanıt gönderin veya mevcut bir alternatif önerin.",
+    "راجع الطلبات الواردة وتحقق من المخزون ثم أرسل للمريض إجابة دقيقة أو اقترح بديلًا متاحًا.":
+      "Gelen talepleri inceleyin, stoğu kontrol edin ve hastaya doğru bir yanıt gönderin veya mevcut bir alternatif önerin.",
 
-"ابحث هنا في طلبات الأدوية ...":
-  "İlaç taleplerinde ara...",
+    "ابحث هنا في طلبات الأدوية ...": "İlaç taleplerinde ara...",
 
-"ترتيب حسب": "Sırala",
-"جاري تحميل الطلبات...": "Talepler yükleniyor...",
-"لا توجد طلبات مطابقة": "Eşleşen talep yok",
-"ستظهر طلبات المرضى الجديدة هنا فور وصولها إلى الصيدلية.":
-  "Yeni hasta talepleri eczaneye ulaştığında burada görünecek.",
+    "ترتيب حسب": "Sırala",
+    "جاري تحميل الطلبات...": "Talepler yükleniyor...",
+    "لا توجد طلبات مطابقة": "Eşleşen talep yok",
+    "ستظهر طلبات المرضى الجديدة هنا فور وصولها إلى الصيدلية.":
+      "Yeni hasta talepleri eczaneye ulaştığında burada görünecek.",
 
-"الكمية": "Miktar",
-"ملاحظة": "Not",
-"عرض الطلب": "Talebi Görüntüle",
+    الكمية: "Miktar",
+    ملاحظة: "Not",
+    "عرض الطلب": "Talebi Görüntüle",
     "تفاصيل الطلب": "Sipariş ayrıntıları",
     "تقديم دواء أو طلب مساعدة من منظمة معتمدة.":
       "Akredite bir kuruluştan ilaç sağlamak veya yardım istemek.",
@@ -4696,41 +4280,43 @@ export const autoMessages = {
     "حفظ التغييرات": "Değişiklikleri kaydet",
     "حفظ التقييم": "Derecelendirmeyi kaydet",
     "إعدادات الحساب": "Hesap Ayarları",
-"حدّث بيانات التواصل وكلمة المرور المرتبطة بحسابك.": "İletişim bilgilerinizi ve hesap şifrenizi güncelleyin.",
-"جاري تحميل بيانات الحساب...": "Hesap bilgileri yükleniyor...",
-"البيانات الشخصية": "Kişisel Bilgiler",
-"عدّل معلومات الحساب الأساسية وبيانات التواصل.": "Temel hesap bilgilerinizi ve iletişim bilgilerinizi güncelleyin.",
-"الاسم الكامل": "Ad Soyad",
-"أدخل الاسم الكامل": "Ad soyad girin",
-"أدخل رقم الهاتف": "Telefon numarasını girin",
-"أدخل البريد الإلكتروني": "E-posta adresini girin",
-"تم حفظ بيانات الحساب بنجاح.": "Hesap bilgileri başarıyla kaydedildi.",
-"حفظ البيانات": "Bilgileri Kaydet",
-"تغيير كلمة المرور": "Şifreyi Değiştir",
-"كلمة المرور الحالية": "Mevcut Şifre",
-"كلمة المرور الجديدة": "Yeni Şifre",
-"تأكيد كلمة المرور": "Şifreyi Onayla",
-"أدخل كلمة المرور": "Şifreyi girin",
-"إظهار كلمة المرور": "Şifreyi Göster",
-"إخفاء كلمة المرور": "Şifreyi Gizle",
-"تم تغيير كلمة المرور بنجاح.": "Şifre başarıyla değiştirildi.",
-"يجب ألا تقل كلمة المرور الجديدة عن 8 أحرف.": "Yeni şifre en az 8 karakter olmalıdır.",
-"استخدم حرفًا إنكليزيًا كبيرًا وصغيرًا ورقمًا ورمزًا خاصًا على الأقل.": "En az bir büyük harf, bir küçük harf, bir rakam ve bir özel karakter kullanın.",
-"تأكيد كلمة المرور غير مطابق.": "Şifre doğrulaması eşleşmiyor.",
-"جاري التغيير...": "Güncelleniyor...",
-"الدور": "Rol",
-"تاريخ إنشاء الحساب": "Hesap Oluşturulma Tarihi",
-"حماية الحساب": "Hesap Güvenliği",
-"احرص على استخدام كلمة مرور قوية وعدم مشاركتها مع أي شخص. ننصح بتغييرها بشكل دوري.": "Güçlü bir şifre kullanın ve kimseyle paylaşmayın. Şifrenizi düzenli olarak değiştirmeniz önerilir.",
+    "حدّث بيانات التواصل وكلمة المرور المرتبطة بحسابك.":
+      "İletişim bilgilerinizi ve hesap şifrenizi güncelleyin.",
+    "جاري تحميل بيانات الحساب...": "Hesap bilgileri yükleniyor...",
+    "البيانات الشخصية": "Kişisel Bilgiler",
+    "عدّل معلومات الحساب الأساسية وبيانات التواصل.":
+      "Temel hesap bilgilerinizi ve iletişim bilgilerinizi güncelleyin.",
+    "الاسم الكامل": "Ad Soyad",
+    "أدخل الاسم الكامل": "Ad soyad girin",
+    "أدخل رقم الهاتف": "Telefon numarasını girin",
+    "أدخل البريد الإلكتروني": "E-posta adresini girin",
+    "تم حفظ بيانات الحساب بنجاح.": "Hesap bilgileri başarıyla kaydedildi.",
+    "حفظ البيانات": "Bilgileri Kaydet",
+    "تغيير كلمة المرور": "Şifreyi Değiştir",
+    "كلمة المرور الحالية": "Mevcut Şifre",
+    "كلمة المرور الجديدة": "Yeni Şifre",
+    "تأكيد كلمة المرور": "Şifreyi Onayla",
+    "أدخل كلمة المرور": "Şifreyi girin",
+    "إظهار كلمة المرور": "Şifreyi Göster",
+    "إخفاء كلمة المرور": "Şifreyi Gizle",
+    "تم تغيير كلمة المرور بنجاح.": "Şifre başarıyla değiştirildi.",
+    "يجب ألا تقل كلمة المرور الجديدة عن 8 أحرف.":
+      "Yeni şifre en az 8 karakter olmalıdır.",
+    "استخدم حرفًا إنكليزيًا كبيرًا وصغيرًا ورقمًا ورمزًا خاصًا على الأقل.":
+      "En az bir büyük harf, bir küçük harf, bir rakam ve bir özel karakter kullanın.",
+    "تأكيد كلمة المرور غير مطابق.": "Şifre doğrulaması eşleşmiyor.",
+    "جاري التغيير...": "Güncelleniyor...",
+    الدور: "Rol",
+    "تاريخ إنشاء الحساب": "Hesap Oluşturulma Tarihi",
+    "حماية الحساب": "Hesap Güvenliği",
+    "احرص على استخدام كلمة مرور قوية وعدم مشاركتها مع أي شخص. ننصح بتغييرها بشكل دوري.":
+      "Güçlü bir şifre kullanın ve kimseyle paylaşmayın. Şifrenizi düzenli olarak değiştirmeniz önerilir.",
     "حفظ الدواء": "İlacı sakla",
-    "مرحبًا بعودتك إلى":
-  "Tekrar hoş geldiniz",
+    "مرحبًا بعودتك إلى": "Tekrar hoş geldiniz",
 
-"لا تمتلك حسابًا مسبقًا؟":
-  "Henüz bir hesabınız yok mu?",
+    "لا تمتلك حسابًا مسبقًا؟": "Henüz bir hesabınız yok mu?",
 
-"خدمات مخصصة":
-  "Kişiselleştirilmiş hizmetler",
+    "خدمات مخصصة": "Kişiselleştirilmiş hizmetler",
     "حفظ القرار": "Kararı kaydet",
     "حفظ بيانات المنظمة": "Organizasyon verilerini kaydet",
     "حفظ ساعات العمل": "Çalışma saatlerinden tasarruf edin",
@@ -5238,7 +4824,6 @@ export const autoMessages = {
     "وصل طلب دواء جديد إلى الصيدلية ويمكن مراجعته من تفاصيل الطلب.":
       "Eczaneye yeni ilaç siparişi gelmiştir ve sipariş detaylarından incelenebilir.",
     "وصل طلب مساعدة دوائية جديد إلى المنظمة.":
-    
       "Kuruluşa yeni bir tıbbi yardım talebi geldi.",
     "وصل عرض تبرع دوائي جديد إلى المنظمة.":
       "Kuruluşa yeni bir ilaç bağışı teklifi geldi.",

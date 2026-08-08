@@ -45,11 +45,7 @@ const initialForm = {
 export function PharmacyProfilePage() {
   const { t, i18n } = useTranslation();
 
-  const currentLanguage = (
-    i18n.resolvedLanguage ||
-    i18n.language ||
-    "ar"
-  )
+  const currentLanguage = (i18n.resolvedLanguage || i18n.language || "ar")
     .split("-")[0]
     .toLowerCase();
 
@@ -102,7 +98,9 @@ export function PharmacyProfilePage() {
         ok: true,
         text: variables.tryVerifyWithGoogle
           ? t("تم حفظ موقع الجهاز، ويمكنك الآن مراجعة نتيجة المطابقة أدناه.")
-          : t("تم حفظ الإحداثيات اليدوية بنجاح، ويمكنك مطابقة الصيدلية مع الموقع الصحيح أدناه."),
+          : t(
+              "تم حفظ الإحداثيات اليدوية بنجاح، ويمكنك مطابقة الصيدلية مع الموقع الصحيح أدناه.",
+            ),
       });
       await refresh();
     },
@@ -128,7 +126,10 @@ export function PharmacyProfilePage() {
   const linkLocation = useMutation({
     mutationFn: linkPharmacyLocation,
     onSuccess: async () => {
-      setMessage({ ok: true, text: t("تم ربط الصيدلية بالموقع المعتمد بنجاح.") });
+      setMessage({
+        ok: true,
+        text: t("تم ربط الصيدلية بالموقع المعتمد بنجاح."),
+      });
       await refresh();
       await client.invalidateQueries({
         queryKey: ["pharmacy", "location-candidates"],
@@ -168,7 +169,9 @@ export function PharmacyProfilePage() {
         setFinding(false);
         setMessage({
           ok: false,
-          text: t("لم نتمكن من قراءة موقعك. اسمح للمتصفح بالوصول إلى الموقع ثم أعد المحاولة."),
+          text: t(
+            "لم نتمكن من قراءة موقعك. اسمح للمتصفح بالوصول إلى الموقع ثم أعد المحاولة.",
+          ),
         });
       },
       { enableHighAccuracy: true, timeout: 15000 },
@@ -208,9 +211,11 @@ export function PharmacyProfilePage() {
     }));
   return (
     <div dir={direction} lang={currentLanguage}>
-<section className="relative isolate min-h-[220px] overflow-hidden rounded-[14px] text-white shadow-[0_22px_55px_rgba(23,75,87,.16)]
+      <section
+        className="relative isolate min-h-[220px] overflow-hidden rounded-[14px] text-white shadow-[0_22px_55px_rgba(23,75,87,.16)]
 sm:min-h-[230px]
-lg:min-h-[250px]">
+lg:min-h-[250px]"
+      >
         <img
           src={PHARMACY_HERO_IMAGE}
           alt=""
@@ -227,22 +232,20 @@ lg:min-h-[250px]">
           }}
         />
 
-   <div className="relative z-10 flex min-h-[220px] items-center px-8 py-7
+        <div
+          className="relative z-10 flex min-h-[220px] items-center px-8 py-7
 sm:min-h-[230px]
 lg:min-h-[250px]
-lg:px-10">
-  <div
+lg:px-10"
+        >
+          <div
             className={`absolute top-1/2 flex -translate-y-1/2 items-center gap-5 ${
               isArabic
                 ? "right-10 flex-row-reverse"
                 : "left-10 flex-row-reverse"
             }`}
           >
-            
-
             <div className={`min-w-0 ${isArabic ? "text-right" : "text-left"}`}>
-            
-
               <h1 className="mt-2 text-[28px] font-medium leading-[1.2] text-white">
                 {t("الملف والموقع")}
               </h1>
@@ -352,7 +355,9 @@ lg:px-10">
           </div>
           <label className="mt-5 flex cursor-pointer items-center justify-between rounded-2xl border border-[#174b57]/10 bg-[#f8fbfa] p-4">
             <div>
-              <span className="text-sm font-extrabold">{t("خدمة توصيل الأدوية")}</span>
+              <span className="text-sm font-extrabold">
+                {t("خدمة توصيل الأدوية")}
+              </span>
               <p className="mt-1 text-xs text-[#829499]">
                 {t("فعّلها فقط إذا كانت الخدمة متاحة فعليًا")}
               </p>
@@ -387,7 +392,9 @@ lg:px-10">
                       <MapPin size={21} strokeWidth={1.9} />
                     </span>
 
-                    <div className={`min-w-0 ${isArabic ? "text-right" : "text-left"}`}>
+                    <div
+                      className={`min-w-0 ${isArabic ? "text-right" : "text-left"}`}
+                    >
                       <h3 className="text-xl font-black text-[#29464D]">
                         {t("موقع الصيدلية")}
                       </h3>
@@ -409,8 +416,6 @@ lg:px-10">
                       )}
                     </div>
                   </div>
-
-                 
                 </div>
               </div>
             </div>
@@ -429,7 +434,9 @@ lg:px-10">
                     <Crosshair size={17} />
                   </span>
                   <div className={isArabic ? "text-right" : "text-left"}>
-                    <h5 className="text-sm font-extrabold">{t("الموقع الحالي")}</h5>
+                    <h5 className="text-sm font-extrabold">
+                      {t("الموقع الحالي")}
+                    </h5>
                     <p className="mt-0.5 text-[11px] text-[#829499]">
                       {t("يتطلب السماح للمتصفح بمعرفة موقع الجهاز")}
                     </p>
@@ -442,7 +449,9 @@ lg:px-10">
                   className="btn-primary w-full justify-center"
                 >
                   <Crosshair size={17} />
-                  {finding ? t("جاري تحديد الموقع...") : t("استخدام موقعي الحالي")}
+                  {finding
+                    ? t("جاري تحديد الموقع...")
+                    : t("استخدام موقعي الحالي")}
                 </button>
               </div>
               <div className="my-3 flex items-center gap-3 text-[11px] font-bold text-[#9aabad]">
@@ -534,7 +543,9 @@ lg:px-10">
                       {item.address}
                     </p>
                     <p className="mt-2 flex items-center gap-3 text-xs text-[#829499]">
-                      <span>{Math.round(item.distanceMeters)} {t("م")}</span>
+                      <span>
+                        {Math.round(item.distanceMeters)} {t("م")}
+                      </span>
                       <span className="flex items-center gap-1">
                         <Star
                           size={12}
@@ -583,7 +594,6 @@ function ManualLocationForm({
   pending,
   onSave,
   t,
-  isArabic,
   direction,
 }) {
   const [values, setValues] = useState({
@@ -604,7 +614,9 @@ function ManualLocationForm({
     if (!Number.isFinite(latitude) || latitude < -90 || latitude > 90)
       return setValidationError(t("يجب أن يكون خط العرض رقمًا بين ‎-90 و90."));
     if (!Number.isFinite(longitude) || longitude < -180 || longitude > 180)
-      return setValidationError(t("يجب أن يكون خط الطول رقمًا بين ‎-180 و180."));
+      return setValidationError(
+        t("يجب أن يكون خط الطول رقمًا بين ‎-180 و180."),
+      );
     onSave({ latitude, longitude });
   };
   return (
@@ -618,7 +630,9 @@ function ManualLocationForm({
           <Keyboard size={17} />
         </span>
         <div>
-          <h5 className="text-sm font-extrabold">{t("إدخال الإحداثيات يدويًا")}</h5>
+          <h5 className="text-sm font-extrabold">
+            {t("إدخال الإحداثيات يدويًا")}
+          </h5>
           <p className="mt-0.5 text-[11px] text-[#829499]">
             {t("انسخ القيم الدقيقة من تطبيق الخرائط")}
           </p>

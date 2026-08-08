@@ -5,6 +5,14 @@ export async function login(credentials) {
   return data;
 }
 
+export async function forgotPassword(email) {
+  return (await apiClient.post("/auth/password/forgot", { email })).data;
+}
+
+export async function resetPassword(payload) {
+  await apiClient.post("/auth/password/reset", payload);
+}
+
 export async function registerUser(payload) {
   return (await apiClient.post("/auth/register/user", payload)).data;
 }

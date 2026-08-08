@@ -51,12 +51,32 @@ export async function getPendingPharmacies() {
   return (await apiClient.get("/admin/pharmacies/pending")).data;
 }
 
-export async function updatePharmacyApproval(pharmacyId, isApproved) {
+export async function updatePharmacyApproval(
+  pharmacyId,
+  isApproved,
+  reason = null,
+  isManualDecision = false,
+) {
   return (
     await apiClient.put(`/admin/pharmacies/${pharmacyId}/approval`, {
       isApproved,
+      reason,
+      isManualDecision,
     })
   ).data;
+}
+
+export async function getPharmacyLicenseVerification(pharmacyId) {
+  return (
+    await apiClient.get(`/admin/pharmacies/${pharmacyId}/license-verification`)
+  ).data;
+}
+
+export async function getPharmacyLicenseDocument(pharmacyId, verificationId) {
+  return apiClient.get(
+    `/admin/pharmacies/${pharmacyId}/license-verification/${verificationId}/document`,
+    { responseType: "blob" },
+  );
 }
 
 export async function getPendingOrganizations() {

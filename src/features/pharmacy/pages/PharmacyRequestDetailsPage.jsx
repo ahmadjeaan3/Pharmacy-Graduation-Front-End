@@ -9,16 +9,16 @@ import {
   Pill,
   Send,
   UserRound,
-  XCircle,
 } from "lucide-react";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { getApiErrorMessage } from "../../../shared/api/errors";
-import { MedicineAlternativesButton } from "../../intelligence/components/MedicineAlternativesButton";
 import {
   getPharmacyRequest,
   pharmacyKeys,
   respondToPharmacyRequest,
+  confirmMedicinePickup,
 } from "../api/pharmacyApi";
 import {
   PharmacyErrorState,
@@ -31,6 +31,7 @@ import {
 } from "../utils/pharmacyFormatters";
 
 export function PharmacyRequestDetailsPage() {
+  const { t, i18n } = useTranslation();
   const { requestId } = useParams();
   const client = useQueryClient();
   const [form, setForm] = useState({
@@ -56,6 +57,18 @@ export function PharmacyRequestDetailsPage() {
     onError: (error) =>
       setNotice({ ok: false, text: getApiErrorMessage(error) }),
   });
+  const pickup = useMutation({
+    mutationFn: () => confirmMedicinePickup(requestId),
+    onSuccess: async () => {
+      setNotice({ ok: true, text: t("تم تأكيد استلام المريض للدواء.") });
+      await Promise.all([
+        client.invalidateQueries({ queryKey: pharmacyKeys.request(requestId) }),
+        client.invalidateQueries({ queryKey: ["pharmacy", "requests"] }),
+        client.invalidateQueries({ queryKey: pharmacyKeys.dashboard }),
+      ]);
+    },
+    onError: (error) => setNotice({ ok: false, text: getApiErrorMessage(error) }),
+  });
   if (query.isLoading)
     return <PharmacyLoadingState label="جاري فتح الطلب..." />;
   if (query.isError)
@@ -66,9 +79,7 @@ export function PharmacyRequestDetailsPage() {
       />
     );
   const data = query.data;
-  const selectedStatus = data.isRequestedMedicineCurrentlyAvailable
-    ? form.status
-    : "Unavailable";
+  const selectedStatus = "Available";
   const meta = requestMeta(data.status);
   const submit = (event) => {
     event.preventDefault();
@@ -84,8 +95,8 @@ export function PharmacyRequestDetailsPage() {
   return (
     <div>
       <Link to="/app/pharmacy/requests" className="btn-quiet mb-5">
-        <ArrowRight size={17} />
-        العودة إلى الطلبات
+        <ArrowRight size={17} className="rtl:rotate-0 ltr:rotate-180" />
+        {t("العودة إلى الطلبات")}
       </Link>
       {notice && (
         <div
@@ -113,7 +124,7 @@ export function PharmacyRequestDetailsPage() {
                   <Pill size={25} />
                 </span>
                 <div>
-                  <h2 className="text-2xl font-black">{data.medicineName}</h2>
+                  <h2 className="break-words text-xl font-black sm:text-2xl">{data.medicineName}</h2>
                   <p className="mt-2 text-sm text-white/55">
                     الكمية المطلوبة: {formatNumber(data.requestedQuantity)}
                   </p>
@@ -133,15 +144,11 @@ export function PharmacyRequestDetailsPage() {
               <Info label="التركيب" value={data.requestedMedicineComposition} />
               <Info
                 label="تاريخ الطلب"
-                value={formatDate(data.createdAtUtc, true)}
+                value={formatDate(data.createdAtUtc, true, i18n.language)}
               />
               <Info
                 label="حالة مخزونك"
-                value={
-                  data.isRequestedMedicineCurrentlyAvailable
-                    ? "متوفر حاليًا"
-                    : "غير متوفر حاليًا"
-                }
+                value={t("محجوز لهذا الطلب")}
               />
             </div>
             {data.note && (
@@ -185,70 +192,20 @@ export function PharmacyRequestDetailsPage() {
               <Send size={20} />
             </span>
             <div>
-              <h3 className="font-black">الرد على الطلب</h3>
+              <h3 className="font-black">{t("تجهيز الحجز")}</h3>
               <p className="mt-1 text-xs text-[#829499]">
-                يرسل الرد للمريض فور الحفظ
+                {t("الكمية محجوزة مسبقاً؛ أكد فقط أنها جاهزة للاستلام")}
               </p>
             </div>
           </div>
           {data.canRespond ? (
             <form onSubmit={submit} className="mt-6">
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  disabled={!data.isRequestedMedicineCurrentlyAvailable}
-                  onClick={() =>
-                    setForm((f) => ({
-                      ...f,
-                      status: "Available",
-                      suggestedAlternativeMedicineId: "",
-                    }))
-                  }
-                  className={`rounded-2xl border p-4 text-center transition disabled:cursor-not-allowed disabled:opacity-35 ${selectedStatus === "Available" ? "border-emerald-400 bg-emerald-50 text-emerald-700" : "border-[#174b57]/10"}`}
-                >
+              <div className="grid gap-3">
+                <div className="rounded-2xl border border-emerald-300 bg-emerald-50 p-4 text-center text-emerald-700">
                   <CheckCircle2 className="mx-auto" />
-                  <strong className="mt-2 block text-sm">متوفر</strong>
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setForm((f) => ({ ...f, status: "Unavailable" }))
-                  }
-                  className={`rounded-2xl border p-4 text-center transition ${selectedStatus === "Unavailable" ? "border-rose-300 bg-rose-50 text-rose-700" : "border-[#174b57]/10"}`}
-                >
-                  <XCircle className="mx-auto" />
-                  <strong className="mt-2 block text-sm">غير متوفر</strong>
-                </button>
-              </div>
-              {selectedStatus === "Unavailable" && (
-                <div className="mt-5">
-                  <label className="block">
-                    <span className="form-label">بديل متاح (اختياري)</span>
-                    <select
-                      className="form-input"
-                      value={form.suggestedAlternativeMedicineId}
-                      onChange={(e) =>
-                        setForm((f) => ({
-                          ...f,
-                          suggestedAlternativeMedicineId: e.target.value,
-                        }))
-                      }
-                    >
-                      <option value="">دون اقتراح بديل</option>
-                      {(data.alternativeCandidates || []).map((item) => (
-                        <option key={item.medicineId} value={item.medicineId}>
-                          {item.medicineName}
-                          {item.capacity ? ` — ${item.capacity}` : ""}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <MedicineAlternativesButton
-                    medicineName={data.medicineName}
-                    className="btn-secondary mt-3 w-full justify-center"
-                  />
+                  <strong className="mt-2 block text-sm">{t("الكمية محجوزة من المخزون")}</strong>
                 </div>
-              )}
+              </div>
               <label className="mt-5 block">
                 <span className="form-label">ملاحظة للمريض (اختيارية)</span>
                 <textarea
@@ -269,7 +226,7 @@ export function PharmacyRequestDetailsPage() {
                 className="btn-primary mt-5 w-full justify-center"
               >
                 <Send size={17} />
-                {response.isPending ? "جاري إرسال الرد..." : "إرسال الرد"}
+                {response.isPending ? t("جاري التأكيد...") : t("تأكيد الجاهزية للاستلام")}
               </button>
             </form>
           ) : (
@@ -286,6 +243,17 @@ export function PharmacyRequestDetailsPage() {
                     {data.suggestedAlternative.medicineName}
                   </strong>
                 </div>
+              )}
+              {data.status === "Available" && (
+                <button
+                  type="button"
+                  disabled={pickup.isPending}
+                  onClick={() => pickup.mutate()}
+                  className="btn-primary mt-5 w-full justify-center"
+                >
+                  <CheckCircle2 size={17} />
+                  {pickup.isPending ? t("جاري التأكيد...") : t("تأكيد أن المريض استلم الدواء")}
+                </button>
               )}
             </div>
           )}

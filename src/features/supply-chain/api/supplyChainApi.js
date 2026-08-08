@@ -7,6 +7,8 @@ export const supplyKeys = {
   orders: ["supply-chain", "orders"],
   representatives: ["supply-chain", "representatives"],
   invoices: ["supply-chain", "invoices"],
+  returns: ["supply-chain", "returns"],
+  recalls: ["supply-chain", "recalls"],
   suggestions: ["supply-chain", "suggestions"],
 };
 export const getSupplyDashboard = async () =>
@@ -15,6 +17,8 @@ export const getBatches = async () =>
   (await apiClient.get("/supply-chain/warehouse/batches")).data;
 export const addBatch = async (payload) =>
   (await apiClient.post("/supply-chain/warehouse/batches", payload)).data;
+export const updateBatch = async (id, payload) =>
+  (await apiClient.put(`/supply-chain/warehouse/batches/${id}`, payload)).data;
 export const getMarketplace = async () =>
   (await apiClient.get("/supply-chain/marketplace")).data;
 export const getWarehouseCatalog = async (id, query = "") =>
@@ -55,6 +59,8 @@ export const getSupplyInvoices = async (status = "") =>
       params: status ? { status } : {},
     })
   ).data;
+export const getSupplyInvoice = async (id) =>
+  (await apiClient.get(`/supply-chain/invoices/${id}`)).data;
 export const updateSupplyInvoice = async (id, payload) =>
   (await apiClient.put(`/supply-chain/warehouse/invoices/${id}`, payload)).data;
 export const recordSupplyPayment = async (id, payload) =>
@@ -73,5 +79,20 @@ export const confirmShipment = async (id, payload) =>
       payload,
     )
   ).data;
+export const createSupplyReturn = async (orderId, payload) =>
+  (
+    await apiClient.post(
+      `/supply-chain/pharmacy/orders/${orderId}/returns`,
+      payload,
+    )
+  ).data;
+export const getSupplyReturns = async () =>
+  (await apiClient.get("/supply-chain/returns")).data;
+export const reviewSupplyReturn = async (id, payload) =>
+  (await apiClient.put(`/supply-chain/warehouse/returns/${id}`, payload)).data;
+export const createMedicineRecall = async (payload) =>
+  (await apiClient.post("/supply-chain/warehouse/recalls", payload)).data;
+export const getMedicineRecalls = async () =>
+  (await apiClient.get("/supply-chain/recalls")).data;
 export const getRestockSuggestions = async () =>
   (await apiClient.get("/supply-chain/pharmacy/restock-suggestions")).data;

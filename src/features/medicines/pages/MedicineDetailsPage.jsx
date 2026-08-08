@@ -11,21 +11,14 @@ import {
   ShoppingBag,
   Tag,
 } from "lucide-react";
-import {
-  Link,
-  useLocation,
-  useParams,
-} from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 
 import { getApiErrorMessage } from "../../../shared/api/errors";
 import {
   DashboardErrorState as AdminErrorState,
   DashboardLoadingState as AdminLoadingState,
 } from "../../../shared/components/AsyncStates";
-import {
-  getMedicine,
-  medicineKeys,
-} from "../api/medicinesApi";
+import { getMedicine, medicineKeys } from "../api/medicinesApi";
 import {
   formatMedicineCurrency,
   formatMedicineNumber,
@@ -37,26 +30,18 @@ export function MedicineDetailsPage() {
   const location = useLocation();
 
   const query = useQuery({
-    queryKey:
-      medicineKeys.detail(
-        medicineId,
-      ),
-    queryFn: () =>
-      getMedicine(medicineId),
+    queryKey: medicineKeys.detail(medicineId),
+    queryFn: () => getMedicine(medicineId),
   });
 
   if (query.isLoading) {
-    return (
-      <AdminLoadingState label="جاري تحميل بيانات الدواء..." />
-    );
+    return <AdminLoadingState label="جاري تحميل بيانات الدواء..." />;
   }
 
   if (query.isError) {
     return (
       <AdminErrorState
-        message={getApiErrorMessage(
-          query.error,
-        )}
+        message={getApiErrorMessage(query.error)}
         onRetry={query.refetch}
       />
     );
@@ -72,7 +57,6 @@ export function MedicineDetailsPage() {
         className="inline-flex items-center gap-2 rounded-xl border border-[#DCE8EA] bg-white px-4 py-2.5 text-sm font-bold text-[#216474] shadow-[0_6px_20px_rgba(23,75,87,.04)] transition hover:border-[#AFC9CD] hover:bg-[#F8FBFB]"
       >
         <ArrowRight size={17} />
-
         العودة إلى دليل الأدوية
       </Link>
 
@@ -100,10 +84,7 @@ export function MedicineDetailsPage() {
         <div className="relative flex flex-col justify-between gap-6 md:flex-row md:items-center">
           <div className="flex min-w-0 items-start gap-4">
             <span className="grid size-16 shrink-0 place-items-center rounded-2xl border border-white/10 bg-white/10 text-[#F5CB72]">
-              <Pill
-                size={29}
-                strokeWidth={1.8}
-              />
+              <Pill size={29} strokeWidth={1.8} />
             </span>
 
             <div className="min-w-0">
@@ -116,27 +97,19 @@ export function MedicineDetailsPage() {
               </h1>
 
               <p className="mt-2 text-sm leading-7 text-white/55">
-                {medicineSubtitle(
-                  medicine,
-                )}
+                {medicineSubtitle(medicine)}
               </p>
             </div>
           </div>
 
           {medicine.requiresPrescription ? (
             <span className="inline-flex w-fit shrink-0 items-center gap-2 rounded-full border border-[#F5CB72]/20 bg-[#F5CB72]/10 px-4 py-2 text-sm font-black text-[#F5CB72]">
-              <ShieldCheck
-                size={17}
-              />
-
+              <ShieldCheck size={17} />
               يتطلب وصفة طبية
             </span>
           ) : (
             <span className="inline-flex w-fit shrink-0 items-center gap-2 rounded-full border border-[#8BD0CB]/20 bg-[#8BD0CB]/10 px-4 py-2 text-sm font-black text-[#BCE7E3]">
-              <ShoppingBag
-                size={17}
-              />
-
+              <ShoppingBag size={17} />
               لا يتطلب وصفة
             </span>
           )}
@@ -156,49 +129,37 @@ export function MedicineDetailsPage() {
             <Detail
               icon={Beaker}
               label="الاسم العلمي"
-              value={
-                medicine.scientificName
-              }
+              value={medicine.scientificName}
             />
 
             <Detail
               icon={Building2}
               label="الشركة المصنعة"
-              value={
-                medicine.manufacturer
-              }
+              value={medicine.manufacturer}
             />
 
             <Detail
               icon={Tag}
               label="الشكل الدوائي"
-              value={
-                medicine.dosageForm
-              }
+              value={medicine.dosageForm}
             />
 
             <Detail
               icon={Package}
               label="حجم العبوة"
-              value={
-                medicine.packageSize
-              }
+              value={medicine.packageSize}
             />
 
             <Detail
               icon={Beaker}
               label="السعة أو التركيز"
-              value={
-                medicine.capacity
-              }
+              value={medicine.capacity}
             />
 
             <Detail
               icon={Package}
               label="الكمية المرجعية"
-              value={formatMedicineNumber(
-                medicine.quantityInStock,
-              )}
+              value={formatMedicineNumber(medicine.quantityInStock)}
             />
           </div>
         </section>
@@ -212,25 +173,14 @@ export function MedicineDetailsPage() {
 
           <div className="p-6">
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
-              <Price
-                label="سعر الشراء"
-                value={
-                  medicine.purchasePrice
-                }
-              />
+              <Price label="سعر الشراء" value={medicine.purchasePrice} />
 
-              <Price
-                label="سعر البيع"
-                value={
-                  medicine.sellingPrice
-                }
-                primary
-              />
+              <Price label="سعر البيع" value={medicine.sellingPrice} primary />
             </div>
 
             <p className="mt-5 rounded-xl border border-[#E6EEF0] bg-[#F8FBFB] p-4 text-xs leading-6 text-[#71858A]">
-              قد تختلف الأسعار والكميات المتاحة لدى كل
-              صيدلية، وتُدار من خلال مخزونها المستقل.
+              قد تختلف الأسعار والكميات المتاحة لدى كل صيدلية، وتُدار من خلال
+              مخزونها المستقل.
             </p>
           </div>
         </section>
@@ -241,68 +191,44 @@ export function MedicineDetailsPage() {
         <TextSection
           icon={Beaker}
           title="التركيب"
-          text={
-            medicine.composition
-          }
+          text={medicine.composition}
         />
 
         <TextSection
           icon={FileText}
           title="الوصف"
-          text={
-            medicine.description
-          }
+          text={medicine.description}
         />
       </div>
     </div>
   );
 }
 
-function SectionHeader({
-  icon: Icon,
-  title,
-  subtitle,
-}) {
+function SectionHeader({ icon: Icon, title, subtitle }) {
   return (
     <div className="flex items-center gap-3 border-b border-[#E6EEF0] bg-[#FAFCFC] px-6 py-5">
       <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-[#EAF4F3] text-[#216474]">
-        <Icon
-          size={20}
-          strokeWidth={1.8}
-        />
+        <Icon size={20} strokeWidth={1.8} />
       </span>
 
       <div>
-        <h2 className="font-black text-[#29464D]">
-          {title}
-        </h2>
+        <h2 className="font-black text-[#29464D]">{title}</h2>
 
-        <p className="mt-0.5 text-xs text-[#829499]">
-          {subtitle}
-        </p>
+        <p className="mt-0.5 text-xs text-[#829499]">{subtitle}</p>
       </div>
     </div>
   );
 }
 
-function Detail({
-  icon: Icon,
-  label,
-  value,
-}) {
+function Detail({ icon: Icon, label, value }) {
   return (
     <div className="flex min-h-[82px] items-center gap-3 rounded-xl border border-[#E6EEF0] bg-[#F8FBFB] p-4">
       <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-white text-[#216474] shadow-[0_4px_14px_rgba(23,75,87,.05)]">
-        <Icon
-          size={18}
-          strokeWidth={1.8}
-        />
+        <Icon size={18} strokeWidth={1.8} />
       </span>
 
       <div className="min-w-0">
-        <p className="text-[11px] text-[#829499]">
-          {label}
-        </p>
+        <p className="text-[11px] text-[#829499]">{label}</p>
 
         <p
           className="mt-1 truncate text-sm font-black text-[#29464D]"
@@ -315,11 +241,7 @@ function Detail({
   );
 }
 
-function Price({
-  label,
-  value,
-  primary = false,
-}) {
+function Price({ label, value, primary = false }) {
   return (
     <div
       className={`rounded-xl border p-5 ${
@@ -330,59 +252,40 @@ function Price({
     >
       <span
         className={`grid size-10 place-items-center rounded-xl ${
-          primary
-            ? "bg-white/10 text-[#F5CB72]"
-            : "bg-[#EAF4F3] text-[#216474]"
+          primary ? "bg-white/10 text-[#F5CB72]" : "bg-[#EAF4F3] text-[#216474]"
         }`}
       >
-        <Banknote
-          size={20}
-          strokeWidth={1.8}
-        />
+        <Banknote size={20} strokeWidth={1.8} />
       </span>
 
       <p
         className={`mt-4 text-xs ${
-          primary
-            ? "text-white/55"
-            : "text-[#829499]"
+          primary ? "text-white/55" : "text-[#829499]"
         }`}
       >
         {label}
       </p>
 
       <strong className="mt-1 block text-xl font-black">
-        {formatMedicineCurrency(
-          value,
-        )}
+        {formatMedicineCurrency(value)}
       </strong>
     </div>
   );
 }
 
-function TextSection({
-  icon: Icon,
-  title,
-  text,
-}) {
+function TextSection({ icon: Icon, title, text }) {
   return (
     <section className="overflow-hidden rounded-[1.55rem] border border-[#DCE8EA] bg-white shadow-[0_12px_35px_rgba(23,75,87,.045)]">
       <div className="flex items-center gap-3 border-b border-[#E6EEF0] bg-[#FAFCFC] px-6 py-5">
         <span className="grid size-10 place-items-center rounded-xl bg-[#EAF4F3] text-[#216474]">
-          <Icon
-            size={18}
-            strokeWidth={1.8}
-          />
+          <Icon size={18} strokeWidth={1.8} />
         </span>
 
-        <h3 className="font-black text-[#29464D]">
-          {title}
-        </h3>
+        <h3 className="font-black text-[#29464D]">{title}</h3>
       </div>
 
       <p className="min-h-[130px] whitespace-pre-line p-6 text-sm leading-8 text-[#60777D]">
-        {text ||
-          "لا توجد معلومات مسجلة."}
+        {text || "لا توجد معلومات مسجلة."}
       </p>
     </section>
   );

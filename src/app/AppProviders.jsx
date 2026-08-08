@@ -8,9 +8,7 @@ export function AppProviders({ children }) {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        <AuthProvider>{children}</AuthProvider>
       </BrowserRouter>
     </QueryClientProvider>
   );

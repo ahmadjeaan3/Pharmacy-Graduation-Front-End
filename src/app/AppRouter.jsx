@@ -10,7 +10,9 @@ import { AdminOrganizationReviewPage } from "../features/admin/pages/AdminOrgani
 import { AdminHomeTickerPage } from "../features/admin/pages/AdminHomeTickerPage";
 import { AdminAccountsPage } from "../features/admin/pages/AdminAccountsPage";
 import { AdminAccountDetailsPage } from "../features/admin/pages/AdminAccountDetailsPage";
+import { AdminPharmacyReviewPage } from "../features/admin/pages/AdminPharmacyReviewPage";
 import { LoginPage } from "../features/auth/pages/LoginPage";
+import { PasswordRecoveryPage } from "../features/auth/pages/PasswordRecoveryPage";
 import { DashboardLayout } from "../features/dashboard/layouts/DashboardLayout";
 import { DashboardIndexPage } from "../features/dashboard/pages/DashboardIndexPage";
 import { LandingPage } from "../features/home/pages/LandingPage";
@@ -51,6 +53,11 @@ const PharmacyProfilePage = lazy(() =>
   import("../features/pharmacy/pages/PharmacyProfilePage").then((module) => ({
     default: module.PharmacyProfilePage,
   })),
+);
+const PharmacyLicenseVerificationPage = lazy(() =>
+  import("../features/pharmacy/pages/PharmacyLicenseVerificationPage").then(
+    (module) => ({ default: module.PharmacyLicenseVerificationPage }),
+  ),
 );
 const PharmacyWorkingHoursPage = lazy(() =>
   import("../features/pharmacy/pages/PharmacyWorkingHoursPage").then(
@@ -171,6 +178,7 @@ export function AppRouter() {
         <Route path="/" element={<LandingPage />} />
         <Route element={<PublicOnlyRoute />}>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/forgot-password" element={<PasswordRecoveryPage />} />
           <Route path="/register" element={<RegisterPage />} />
         </Route>
         <Route element={<ProtectedRoute />}>
@@ -195,6 +203,48 @@ export function AppRouter() {
                 element={<SupplyChainWorkspacePage />}
               />
             </Route>
+            <Route element={<RoleRoute allowedRoles={["Warehouse"]} />}>
+              <Route
+                path="warehouse/inventory"
+                element={<SupplyChainWorkspacePage />}
+              />
+              <Route
+                path="warehouse/orders"
+                element={<SupplyChainWorkspacePage />}
+              />
+              <Route
+                path="warehouse/shipments"
+                element={<Navigate to="/app/warehouse/orders" replace />}
+              />
+              <Route
+                path="warehouse/representatives"
+                element={<SupplyChainWorkspacePage />}
+              />
+              <Route
+                path="warehouse/batches"
+                element={<Navigate to="/app/warehouse/inventory" replace />}
+              />
+              <Route
+                path="warehouse/invoices"
+                element={<SupplyChainWorkspacePage />}
+              />
+              <Route
+                path="warehouse/returns"
+                element={<SupplyChainWorkspacePage />}
+              />
+              <Route
+                path="warehouse/recalls"
+                element={<SupplyChainWorkspacePage />}
+              />
+              <Route
+                path="warehouse/profile"
+                element={<Navigate to="/app/settings" replace />}
+              />
+              <Route
+                path="warehouse/working-hours"
+                element={<Navigate to="/app/settings" replace />}
+              />
+            </Route>
             <Route element={<RoleRoute allowedRoles={["Admin"]} />}>
               <Route path="approvals" element={<AdminApprovalsPage />} />
               <Route path="home-ticker" element={<AdminHomeTickerPage />} />
@@ -206,6 +256,10 @@ export function AppRouter() {
               <Route
                 path="organizations/:organizationId/review"
                 element={<AdminOrganizationReviewPage />}
+              />
+              <Route
+                path="pharmacies/:pharmacyId/review"
+                element={<AdminPharmacyReviewPage />}
               />
               <Route path="medicines" element={<MedicineCatalogPage />} />
               <Route path="medicines/new" element={<CreateMedicinePage />} />
@@ -266,6 +320,10 @@ export function AppRouter() {
               <Route
                 path="pharmacy/profile"
                 element={<PharmacyProfilePage />}
+              />
+              <Route
+                path="pharmacy/license"
+                element={<PharmacyLicenseVerificationPage />}
               />
               <Route
                 path="pharmacy/working-hours"

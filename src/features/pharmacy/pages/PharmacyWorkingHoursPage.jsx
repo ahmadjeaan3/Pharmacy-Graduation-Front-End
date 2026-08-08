@@ -1,11 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  CalendarDays,
-  Clock3,
-  Moon,
-  Save,
-  SunMedium,
-} from "lucide-react";
+import { CalendarDays, Clock3, Moon, Save, SunMedium } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -50,11 +44,7 @@ const mapWorkingHours = (periods) => {
 export function PharmacyWorkingHoursPage() {
   const { t, i18n } = useTranslation();
 
-  const currentLanguage = (
-    i18n.resolvedLanguage ||
-    i18n.language ||
-    "ar"
-  )
+  const currentLanguage = (i18n.resolvedLanguage || i18n.language || "ar")
     .split("-")[0]
     .toLowerCase();
 
@@ -145,9 +135,11 @@ export function PharmacyWorkingHoursPage() {
   return (
     <div dir={direction} lang={currentLanguage} className="space-y-5">
       {/* Hero */}
-           <section className="relative isolate min-h-[220px] overflow-hidden rounded-[14px] text-white shadow-[0_22px_55px_rgba(23,75,87,.16)]
+      <section
+        className="relative isolate min-h-[220px] overflow-hidden rounded-[14px] text-white shadow-[0_22px_55px_rgba(23,75,87,.16)]
 sm:min-h-[230px]
-lg:min-h-[250px]">
+lg:min-h-[250px]"
+      >
         <img
           src={PHARMACY_HERO_IMAGE}
           alt=""
@@ -166,7 +158,9 @@ lg:min-h-[250px]">
 
         <div className="relative z-10 flex min-h-[188px] items-center justify-between gap-6 px-6 lg:px-10 mt-10">
           {/* Right title block */}
-          <div className={`flex items-center gap-5 ${isArabic ? "text-right" : "text-left"}`}>
+          <div
+            className={`flex items-center gap-5 ${isArabic ? "text-right" : "text-left"}`}
+          >
             <span className="grid size-12 shrink-0 place-items-center rounded-lg bg-[rgba(230,243,246,.10)] text-[#E6F3F6] backdrop-blur-sm">
               <Clock3 size={28} strokeWidth={1.7} />
             </span>

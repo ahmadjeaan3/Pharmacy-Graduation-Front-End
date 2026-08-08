@@ -25,6 +25,20 @@ export const getMyPharmacy = async () =>
   (await apiClient.get("/pharmacy/me")).data;
 export const updatePharmacyProfile = async (payload) =>
   (await apiClient.put("/pharmacy/me/profile", payload)).data;
+export const getLicenseVerification = async () =>
+  (await apiClient.get("/pharmacy/me/license-verification")).data;
+export const submitLicenseVerification = async (file) => {
+  const form = new FormData();
+  form.append("licenseImage", file);
+  return (await apiClient.post("/pharmacy/me/license-verification", form)).data;
+};
+export const downloadLicenseDocument = async (verificationId) =>
+  (
+    await apiClient.get(
+      `/pharmacy/me/license-verification/${verificationId}/document`,
+      { responseType: "blob" },
+    )
+  ).data;
 export const updatePharmacyLocation = async (payload) =>
   (await apiClient.put("/pharmacy/me/location", payload)).data;
 export const getLocationCandidates = async (params = {}) =>
@@ -46,6 +60,8 @@ export const getInventory = async (params = {}) =>
     .data;
 export const addInventoryMedicine = async (payload) =>
   (await apiClient.post("/pharmacy/me/medicines", payload)).data;
+export const addInventoryBatch = async (items) =>
+  (await apiClient.post("/pharmacy/me/medicines/batch", { items })).data;
 export const updateInventoryMedicine = async (id, payload) =>
   (await apiClient.put(`/pharmacy/me/medicines/${id}`, payload)).data;
 export const removeInventoryMedicine = async (id) =>
@@ -59,6 +75,8 @@ export const getPharmacyRequest = async (id) =>
   (await apiClient.get(`/pharmacy/me/requests/${id}`)).data;
 export const respondToPharmacyRequest = async (id, payload) =>
   (await apiClient.put(`/pharmacy/me/requests/${id}/response`, payload)).data;
+export const confirmMedicinePickup = async (id) =>
+  (await apiClient.post(`/pharmacy/me/requests/${id}/confirm-pickup`)).data;
 export const searchMedicineCatalog = async (params = {}) =>
   (
     await apiClient.get("/pharmacy/catalog/medicines", {

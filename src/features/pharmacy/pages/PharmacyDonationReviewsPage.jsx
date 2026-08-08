@@ -33,13 +33,10 @@ const getOffers = async () =>
 
 const reviewOffer = async ({ offerId, status, reviewNote }) =>
   (
-    await apiClient.put(
-      `/pharmacy/donations/offers/${offerId}/review`,
-      {
-        status,
-        reviewNote: reviewNote || null,
-      },
-    )
+    await apiClient.put(`/pharmacy/donations/offers/${offerId}/review`, {
+      status,
+      reviewNote: reviewNote || null,
+    })
   ).data;
 
 const statusMeta = {
@@ -77,9 +74,7 @@ export function PharmacyDonationReviewsPage() {
   const { t, i18n } = useTranslation();
 
   const currentLanguage = normalizeLanguage(
-    i18n.resolvedLanguage ||
-      i18n.language ||
-      "ar",
+    i18n.resolvedLanguage || i18n.language || "ar",
   );
 
   const isArabic = currentLanguage === "ar";
@@ -98,9 +93,7 @@ export function PharmacyDonationReviewsPage() {
     onSuccess: async () => {
       setNotice({
         ok: true,
-        text: t(
-          "تم حفظ قرار الصيدلية وإرسال الإشعارات اللازمة.",
-        ),
+        text: t("تم حفظ قرار الصيدلية وإرسال الإشعارات اللازمة."),
       });
 
       await client.invalidateQueries({
@@ -115,11 +108,7 @@ export function PharmacyDonationReviewsPage() {
   });
 
   return (
-    <div
-      dir={direction}
-      lang={currentLanguage}
-      className="space-y-6"
-    >
+    <div dir={direction} lang={currentLanguage} className="space-y-6">
       <PharmacyPageHeader
         eyebrow={t("شبكة تبرع آمنة")}
         title={t("التحقق من التبرعات الدوائية")}
@@ -145,9 +134,7 @@ export function PharmacyDonationReviewsPage() {
           icon={ShieldCheck}
           number="2"
           title={t("فحص مهني")}
-          text={t(
-            "تأكد من الإغلاق، الصلاحية، التخزين وسلامة العبوة.",
-          )}
+          text={t("تأكد من الإغلاق، الصلاحية، التخزين وسلامة العبوة.")}
           isArabic={isArabic}
           t={t}
         />
@@ -170,18 +157,14 @@ export function PharmacyDonationReviewsPage() {
             notice.ok
               ? "border-emerald-100 bg-emerald-50 text-emerald-700"
               : "border-rose-100 bg-rose-50 text-rose-700"
-          } ${
-            isArabic ? "text-right" : "text-left"
-          }`}
+          } ${isArabic ? "text-right" : "text-left"}`}
         >
           {notice.text}
         </div>
       )}
 
       {query.isLoading ? (
-        <LoadingState
-          label={t("جاري تحميل عروض التبرع...")}
-        />
+        <LoadingState label={t("جاري تحميل عروض التبرع...")} />
       ) : query.isError ? (
         <ErrorState
           message={getApiErrorMessage(query.error)}
@@ -221,14 +204,7 @@ export function PharmacyDonationReviewsPage() {
   );
 }
 
-function Step({
-  icon: Icon,
-  number,
-  title,
-  text,
-  isArabic,
-  t,
-}) {
+function Step({ icon: Icon, number, title, text, isArabic, t }) {
   return (
     <article className="rounded-2xl border border-[#174b57]/8 bg-white p-4">
       <div className="flex items-center gap-3">
@@ -260,47 +236,26 @@ function Step({
   );
 }
 
-function OfferCard({
-  offer,
-  pending,
-  onReview,
-  t,
-  currentLanguage,
-  isArabic,
-}) {
-  const [note, setNote] = useState(
-    offer.pharmacyReviewNote || "",
-  );
+function OfferCard({ offer, pending, onReview, t, currentLanguage, isArabic }) {
+  const [note, setNote] = useState(offer.pharmacyReviewNote || "");
 
   const meta =
-    statusMeta[offer.pharmacyReviewStatus] ||
-    statusMeta.PendingPharmacyReview;
+    statusMeta[offer.pharmacyReviewStatus] || statusMeta.PendingPharmacyReview;
 
-  const waiting =
-    offer.pharmacyReviewStatus ===
-    "PendingPharmacyReview";
+  const waiting = offer.pharmacyReviewStatus === "PendingPharmacyReview";
 
-  const accepted =
-    offer.pharmacyReviewStatus ===
-    "PharmacyApproved";
+  const accepted = offer.pharmacyReviewStatus === "PharmacyApproved";
 
   const formattedExpiry = offer.expiryDateUtc
-    ? new Intl.DateTimeFormat(
-        resolveLocale(currentLanguage),
-        {
-          dateStyle: "medium",
-        },
-      ).format(new Date(offer.expiryDateUtc))
+    ? new Intl.DateTimeFormat(resolveLocale(currentLanguage), {
+        dateStyle: "medium",
+      }).format(new Date(offer.expiryDateUtc))
     : t("غير محددة");
 
   return (
     <article className="rounded-[1.45rem] border border-[#174b57]/8 bg-white p-5">
       <div className="flex items-start justify-between gap-3">
-        <div
-          className={
-            isArabic ? "text-right" : "text-left"
-          }
-        >
+        <div className={isArabic ? "text-right" : "text-left"}>
           <p className="text-xs font-bold text-[#216474]">
             {offer.targetOrganizationName}
           </p>
@@ -310,8 +265,7 @@ function OfferCard({
           </h2>
 
           <p className="mt-1 text-xs text-[#829499]">
-            {offer.scientificName ||
-              t("الاسم العلمي غير محدد")}
+            {offer.scientificName || t("الاسم العلمي غير محدد")}
           </p>
         </div>
 
@@ -326,20 +280,14 @@ function OfferCard({
         <Detail
           icon={Gift}
           label={t("المتبرع")}
-          value={
-            offer.donorFullName ||
-            t("مستخدم المنصة")
-          }
+          value={offer.donorFullName || t("مستخدم المنصة")}
           isArabic={isArabic}
         />
 
         <Detail
           icon={Phone}
           label={t("الهاتف")}
-          value={
-            offer.donorPhoneNumber ||
-            t("غير مسجل")
-          }
+          value={offer.donorPhoneNumber || t("غير مسجل")}
           isArabic={isArabic}
           ltr
         />
@@ -374,31 +322,21 @@ function OfferCard({
           <label>
             <span
               className={`form-label block ${
-                isArabic
-                  ? "text-right"
-                  : "text-left"
+                isArabic ? "text-right" : "text-left"
               }`}
             >
-              {t(
-                "ملاحظة التحقق أو سبب الرفض",
-              )}
+              {t("ملاحظة التحقق أو سبب الرفض")}
             </span>
 
             <textarea
               dir={isArabic ? "rtl" : "ltr"}
               className={`form-textarea min-h-20 ${
-                isArabic
-                  ? "text-right"
-                  : "text-left"
+                isArabic ? "text-right" : "text-left"
               }`}
               value={note}
               maxLength={1000}
-              onChange={(event) =>
-                setNote(event.target.value)
-              }
-              placeholder={t(
-                "دوّن نتيجة فحص العبوة والصلاحية وحالة التخزين",
-              )}
+              onChange={(event) => setNote(event.target.value)}
+              placeholder={t("دوّن نتيجة فحص العبوة والصلاحية وحالة التخزين")}
             />
           </label>
 
@@ -409,29 +347,17 @@ function OfferCard({
                   type="button"
                   className="btn-primary"
                   disabled={pending}
-                  onClick={() =>
-                    onReview(
-                      "PharmacyApproved",
-                      note.trim(),
-                    )
-                  }
+                  onClick={() => onReview("PharmacyApproved", note.trim())}
                 >
                   <CheckCircle2 size={16} />
-                  {t(
-                    "قبول مبدئي وتحديد التسليم",
-                  )}
+                  {t("قبول مبدئي وتحديد التسليم")}
                 </button>
 
                 <button
                   type="button"
                   className="btn-secondary text-rose-700"
                   disabled={pending}
-                  onClick={() =>
-                    onReview(
-                      "PharmacyRejected",
-                      note.trim(),
-                    )
-                  }
+                  onClick={() => onReview("PharmacyRejected", note.trim())}
                 >
                   <XCircle size={16} />
                   {t("رفض بعد الفحص")}
@@ -444,17 +370,10 @@ function OfferCard({
                 type="button"
                 className="btn-primary"
                 disabled={pending}
-                onClick={() =>
-                  onReview(
-                    "ReceivedByPharmacy",
-                    note.trim(),
-                  )
-                }
+                onClick={() => onReview("ReceivedByPharmacy", note.trim())}
               >
                 <PackageCheck size={16} />
-                {t(
-                  "تأكيد الاستلام والتوثيق",
-                )}
+                {t("تأكيد الاستلام والتوثيق")}
               </button>
             )}
           </div>
@@ -464,23 +383,12 @@ function OfferCard({
   );
 }
 
-function Detail({
-  icon: Icon,
-  label,
-  value,
-  isArabic,
-  ltr = false,
-}) {
+function Detail({ icon: Icon, label, value, isArabic, ltr = false }) {
   return (
     <div className="flex items-center gap-2">
-      <Icon
-        size={14}
-        className="text-[#6f888d]"
-      />
+      <Icon size={14} className="text-[#6f888d]" />
 
-      <span className="text-[#829499]">
-        {label}
-      </span>
+      <span className="text-[#829499]">{label}</span>
 
       <strong
         dir={ltr ? "ltr" : undefined}

@@ -41,11 +41,7 @@ export function OrganizationDonationOffersPage() {
   const { t, i18n } = useTranslation();
   const client = useQueryClient();
 
-  const currentLanguage = (
-    i18n.resolvedLanguage ||
-    i18n.language ||
-    "ar"
-  )
+  const currentLanguage = (i18n.resolvedLanguage || i18n.language || "ar")
     .split("-")[0]
     .toLowerCase();
 
@@ -65,8 +61,7 @@ export function OrganizationDonationOffersPage() {
 
   const query = useQuery({
     queryKey: organizationKeys.offers(params),
-    queryFn: () =>
-      getOrganizationDonationOffers(params),
+    queryFn: () => getOrganizationDonationOffers(params),
   });
 
   const campaigns = useQuery({
@@ -81,29 +76,20 @@ export function OrganizationDonationOffersPage() {
 
   const review = useMutation({
     mutationFn: ({ offerId, payload }) =>
-      reviewOrganizationDonationOffer(
-        offerId,
-        payload,
-      ),
+      reviewOrganizationDonationOffer(offerId, payload),
 
     onSuccess: async () => {
       setNotice({
         ok: true,
-        text: t(
-          "تم تحديث عرض التبرع وإشعار المتبرع.",
-        ),
+        text: t("تم تحديث عرض التبرع وإشعار المتبرع."),
       });
 
       await Promise.all([
         client.invalidateQueries({
-          queryKey: [
-            "organization",
-            "offers",
-          ],
+          queryKey: ["organization", "offers"],
         }),
         client.invalidateQueries({
-          queryKey:
-            organizationKeys.dashboard,
+          queryKey: organizationKeys.dashboard,
         }),
       ]);
     },
@@ -116,28 +102,21 @@ export function OrganizationDonationOffersPage() {
   });
 
   const filteredOffers = useMemo(() => {
-    const normalized = search
-      .trim()
-      .toLowerCase();
+    const normalized = search.trim().toLowerCase();
 
     if (!normalized) {
       return query.data || [];
     }
 
-    return (query.data || []).filter(
-      (offer) =>
-        [
-          offer.medicineName,
-          offer.scientificName,
-          offer.donorFullName,
-          offer.donorPhoneNumber,
-          offer.reviewingPharmacyName,
-          offer.campaignTitle,
-        ].some((value) =>
-          value
-            ?.toLowerCase()
-            .includes(normalized),
-        ),
+    return (query.data || []).filter((offer) =>
+      [
+        offer.medicineName,
+        offer.scientificName,
+        offer.donorFullName,
+        offer.donorPhoneNumber,
+        offer.reviewingPharmacyName,
+        offer.campaignTitle,
+      ].some((value) => value?.toLowerCase().includes(normalized)),
     );
   }, [query.data, search]);
 
@@ -197,10 +176,7 @@ export function OrganizationDonationOffersPage() {
           >
             <div className="flex items-center gap-3">
               <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-white/10 text-white backdrop-blur-sm">
-                <Gift
-                  size={22}
-                  strokeWidth={1.8}
-                />
+                <Gift size={22} strokeWidth={1.8} />
               </span>
 
               <h1 className="text-[28px] font-bold leading-none text-white">
@@ -224,13 +200,7 @@ export function OrganizationDonationOffersPage() {
             <ShieldCheck size={19} />
           </span>
 
-          <div
-            className={
-              isArabic
-                ? "text-right"
-                : "text-left"
-            }
-          >
+          <div className={isArabic ? "text-right" : "text-left"}>
             <h2 className="font-bold text-[#29464D]">
               {t("مسار التحقق والاستلام")}
             </h2>
@@ -264,7 +234,7 @@ export function OrganizationDonationOffersPage() {
           ))}
         </div>
       </section>
-            {/* Notice */}
+      {/* Notice */}
       {notice && (
         <div
           className={`rounded-xl border px-4 py-3 text-sm font-bold ${
@@ -280,13 +250,7 @@ export function OrganizationDonationOffersPage() {
       {/* Filters */}
       <section className="rounded-xl bg-white p-5 shadow-[0_6px_24px_rgba(23,75,87,.03)]">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
-          <div
-            className={
-              isArabic
-                ? "text-right"
-                : "text-left"
-            }
-          >
+          <div className={isArabic ? "text-right" : "text-left"}>
             <h2 className="text-xl font-bold text-[#333333]">
               {t("العروض الواردة")}
             </h2>
@@ -298,27 +262,16 @@ export function OrganizationDonationOffersPage() {
 
           <div className="grid flex-1 gap-3 md:grid-cols-[minmax(240px,1fr)_180px_220px] xl:max-w-[760px]">
             <label className="flex h-11 items-center gap-2 rounded-lg border border-[#D8E6E8] bg-white px-3">
-              <Search
-                size={17}
-                className="text-[#9BAEB2]"
-              />
+              <Search size={17} className="text-[#9BAEB2]" />
 
               <input
                 dir={direction}
                 value={search}
-                onChange={(event) =>
-                  setSearch(event.target.value)
-                }
-                placeholder={t(
-                  "ابحث باسم الدواء أو المتبرع...",
-                )}
-                aria-label={t(
-                  "ابحث باسم الدواء أو المتبرع...",
-                )}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder={t("ابحث باسم الدواء أو المتبرع...")}
+                aria-label={t("ابحث باسم الدواء أو المتبرع...")}
                 className={`min-w-0 flex-1 bg-transparent text-sm text-[#36565D] outline-none placeholder:text-[#B6C2C4] ${
-                  isArabic
-                    ? "text-right"
-                    : "text-left"
+                  isArabic ? "text-right" : "text-left"
                 }`}
               />
             </label>
@@ -330,10 +283,7 @@ export function OrganizationDonationOffersPage() {
               ariaLabel={t("حالة العرض")}
             >
               {offerStatuses.map((item) => (
-                <option
-                  key={item.value || "all"}
-                  value={item.value}
-                >
+                <option key={item.value || "all"} value={item.value}>
                   {t(item.label)}
                 </option>
               ))}
@@ -345,20 +295,13 @@ export function OrganizationDonationOffersPage() {
               onChange={setCampaignId}
               ariaLabel={t("الحملة")}
             >
-              <option value="">
-                {t("جميع الحملات")}
-              </option>
+              <option value="">{t("جميع الحملات")}</option>
 
-              {(campaigns.data || []).map(
-                (campaign) => (
-                  <option
-                    key={campaign.campaignId}
-                    value={campaign.campaignId}
-                  >
-                    {campaign.title}
-                  </option>
-                ),
-              )}
+              {(campaigns.data || []).map((campaign) => (
+                <option key={campaign.campaignId} value={campaign.campaignId}>
+                  {campaign.title}
+                </option>
+              ))}
             </SelectField>
           </div>
         </div>
@@ -366,14 +309,10 @@ export function OrganizationDonationOffersPage() {
 
       {/* Content */}
       {query.isLoading ? (
-        <UserLoadingState
-          label={t("جاري تحميل عروض التبرع...")}
-        />
+        <UserLoadingState label={t("جاري تحميل عروض التبرع...")} />
       ) : query.isError ? (
         <UserErrorState
-          message={getApiErrorMessage(
-            query.error,
-          )}
+          message={getApiErrorMessage(query.error)}
           onRetry={query.refetch}
         />
       ) : !filteredOffers.length ? (
@@ -386,9 +325,7 @@ export function OrganizationDonationOffersPage() {
       ) : (
         <section
           className={`grid gap-4 xl:grid-cols-2 ${
-            query.isFetching
-              ? "opacity-60"
-              : ""
+            query.isFetching ? "opacity-60" : ""
           }`}
         >
           {filteredOffers.map((offer) => (
@@ -411,7 +348,7 @@ export function OrganizationDonationOffersPage() {
           ))}
         </section>
       )}
-          </div>
+    </div>
   );
 }
 
@@ -423,16 +360,11 @@ function SelectField({
   direction = "rtl",
 }) {
   return (
-    <div
-      dir={direction}
-      className="relative"
-    >
+    <div dir={direction} className="relative">
       <select
         aria-label={ariaLabel}
         value={value}
-        onChange={(event) =>
-          onChange(event.target.value)
-        }
+        onChange={(event) => onChange(event.target.value)}
         className="h-11 w-full appearance-none rounded-lg border border-[#D8E6E8] bg-[#F8FBFB] pe-10 ps-3 text-sm font-medium text-[#47666D] outline-none transition hover:border-[#9ABCC1] focus:border-[#216474] focus:bg-white"
       >
         {children}
@@ -455,30 +387,19 @@ function OfferCard({
   direction,
   currentLanguage,
 }) {
-  const isArabic =
-    currentLanguage === "ar";
+  const isArabic = currentLanguage === "ar";
 
-  const [nextStatus, setNextStatus] =
-    useState(
-      offer.status === "Approved"
-        ? "Received"
-        : "Approved",
-    );
-
-  const [note, setNote] = useState(
-    offer.reviewNote || "",
+  const [nextStatus, setNextStatus] = useState(
+    offer.status === "Approved" ? "Received" : "Approved",
   );
 
-  const status = getStatusMeta(
+  const [note, setNote] = useState(offer.reviewNote || "");
+
+  const status = getStatusMeta(offer.status, "offer");
+
+  const actionable = !["Cancelled", "Rejected", "Received"].includes(
     offer.status,
-    "offer",
   );
-
-  const actionable = ![
-    "Cancelled",
-    "Rejected",
-    "Received",
-  ].includes(offer.status);
 
   const numberLocale =
     currentLanguage === "ar"
@@ -498,28 +419,18 @@ function OfferCard({
             <Gift size={18} />
           </span>
 
-          <div
-            className={`min-w-0 ${
-              isArabic
-                ? "text-right"
-                : "text-left"
-            }`}
-          >
+          <div className={`min-w-0 ${isArabic ? "text-right" : "text-left"}`}>
             <h3 className="truncate text-base font-bold text-[#29464D]">
               {offer.medicineName}
             </h3>
 
             <p className="mt-1 truncate text-[11px] text-[#93A4A8]">
-              {offer.scientificName ||
-                t("الاسم العلمي غير محدد")}
+              {offer.scientificName || t("الاسم العلمي غير محدد")}
             </p>
           </div>
         </div>
 
-        <StatusBadge
-          label={t(status.label)}
-          status={offer.status}
-        />
+        <StatusBadge label={t(status.label)} status={offer.status} />
       </div>
 
       <div className="p-5">
@@ -527,20 +438,14 @@ function OfferCard({
           <InfoCard
             icon={UserRound}
             label={t("المتبرع")}
-            value={
-              offer.donorFullName ||
-              t("غير مسجل")
-            }
+            value={offer.donorFullName || t("غير مسجل")}
             direction={direction}
           />
 
           <InfoCard
             icon={Phone}
             label={t("الهاتف")}
-            value={
-              offer.donorPhoneNumber ||
-              t("غير مسجل")
-            }
+            value={offer.donorPhoneNumber || t("غير مسجل")}
             direction={direction}
           />
 
@@ -548,10 +453,7 @@ function OfferCard({
             icon={Package}
             label={t("عدد العبوات")}
             value={t("{{count}} عبوة", {
-              count:
-                offer.packageCount?.toLocaleString(
-                  numberLocale,
-                ) ?? "0",
+              count: offer.packageCount?.toLocaleString(numberLocale) ?? "0",
             })}
             direction={direction}
           />
@@ -559,19 +461,14 @@ function OfferCard({
           <InfoCard
             icon={CalendarDays}
             label={t("تاريخ الصلاحية")}
-            value={formatOrgDate(
-              offer.expiryDateUtc,
-            )}
+            value={formatOrgDate(offer.expiryDateUtc)}
             direction={direction}
           />
 
           <InfoCard
             icon={Building2}
             label={t("صيدلية التحقق")}
-            value={
-              offer.reviewingPharmacyName ||
-              t("غير محددة")
-            }
+            value={offer.reviewingPharmacyName || t("غير محددة")}
             direction={direction}
           />
 
@@ -579,8 +476,7 @@ function OfferCard({
             icon={ShieldCheck}
             label={t("توثيق الصيدلية")}
             value={
-              offer.pharmacyReviewStatus ===
-              "ReceivedByPharmacy"
+              offer.pharmacyReviewStatus === "ReceivedByPharmacy"
                 ? t("تم الاستلام والتحقق")
                 : t("بانتظار التحقق")
             }
@@ -607,15 +503,13 @@ function OfferCard({
 
         {offer.pharmacyReviewNote && (
           <MessageBox
-            title={t(
-              "ملاحظة صيدلية التحقق",
-            )}
+            title={t("ملاحظة صيدلية التحقق")}
             text={offer.pharmacyReviewNote}
             direction={direction}
             accent
           />
         )}
-                {actionable ? (
+        {actionable ? (
           <div className="mt-5 border-t border-[#E7EFF0] pt-5">
             <div className="grid gap-3 sm:grid-cols-[180px_1fr]">
               <SelectField
@@ -624,36 +518,22 @@ function OfferCard({
                 onChange={setNextStatus}
                 ariaLabel={t("قرار المراجعة")}
               >
-                <option value="Approved">
-                  {t("قبول العرض")}
-                </option>
+                <option value="Approved">{t("قبول العرض")}</option>
 
-                <option value="Received">
-                  {t("تأكيد الاستلام")}
-                </option>
+                <option value="Received">{t("تأكيد الاستلام")}</option>
 
-                <option value="Rejected">
-                  {t("رفض العرض")}
-                </option>
+                <option value="Rejected">{t("رفض العرض")}</option>
               </SelectField>
 
               <input
                 dir={direction}
                 maxLength={1000}
                 value={note}
-                onChange={(event) =>
-                  setNote(event.target.value)
-                }
-                placeholder={t(
-                  "ملاحظة للمتبرع (اختيارية)",
-                )}
-                aria-label={t(
-                  "ملاحظة للمتبرع (اختيارية)",
-                )}
+                onChange={(event) => setNote(event.target.value)}
+                placeholder={t("ملاحظة للمتبرع (اختيارية)")}
+                aria-label={t("ملاحظة للمتبرع (اختيارية)")}
                 className={`h-11 w-full rounded-lg border border-[#D8E6E8] bg-white px-4 text-sm text-[#36565D] outline-none transition placeholder:text-[#B6C2C4] hover:border-[#9ABCC1] focus:border-[#216474] focus:ring-2 focus:ring-[#216474]/10 ${
-                  isArabic
-                    ? "text-right"
-                    : "text-left"
+                  isArabic ? "text-right" : "text-left"
                 }`}
               />
             </div>
@@ -663,8 +543,7 @@ function OfferCard({
               onClick={() =>
                 onReview({
                   status: nextStatus,
-                  reviewNote:
-                    note.trim() || null,
+                  reviewNote: note.trim() || null,
                 })
               }
               disabled={pending}
@@ -672,9 +551,7 @@ function OfferCard({
             >
               <Save size={16} />
 
-              {pending
-                ? t("جاري الحفظ...")
-                : t("حفظ القرار")}
+              {pending ? t("جاري الحفظ...") : t("حفظ القرار")}
             </button>
           </div>
         ) : (
@@ -691,10 +568,7 @@ function OfferCard({
           <Check size={13} />
 
           <span>
-            {t("وصل في")}{" "}
-            {formatOrgDate(
-              offer.createdAtUtc,
-            )}
+            {t("وصل في")} {formatOrgDate(offer.createdAtUtc)}
           </span>
         </p>
       </div>
@@ -702,28 +576,19 @@ function OfferCard({
   );
 }
 
-function StatusBadge({
-  label,
-  status,
-}) {
+function StatusBadge({ label, status }) {
   const styles = {
-    Pending:
-      "border-[#D5E3E6] bg-[#F2F6F7] text-[#60777D]",
-    Approved:
-      "border-[#C9E0E5] bg-[#E6F3F6] text-[#216474]",
-    Received:
-      "border-[#BFD9DE] bg-[#EAF4F3] text-[#174B57]",
-    Rejected:
-      "border-[#F1D4D7] bg-[#FFF1F2] text-[#C34A57]",
-    Cancelled:
-      "border-[#DCE4E6] bg-[#F4F7F8] text-[#72868B]",
+    Pending: "border-[#D5E3E6] bg-[#F2F6F7] text-[#60777D]",
+    Approved: "border-[#C9E0E5] bg-[#E6F3F6] text-[#216474]",
+    Received: "border-[#BFD9DE] bg-[#EAF4F3] text-[#174B57]",
+    Rejected: "border-[#F1D4D7] bg-[#FFF1F2] text-[#C34A57]",
+    Cancelled: "border-[#DCE4E6] bg-[#F4F7F8] text-[#72868B]",
   };
 
   return (
     <span
       className={`shrink-0 rounded-full border px-3 py-1.5 text-[11px] font-bold ${
-        styles[status] ||
-        "border-[#D5E3E6] bg-[#F2F6F7] text-[#60777D]"
+        styles[status] || "border-[#D5E3E6] bg-[#F2F6F7] text-[#60777D]"
       }`}
     >
       {label}
@@ -731,12 +596,7 @@ function StatusBadge({
   );
 }
 
-function InfoCard({
-  icon: Icon,
-  label,
-  value,
-  direction = "rtl",
-}) {
+function InfoCard({ icon: Icon, label, value, direction = "rtl" }) {
   return (
     <div
       dir={direction}
@@ -759,12 +619,7 @@ function InfoCard({
   );
 }
 
-function MessageBox({
-  title,
-  text,
-  accent = false,
-  direction = "rtl",
-}) {
+function MessageBox({ title, text, accent = false, direction = "rtl" }) {
   return (
     <div
       dir={direction}
@@ -776,17 +631,13 @@ function MessageBox({
     >
       <p
         className={`text-[10px] font-bold ${
-          accent
-            ? "text-[#216474]"
-            : "text-[#71858A]"
+          accent ? "text-[#216474]" : "text-[#71858A]"
         }`}
       >
         {title}
       </p>
 
-      <p className="mt-1 text-xs leading-6 text-[#536D73]">
-        {text}
-      </p>
+      <p className="mt-1 text-xs leading-6 text-[#536D73]">{text}</p>
     </div>
   );
 }

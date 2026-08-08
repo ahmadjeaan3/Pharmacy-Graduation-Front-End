@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { lazy, Suspense, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   getLocationContext,
   getNearestPharmacies,
@@ -325,6 +326,7 @@ export function MedicineSearchPage() {
 }
 
 function MedicineResults({ mutation, results, groupedCount }) {
+  const { t } = useTranslation();
   if (mutation.isPending)
     return <UserLoadingState label="نبحث في الصيدليات القريبة..." />;
   if (mutation.isError)
@@ -389,10 +391,7 @@ function MedicineResults({ mutation, results, groupedCount }) {
             </div>
             <div className="mt-5 grid grid-cols-2 gap-3 rounded-2xl bg-[#f8fbfa] p-4 sm:grid-cols-4">
               <Info label="السعر" value={formatPrice(item.sellingPrice)} />
-              <Info
-                label="الكمية"
-                value={item.quantityAvailable.toLocaleString("ar-SY")}
-              />
+              <Info label={t("التوفر")} value={t("متوفر")} />
               <Info
                 label="المسافة"
                 value={formatDistance(item.pharmacy.distanceMeters)}

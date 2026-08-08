@@ -10,6 +10,7 @@ import {
   ExternalLink,
   Eye,
   MapPin,
+  Megaphone,
   Minus,
   PackageCheck,
   Pencil,
@@ -17,6 +18,7 @@ import {
   Plus,
   Power,
   ReceiptText,
+  RotateCcw,
   Route,
   ScanLine,
   Search,
@@ -31,6 +33,7 @@ import {
 import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getPrimaryRole } from "../../../shared/config/roles";
 import { MedicineAlternativesButton } from "../../intelligence/components/MedicineAlternativesButton";
 import { useAuth } from "../../auth/hooks/useAuth";
@@ -41,6 +44,8 @@ import {
   confirmShipment,
   createRepresentative,
   createSupplyOrder,
+  createSupplyReturn,
+  createMedicineRecall,
   getBatches,
   getMarketplace,
   getRepresentatives,
@@ -48,6 +53,8 @@ import {
   getSupplyDashboard,
   getSupplyOrders,
   getSupplyInvoices,
+  getSupplyReturns,
+  getMedicineRecalls,
   getWarehouseCatalog,
   supplyKeys,
   updateShipment,
@@ -55,9 +62,32 @@ import {
   updateRepresentative,
   updateSupplyInvoice,
   recordSupplyPayment,
+  reviewSupplyReturn,
+  updateBatch,
 } from "../api/supplyChainApi";
 
 const SUPPLY_HERO_IMAGE = "/assets/app/pharmacy.png";
+
+const warehousePathTabs = {
+  "/app/warehouse/inventory": "inventory",
+  "/app/warehouse/batches": "inventory",
+  "/app/warehouse/orders": "orders",
+  "/app/warehouse/shipments": "orders",
+  "/app/warehouse/representatives": "team",
+  "/app/warehouse/invoices": "invoices",
+  "/app/warehouse/returns": "returns",
+  "/app/warehouse/recalls": "recalls",
+  "/app/supply-chain": "orders",
+};
+
+const warehouseTabPaths = {
+  orders: "/app/warehouse/orders",
+  inventory: "/app/warehouse/inventory",
+  team: "/app/warehouse/representatives",
+  invoices: "/app/warehouse/invoices",
+  returns: "/app/warehouse/returns",
+  recalls: "/app/warehouse/recalls",
+};
 
 const labels = {
   Submitted: "طلب جديد",
@@ -73,6 +103,10 @@ const labels = {
   Arrived: "وصل للصيدلية",
   Failed: "تعذر التسليم",
   Returned: "أعيدت للمستودع",
+  Pending: "قيد المراجعة",
+  Approved: "مقبول",
+  Collected: "تم الاستلام",
+  Completed: "مكتمل",
 };
 const localeMap = {
   ar: "ar-SY",
@@ -112,9 +146,22 @@ const tone = (s) =>
       ? "bg-[#FFF1F2] text-[#E11D48]"
       : "bg-[#FFF7DF] text-[#DFAE0D]";
 
-function Stat({ icon: Icon, label, value, hint, className, isArabic = true, currentLanguage = "ar" }) {
+function Stat({
+  icon: Icon,
+  label,
+  value,
+  hint,
+  className,
+  isArabic = true,
+  currentLanguage = "ar",
+  onClick,
+}) {
   return (
-    <article className="relative min-h-[145px] overflow-hidden rounded-[1.35rem] border border-[#DCE8EA] bg-white p-5 shadow-[0_10px_30px_rgba(23,75,87,.04)]">
+    <button
+      type="button"
+      onClick={onClick}
+      className="relative min-h-[145px] w-full overflow-hidden rounded-[1.35rem] border border-[#DCE8EA] bg-white p-5 text-start shadow-[0_10px_30px_rgba(23,75,87,.04)] transition hover:-translate-y-0.5 hover:border-[#8BD0CB] hover:shadow-[0_14px_34px_rgba(23,75,87,.10)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#216474]"
+    >
       <span
         className={`absolute top-5 grid size-11 place-items-center rounded-xl ${
           isArabic ? "right-5" : "left-5"
@@ -132,7 +179,7 @@ function Stat({ icon: Icon, label, value, hint, className, isArabic = true, curr
 
         <p className="mt-4 text-[11px] leading-5 text-[#A5A5A5]">{hint}</p>
       </div>
-    </article>
+    </button>
   );
 }
 function OrderCard({
@@ -144,7 +191,6 @@ function OrderCard({
   onDetails,
   t,
   currentLanguage,
-  isArabic,
 }) {
   const next =
     role === "Warehouse"
@@ -290,22 +336,32 @@ export function SupplyChainWorkspacePage() {
   const { t, i18n } = useTranslation();
 
   const currentLanguage = normalizeLanguage(
-    i18n.resolvedLanguage ||
-      i18n.language ||
-      "ar",
+    i18n.resolvedLanguage || i18n.language || "ar",
   );
 
   const isArabic = currentLanguage === "ar";
   const direction = isArabic ? "rtl" : "ltr";
 
   const { user } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
   const role = getPrimaryRole(user.roles);
   const qc = useQueryClient();
-  const [tab, setTab] = useState("orders");
+  const requestedTab = new URLSearchParams(location.search).get("tab");
+  const [tab, setTab] = useState(
+    requestedTab || warehousePathTabs[location.pathname] || "orders",
+  );
+  const activeTab =
+    role === "Warehouse"
+      ? requestedTab || warehousePathTabs[location.pathname] || tab
+      : tab;
   const [dialog, setDialog] = useState(null);
   const [representativeToEdit, setRepresentativeToEdit] = useState(null);
   const [invoiceToManage, setInvoiceToManage] = useState(null);
   const [detailsOrder, setDetailsOrder] = useState(null);
+  const [batchToEdit, setBatchToEdit] = useState(null);
+  const [batchToRecall, setBatchToRecall] = useState(null);
+  const [returnOrder, setReturnOrder] = useState(null);
   const [selectedWarehouse, setSelectedWarehouse] = useState(null);
   const [catalogSearch, setCatalogSearch] = useState("");
   const [cart, setCart] = useState({});
@@ -333,6 +389,16 @@ export function SupplyChainWorkspacePage() {
   const invoices = useQuery({
     queryKey: [...supplyKeys.invoices, role],
     queryFn: () => getSupplyInvoices(),
+    enabled: ["Warehouse", "Pharmacy", "Admin"].includes(role),
+  });
+  const returns = useQuery({
+    queryKey: [...supplyKeys.returns, role],
+    queryFn: getSupplyReturns,
+    enabled: ["Warehouse", "Pharmacy", "Admin"].includes(role),
+  });
+  const recalls = useQuery({
+    queryKey: [...supplyKeys.recalls, role],
+    queryFn: getMedicineRecalls,
     enabled: ["Warehouse", "Pharmacy", "Admin"].includes(role),
   });
   const marketplace = useQuery({
@@ -424,6 +490,26 @@ export function SupplyChainWorkspacePage() {
       qc.invalidateQueries({ queryKey: supplyKeys.orders });
     },
   });
+  const returnMutation = useMutation({
+    mutationFn: ({ orderId, payload }) => createSupplyReturn(orderId, payload),
+    onSuccess: () => {
+      setReturnOrder(null);
+      qc.invalidateQueries({ queryKey: supplyKeys.returns });
+    },
+  });
+  const reviewReturnMutation = useMutation({
+    mutationFn: ({ id, payload }) => reviewSupplyReturn(id, payload),
+    onSuccess: () => qc.invalidateQueries({ queryKey: supplyKeys.returns }),
+  });
+  const recallMutation = useMutation({
+    mutationFn: createMedicineRecall,
+    onSuccess: () => {
+      setBatchToRecall(null);
+      qc.invalidateQueries({ queryKey: supplyKeys.recalls });
+      qc.invalidateQueries({ queryKey: supplyKeys.batches });
+      qc.invalidateQueries({ queryKey: supplyKeys.dashboard });
+    },
+  });
   const act = (type, id, value) => {
     mutation.reset();
     mutation.mutate({ type, id, value });
@@ -450,6 +536,9 @@ export function SupplyChainWorkspacePage() {
   const tabs = [
     "orders",
     "invoices",
+    ...(["Warehouse", "Pharmacy", "Admin"].includes(role)
+      ? ["returns", "recalls"]
+      : []),
     ...(role === "Warehouse"
       ? ["inventory", "team"]
       : role === "Pharmacy"
@@ -458,9 +547,11 @@ export function SupplyChainWorkspacePage() {
   ];
   return (
     <div dir={direction} lang={currentLanguage}>
-           <section className="relative isolate min-h-[220px] overflow-hidden rounded-[14px] text-white shadow-[0_22px_55px_rgba(23,75,87,.16)]
+      <section
+        className="relative isolate min-h-[220px] overflow-hidden rounded-[14px] text-white shadow-[0_22px_55px_rgba(23,75,87,.16)]
 sm:min-h-[230px]
-lg:min-h-[250px]">
+lg:min-h-[250px]"
+      >
         <img
           src={SUPPLY_HERO_IMAGE}
           alt=""
@@ -501,9 +592,13 @@ lg:min-h-[250px]">
           </div>
 
           <div className="grid w-full gap-3 sm:grid-cols-2 lg:w-auto lg:min-w-[280px]">
-            <div className={`relative min-h-[88px] rounded-[12px] border border-[rgba(102,102,102,.16)] bg-[rgba(2,77,82,.56)] p-4 backdrop-blur-[10px] ${isArabic ? "pl-14 text-right" : "pr-14 text-left"}`}>
-              <span className={`absolute top-1/2 grid size-9 -translate-y-1/2 place-items-center mt-2 rounded-lg text-[#F5CB72] ${isArabic ? "left-4 ml-2" : "right-4 mr-2"}`}>
-                <Truck size={22} strokeWidth={1.8}  />
+            <div
+              className={`relative min-h-[88px] rounded-[12px] border border-[rgba(102,102,102,.16)] bg-[rgba(2,77,82,.56)] p-4 backdrop-blur-[10px] ${isArabic ? "pl-14 text-right" : "pr-14 text-left"}`}
+            >
+              <span
+                className={`absolute top-1/2 grid size-9 -translate-y-1/2 place-items-center mt-2 rounded-lg text-[#F5CB72] ${isArabic ? "left-4 ml-2" : "right-4 mr-2"}`}
+              >
+                <Truck size={22} strokeWidth={1.8} />
               </span>
 
               <p className="text-xs text-[#D6D6D6]">{t("شحنات جارية")}</p>
@@ -514,8 +609,12 @@ lg:min-h-[250px]">
               </strong>
             </div>
 
-            <div className={`relative min-h-[88px] rounded-[12px] border border-[rgba(102,102,102,.16)] bg-[rgba(2,77,82,.56)] p-4 backdrop-blur-[10px] ${isArabic ? "pl-14 text-right" : "pr-14 text-left"}`}>
-              <span className={`absolute top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-lg mt-2 text-[#E6F3F6] ${isArabic ? "left-4 ml-2" : "right-4 mr-2"}`}>
+            <div
+              className={`relative min-h-[88px] rounded-[12px] border border-[rgba(102,102,102,.16)] bg-[rgba(2,77,82,.56)] p-4 backdrop-blur-[10px] ${isArabic ? "pl-14 text-right" : "pr-14 text-left"}`}
+            >
+              <span
+                className={`absolute top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-lg mt-2 text-[#E6F3F6] ${isArabic ? "left-4 ml-2" : "right-4 mr-2"}`}
+              >
                 <CheckCircle2 size={22} strokeWidth={1.8} />
               </span>
 
@@ -532,7 +631,9 @@ lg:min-h-[250px]">
       {role === "Warehouse" && dashboard.isError && (
         <div className="mt-5 rounded-2xl border border-[#F5CB72]/45 bg-amber-50 p-5 text-sm font-bold text-amber-800">
           <AlertTriangle className="me-2 inline" size={18} />
-          {t("تعذر تحميل مؤشرات المستودع. تأكد من اعتماد الحساب وتطبيق تحديث قاعدة البيانات، ثم أعد المحاولة.")}
+          {t(
+            "تعذر تحميل مؤشرات المستودع. تأكد من اعتماد الحساب وتطبيق تحديث قاعدة البيانات، ثم أعد المحاولة.",
+          )}
         </div>
       )}
       {role === "Warehouse" && d && (
@@ -541,10 +642,11 @@ lg:min-h-[250px]">
             icon={Boxes}
             label={t("دفعات فعالة")}
             value={d.activeBatches}
-            hint={t("{{count}} تحتاج تعبئة", { count: d.lowStockBatches })}
+            hint={t("{{count}} تحتاج تعبئة", { count: d.lowStockBatches ?? 0 })}
             className="bg-[#EAF4F3] text-[#216474]"
             isArabic={isArabic}
             currentLanguage={currentLanguage}
+            onClick={() => navigate("/app/warehouse/inventory")}
           />
           <Stat
             icon={Clock3}
@@ -554,6 +656,7 @@ lg:min-h-[250px]">
             className="bg-[#FFF7DF] text-[#DFAE0D]"
             isArabic={isArabic}
             currentLanguage={currentLanguage}
+            onClick={() => navigate("/app/warehouse/inventory")}
           />
           <Stat
             icon={ShoppingCart}
@@ -563,6 +666,7 @@ lg:min-h-[250px]">
             className="bg-[#F0F6F7] text-[#216474]"
             isArabic={isArabic}
             currentLanguage={currentLanguage}
+            onClick={() => navigate("/app/warehouse/orders")}
           />
           <Stat
             icon={Route}
@@ -572,15 +676,23 @@ lg:min-h-[250px]">
             className="bg-[#EAF4F3] text-[#174B57]"
             isArabic={isArabic}
             currentLanguage={currentLanguage}
+            onClick={() => navigate("/app/warehouse/orders")}
           />
         </div>
       )}
-      <div className="mt-6 flex flex-wrap gap-2">
+      <div
+        className={`mt-6 flex flex-wrap gap-2 ${role === "Warehouse" ? "hidden" : ""}`}
+      >
         {tabs.map((x) => (
           <button
             key={x}
-            onClick={() => setTab(x)}
-            className={`rounded-xl px-5 py-3 text-sm font-black ${tab === x ? "bg-[#174B57] text-white shadow-lg" : "bg-white text-[#60777D]"}`}
+            onClick={() => {
+              setTab(x);
+              if (role === "Warehouse") {
+                navigate(warehouseTabPaths[x] || "/app/supply-chain");
+              }
+            }}
+            className={`rounded-xl px-5 py-3 text-sm font-black ${activeTab === x ? "bg-[#174B57] text-white shadow-lg" : "bg-white text-[#60777D]"}`}
           >
             {t(
               {
@@ -590,6 +702,8 @@ lg:min-h-[250px]">
                 team: "فريق المندوبين",
                 marketplace: "المستودعات",
                 suggestions: "اقتراحات ذكية",
+                returns: "المرتجعات",
+                recalls: "استدعاءات الدفعات",
               }[x],
             )}
           </button>
@@ -603,7 +717,9 @@ lg:min-h-[250px]">
               {mutation.error?.response?.data?.error ||
                 mutation.error?.response?.data?.detail ||
                 mutation.error?.message ||
-                t("تعذر تنفيذ الإجراء. تحقق من حالة المندوب والطلب ثم حاول مجددًا.")}
+                t(
+                  "تعذر تنفيذ الإجراء. تحقق من حالة المندوب والطلب ثم حاول مجددًا.",
+                )}
             </p>
             {mutation.error?.response?.data?.traceId && (
               <p className="mt-2 font-mono text-[10px] font-normal opacity-70">
@@ -622,7 +738,7 @@ lg:min-h-[250px]">
         </div>
       )}
       <section className="mt-4">
-        {tab === "orders" && (
+        {activeTab === "orders" && (
           <div className="grid gap-4 xl:grid-cols-2">
             {orders.isLoading ? (
               <div className="surface col-span-full p-12 text-center">
@@ -683,7 +799,7 @@ lg:min-h-[250px]">
             )}
           </div>
         )}
-        {tab === "inventory" && (
+        {activeTab === "inventory" && (
           <div className="surface p-5">
             <div className="mb-5 flex items-center justify-between">
               <div>
@@ -727,12 +843,31 @@ lg:min-h-[250px]">
                   </div>
                   <p className="mt-3 text-xs text-[#829499]">
                     الصلاحية:{" "}
-                    {new Date(b.expiryDateUtc).toLocaleDateString(resolveLocale(currentLanguage))}
+                    {new Date(b.expiryDateUtc).toLocaleDateString(
+                      resolveLocale(currentLanguage),
+                    )}
                   </p>
                   <MedicineAlternativesButton
                     medicineName={b.medicineName}
                     className="mt-4 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-[#DCE8EA] bg-violet-50 px-3 text-xs font-black text-violet-700 transition hover:-translate-y-0.5 hover:bg-[#EAF4F3]"
                   />
+                  <div className="mt-2 grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      className="btn-secondary justify-center"
+                      onClick={() => setBatchToEdit(b)}
+                    >
+                      <Pencil size={15} /> تعديل
+                    </button>
+                    <button
+                      type="button"
+                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-rose-100 bg-rose-50 px-3 text-xs font-black text-rose-700"
+                      onClick={() => setBatchToRecall(b)}
+                      disabled={!b.isActive}
+                    >
+                      <Megaphone size={15} /> استدعاء
+                    </button>
+                  </div>
                 </article>
               ))}
               {!batches.data?.length && (
@@ -743,7 +878,7 @@ lg:min-h-[250px]">
             </div>
           </div>
         )}
-        {tab === "team" && (
+        {activeTab === "team" && (
           <div>
             <div className="mb-4 flex items-center justify-between">
               <div>
@@ -822,7 +957,7 @@ lg:min-h-[250px]">
             </div>
           </div>
         )}
-        {tab === "invoices" && (
+        {activeTab === "invoices" && (
           <InvoicesPanel
             invoices={invoices.data || []}
             loading={invoices.isLoading}
@@ -830,7 +965,24 @@ lg:min-h-[250px]">
             onManage={setInvoiceToManage}
           />
         )}
-        {tab === "marketplace" && (
+        {activeTab === "returns" && (
+          <ReturnsPanel
+            items={returns.data || []}
+            loading={returns.isLoading}
+            role={role}
+            busy={reviewReturnMutation.isPending}
+            onReview={(id, status) =>
+              reviewReturnMutation.mutate({ id, payload: { status, note: "" } })
+            }
+          />
+        )}
+        {activeTab === "recalls" && (
+          <RecallsPanel
+            items={recalls.data || []}
+            loading={recalls.isLoading}
+          />
+        )}
+        {activeTab === "marketplace" && (
           <MarketplacePanel
             warehouses={marketplace.data || []}
             selected={selectedWarehouse}
@@ -853,7 +1005,7 @@ lg:min-h-[250px]">
             error={orderMutation.error}
           />
         )}
-        {tab === "suggestions" && (
+        {activeTab === "suggestions" && (
           <div className="grid gap-4 md:grid-cols-2">
             {suggestions.data?.map((i) => (
               <article
@@ -866,11 +1018,14 @@ lg:min-h-[250px]">
                 <div>
                   <h3 className="font-black">{i.medicineName}</h3>
                   <p className="mt-1 text-xs text-[#829499]">
-                    {t("المتوفر")} {i.currentQuantity} · {t("المقترح")} {i.suggestedQuantity}
+                    {t("المتوفر")} {i.currentQuantity} · {t("المقترح")}{" "}
+                    {i.suggestedQuantity}
                   </p>
                   <p className="mt-2 text-sm font-bold text-[#216474]">
                     {i.recommendedWarehouseName || t("لا يوجد مستودع متاح")}{" "}
-                    {i.bestPrice ? `· ${money(i.bestPrice, currentLanguage)}` : ""}
+                    {i.bestPrice
+                      ? `· ${money(i.bestPrice, currentLanguage)}`
+                      : ""}
                   </p>
                 </div>
               </article>
@@ -892,6 +1047,27 @@ lg:min-h-[250px]">
             });
             qc.invalidateQueries({ queryKey: supplyKeys.dashboard });
           }}
+        />
+      )}
+      {batchToEdit && (
+        <WarehouseDialog
+          mode="batch"
+          batch={batchToEdit}
+          onClose={() => setBatchToEdit(null)}
+          onSaved={() => {
+            setBatchToEdit(null);
+            qc.invalidateQueries({ queryKey: supplyKeys.batches });
+            qc.invalidateQueries({ queryKey: supplyKeys.dashboard });
+          }}
+        />
+      )}
+      {batchToRecall && (
+        <RecallDialog
+          batch={batchToRecall}
+          busy={recallMutation.isPending}
+          error={recallMutation.error}
+          onClose={() => setBatchToRecall(null)}
+          onSubmit={(payload) => recallMutation.mutate(payload)}
         />
       )}
       {representativeToEdit && (
@@ -934,7 +1110,22 @@ lg:min-h-[250px]">
             act(type, id, value);
             setDetailsOrder(null);
           }}
+          onReturn={() => {
+            setReturnOrder(detailsOrder);
+            setDetailsOrder(null);
+          }}
           onClose={() => setDetailsOrder(null)}
+        />
+      )}
+      {returnOrder && (
+        <ReturnDialog
+          order={returnOrder}
+          busy={returnMutation.isPending}
+          error={returnMutation.error}
+          onClose={() => setReturnOrder(null)}
+          onSubmit={(payload) =>
+            returnMutation.mutate({ orderId: returnOrder.id, payload })
+          }
         />
       )}
     </div>
@@ -947,6 +1138,7 @@ function OrderDetailsDialog({
   representatives,
   busy,
   onAction,
+  onReturn,
   onClose,
 }) {
   const { t, i18n } = useTranslation();
@@ -1081,7 +1273,12 @@ function OrderDetailsDialog({
                     <span>
                       الكمية: <b>{item.approvedQuantity}</b>
                     </span>
-                    <b>{money(item.unitPrice * item.approvedQuantity, currentLanguage)}</b>
+                    <b>
+                      {money(
+                        item.unitPrice * item.approvedQuantity,
+                        currentLanguage,
+                      )}
+                    </b>
                   </div>
                 ))}
               </div>
@@ -1146,7 +1343,9 @@ function OrderDetailsDialog({
                   <Building2 size={20} />
                 </span>
                 <div>
-                  <p className="text-xs text-[#829499]">{t("بيانات الصيدلية")}</p>
+                  <p className="text-xs text-[#829499]">
+                    {t("بيانات الصيدلية")}
+                  </p>
                   <h3 className="font-black">{order.pharmacyName}</h3>
                 </div>
               </div>
@@ -1272,6 +1471,20 @@ function OrderDetailsDialog({
                   )}
               </section>
             )}
+            {role === "Pharmacy" && order.status === "Delivered" && (
+              <section className="surface p-5">
+                <h3 className="font-black">خدمة ما بعد الاستلام</h3>
+                <p className="mt-2 text-xs leading-6 text-[#829499]">
+                  يمكنك إنشاء طلب إرجاع لبند تم استلامه من هذا الطلب.
+                </p>
+                <button
+                  onClick={onReturn}
+                  className="btn-secondary mt-4 w-full justify-center"
+                >
+                  <RotateCcw size={17} /> إنشاء طلب مرتجع
+                </button>
+              </section>
+            )}
           </aside>
         </div>
       </div>
@@ -1314,8 +1527,6 @@ function MarketplacePanel({
   const currentLanguage = normalizeLanguage(
     i18n.resolvedLanguage || i18n.language || "ar",
   );
-  const isArabic = currentLanguage === "ar";
-  const direction = isArabic ? "rtl" : "ltr";
 
   if (!selected)
     return (
@@ -1355,11 +1566,16 @@ function MarketplacePanel({
                   <b className="block text-base">{w.availableMedicines}</b>دواء
                 </div>
                 <div className="rounded-xl bg-[#F8FBFB] p-3">
-                  <b className="block text-sm">{money(w.minimumOrderAmount, currentLanguage)}</b>
+                  <b className="block text-sm">
+                    {money(w.minimumOrderAmount, currentLanguage)}
+                  </b>
                   الحد الأدنى
                 </div>
                 <div className="rounded-xl bg-[#F8FBFB] p-3">
-                  <b className="block text-sm">{money(w.deliveryFee, currentLanguage)}</b>التوصيل
+                  <b className="block text-sm">
+                    {money(w.deliveryFee, currentLanguage)}
+                  </b>
+                  التوصيل
                 </div>
               </div>
               <button
@@ -1455,8 +1671,11 @@ function MarketplacePanel({
                   <div className="min-w-0 flex-1">
                     <h3 className="truncate font-black">{item.medicineName}</h3>
                     <p className="mt-1 truncate text-xs text-[#829499]">
-                      {item.scientificName || t("لا يوجد اسم علمي")} · أقرب صلاحية{" "}
-                      {new Date(item.nearestExpiry).toLocaleDateString(resolveLocale(currentLanguage))}
+                      {item.scientificName || t("لا يوجد اسم علمي")} · أقرب
+                      صلاحية{" "}
+                      {new Date(item.nearestExpiry).toLocaleDateString(
+                        resolveLocale(currentLanguage),
+                      )}
                     </p>
                   </div>
                   <div className="text-sm">
@@ -1498,7 +1717,9 @@ function MarketplacePanel({
       <aside className="surface h-fit p-5 xl:sticky xl:top-28">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs font-bold text-[#216474]">{t("ملخص طلب التوريد")}</p>
+            <p className="text-xs font-bold text-[#216474]">
+              {t("ملخص طلب التوريد")}
+            </p>
             <h3 className="mt-1 text-xl font-black">{t("السلة")}</h3>
           </div>
           <span className="grid size-12 place-items-center rounded-2xl bg-[#EAF4F3] text-[#216474]">
@@ -1516,7 +1737,8 @@ function MarketplacePanel({
                   {line.item.medicineName}
                 </b>
                 <small className="text-[#829499]">
-                  {line.quantity} × {money(line.item.bestPrice, currentLanguage)}
+                  {line.quantity} ×{" "}
+                  {money(line.item.bestPrice, currentLanguage)}
                 </small>
               </div>
               <button
@@ -1555,8 +1777,9 @@ function MarketplacePanel({
         </div>
         {!minimumReached && lines.length > 0 && (
           <div className="mt-4 rounded-xl bg-amber-50 p-3 text-xs font-bold leading-6 text-amber-800">
-            الحد الأدنى لهذا المستودع {money(selected.minimumOrderAmount, currentLanguage)}. أضف
-            أدوية بقيمة {money(selected.minimumOrderAmount - total, currentLanguage)}.
+            الحد الأدنى لهذا المستودع{" "}
+            {money(selected.minimumOrderAmount, currentLanguage)}. أضف أدوية
+            بقيمة {money(selected.minimumOrderAmount - total, currentLanguage)}.
           </div>
         )}
         {error && (
@@ -1587,7 +1810,303 @@ function MarketplacePanel({
   );
 }
 
-function WarehouseDialog({ mode, onClose, onSaved }) {
+function ReturnsPanel({ items, loading, role, busy, onReview }) {
+  if (loading)
+    return (
+      <div className="surface p-10 text-center">جاري تحميل المرتجعات...</div>
+    );
+  return (
+    <div className="grid gap-4 md:grid-cols-2">
+      {items.map((item) => (
+        <article key={item.id} className="surface p-5">
+          <div className="flex items-start justify-between gap-3">
+            <span className="grid size-11 place-items-center rounded-xl bg-amber-50 text-amber-700">
+              <RotateCcw size={20} />
+            </span>
+            <span
+              className={`rounded-full px-3 py-1 text-xs font-black ${tone(item.status)}`}
+            >
+              {labels[item.status] || item.status}
+            </span>
+          </div>
+          <h3 className="mt-4 font-black">{item.medicineName}</h3>
+          <p className="mt-1 font-mono text-xs text-[#829499]">
+            {item.orderCode}
+          </p>
+          <div className="mt-4 rounded-xl bg-[#F8FBFB] p-3 text-sm">
+            <p>
+              الكمية: <b>{item.quantity}</b>
+            </p>
+            <p className="mt-2 text-[#60777D]">السبب: {item.reason}</p>
+            {item.reviewNote && (
+              <p className="mt-2 text-[#60777D]">
+                ملاحظة المستودع: {item.reviewNote}
+              </p>
+            )}
+          </div>
+          {role === "Warehouse" &&
+            item.status !== "Completed" &&
+            item.status !== "Rejected" && (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {item.status === "Pending" && (
+                  <>
+                    <button
+                      disabled={busy}
+                      onClick={() => onReview(item.id, "Approved")}
+                      className="btn-primary flex-1 justify-center"
+                    >
+                      قبول
+                    </button>
+                    <button
+                      disabled={busy}
+                      onClick={() => onReview(item.id, "Rejected")}
+                      className="btn-secondary flex-1 justify-center"
+                    >
+                      رفض
+                    </button>
+                  </>
+                )}
+                {item.status === "Approved" && (
+                  <button
+                    disabled={busy}
+                    onClick={() => onReview(item.id, "Collected")}
+                    className="btn-primary w-full justify-center"
+                  >
+                    تم استلام المرتجع
+                  </button>
+                )}
+                {item.status === "Collected" && (
+                  <button
+                    disabled={busy}
+                    onClick={() => onReview(item.id, "Completed")}
+                    className="btn-primary w-full justify-center"
+                  >
+                    إكمال المعالجة
+                  </button>
+                )}
+              </div>
+            )}
+        </article>
+      ))}
+      {!items.length && (
+        <div className="surface col-span-full p-12 text-center text-sm text-[#71858A]">
+          لا توجد طلبات مرتجعات حاليًا.
+        </div>
+      )}
+    </div>
+  );
+}
+
+function RecallsPanel({ items, loading }) {
+  if (loading)
+    return (
+      <div className="surface p-10 text-center">جاري تحميل الاستدعاءات...</div>
+    );
+  return (
+    <div className="grid gap-4 md:grid-cols-2">
+      {items.map((item) => (
+        <article
+          key={item.id}
+          className="surface border-s-4 border-s-rose-500 p-5"
+        >
+          <div className="flex items-start justify-between gap-3">
+            <span className="grid size-11 place-items-center rounded-xl bg-rose-50 text-rose-700">
+              <Megaphone size={20} />
+            </span>
+            <span className="rounded-full bg-rose-50 px-3 py-1 text-xs font-black text-rose-700">
+              {item.severity}
+            </span>
+          </div>
+          <h3 className="mt-4 font-black">{item.medicineName}</h3>
+          <p className="mt-1 font-mono text-xs text-[#829499]">
+            الدفعة: {item.batchNumber}
+          </p>
+          <p className="mt-4 rounded-xl bg-[#FFF1F2] p-3 text-sm leading-7 text-rose-800">
+            {item.reason}
+          </p>
+          <p className="mt-3 text-xs text-[#829499]">
+            {formatDate(item.initiatedAtUtc, "ar", true)}
+          </p>
+        </article>
+      ))}
+      {!items.length && (
+        <div className="surface col-span-full p-12 text-center text-sm text-[#71858A]">
+          لا توجد استدعاءات دفعات دوائية.
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ReturnDialog({ order, busy, error, onClose, onSubmit }) {
+  const eligibleItems = order.items.filter(
+    (item) => item.deliveredQuantity > 0,
+  );
+  const [form, setForm] = useState({
+    orderItemId: eligibleItems[0]?.id || "",
+    quantity: 1,
+    reason: "",
+  });
+  const selected = eligibleItems.find((item) => item.id === form.orderItemId);
+  return (
+    <SimpleDialog title="إنشاء طلب مرتجع" icon={RotateCcw} onClose={onClose}>
+      <form
+        className="space-y-4"
+        onSubmit={(event) => {
+          event.preventDefault();
+          onSubmit({ ...form, quantity: Number(form.quantity) });
+        }}
+      >
+        <Field label="الدواء">
+          <select
+            required
+            className="form-input"
+            value={form.orderItemId}
+            onChange={(event) =>
+              setForm((x) => ({
+                ...x,
+                orderItemId: event.target.value,
+                quantity: 1,
+              }))
+            }
+          >
+            {eligibleItems.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.medicineName} — المستلم {item.deliveredQuantity}
+              </option>
+            ))}
+          </select>
+        </Field>
+        <Field label="الكمية المراد إرجاعها">
+          <input
+            required
+            min="1"
+            max={selected?.deliveredQuantity || 1}
+            type="number"
+            className="form-input"
+            value={form.quantity}
+            onChange={(event) =>
+              setForm((x) => ({ ...x, quantity: event.target.value }))
+            }
+          />
+        </Field>
+        <Field label="سبب الإرجاع">
+          <textarea
+            required
+            rows="4"
+            className="form-input h-auto py-3"
+            value={form.reason}
+            onChange={(event) =>
+              setForm((x) => ({ ...x, reason: event.target.value }))
+            }
+          />
+        </Field>
+        {error && (
+          <p className="rounded-xl bg-rose-50 p-3 text-sm font-bold text-rose-700">
+            {error.response?.data?.error || "تعذر إرسال طلب المرتجع."}
+          </p>
+        )}
+        <button
+          disabled={busy || !eligibleItems.length}
+          className="btn-primary w-full justify-center"
+        >
+          {busy ? "جاري الإرسال..." : "إرسال طلب المرتجع"}
+        </button>
+      </form>
+    </SimpleDialog>
+  );
+}
+
+function RecallDialog({ batch, busy, error, onClose, onSubmit }) {
+  const [form, setForm] = useState({
+    medicineBatchId: batch.id,
+    reason: "",
+    severity: "High",
+  });
+  return (
+    <SimpleDialog
+      title={`استدعاء دفعة ${batch.batchNumber}`}
+      icon={Megaphone}
+      onClose={onClose}
+    >
+      <form
+        className="space-y-4"
+        onSubmit={(event) => {
+          event.preventDefault();
+          onSubmit(form);
+        }}
+      >
+        <p className="rounded-xl bg-amber-50 p-3 text-sm leading-7 text-amber-900">
+          سيتم إيقاف الدفعة فورًا وإشعار الصيدليات التي استلمت منها.
+        </p>
+        <Field label="درجة الخطورة">
+          <select
+            className="form-input"
+            value={form.severity}
+            onChange={(event) =>
+              setForm((x) => ({ ...x, severity: event.target.value }))
+            }
+          >
+            <option value="Low">منخفضة</option>
+            <option value="Medium">متوسطة</option>
+            <option value="High">مرتفعة</option>
+            <option value="Critical">حرجة</option>
+          </select>
+        </Field>
+        <Field label="سبب الاستدعاء">
+          <textarea
+            required
+            rows="4"
+            className="form-input h-auto py-3"
+            value={form.reason}
+            onChange={(event) =>
+              setForm((x) => ({ ...x, reason: event.target.value }))
+            }
+          />
+        </Field>
+        {error && (
+          <p className="rounded-xl bg-rose-50 p-3 text-sm font-bold text-rose-700">
+            {error.response?.data?.error || "تعذر إنشاء الاستدعاء."}
+          </p>
+        )}
+        <button
+          disabled={busy}
+          className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-rose-700 px-5 font-black text-white disabled:opacity-50"
+        >
+          {busy ? "جاري التنفيذ..." : "تأكيد استدعاء الدفعة"}
+        </button>
+      </form>
+    </SimpleDialog>
+  );
+}
+
+function SimpleDialog({ title, icon: Icon, onClose, children }) {
+  return (
+    <div className="fixed inset-0 z-[120] grid place-items-center bg-[#071f25]/65 p-4 backdrop-blur-sm">
+      <div
+        dir="rtl"
+        className="max-h-[92vh] w-full max-w-xl overflow-auto rounded-[1.75rem] bg-white shadow-2xl"
+      >
+        <header className="flex items-center justify-between bg-[#174B57] p-5 text-white">
+          <div className="flex items-center gap-3">
+            <Icon size={23} />
+            <h2 className="text-xl font-black">{title}</h2>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="grid size-9 place-items-center rounded-xl bg-white/10"
+          >
+            <X size={19} />
+          </button>
+        </header>
+        <div className="p-6">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+function WarehouseDialog({ mode, batch, onClose, onSaved }) {
   const { t, i18n } = useTranslation();
   const currentLanguage = normalizeLanguage(
     i18n.resolvedLanguage || i18n.language || "ar",
@@ -1599,14 +2118,14 @@ function WarehouseDialog({ mode, onClose, onSaved }) {
   const [form, setForm] = useState(
     isBatch
       ? {
-          medicineId: "",
-          batchNumber: "",
-          quantityAvailable: 1,
-          purchasePrice: 0,
-          wholesalePrice: 0,
-          productionDateUtc: "",
-          expiryDateUtc: "",
-          storageLocation: "",
+          medicineId: batch?.medicineId || "",
+          batchNumber: batch?.batchNumber || "",
+          quantityAvailable: batch?.quantityAvailable ?? 1,
+          purchasePrice: batch?.purchasePrice ?? 0,
+          wholesalePrice: batch?.wholesalePrice ?? 0,
+          productionDateUtc: batch?.productionDateUtc?.slice(0, 10) || "",
+          expiryDateUtc: batch?.expiryDateUtc?.slice(0, 10) || "",
+          storageLocation: batch?.storageLocation || "",
         }
       : {
           fullName: "",
@@ -1624,7 +2143,7 @@ function WarehouseDialog({ mode, onClose, onSaved }) {
   const save = useMutation({
     mutationFn: () =>
       isBatch
-        ? addBatch({
+        ? (batch ? updateBatch : addBatch)(...(batch ? [batch.id] : []), {
             ...form,
             quantityAvailable: Number(form.quantityAvailable),
             purchasePrice: Number(form.purchasePrice),
@@ -1641,14 +2160,22 @@ function WarehouseDialog({ mode, onClose, onSaved }) {
   });
   return (
     <div className="fixed inset-0 z-[100] grid place-items-center bg-[#071f25]/65 p-4 backdrop-blur-sm">
-      <div className="max-h-[92vh] w-full max-w-2xl overflow-auto rounded-[1.8rem] bg-white shadow-2xl"
+      <div
+        className="max-h-[92vh] w-full max-w-2xl overflow-auto rounded-[1.8rem] bg-white shadow-2xl"
         dir={direction}
-        lang={currentLanguage}>
+        lang={currentLanguage}
+      >
         <div className="flex items-center justify-between bg-[#174B57] p-6 text-white">
           <div>
-            <p className="text-xs font-bold text-[#E6F3F6]">{t("إدارة المستودع")}</p>
+            <p className="text-xs font-bold text-[#E6F3F6]">
+              {t("إدارة المستودع")}
+            </p>
             <h2 className="mt-1 text-2xl font-black">
-              {isBatch ? "إضافة دفعة دوائية" : "إنشاء حساب مندوب"}
+              {isBatch
+                ? batch
+                  ? "تعديل الدفعة الدوائية"
+                  : "إضافة دفعة دوائية"
+                : "إنشاء حساب مندوب"}
             </h2>
           </div>
           <button
@@ -1671,6 +2198,7 @@ function WarehouseDialog({ mode, onClose, onSaved }) {
                 <span className="form-label">الدواء</span>
                 <select
                   required
+                  disabled={Boolean(batch)}
                   className="form-input"
                   {...field("medicineId")}
                 >
@@ -1829,8 +2357,6 @@ function InvoicesPanel({ invoices, loading, role, onManage }) {
   const currentLanguage = normalizeLanguage(
     i18n.resolvedLanguage || i18n.language || "ar",
   );
-  const isArabic = currentLanguage === "ar";
-  const direction = isArabic ? "rtl" : "ltr";
 
   const paid = invoices.filter((x) => x.paymentStatus === "Paid").length;
   const outstanding = invoices.reduce(
@@ -1897,12 +2423,16 @@ function InvoicesPanel({ invoices, loading, role, onManage }) {
                       : "bg-[#FFF1F2] text-[#E11D48]"
                 }`}
               >
-                {t(paymentLabels[invoice.paymentStatus] || invoice.paymentStatus)}
+                {t(
+                  paymentLabels[invoice.paymentStatus] || invoice.paymentStatus,
+                )}
               </span>
             </div>
             <div className="grid grid-cols-3 gap-2 p-5 text-center text-xs">
               <div className="rounded-xl bg-[#F8FBFB] p-3">
-                <b className="block text-sm">{money(invoice.totalAmount, currentLanguage)}</b>
+                <b className="block text-sm">
+                  {money(invoice.totalAmount, currentLanguage)}
+                </b>
                 الإجمالي
               </div>
               <div className="rounded-xl bg-[#F8FBFB] p-3">
@@ -1921,7 +2451,9 @@ function InvoicesPanel({ invoices, loading, role, onManage }) {
             <div className="flex items-center justify-between gap-3 px-5 pb-5">
               <p className="text-xs text-[#829499]">
                 الاستحقاق{" "}
-                {new Date(invoice.dueAtUtc).toLocaleDateString(resolveLocale(currentLanguage))}
+                {new Date(invoice.dueAtUtc).toLocaleDateString(
+                  resolveLocale(currentLanguage),
+                )}
               </p>
               <button
                 onClick={() => onManage(invoice)}
@@ -2171,9 +2703,11 @@ function InvoiceDialog({ invoice, role, busy, error, onClose, onSubmit }) {
   });
   return (
     <div className="fixed inset-0 z-[110] grid place-items-center bg-[#071f25]/65 p-4 backdrop-blur-sm">
-      <div className="max-h-[94vh] w-full max-w-3xl overflow-auto rounded-[1.8rem] bg-[#F8FBFB] shadow-2xl"
+      <div
+        className="max-h-[94vh] w-full max-w-3xl overflow-auto rounded-[1.8rem] bg-[#F8FBFB] shadow-2xl"
         dir={direction}
-        lang={currentLanguage}>
+        lang={currentLanguage}
+      >
         <header className="flex items-center justify-between bg-[#174B57] p-6 text-white">
           <div>
             <p className="font-mono text-xs text-[#E6F3F6]">
@@ -2194,8 +2728,14 @@ function InvoiceDialog({ invoice, role, busy, error, onClose, onSubmit }) {
           <main className="space-y-4">
             <section className="surface p-5">
               <div className="grid grid-cols-3 gap-3 text-center text-xs">
-                <InfoBox label="الإجمالي" value={money(invoice.totalAmount, currentLanguage)} />
-                <InfoBox label="المدفوع" value={money(invoice.paidAmount, currentLanguage)} />
+                <InfoBox
+                  label="الإجمالي"
+                  value={money(invoice.totalAmount, currentLanguage)}
+                />
+                <InfoBox
+                  label="المدفوع"
+                  value={money(invoice.paidAmount, currentLanguage)}
+                />
                 <InfoBox
                   label="المتبقي"
                   value={money(invoice.remainingAmount, currentLanguage)}
@@ -2384,7 +2924,9 @@ function InvoiceDialog({ invoice, role, busy, error, onClose, onSubmit }) {
             </p>
             <p className="text-xs leading-6 text-[#71858A]">
               الاستحقاق:{" "}
-              {new Date(invoice.dueAtUtc).toLocaleDateString(resolveLocale(currentLanguage))}
+              {new Date(invoice.dueAtUtc).toLocaleDateString(
+                resolveLocale(currentLanguage),
+              )}
             </p>
             {invoice.paymentStatus !== "Paid" && role !== "Admin" && (
               <button
@@ -2422,7 +2964,9 @@ function InvoiceDialog({ invoice, role, busy, error, onClose, onSubmit }) {
                     <b>{money(p.amount, currentLanguage)}</b>
                     <p className="mt-1 text-[#829499]">
                       {t(paymentMethodLabels[p.method])} ·{" "}
-                      {new Date(p.paidAtUtc).toLocaleDateString(resolveLocale(currentLanguage))}
+                      {new Date(p.paidAtUtc).toLocaleDateString(
+                        resolveLocale(currentLanguage),
+                      )}
                     </p>
                   </div>
                 ))}

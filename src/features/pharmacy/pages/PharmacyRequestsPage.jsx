@@ -31,11 +31,7 @@ const PHARMACY_HERO_IMAGE = "/assets/app/pharmacy.png";
 export function PharmacyRequestsPage() {
   const { t, i18n } = useTranslation();
 
-  const currentLanguage = (
-    i18n.resolvedLanguage ||
-    i18n.language ||
-    "ar"
-  )
+  const currentLanguage = (i18n.resolvedLanguage || i18n.language || "ar")
     .split("-")[0]
     .toLowerCase();
 
@@ -63,11 +59,7 @@ export function PharmacyRequestsPage() {
   const RequestArrow = isArabic ? ArrowLeft : ArrowRight;
 
   return (
-    <div
-      dir={direction}
-      lang={currentLanguage}
-      className="space-y-5"
-    >
+    <div dir={direction} lang={currentLanguage} className="space-y-5">
       {/* Hero */}
       <section
         className="
@@ -107,9 +99,7 @@ export function PharmacyRequestsPage() {
         >
           <div
             className={`flex w-full max-w-[690px] items-center gap-5 ${
-              isArabic
-                ? "ml-auto justify-start"
-                : "mr-auto justify-start"
+              isArabic ? "ml-auto justify-start" : "mr-auto justify-start"
             }`}
           >
             <span className="grid size-12 shrink-0 place-items-center rounded-lg bg-[rgba(230,243,246,.10)] text-[#E6F3F6] backdrop-blur-sm">
@@ -148,9 +138,7 @@ export function PharmacyRequestsPage() {
           <input
             dir={direction}
             className={`h-10 w-full rounded-lg border border-[rgba(102,102,102,.16)] bg-white text-[12px] text-[#333333] outline-none transition placeholder:text-[#A5A5A5] focus:border-[#216474] focus:ring-2 focus:ring-[#216474]/10 ${
-              isArabic
-                ? "pr-14 pl-4 text-right"
-                : "pl-14 pr-4 text-left"
+              isArabic ? "pr-14 pl-4 text-right" : "pl-14 pr-4 text-left"
             }`}
             value={filters.searchTerm}
             onChange={(e) =>
@@ -167,9 +155,7 @@ export function PharmacyRequestsPage() {
           <select
             dir={direction}
             className={`h-10 w-full appearance-none rounded border border-[rgba(102,102,102,.16)] bg-white text-[14px] font-medium text-[#A5A5A5] outline-none transition focus:border-[#216474] focus:ring-2 focus:ring-[#216474]/10 ${
-              isArabic
-                ? "pr-4 pl-10 text-right"
-                : "pl-4 pr-10 text-left"
+              isArabic ? "pr-4 pl-10 text-right" : "pl-4 pr-10 text-left"
             }`}
             value={filters.status}
             onChange={(e) =>
@@ -279,10 +265,7 @@ export function PharmacyRequestsPage() {
 
                     <span className="flex items-center gap-2">
                       {t("الكمية")}:{" "}
-                      {formatNumber(
-                        request.requestedQuantity,
-                        currentLanguage,
-                      )}
+                      {formatNumber(request.requestedQuantity, currentLanguage)}
                     </span>
 
                     {request.userPhoneNumber && (

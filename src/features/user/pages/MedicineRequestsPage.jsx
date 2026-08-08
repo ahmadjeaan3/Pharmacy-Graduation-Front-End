@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ClipboardList, Plus, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { getMedicineRequests, userKeys } from "../api/userApi";
 import { RequestCard } from "../components/RequestCard";
 import {
@@ -21,6 +22,7 @@ const filters = [
 ];
 
 export function MedicineRequestsPage() {
+  const { t } = useTranslation();
   const [status, setStatus] = useState("");
   const [search, setSearch] = useState("");
   const query = useQuery({
@@ -39,9 +41,9 @@ export function MedicineRequestsPage() {
   return (
     <div className="space-y-6">
       <UserPageHeader
-        eyebrow="متابعة واضحة"
-        title="طلبات الأدوية"
-        description="تابع ردود الصيدليات وحالة كل طلب، وارجع إلى تفاصيله في أي وقت."
+        eyebrow={t("متابعة واضحة")}
+        title={t("حجوزات الأدوية")}
+        description={t("تابع رحلة الدواء من الحجز والتجهيز حتى الاستلام من الصيدلية.")}
         icon={ClipboardList}
         action={
           <Link
@@ -49,7 +51,7 @@ export function MedicineRequestsPage() {
             className="inline-flex items-center gap-2 rounded-xl bg-[#f5cb72] px-4 py-3 text-sm font-black text-[#173d46]"
           >
             <Plus size={17} />
-            طلب جديد
+            {t("حجز دواء")}
           </Link>
         }
       />
@@ -63,7 +65,7 @@ export function MedicineRequestsPage() {
                 onClick={() => setStatus(item.value)}
                 className={`shrink-0 rounded-full px-4 py-2 text-sm font-bold transition ${status === item.value ? "bg-[#174b57] text-white" : "bg-[#f3f7f6] text-[#60777c] hover:bg-[#eaf4f3]"}`}
               >
-                {item.label}
+                {t(item.label)}
               </button>
             ))}
           </div>
@@ -72,7 +74,7 @@ export function MedicineRequestsPage() {
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               className="form-input has-field-icon"
-              placeholder="بحث بالدواء أو الصيدلية أو الرقم"
+              placeholder={t("بحث بالدواء أو الصيدلية أو الرقم")}
             />
             <span className="field-icon-shell">
               <Search size={18} />

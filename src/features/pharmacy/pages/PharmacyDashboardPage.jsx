@@ -19,10 +19,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 import { getApiErrorMessage } from "../../../shared/api/errors";
-import {
-  getPharmacyDashboard,
-  pharmacyKeys,
-} from "../api/pharmacyApi";
+import { getPharmacyDashboard, pharmacyKeys } from "../api/pharmacyApi";
 import {
   PharmacyErrorState,
   PharmacyLoadingState,
@@ -38,14 +35,7 @@ const statTones = {
   danger: "bg-[#FFF1F2] text-[#E11D48]",
 };
 
-function Stat({
-  icon: Icon,
-  label,
-  value,
-  hint,
-  tone = "primary",
-  isArabic,
-}) {
+function Stat({ icon: Icon, label, value, hint, tone = "primary", isArabic }) {
   return (
     <article className="relative min-h-[150px] overflow-hidden rounded-[1.35rem] border border-[#DCE8EA] bg-white p-5 shadow-[0_10px_30px_rgba(23,75,87,.04)]">
       <span
@@ -72,11 +62,7 @@ function Stat({
 export function PharmacyDashboardPage() {
   const { t, i18n } = useTranslation();
 
-  const currentLanguage = (
-    i18n.resolvedLanguage ||
-    i18n.language ||
-    "ar"
-  )
+  const currentLanguage = (i18n.resolvedLanguage || i18n.language || "ar")
     .split("-")[0]
     .toLowerCase();
 
@@ -182,10 +168,7 @@ export function PharmacyDashboardPage() {
 
             <p className="mt-3 flex items-center gap-2 text-sm text-[#D6D6D6]">
               <MapPin size={16} />
-              {[
-                data.area ? t(data.area) : "",
-                data.city ? t(data.city) : "",
-              ]
+              {[data.area ? t(data.area) : "", data.city ? t(data.city) : ""]
                 .filter(Boolean)
                 .join(isArabic ? "، " : ", ") || t("لم يحدد الموقع بعد")}
             </p>
@@ -223,10 +206,7 @@ export function PharmacyDashboardPage() {
                   isArabic ? "left-4" : "right-4"
                 }`}
               >
-                <Star
-                  size={24}
-                  className="fill-[#DFAE0D] text-[#DFAE0D]"
-                />
+                <Star size={24} className="fill-[#DFAE0D] text-[#DFAE0D]" />
               </span>
 
               <p className="text-xs text-[#D6D6D6]">{t("التقييم")}</p>
@@ -329,7 +309,9 @@ export function PharmacyDashboardPage() {
                       <AlertTriangle size={18} />
                     </span>
 
-                    <div className={`min-w-0 flex-1 ${isArabic ? "text-right" : "text-left"}`}>
+                    <div
+                      className={`min-w-0 flex-1 ${isArabic ? "text-right" : "text-left"}`}
+                    >
                       <p className="truncate text-sm font-bold text-[#29464D]">
                         {item.medicineName}
                       </p>

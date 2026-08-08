@@ -22,33 +22,20 @@ import {
   UserRound,
 } from "lucide-react";
 
-import {
-  useMemo,
-  useState,
-} from "react";
+import { useMemo, useState } from "react";
 
-import {
-  useTranslation,
-} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
-import {
-  Link,
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
-import {
-  getApiErrorMessage,
-} from "../../../shared/api/errors";
+import { getApiErrorMessage } from "../../../shared/api/errors";
 
 import {
   normalizeLanguage,
   getLanguageDirection,
 } from "../../../shared/i18n/i18n";
 
-import {
-  getRegistrationDefinitions,
-} from "../../../shared/config/roles";
+import { getRegistrationDefinitions } from "../../../shared/config/roles";
 
 import {
   registerOrganization,
@@ -57,9 +44,7 @@ import {
   registerWarehouse,
 } from "../../auth/api/authApi";
 
-import {
-  useAuth,
-} from "../../auth/hooks/useAuth";
+import { useAuth } from "../../auth/hooks/useAuth";
 
 /*
 |--------------------------------------------------------------------------
@@ -67,8 +52,7 @@ import {
 |--------------------------------------------------------------------------
 */
 const ACCOUNT_CARD_IMAGES = {
-  pharmacy:
-    "/assets/app/home/icons/pharmacy.png",
+  pharmacy: "/assets/app/home/icons/pharmacy.png",
 };
 
 /*
@@ -76,8 +60,7 @@ const ACCOUNT_CARD_IMAGES = {
 | صورة التسجيل
 |--------------------------------------------------------------------------
 */
-const REGISTRATION_IMAGE =
-  "/assets/app/home/icons/Asclepius.png";
+const REGISTRATION_IMAGE = "/assets/app/home/icons/Asclepius.png";
 
 /*
 |--------------------------------------------------------------------------
@@ -122,75 +105,46 @@ const initialForm = {
 |--------------------------------------------------------------------------
 */
 export function RegisterPage() {
-  const {
-    t,
-    i18n,
-  } = useTranslation();
+  const { t, i18n } = useTranslation();
 
-  const [
-    searchParams,
-    setSearchParams,
-  ] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   /*
   |--------------------------------------------------------------------------
   | قراءة اللغة المختارة في الصفحة الرئيسية
   |--------------------------------------------------------------------------
   */
-  const currentLanguage =
-    normalizeLanguage(
-      i18n.resolvedLanguage ||
-        i18n.language ||
-        "ar",
-    );
+  const currentLanguage = normalizeLanguage(
+    i18n.resolvedLanguage || i18n.language || "ar",
+  );
 
   /*
   |--------------------------------------------------------------------------
   | اتجاه الصفحة
   |--------------------------------------------------------------------------
   */
-  const isArabic =
-    currentLanguage === "ar";
+  const isArabic = currentLanguage === "ar";
 
-  const textDirection =
-    getLanguageDirection(
-      currentLanguage,
-    );
+  const textDirection = getLanguageDirection(currentLanguage);
 
-  const textAlignClass =
-    isArabic
-      ? "text-right"
-      : "text-left";
+  const textAlignClass = isArabic ? "text-right" : "text-left";
 
-  const itemsAlignClass =
-    isArabic
-      ? "items-end"
-      : "items-start";
+  const itemsAlignClass = isArabic ? "items-end" : "items-start";
 
   /*
   |--------------------------------------------------------------------------
   | جلب تعريفات الحسابات حسب اللغة المختارة
   |--------------------------------------------------------------------------
   */
-  const accountTypes =
-    useMemo(
-      () =>
-        getRegistrationDefinitions(
-          currentLanguage,
-        ),
-      [currentLanguage],
-    );
+  const accountTypes = useMemo(
+    () => getRegistrationDefinitions(currentLanguage),
+    [currentLanguage],
+  );
 
-  const requestedType =
-    searchParams.get("type");
+  const requestedType = searchParams.get("type");
 
   const type =
-    requestedType &&
-    accountTypes[
-      requestedType
-    ]
-      ? requestedType
-      : null;
+    requestedType && accountTypes[requestedType] ? requestedType : null;
 
   /*
   |--------------------------------------------------------------------------
@@ -211,9 +165,7 @@ export function RegisterPage() {
   | اختيار نوع الحساب
   |--------------------------------------------------------------------------
   */
-  const selectAccountType = (
-    nextType,
-  ) => {
+  const selectAccountType = (nextType) => {
     setSearchParams({
       type: nextType,
     });
@@ -224,32 +176,23 @@ export function RegisterPage() {
   | الرجوع إلى اختيار نوع الحساب
   |--------------------------------------------------------------------------
   */
-  const changeAccountType =
-    () => {
-      setSearchParams({});
-    };
+  const changeAccountType = () => {
+    setSearchParams({});
+  };
 
   return type ? (
     <RegistrationForm
       key={type}
       type={type}
-      accountTypes={
-        accountTypes
-      }
+      accountTypes={accountTypes}
       language={language}
-      onChangeType={
-        changeAccountType
-      }
+      onChangeType={changeAccountType}
     />
   ) : (
     <AccountTypeSelection
-      accountTypes={
-        accountTypes
-      }
+      accountTypes={accountTypes}
       language={language}
-      onSelect={
-        selectAccountType
-      }
+      onSelect={selectAccountType}
     />
   );
 }
@@ -259,11 +202,7 @@ export function RegisterPage() {
 | صفحة اختيار نوع الحساب
 |--------------------------------------------------------------------------
 */
-function AccountTypeSelection({
-  accountTypes,
-  language,
-  onSelect,
-}) {
+function AccountTypeSelection({ accountTypes, language, onSelect }) {
   const {
     t,
     currentLanguage,
@@ -273,48 +212,14 @@ function AccountTypeSelection({
     itemsAlignClass,
   } = language;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   /*
   |--------------------------------------------------------------------------
   | ترتيب الحسابات
   |--------------------------------------------------------------------------
   */
-  const orderedAccountTypes = [
-    "user",
-    "pharmacy",
-    "organization",
-    "warehouse",
-  ]
-    .map(
-      (accountType) => [
-        accountType,
-        accountTypes[
-          accountType
-        ],
-      ],
-    )
-    .filter(
-      ([, account]) =>
-        Boolean(account),
-    );
+  const orderedAccountTypes = ["user", "pharmacy", "organization", "warehouse"]
+    .map((accountType) => [accountType, accountTypes[accountType]])
+    .filter(([, account]) => Boolean(account));
 
   return (
     <div
@@ -322,17 +227,13 @@ function AccountTypeSelection({
       lang={currentLanguage}
       className="relative min-h-screen overflow-hidden bg-[#f8fafc]"
     >
-      <RegisterHeader
-        language={language}
-      />
+      <RegisterHeader language={language} />
 
       {/* خلفية التوهج الأولى */}
       <div
         aria-hidden="true"
         className={`pointer-events-none absolute top-[-130px] h-[500px] w-[450px] rounded-full bg-[rgba(21,142,171,0.18)] blur-[150px] ${
-          isArabic
-            ? "-right-[180px]"
-            : "-left-[180px]"
+          isArabic ? "-right-[180px]" : "-left-[180px]"
         }`}
       />
 
@@ -340,9 +241,7 @@ function AccountTypeSelection({
       <div
         aria-hidden="true"
         className={`pointer-events-none absolute top-[400px] h-[420px] w-[375px] rounded-full bg-[rgba(254,226,82,0.20)] blur-[150px] ${
-          isArabic
-            ? "-left-[130px]"
-            : "-right-[130px]"
+          isArabic ? "-left-[130px]" : "-right-[130px]"
         }`}
       />
 
@@ -352,9 +251,7 @@ function AccountTypeSelection({
           <div
             dir="ltr"
             className={`inline-flex min-h-10 items-center justify-center gap-2 rounded-full bg-white px-5 py-2 text-[#216474] shadow-[0_5px_20px_rgba(33,100,116,0.04)] ${
-              isArabic
-                ? "flex-row-reverse"
-                : "flex-row"
+              isArabic ? "flex-row-reverse" : "flex-row"
             }`}
           >
             <span
@@ -368,13 +265,8 @@ function AccountTypeSelection({
               </span>
             </span>
 
-            <span
-              dir={textDirection}
-              className="text-base font-normal"
-            >
-              {t(
-                "إنشاء حساب جديد",
-              )}
+            <span dir={textDirection} className="text-base font-normal">
+              {t("إنشاء حساب جديد")}
             </span>
           </div>
 
@@ -393,9 +285,7 @@ function AccountTypeSelection({
                 dir={textDirection}
                 className="shrink-0 text-center text-[27px] font-medium leading-none text-[#333333] sm:text-[32px]"
               >
-                {t(
-                  "اختر نوع الحساب",
-                )}
+                {t("اختر نوع الحساب")}
               </h1>
 
               <span className="h-[3px] min-w-0 flex-1 rounded-full bg-gradient-to-l from-white to-[#eeb73a]" />
@@ -416,149 +306,94 @@ function AccountTypeSelection({
             dir={textDirection}
             className="mt-11 grid w-full grid-cols-1 gap-7 sm:grid-cols-2 xl:grid-cols-4"
           >
-            {orderedAccountTypes.map(
-              (
-                [
-                  accountType,
-                  account,
-                ],
-                index,
-              ) => {
-                const {
-                  role,
-                  title,
-                  text,
-                } = account;
+            {orderedAccountTypes.map(([accountType, account], index) => {
+              const { role, title, text } = account;
 
-                const iconStyle =
-                  accountType ===
-                  "user"
-                    ? "bg-gradient-to-b from-[rgba(33,100,116,.10)] via-[rgba(33,100,116,.04)] to-transparent text-[#216474]"
-                    : accountType ===
-                        "pharmacy"
-                      ? "bg-gradient-to-b from-[rgba(249,209,45,.15)] to-[rgba(251,244,177,0)] text-[#f59e0b]"
-                      : accountType ===
-                          "warehouse"
-                        ? "bg-gradient-to-b from-[rgba(91,141,239,.16)] to-[rgba(219,231,255,0)] text-[#4f73bd]"
-                        : "bg-gradient-to-b from-[rgba(255,234,204,.66)] to-[rgba(255,243,226,0)] text-[#8a5b16]";
+              const iconStyle =
+                accountType === "user"
+                  ? "bg-gradient-to-b from-[rgba(33,100,116,.10)] via-[rgba(33,100,116,.04)] to-transparent text-[#216474]"
+                  : accountType === "pharmacy"
+                    ? "bg-gradient-to-b from-[rgba(249,209,45,.15)] to-[rgba(251,244,177,0)] text-[#f59e0b]"
+                    : accountType === "warehouse"
+                      ? "bg-gradient-to-b from-[rgba(91,141,239,.16)] to-[rgba(219,231,255,0)] text-[#4f73bd]"
+                      : "bg-gradient-to-b from-[rgba(255,234,204,.66)] to-[rgba(255,243,226,0)] text-[#8a5b16]";
 
-                const cardNumber =
-                  String(
-                    index + 1,
-                  ).padStart(
-                    2,
-                    "0",
-                  );
+              const cardNumber = String(index + 1).padStart(2, "0");
 
-                return (
-                  <article
-                    key={role}
-                    dir={
-                      textDirection
-                    }
-                    className="group relative flex min-h-[286px] flex-col rounded-2xl border border-[rgba(102,102,102,.16)] bg-white px-7 pb-8 pt-7 opacity-90 transition-all duration-300 hover:-translate-y-1 hover:border-[#216474]/25 hover:opacity-100 hover:shadow-[0_16px_38px_rgba(33,100,116,.10)]"
+              return (
+                <article
+                  key={role}
+                  dir={textDirection}
+                  className="group relative flex min-h-[286px] flex-col rounded-2xl border border-[rgba(102,102,102,.16)] bg-white px-7 pb-8 pt-7 opacity-90 transition-all duration-300 hover:-translate-y-1 hover:border-[#216474]/25 hover:opacity-100 hover:shadow-[0_16px_38px_rgba(33,100,116,.10)]"
+                >
+                  {/* الرقم والأيقونة */}
+                  <div
+                    dir="ltr"
+                    className="flex w-full items-start justify-between"
                   >
-                    {/* الرقم والأيقونة */}
+                    {/* الرقم ثابت على اليسار */}
+                    <span className="shrink-0 bg-gradient-to-b from-[#e6f3f6] to-[rgba(230,243,246,.12)] bg-clip-text text-[38px] font-bold leading-none text-transparent">
+                      {cardNumber}
+                    </span>
+
+                    {/* الأيقونة ثابتة على اليمين */}
+                    <span
+                      className={`grid size-10 shrink-0 place-items-center rounded-lg ${iconStyle}`}
+                    >
+                      <AccountCardIcon
+                        account={account}
+                        accountType={accountType}
+                        translatedTitle={title}
+                        size={24}
+                        strokeWidth={1.8}
+                      />
+                    </span>
+                  </div>
+
+                  {/* محتوى الكارد */}
+                  <div className={`flex flex-1 flex-col ${itemsAlignClass}`}>
                     <div
-                      dir="ltr"
-                      className="flex w-full items-start justify-between"
+                      dir={textDirection}
+                      className={`mt-4 w-full ${textAlignClass}`}
                     >
-                      {/* الرقم ثابت على اليسار */}
-                      <span className="shrink-0 bg-gradient-to-b from-[#e6f3f6] to-[rgba(230,243,246,.12)] bg-clip-text text-[38px] font-bold leading-none text-transparent">
-                        {
-                          cardNumber
-                        }
-                      </span>
+                      <h2 className="text-xl font-medium tracking-[0.04em] text-[#333333]">
+                        {title}
+                      </h2>
 
-                      {/* الأيقونة ثابتة على اليمين */}
-                      <span
-                        className={`grid size-10 shrink-0 place-items-center rounded-lg ${iconStyle}`}
-                      >
-                        <AccountCardIcon
-                          account={
-                            account
-                          }
-                          accountType={
-                            accountType
-                          }
-                          translatedTitle={
-                            title
-                          }
-                          size={24}
-                          strokeWidth={
-                            1.8
-                          }
-                        />
-                      </span>
+                      <p className="mt-4 min-h-[70px] text-sm leading-[1.65] tracking-[0.01em] text-[#666666]">
+                        {text}
+                      </p>
                     </div>
+                  </div>
 
-                    {/* محتوى الكارد */}
-                    <div
-                      className={`flex flex-1 flex-col ${itemsAlignClass}`}
-                    >
-                      <div
-                        dir={
-                          textDirection
-                        }
-                        className={`mt-4 w-full ${textAlignClass}`}
-                      >
-                        <h2 className="text-xl font-medium tracking-[0.04em] text-[#333333]">
-                          {title}
-                        </h2>
+                  {/* زر اختيار الحساب */}
+                  <button
+                    type="button"
+                    onClick={() => onSelect(accountType)}
+                    dir="ltr"
+                    className={`mt-7 flex h-12 w-full items-center justify-center gap-3 rounded-lg border border-[rgba(102,102,102,.16)] bg-white text-xl font-medium text-[#a5a5a5] transition-all duration-300 group-hover:border-[#216474] group-hover:bg-[#216474] group-hover:text-white group-hover:shadow-[0_8px_18px_rgba(33,100,116,.18)] hover:!bg-[#194f5b] ${
+                      isArabic ? "flex-row-reverse" : "flex-row"
+                    }`}
+                  >
+                    <span dir={textDirection}>{t("اختر الحساب")}</span>
 
-                        <p className="mt-4 min-h-[70px] text-sm leading-[1.65] tracking-[0.01em] text-[#666666]">
-                          {text}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* زر اختيار الحساب */}
-                    <button
-                      type="button"
-                      onClick={() =>
-                        onSelect(
-                          accountType,
-                        )
-                      }
-                      dir="ltr"
-                      className={`mt-7 flex h-12 w-full items-center justify-center gap-3 rounded-lg border border-[rgba(102,102,102,.16)] bg-white text-xl font-medium text-[#a5a5a5] transition-all duration-300 group-hover:border-[#216474] group-hover:bg-[#216474] group-hover:text-white group-hover:shadow-[0_8px_18px_rgba(33,100,116,.18)] hover:!bg-[#194f5b] ${
-                        isArabic
-                          ? "flex-row-reverse"
-                          : "flex-row"
-                      }`}
-                    >
-                      <span
-                        dir={
-                          textDirection
-                        }
-                      >
-                        {t(
-                          "اختر الحساب",
-                        )}
-                      </span>
-
-                      {isArabic ? (
-                        <ChevronLeft
-                          size={21}
-                          strokeWidth={
-                            1.7
-                          }
-                          aria-hidden="true"
-                        />
-                      ) : (
-                        <ChevronRight
-                          size={21}
-                          strokeWidth={
-                            1.7
-                          }
-                          aria-hidden="true"
-                        />
-                      )}
-                    </button>
-                  </article>
-                );
-              },
-            )}
+                    {isArabic ? (
+                      <ChevronLeft
+                        size={21}
+                        strokeWidth={1.7}
+                        aria-hidden="true"
+                      />
+                    ) : (
+                      <ChevronRight
+                        size={21}
+                        strokeWidth={1.7}
+                        aria-hidden="true"
+                      />
+                    )}
+                  </button>
+                </article>
+              );
+            })}
           </div>
 
           {/* تسجيل الدخول */}
@@ -566,19 +401,13 @@ function AccountTypeSelection({
             dir={textDirection}
             className="mt-10 flex flex-wrap items-center justify-center gap-2 text-sm sm:text-base"
           >
-            <span className="text-[#a5a5a5]">
-              {t(
-                "لدي حساب بالفعل",
-              )}
-            </span>
+            <span className="text-[#a5a5a5]">{t("لدي حساب بالفعل")}</span>
 
             <Link
               to="/login"
               className="font-normal text-[#216474] underline underline-offset-2 transition hover:text-[#174b57]"
             >
-              {t(
-                "العودة لتسجيل الدخول",
-              )}
+              {t("العودة لتسجيل الدخول")}
             </Link>
           </div>
         </div>
@@ -591,20 +420,9 @@ function AccountTypeSelection({
 | نموذج التسجيل
 |--------------------------------------------------------------------------
 */
-function RegistrationForm({
-  type,
-  accountTypes,
-  language,
-  onChangeType,
-}) {
-  const {
-    t,
-    currentLanguage,
-    isArabic,
-    textDirection,
-    textAlignClass,
-    itemsAlignClass,
-  } = language;
+function RegistrationForm({ type, accountTypes, language, onChangeType }) {
+  const { t, currentLanguage, isArabic, textDirection, textAlignClass } =
+    language;
 
   const account = accountTypes[type];
   const isBusiness = type !== "user";
@@ -685,9 +503,7 @@ function RegistrationForm({
     if (!navigator.geolocation) {
       setLocationState({
         status: "error",
-        message: t(
-          "خدمة تحديد الموقع غير مدعومة في هذا المتصفح.",
-        ),
+        message: t("خدمة تحديد الموقع غير مدعومة في هذا المتصفح."),
       });
 
       return;
@@ -706,19 +522,13 @@ function RegistrationForm({
           longitude: coords.longitude,
         }));
 
-        const owner =
-          type === "warehouse"
-            ? t("المستودع")
-            : t("الصيدلية");
+        const owner = type === "warehouse" ? t("المستودع") : t("الصيدلية");
 
         setLocationState({
           status: "success",
-          message: t(
-            "تمت إضافة إحداثيات موقع {{owner}}.",
-            {
-              owner,
-            },
-          ),
+          message: t("تمت إضافة إحداثيات موقع {{owner}}.", {
+            owner,
+          }),
         });
       },
       () => {
@@ -746,20 +556,12 @@ function RegistrationForm({
 
   const stepDescription =
     step === 1
-      ? t(
-          "أدخل بيانات الدخول الأساسية كما ستظهر في حسابك.",
-        )
+      ? t("أدخل بيانات الدخول الأساسية كما ستظهر في حسابك.")
       : type === "pharmacy"
-        ? t(
-            "أدخل البيانات الرسمية وعنوان الصيدلية.",
-          )
+        ? t("أدخل البيانات الرسمية وعنوان الصيدلية.")
         : type === "warehouse"
-          ? t(
-              "أدخل بيانات الترخيص والتوصيل الخاصة بالمستودع.",
-            )
-          : t(
-              "أدخل البيانات الرسمية وعنوان المنظمة.",
-            );
+          ? t("أدخل بيانات الترخيص والتوصيل الخاصة بالمستودع.")
+          : t("أدخل البيانات الرسمية وعنوان المنظمة.");
 
   return (
     <div
@@ -790,15 +592,9 @@ function RegistrationForm({
                 isArabic ? "flex-row-reverse" : "flex-row"
               }`}
             >
-              {isArabic ? (
-                <ArrowRight size={17} />
-              ) : (
-                <ArrowLeft size={17} />
-              )}
+              {isArabic ? <ArrowRight size={17} /> : <ArrowLeft size={17} />}
 
-              <span dir={textDirection}>
-                {t("تغيير نوع الحساب")}
-              </span>
+              <span dir={textDirection}>{t("تغيير نوع الحساب")}</span>
             </button>
 
             {/* Account icon: right in Arabic, left in other languages */}
@@ -831,15 +627,11 @@ function RegistrationForm({
               {account.subtitle}
             </p>
 
-            <h1
-              className={`mt-1 text-2xl font-black ${textAlignClass}`}
-            >
+            <h1 className={`mt-1 text-2xl font-black ${textAlignClass}`}>
               {account.title}
             </h1>
 
-            <p
-              className={`mt-4 leading-7 text-white/60 ${textAlignClass}`}
-            >
+            <p className={`mt-4 leading-7 text-white/60 ${textAlignClass}`}>
               {account.text}
             </p>
           </div>
@@ -864,9 +656,7 @@ function RegistrationForm({
                   key={item}
                   dir="ltr"
                   className={`flex items-center gap-3 rounded-2xl border p-3.5 ${
-                    isArabic
-                      ? "flex-row-reverse"
-                      : "flex-row"
+                    isArabic ? "flex-row-reverse" : "flex-row"
                   } ${
                     step === item
                       ? "border-white/20 bg-white/10"
@@ -880,11 +670,7 @@ function RegistrationForm({
                         : "bg-white/10"
                     }`}
                   >
-                    {step > item ? (
-                      <Check size={16} strokeWidth={3} />
-                    ) : (
-                      item
-                    )}
+                    {step > item ? <Check size={16} strokeWidth={3} /> : item}
                   </span>
 
                   <span
@@ -909,14 +695,9 @@ function RegistrationForm({
                 isArabic ? "flex-row-reverse" : "flex-row"
               }`}
             >
-              <ShieldCheck
-                size={18}
-                className="shrink-0 text-[#f5cb72]"
-              />
+              <ShieldCheck size={18} className="shrink-0 text-[#f5cb72]" />
 
-              <span dir={textDirection}>
-                {t("خصوصيتك تهمنا")}
-              </span>
+              <span dir={textDirection}>{t("خصوصيتك تهمنا")}</span>
             </div>
 
             <p
@@ -951,20 +732,12 @@ function RegistrationForm({
                 onClick={onChangeType}
                 dir="ltr"
                 className={`mb-4 inline-flex items-center gap-2 text-sm font-bold text-[#216474] lg:hidden ${
-                  isArabic
-                    ? "flex-row-reverse"
-                    : "flex-row"
+                  isArabic ? "flex-row-reverse" : "flex-row"
                 }`}
               >
-                {isArabic ? (
-                  <ArrowRight size={16} />
-                ) : (
-                  <ArrowLeft size={16} />
-                )}
+                {isArabic ? <ArrowRight size={16} /> : <ArrowLeft size={16} />}
 
-                <span dir={textDirection}>
-                  {t("تغيير نوع الحساب")}
-                </span>
+                <span dir={textDirection}>{t("تغيير نوع الحساب")}</span>
               </button>
 
               <p className="text-sm font-bold text-[#216474]">
@@ -978,9 +751,7 @@ function RegistrationForm({
                 {stepTitle}
               </h2>
 
-              <p className="mt-2 leading-7 text-[#71858a]">
-                {stepDescription}
-              </p>
+              <p className="mt-2 leading-7 text-[#71858a]">{stepDescription}</p>
             </div>
 
             {/* Form account icon */}
@@ -1034,8 +805,7 @@ function RegistrationForm({
                 dir={textDirection}
                 className={`rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700 ${textAlignClass}`}
               >
-                {clientError ||
-                  getApiErrorMessage(mutation.error)}
+                {clientError || getApiErrorMessage(mutation.error)}
               </div>
             )}
 
@@ -1043,9 +813,7 @@ function RegistrationForm({
             <div
               dir="ltr"
               className={`flex flex-col-reverse gap-3 border-t border-slate-100 pt-6 sm:justify-between ${
-                isArabic
-                  ? "sm:flex-row-reverse"
-                  : "sm:flex-row"
+                isArabic ? "sm:flex-row-reverse" : "sm:flex-row"
               }`}
             >
               {step > 1 ? (
@@ -1057,9 +825,7 @@ function RegistrationForm({
                   }}
                   dir="ltr"
                   className={`btn-secondary justify-center gap-2 ${
-                    isArabic
-                      ? "flex-row-reverse"
-                      : "flex-row"
+                    isArabic ? "flex-row-reverse" : "flex-row"
                   }`}
                 >
                   {isArabic ? (
@@ -1068,9 +834,7 @@ function RegistrationForm({
                     <ArrowLeft size={17} />
                   )}
 
-                  <span dir={textDirection}>
-                    {t("السابق")}
-                  </span>
+                  <span dir={textDirection}>{t("السابق")}</span>
                 </button>
               ) : (
                 <span />
@@ -1081,9 +845,7 @@ function RegistrationForm({
                 disabled={mutation.isPending}
                 dir="ltr"
                 className={`btn-primary justify-center gap-2 px-6 py-3 disabled:cursor-not-allowed disabled:opacity-60 ${
-                  isArabic
-                    ? "flex-row-reverse"
-                    : "flex-row"
+                  isArabic ? "flex-row-reverse" : "flex-row"
                 }`}
               >
                 <span dir={textDirection}>
@@ -1094,11 +856,7 @@ function RegistrationForm({
                       : t("إنشاء الحساب")}
                 </span>
 
-                {isArabic ? (
-                  <ArrowLeft size={18} />
-                ) : (
-                  <ArrowRight size={18} />
-                )}
+                {isArabic ? <ArrowLeft size={18} /> : <ArrowRight size={18} />}
               </button>
             </div>
           </form>
@@ -1120,30 +878,15 @@ function AccountFields({
   setShowPassword,
   language,
 }) {
-  const {
-    t,
-    isArabic,
-    textDirection,
-    textAlignClass,
-  } = language;
+  const { t, isArabic, textDirection, textAlignClass } = language;
 
   const passwordChecks = [
-    [
-      t("8 أحرف على الأقل"),
-      form.password.length >= 8,
-    ],
-    [
-      t("حرف إنكليزي كبير"),
-      /[A-Z]/.test(form.password),
-    ],
-    [
-      t("حرف إنكليزي صغير"),
-      /[a-z]/.test(form.password),
-    ],
+    [t("8 أحرف على الأقل"), form.password.length >= 8],
+    [t("حرف إنكليزي كبير"), /[A-Z]/.test(form.password)],
+    [t("حرف إنكليزي صغير"), /[a-z]/.test(form.password)],
     [
       t("رقم ورمز خاص"),
-      /\d/.test(form.password) &&
-        /[^a-zA-Z0-9]/.test(form.password),
+      /\d/.test(form.password) && /[^a-zA-Z0-9]/.test(form.password),
     ],
   ];
 
@@ -1151,10 +894,7 @@ function AccountFields({
     <div className="flex w-full flex-col gap-5">
       {/* الاسم ورقم الهاتف */}
       <div className="grid gap-5 sm:grid-cols-2">
-        <FormField
-          label={t("الاسم الكامل")}
-          language={language}
-        >
+        <FormField label={t("الاسم الكامل")} language={language}>
           <input
             className={getIconInputClass(isArabic)}
             required
@@ -1163,24 +903,16 @@ function AccountFields({
             dir={textDirection}
             value={form.fullName}
             onChange={update("fullName")}
-            placeholder={t(
-              "الاسم كما سيظهر في الحساب",
-            )}
+            placeholder={t("الاسم كما سيظهر في الحساب")}
           />
 
-          <span
-            className={getFieldIconClass(isArabic)}
-          >
+          <span className={getFieldIconClass(isArabic)}>
             <UserRound size={18} />
           </span>
         </FormField>
 
         <FormField
-          label={
-            type === "user"
-              ? t("رقم الهاتف (اختياري)")
-              : t("رقم الهاتف")
-          }
+          label={type === "user" ? t("رقم الهاتف (اختياري)") : t("رقم الهاتف")}
           language={language}
         >
           <input
@@ -1195,19 +927,14 @@ function AccountFields({
             placeholder="+963 ..."
           />
 
-          <span
-            className={getFieldIconClass(isArabic)}
-          >
+          <span className={getFieldIconClass(isArabic)}>
             <Phone size={18} />
           </span>
         </FormField>
       </div>
 
       {/* البريد الإلكتروني */}
-      <FormField
-        label={t("البريد الإلكتروني")}
-        language={language}
-      >
+      <FormField label={t("البريد الإلكتروني")} language={language}>
         <input
           className={getIconInputClass(isArabic)}
           required
@@ -1219,19 +946,14 @@ function AccountFields({
           placeholder="name@example.com"
         />
 
-        <span
-          className={getFieldIconClass(isArabic)}
-        >
+        <span className={getFieldIconClass(isArabic)}>
           <Mail size={18} />
         </span>
       </FormField>
 
       {/* كلمة المرور والتأكيد */}
       <div className="grid gap-5 sm:grid-cols-2">
-        <FormField
-          label={t("كلمة المرور")}
-          language={language}
-        >
+        <FormField label={t("كلمة المرور")} language={language}>
           <input
             className={getPasswordInputClass(isArabic)}
             required
@@ -1244,9 +966,7 @@ function AccountFields({
             placeholder="••••••••"
           />
 
-          <span
-            className={getFieldIconClass(isArabic)}
-          >
+          <span className={getFieldIconClass(isArabic)}>
             <KeyRound size={18} />
           </span>
 
@@ -1257,10 +977,7 @@ function AccountFields({
           />
         </FormField>
 
-        <FormField
-          label={t("تأكيد كلمة المرور")}
-          language={language}
-        >
+        <FormField label={t("تأكيد كلمة المرور")} language={language}>
           <input
             className={getPasswordInputClass(isArabic)}
             required
@@ -1273,9 +990,7 @@ function AccountFields({
             placeholder="••••••••"
           />
 
-          <span
-            className={getFieldIconClass(isArabic)}
-          >
+          <span className={getFieldIconClass(isArabic)}>
             <LockKeyhole size={18} />
           </span>
 
@@ -1297,32 +1012,18 @@ function AccountFields({
             key={label}
             dir="ltr"
             className={`flex items-center gap-2 text-xs font-semibold ${
-              isArabic
-                ? "flex-row-reverse"
-                : "flex-row"
-            } ${
-              valid
-                ? "text-emerald-600"
-                : "text-slate-400"
-            }`}
+              isArabic ? "flex-row-reverse" : "flex-row"
+            } ${valid ? "text-emerald-600" : "text-slate-400"}`}
           >
             <span
               className={`grid size-5 shrink-0 place-items-center rounded-full ${
-                valid
-                  ? "bg-emerald-50"
-                  : "bg-white"
+                valid ? "bg-emerald-50" : "bg-white"
               }`}
             >
-              <Check
-                size={12}
-                strokeWidth={3}
-              />
+              <Check size={12} strokeWidth={3} />
             </span>
 
-            <span
-              dir={textDirection}
-              className={textAlignClass}
-            >
+            <span dir={textDirection} className={textAlignClass}>
               {label}
             </span>
           </span>
@@ -1337,30 +1038,18 @@ function AccountFields({
 | غلاف الحقل وعنوانه
 |--------------------------------------------------------------------------
 */
-function FormField({
-  label,
-  children,
-  language,
-}) {
-  const {
-    textDirection,
-    textAlignClass,
-  } = language;
+function FormField({ label, children, language }) {
+  const { textDirection, textAlignClass } = language;
 
   return (
-    <label
-      dir={textDirection}
-      className="block w-full"
-    >
+    <label dir={textDirection} className="block w-full">
       <span
         className={`mb-2 block text-sm font-semibold leading-5 text-[#29464d] ${textAlignClass}`}
       >
         {label}
       </span>
 
-      <span className="relative block w-full">
-        {children}
-      </span>
+      <span className="relative block w-full">{children}</span>
     </label>
   );
 }
@@ -1370,38 +1059,19 @@ function FormField({
 | إظهار وإخفاء كلمة المرور
 |--------------------------------------------------------------------------
 */
-function PasswordToggle({
-  show,
-  setShow,
-  language,
-}) {
-  const {
-    t,
-    isArabic,
-  } = language;
+function PasswordToggle({ show, setShow, language }) {
+  const { t, isArabic } = language;
 
   return (
     <button
       type="button"
-      onClick={() =>
-        setShow((value) => !value)
-      }
+      onClick={() => setShow((value) => !value)}
       className={`absolute top-1/2 z-20 grid size-8 -translate-y-1/2 place-items-center rounded-lg text-[#7f98a0] transition hover:bg-slate-50 hover:text-[#216474] ${
-        isArabic
-          ? "left-2"
-          : "right-2"
+        isArabic ? "left-2" : "right-2"
       }`}
-      aria-label={
-        show
-          ? t("إخفاء كلمة المرور")
-          : t("إظهار كلمة المرور")
-      }
+      aria-label={show ? t("إخفاء كلمة المرور") : t("إظهار كلمة المرور")}
     >
-      {show ? (
-        <EyeOff size={18} />
-      ) : (
-        <Eye size={18} />
-      )}
+      {show ? <EyeOff size={18} /> : <Eye size={18} />}
     </button>
   );
 }
@@ -1432,9 +1102,7 @@ function getIconInputClass(isArabic) {
     "focus:border-[#216474]",
     "focus:ring-2",
     "focus:ring-[#216474]/10",
-    isArabic
-      ? "pr-11 pl-4 text-right"
-      : "pl-11 pr-4 text-left",
+    isArabic ? "pr-11 pl-4 text-right" : "pl-11 pr-4 text-left",
   ].join(" ");
 }
 
@@ -1463,9 +1131,7 @@ function getPasswordInputClass(isArabic) {
     "focus:border-[#216474]",
     "focus:ring-2",
     "focus:ring-[#216474]/10",
-    isArabic
-      ? "pr-11 pl-11 text-right"
-      : "pl-11 pr-11 text-left",
+    isArabic ? "pr-11 pl-11 text-right" : "pl-11 pr-11 text-left",
   ].join(" ");
 }
 
@@ -1485,9 +1151,7 @@ function getFieldIconClass(isArabic) {
     "-translate-y-1/2",
     "place-items-center",
     "text-[#7f98a0]",
-    isArabic
-      ? "right-3.5"
-      : "left-3.5",
+    isArabic ? "right-3.5" : "left-3.5",
   ].join(" ");
 }
 /*
@@ -1503,18 +1167,11 @@ function BusinessFields({
   locationState,
   language,
 }) {
-  const {
-    t,
-    isArabic,
-    textDirection,
-    textAlignClass,
-  } = language;
+  const { t, isArabic, textDirection, textAlignClass } = language;
 
-  const isPharmacy =
-    type === "pharmacy";
+  const isPharmacy = type === "pharmacy";
 
-  const isWarehouse =
-    type === "warehouse";
+  const isWarehouse = type === "warehouse";
 
   const businessTitle = isPharmacy
     ? t("الصيدلية")
@@ -1540,79 +1197,49 @@ function BusinessFields({
       ? t("اسم المستودع")
       : t("اسم المنظمة");
 
-  const businessNamePlaceholder =
-    isPharmacy
-      ? t("الاسم الرسمي للصيدلية")
-      : isWarehouse
-        ? t(
-            "الاسم التجاري المرخص للمستودع",
-          )
-        : t("الاسم الرسمي للمنظمة");
+  const businessNamePlaceholder = isPharmacy
+    ? t("الاسم الرسمي للصيدلية")
+    : isWarehouse
+      ? t("الاسم التجاري المرخص للمستودع")
+      : t("الاسم الرسمي للمنظمة");
 
   const licenseLabel =
-    isPharmacy || isWarehouse
-      ? t("رقم الترخيص")
-      : t("رقم التسجيل");
+    isPharmacy || isWarehouse ? t("رقم الترخيص") : t("رقم التسجيل");
 
   const licenseValue =
-    isPharmacy || isWarehouse
-      ? form.licenseNumber
-      : form.registrationNumber;
+    isPharmacy || isWarehouse ? form.licenseNumber : form.registrationNumber;
 
   const licenseField =
-    isPharmacy || isWarehouse
-      ? "licenseNumber"
-      : "registrationNumber";
+    isPharmacy || isWarehouse ? "licenseNumber" : "registrationNumber";
 
-  const licensePlaceholder =
-    isPharmacy
-      ? t("رقم ترخيص الصيدلية")
-      : isWarehouse
-        ? t("رقم ترخيص المستودع")
-        : t("رقم تسجيل المنظمة");
+  const licensePlaceholder = isPharmacy
+    ? t("رقم ترخيص الصيدلية")
+    : isWarehouse
+      ? t("رقم ترخيص المستودع")
+      : t("رقم تسجيل المنظمة");
 
-  const descriptionPlaceholder =
-    isPharmacy
-      ? t(
-          "معلومات إضافية عن الصيدلية وخدماتها",
-        )
-      : isWarehouse
-        ? t(
-            "معلومات إضافية عن المستودع وتغطيته وخدماته",
-          )
-        : t(
-            "معلومات إضافية عن المنظمة ونشاطها",
-          );
+  const descriptionPlaceholder = isPharmacy
+    ? t("معلومات إضافية عن الصيدلية وخدماتها")
+    : isWarehouse
+      ? t("معلومات إضافية عن المستودع وتغطيته وخدماته")
+      : t("معلومات إضافية عن المنظمة ونشاطها");
 
   return (
     <div className="flex w-full flex-col gap-5">
       {/* اسم المنشأة والترخيص */}
       <div className="grid gap-5 sm:grid-cols-2">
-        <FormField
-          label={businessNameLabel}
-          language={language}
-        >
+        <FormField label={businessNameLabel} language={language}>
           <input
-            className={getIconInputClass(
-              isArabic,
-            )}
+            className={getIconInputClass(isArabic)}
             required
             maxLength={200}
             dir={textDirection}
             value={businessName}
-            onChange={update(
-              businessNameField,
-            )}
-            placeholder={
-              businessNamePlaceholder
-            }
+            onChange={update(businessNameField)}
+            placeholder={businessNamePlaceholder}
           />
 
-          <span
-            className={getFieldIconClass(
-              isArabic,
-            )}
-          >
+          <span className={getFieldIconClass(isArabic)}>
             {isWarehouse ? (
               <PackageOpen size={18} />
             ) : isPharmacy ? (
@@ -1623,31 +1250,18 @@ function BusinessFields({
           </span>
         </FormField>
 
-        <FormField
-          label={licenseLabel}
-          language={language}
-        >
+        <FormField label={licenseLabel} language={language}>
           <input
-            className={getIconInputClass(
-              isArabic,
-            )}
+            className={getIconInputClass(isArabic)}
             required
             maxLength={100}
             dir={textDirection}
             value={licenseValue}
-            onChange={update(
-              licenseField,
-            )}
-            placeholder={
-              licensePlaceholder
-            }
+            onChange={update(licenseField)}
+            placeholder={licensePlaceholder}
           />
 
-          <span
-            className={getFieldIconClass(
-              isArabic,
-            )}
-          >
+          <span className={getFieldIconClass(isArabic)}>
             <FileBadge2 size={18} />
           </span>
         </FormField>
@@ -1655,14 +1269,9 @@ function BusinessFields({
 
       {/* المدينة والمنطقة */}
       <div className="grid gap-5 sm:grid-cols-2">
-        <FormField
-          label={t("المدينة")}
-          language={language}
-        >
+        <FormField label={t("المدينة")} language={language}>
           <input
-            className={getIconInputClass(
-              isArabic,
-            )}
+            className={getIconInputClass(isArabic)}
             required
             maxLength={100}
             autoComplete="address-level2"
@@ -1672,80 +1281,49 @@ function BusinessFields({
             placeholder={t("المدينة")}
           />
 
-          <span
-            className={getFieldIconClass(
-              isArabic,
-            )}
-          >
+          <span className={getFieldIconClass(isArabic)}>
             <MapPin size={18} />
           </span>
         </FormField>
 
-        <FormField
-          label={t("المنطقة")}
-          language={language}
-        >
+        <FormField label={t("المنطقة")} language={language}>
           <input
-            className={getIconInputClass(
-              isArabic,
-            )}
+            className={getIconInputClass(isArabic)}
             required
             maxLength={100}
             autoComplete="address-level3"
             dir={textDirection}
             value={form.area}
             onChange={update("area")}
-            placeholder={t(
-              "المنطقة أو الحي",
-            )}
+            placeholder={t("المنطقة أو الحي")}
           />
 
-          <span
-            className={getFieldIconClass(
-              isArabic,
-            )}
-          >
+          <span className={getFieldIconClass(isArabic)}>
             <MapPin size={18} />
           </span>
         </FormField>
       </div>
 
       {/* العنوان */}
-      <FormField
-        label={t("العنوان التفصيلي")}
-        language={language}
-      >
+      <FormField label={t("العنوان التفصيلي")} language={language}>
         <input
-          className={getIconInputClass(
-            isArabic,
-          )}
+          className={getIconInputClass(isArabic)}
           required
           maxLength={300}
           autoComplete="street-address"
           dir={textDirection}
           value={form.address}
           onChange={update("address")}
-          placeholder={t(
-            "الشارع، البناء وأقرب نقطة دالة",
-          )}
+          placeholder={t("الشارع، البناء وأقرب نقطة دالة")}
         />
 
-        <span
-          className={getFieldIconClass(
-            isArabic,
-          )}
-        >
+        <span className={getFieldIconClass(isArabic)}>
           <MapPin size={18} />
         </span>
       </FormField>
 
       {/* الوصف */}
-      <FormField
-        label={t(
-          "وصف مختصر (اختياري)",
-        )}
-        language={language}
-      >
+      <FormField label={t("وصف مختصر (اختياري)")} language={language}>
         <textarea
           dir={textDirection}
           className={`form-textarea w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-[#29464d] outline-none transition placeholder:text-slate-400 focus:border-[#216474] focus:ring-2 focus:ring-[#216474]/10 ${textAlignClass}`}
@@ -1753,33 +1331,24 @@ function BusinessFields({
           rows={4}
           value={form.description}
           onChange={update("description")}
-          placeholder={
-            descriptionPlaceholder
-          }
+          placeholder={descriptionPlaceholder}
         />
       </FormField>
 
       {/* التوصيل والموقع */}
-      {(isPharmacy ||
-        isWarehouse) && (
+      {(isPharmacy || isWarehouse) && (
         <div className="grid gap-4 sm:grid-cols-2">
           <label
             dir="ltr"
             className={`flex cursor-pointer items-center gap-3 rounded-2xl border border-[#174b57]/10 bg-[#f8fbfa] p-4 ${
-              isArabic
-                ? "flex-row-reverse"
-                : "flex-row"
+              isArabic ? "flex-row-reverse" : "flex-row"
             }`}
           >
             <input
               type="checkbox"
               className="size-4 shrink-0 accent-[#216474]"
-              checked={
-                form.hasDeliveryService
-              }
-              onChange={update(
-                "hasDeliveryService",
-              )}
+              checked={form.hasDeliveryService}
+              onChange={update("hasDeliveryService")}
             />
 
             <span
@@ -1788,18 +1357,12 @@ function BusinessFields({
             >
               <strong className="block text-sm text-[#29464d]">
                 {isWarehouse
-                  ? t(
-                      "يوفر المستودع خدمة التوصيل",
-                    )
-                  : t(
-                      "خدمة توصيل تابعة للصيدلية",
-                    )}
+                  ? t("يوفر المستودع خدمة التوصيل")
+                  : t("خدمة توصيل تابعة للصيدلية")}
               </strong>
 
               <small className="mt-1 block text-[#71858a]">
-                {t(
-                  "حدد الخيار عند توفر خدمة التوصيل",
-                )}
+                {t("حدد الخيار عند توفر خدمة التوصيل")}
               </small>
             </span>
           </label>
@@ -1811,50 +1374,32 @@ function BusinessFields({
             <button
               type="button"
               onClick={requestLocation}
-              disabled={
-                locationState.status ===
-                "loading"
-              }
+              disabled={locationState.status === "loading"}
               dir="ltr"
               className={`flex items-center gap-2 text-sm font-bold text-[#216474] disabled:opacity-50 ${
-                isArabic
-                  ? "flex-row-reverse"
-                  : "flex-row"
+                isArabic ? "flex-row-reverse" : "flex-row"
               }`}
             >
-              <LocateFixed
-                size={18}
-                className="shrink-0"
-              />
+              <LocateFixed size={18} className="shrink-0" />
 
               <span dir={textDirection}>
-                {locationState.status ===
-                "loading"
-                  ? t(
-                      "جاري تحديد الموقع...",
-                    )
-                  : t(
-                      "إضافة إحداثيات {{owner}}",
-                      {
-                        owner:
-                          businessTitle,
-                      },
-                    )}
+                {locationState.status === "loading"
+                  ? t("جاري تحديد الموقع...")
+                  : t("إضافة إحداثيات {{owner}}", {
+                      owner: businessTitle,
+                    })}
               </span>
             </button>
 
             {locationState.message && (
               <p
                 className={`mt-2 text-xs leading-5 ${
-                  locationState.status ===
-                  "error"
+                  locationState.status === "error"
                     ? "text-rose-600"
                     : "text-emerald-600"
                 } ${textAlignClass}`}
               >
-                {
-                  locationState.message
-                }
+                {locationState.message}
               </p>
             )}
           </div>
@@ -1872,9 +1417,7 @@ function BusinessFields({
             <div
               dir="ltr"
               className={`mb-5 flex items-center gap-3 ${
-                isArabic
-                  ? "flex-row-reverse"
-                  : "flex-row"
+                isArabic ? "flex-row-reverse" : "flex-row"
               }`}
             >
               <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#e8f1ff] text-[#4f73bd]">
@@ -1886,55 +1429,35 @@ function BusinessFields({
                 className={`min-w-0 flex-1 ${textAlignClass}`}
               >
                 <h3 className="font-bold text-[#29464d]">
-                  {t(
-                    "إعدادات طلبات المستودع",
-                  )}
+                  {t("إعدادات طلبات المستودع")}
                 </h3>
 
                 <p className="mt-1 text-xs text-[#71858a]">
-                  {t(
-                    "حدد قيمة الطلب والتوصيل ونطاق التغطية",
-                  )}
+                  {t("حدد قيمة الطلب والتوصيل ونطاق التغطية")}
                 </p>
               </div>
             </div>
 
             {/* الحقول الرقمية */}
             <div className="grid gap-5 sm:grid-cols-3">
-              <FormField
-                label={t(
-                  "الحد الأدنى للطلب",
-                )}
-                language={language}
-              >
+              <FormField label={t("الحد الأدنى للطلب")} language={language}>
                 <input
-                  className={getPlainInputClass(
-                    isArabic,
-                  )}
+                  className={getPlainInputClass(isArabic)}
                   required
                   min="0"
                   step="0.01"
                   type="number"
                   inputMode="decimal"
                   dir="ltr"
-                  value={
-                    form.minimumOrderAmount
-                  }
-                  onChange={update(
-                    "minimumOrderAmount",
-                  )}
+                  value={form.minimumOrderAmount}
+                  onChange={update("minimumOrderAmount")}
                   placeholder="0"
                 />
               </FormField>
 
-              <FormField
-                label={t("أجور التوصيل")}
-                language={language}
-              >
+              <FormField label={t("أجور التوصيل")} language={language}>
                 <input
-                  className={getPlainInputClass(
-                    isArabic,
-                  )}
+                  className={getPlainInputClass(isArabic)}
                   required
                   min="0"
                   step="0.01"
@@ -1942,35 +1465,22 @@ function BusinessFields({
                   inputMode="decimal"
                   dir="ltr"
                   value={form.deliveryFee}
-                  onChange={update(
-                    "deliveryFee",
-                  )}
+                  onChange={update("deliveryFee")}
                   placeholder="0"
                 />
               </FormField>
 
-              <FormField
-                label={t(
-                  "نطاق التوصيل (كم)",
-                )}
-                language={language}
-              >
+              <FormField label={t("نطاق التوصيل (كم)")} language={language}>
                 <input
-                  className={getPlainInputClass(
-                    isArabic,
-                  )}
+                  className={getPlainInputClass(isArabic)}
                   required
                   min="0"
                   step="1"
                   type="number"
                   inputMode="numeric"
                   dir="ltr"
-                  value={
-                    form.deliveryRadiusKm
-                  }
-                  onChange={update(
-                    "deliveryRadiusKm",
-                  )}
+                  value={form.deliveryRadiusKm}
+                  onChange={update("deliveryRadiusKm")}
                   placeholder="0"
                 />
               </FormField>
@@ -1978,55 +1488,28 @@ function BusinessFields({
           </div>
 
           {/* خيارات المستودع */}
-          <div
-            dir={textDirection}
-            className="grid gap-3 sm:grid-cols-3"
-          >
+          <div dir={textDirection} className="grid gap-3 sm:grid-cols-3">
             <WarehouseOption
-              label={t(
-                "يعمل على مدار 24 ساعة",
-              )}
-              description={t(
-                "استقبال الطلبات في جميع الأوقات",
-              )}
-              checked={
-                form.works24Hours
-              }
-              onChange={update(
-                "works24Hours",
-              )}
+              label={t("يعمل على مدار 24 ساعة")}
+              description={t("استقبال الطلبات في جميع الأوقات")}
+              checked={form.works24Hours}
+              onChange={update("works24Hours")}
               language={language}
             />
 
             <WarehouseOption
-              label={t(
-                "يدعم الطلبات المستعجلة",
-              )}
-              description={t(
-                "معالجة الطلبات ذات الأولوية",
-              )}
-              checked={
-                form.supportsUrgentOrders
-              }
-              onChange={update(
-                "supportsUrgentOrders",
-              )}
+              label={t("يدعم الطلبات المستعجلة")}
+              description={t("معالجة الطلبات ذات الأولوية")}
+              checked={form.supportsUrgentOrders}
+              onChange={update("supportsUrgentOrders")}
               language={language}
             />
 
             <WarehouseOption
-              label={t(
-                "يقبل الدفع الآجل",
-              )}
-              description={t(
-                "إتاحة الدفع المؤجل للصيدليات",
-              )}
-              checked={
-                form.acceptsDeferredPayment
-              }
-              onChange={update(
-                "acceptsDeferredPayment",
-              )}
+              label={t("يقبل الدفع الآجل")}
+              description={t("إتاحة الدفع المؤجل للصيدليات")}
+              checked={form.acceptsDeferredPayment}
+              onChange={update("acceptsDeferredPayment")}
               language={language}
             />
           </div>
@@ -2041,26 +1524,14 @@ function BusinessFields({
 | خيار من خيارات المستودع
 |--------------------------------------------------------------------------
 */
-function WarehouseOption({
-  label,
-  description,
-  checked,
-  onChange,
-  language,
-}) {
-  const {
-    isArabic,
-    textDirection,
-    textAlignClass,
-  } = language;
+function WarehouseOption({ label, description, checked, onChange, language }) {
+  const { isArabic, textDirection, textAlignClass } = language;
 
   return (
     <label
       dir="ltr"
       className={`flex cursor-pointer items-start gap-3 rounded-2xl border border-[#174b57]/10 bg-[#f8fbfa] p-4 transition hover:border-[#216474]/25 hover:bg-white ${
-        isArabic
-          ? "flex-row-reverse"
-          : "flex-row"
+        isArabic ? "flex-row-reverse" : "flex-row"
       }`}
     >
       <input
@@ -2070,13 +1541,8 @@ function WarehouseOption({
         onChange={onChange}
       />
 
-      <span
-        dir={textDirection}
-        className={`min-w-0 flex-1 ${textAlignClass}`}
-      >
-        <strong className="block text-sm text-[#29464d]">
-          {label}
-        </strong>
+      <span dir={textDirection} className={`min-w-0 flex-1 ${textAlignClass}`}>
+        <strong className="block text-sm text-[#29464d]">{label}</strong>
 
         <small className="mt-1 block leading-5 text-[#71858a]">
           {description}
@@ -2091,9 +1557,7 @@ function WarehouseOption({
 | حقل رقمي من دون أيقونة
 |--------------------------------------------------------------------------
 */
-function getPlainInputClass(
-  isArabic,
-) {
+function getPlainInputClass(isArabic) {
   return [
     "block",
     "h-12",
@@ -2111,9 +1575,7 @@ function getPlainInputClass(
     "focus:border-[#216474]",
     "focus:ring-2",
     "focus:ring-[#216474]/10",
-    isArabic
-      ? "text-right"
-      : "text-left",
+    isArabic ? "text-right" : "text-left",
   ].join(" ");
 }
 /*
@@ -2121,12 +1583,7 @@ function getPlainInputClass(
 | صورة صفحة التسجيل
 |--------------------------------------------------------------------------
 */
-function RegistrationPageImage({
-  src,
-  alt = "",
-  size = 28,
-  className = "",
-}) {
+function RegistrationPageImage({ src, alt = "", size = 28, className = "" }) {
   if (!src) {
     return null;
   }
@@ -2157,18 +1614,13 @@ function AccountCardIcon({
   strokeWidth = 1.8,
   className = "",
 }) {
-  const cardImage =
-    ACCOUNT_CARD_IMAGES[accountType];
+  const cardImage = ACCOUNT_CARD_IMAGES[accountType];
 
   if (cardImage) {
     return (
       <img
         src={cardImage}
-        alt={
-          translatedTitle ||
-          account?.title ||
-          ""
-        }
+        alt={translatedTitle || account?.title || ""}
         className={`object-contain ${className}`}
         style={{
           width: size,
@@ -2216,11 +1668,7 @@ function AccountTypeIcon({
     return (
       <img
         src={account.icon}
-        alt={
-          translatedTitle ||
-          account.title ||
-          ""
-        }
+        alt={translatedTitle || account.title || ""}
         className={`object-contain ${className}`}
         style={{
           width: size,
@@ -2230,8 +1678,7 @@ function AccountTypeIcon({
     );
   }
 
-  const IconComponent =
-    account?.icon;
+  const IconComponent = account?.icon;
 
   if (!IconComponent) {
     return null;
@@ -2255,14 +1702,8 @@ function AccountTypeIcon({
 | وتستمر تلقائيًا في كامل الموقع.
 |--------------------------------------------------------------------------
 */
-function RegisterHeader({
-  language,
-}) {
-  const {
-    t,
-    isArabic,
-    textDirection,
-  } = language;
+function RegisterHeader({ language }) {
+  const { t, isArabic, textDirection } = language;
 
   return (
     <header
@@ -2310,12 +1751,11 @@ function RegisterHeader({
           ) : (
             <>
               {/* الإنكليزي والتركي */}
-               <img
-                  src="/assets/app/brand/logo.png"
-                  alt="Medical Life"
-                  className="h-[54px] w-[54px] object-contain"
-                />
-              
+              <img
+                src="/assets/app/brand/logo.png"
+                alt="Medical Life"
+                className="h-[54px] w-[54px] object-contain"
+              />
 
               <span
                 aria-hidden="true"
@@ -2327,13 +1767,13 @@ function RegisterHeader({
                 aria-label={t("العودة إلى الصفحة الرئيسية")}
                 className="flex h-[58px] w-[64px] shrink-0 items-center justify-center"
               >
-               <Link
-                to="/"
-                dir={textDirection}
-                className="hidden whitespace-nowrap text-base font-normal text-[#666666] transition hover:text-[#216474] sm:block sm:text-lg"
-              >
-                {t("الرئيسية")}
-              </Link>
+                <Link
+                  to="/"
+                  dir={textDirection}
+                  className="hidden whitespace-nowrap text-base font-normal text-[#666666] transition hover:text-[#216474] sm:block sm:text-lg"
+                >
+                  {t("الرئيسية")}
+                </Link>
               </Link>
             </>
           )}
@@ -2371,38 +1811,20 @@ function RegisterHeader({
 | هذا المكوّن غير مستخدم حاليًا، لكنه مترجم وجاهز للاستخدام.
 |--------------------------------------------------------------------------
 */
-function SecurityNote({
-  language,
-}) {
-  const {
-    t,
-    isArabic,
-    textDirection,
-    textAlignClass,
-  } = language;
+function SecurityNote({ language }) {
+  const { t, isArabic, textDirection, textAlignClass } = language;
 
   return (
     <div
       dir="ltr"
       className={`mx-auto mt-10 flex max-w-2xl items-start gap-3 rounded-2xl border border-[#174b57]/10 bg-white/75 p-4 text-sm leading-6 text-[#62777c] backdrop-blur ${
-        isArabic
-          ? "flex-row-reverse"
-          : "flex-row"
+        isArabic ? "flex-row-reverse" : "flex-row"
       }`}
     >
-      <ShieldCheck
-        size={20}
-        className="mt-0.5 shrink-0 text-[#216474]"
-      />
+      <ShieldCheck size={20} className="mt-0.5 shrink-0 text-[#216474]" />
 
-      <p
-        dir={textDirection}
-        className={`min-w-0 flex-1 ${textAlignClass}`}
-      >
-        <strong className="text-[#29464d]">
-          {t("بيانات الحساب محمية.")}
-        </strong>{" "}
-
+      <p dir={textDirection} className={`min-w-0 flex-1 ${textAlignClass}`}>
+        <strong className="text-[#29464d]">{t("بيانات الحساب محمية.")}</strong>{" "}
         {t(
           "تخضع الصيدليات والمنظمات والمستودعات للمراجعة والاعتماد داخل المنصة.",
         )}
@@ -2416,11 +1838,7 @@ function SecurityNote({
 | التحقق من كلمة المرور
 |--------------------------------------------------------------------------
 */
-function validatePassword(
-  password,
-  confirmation,
-  t,
-) {
+function validatePassword(password, confirmation, t) {
   if (
     password.length < 8 ||
     !/[A-Z]/.test(password) ||
@@ -2428,15 +1846,11 @@ function validatePassword(
     !/\d/.test(password) ||
     !/[^a-zA-Z0-9]/.test(password)
   ) {
-    return t(
-      "كلمة المرور لا تحقق جميع متطلبات الأمان الموضحة.",
-    );
+    return t("كلمة المرور لا تحقق جميع متطلبات الأمان الموضحة.");
   }
 
   if (password !== confirmation) {
-    return t(
-      "كلمة المرور وتأكيدها غير متطابقين.",
-    );
+    return t("كلمة المرور وتأكيدها غير متطابقين.");
   }
 
   return "";
@@ -2447,26 +1861,17 @@ function validatePassword(
 | إرسال بيانات التسجيل إلى API
 |--------------------------------------------------------------------------
 */
-function submitRegistration(
-  type,
-  form,
-) {
+function submitRegistration(type, form) {
   const common = {
-    fullName:
-      form.fullName.trim(),
+    fullName: form.fullName.trim(),
 
-    email:
-      form.email.trim(),
+    email: form.email.trim(),
 
-    password:
-      form.password,
+    password: form.password,
 
-    confirmPassword:
-      form.confirmPassword,
+    confirmPassword: form.confirmPassword,
 
-    phoneNumber:
-      form.phoneNumber.trim() ||
-      null,
+    phoneNumber: form.phoneNumber.trim() || null,
   };
 
   if (type === "user") {
@@ -2474,18 +1879,13 @@ function submitRegistration(
   }
 
   const address = {
-    city:
-      form.city.trim(),
+    city: form.city.trim(),
 
-    area:
-      form.area.trim(),
+    area: form.area.trim(),
 
-    address:
-      form.address.trim(),
+    address: form.address.trim(),
 
-    description:
-      form.description.trim() ||
-      null,
+    description: form.description.trim() || null,
   };
 
   if (type === "pharmacy") {
@@ -2493,23 +1893,17 @@ function submitRegistration(
       ...common,
       ...address,
 
-      phoneNumber:
-        form.phoneNumber.trim(),
+      phoneNumber: form.phoneNumber.trim(),
 
-      pharmacyName:
-        form.pharmacyName.trim(),
+      pharmacyName: form.pharmacyName.trim(),
 
-      licenseNumber:
-        form.licenseNumber.trim(),
+      licenseNumber: form.licenseNumber.trim(),
 
-      hasDeliveryService:
-        form.hasDeliveryService,
+      hasDeliveryService: form.hasDeliveryService,
 
-      latitude:
-        form.latitude,
+      latitude: form.latitude,
 
-      longitude:
-        form.longitude,
+      longitude: form.longitude,
     });
   }
 
@@ -2518,47 +1912,29 @@ function submitRegistration(
       ...common,
       ...address,
 
-      phoneNumber:
-        form.phoneNumber.trim(),
+      phoneNumber: form.phoneNumber.trim(),
 
-      warehouseName:
-        form.warehouseName.trim(),
+      warehouseName: form.warehouseName.trim(),
 
-      licenseNumber:
-        form.licenseNumber.trim(),
+      licenseNumber: form.licenseNumber.trim(),
 
-      hasDeliveryService:
-        form.hasDeliveryService,
+      hasDeliveryService: form.hasDeliveryService,
 
-      works24Hours:
-        form.works24Hours,
+      works24Hours: form.works24Hours,
 
-      supportsUrgentOrders:
-        form.supportsUrgentOrders,
+      supportsUrgentOrders: form.supportsUrgentOrders,
 
-      acceptsDeferredPayment:
-        form.acceptsDeferredPayment,
+      acceptsDeferredPayment: form.acceptsDeferredPayment,
 
-      latitude:
-        form.latitude,
+      latitude: form.latitude,
 
-      longitude:
-        form.longitude,
+      longitude: form.longitude,
 
-      minimumOrderAmount:
-        Number(
-          form.minimumOrderAmount,
-        ),
+      minimumOrderAmount: Number(form.minimumOrderAmount),
 
-      deliveryFee:
-        Number(
-          form.deliveryFee,
-        ),
+      deliveryFee: Number(form.deliveryFee),
 
-      deliveryRadiusKm:
-        Number(
-          form.deliveryRadiusKm,
-        ),
+      deliveryRadiusKm: Number(form.deliveryRadiusKm),
     });
   }
 
@@ -2566,13 +1942,10 @@ function submitRegistration(
     ...common,
     ...address,
 
-    phoneNumber:
-      form.phoneNumber.trim(),
+    phoneNumber: form.phoneNumber.trim(),
 
-    organizationName:
-      form.organizationName.trim(),
+    organizationName: form.organizationName.trim(),
 
-    registrationNumber:
-      form.registrationNumber.trim(),
+    registrationNumber: form.registrationNumber.trim(),
   });
 }

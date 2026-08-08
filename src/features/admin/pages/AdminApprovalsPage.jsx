@@ -183,15 +183,6 @@ export function AdminApprovalsPage() {
                   key={item.pharmacyId}
                   item={item}
                   index={index}
-                  onApprove={() => {
-                    approval.reset();
-                    setApprovalTarget({
-                      type: "pharmacy",
-                      id: item.pharmacyId,
-                      name: item.pharmacyName,
-                      kindLabel: "الصيدلية",
-                    });
-                  }}
                 />
               ))
             : activeTab === "warehouses"
@@ -319,7 +310,7 @@ function TabButton({ active, onClick, icon: Icon, label, count }) {
   );
 }
 
-function PharmacyApprovalCard({ item, index, onApprove }) {
+function PharmacyApprovalCard({ item, index }) {
   return (
     <ApprovalCardShell
       index={index}
@@ -343,13 +334,12 @@ function PharmacyApprovalCard({ item, index, onApprove }) {
         value={`تاريخ التسجيل: ${formatDate(item.createdAtUtc)}`}
       />
       <div className="mt-5 border-t border-slate-100 pt-4">
-        <button
-          type="button"
-          onClick={onApprove}
+        <Link
+          to={`/app/pharmacies/${item.pharmacyId}/review`}
           className="btn-primary w-full justify-center"
         >
-          <CheckCircle2 size={17} /> اعتماد الصيدلية
-        </button>
+          <CheckCircle2 size={17} /> مراجعة الترخيص واتخاذ القرار
+        </Link>
       </div>
     </ApprovalCardShell>
   );

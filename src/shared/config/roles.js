@@ -15,6 +15,8 @@ import {
   Megaphone,
   PackageCheck,
   PackageSearch,
+  ReceiptText,
+  RotateCcw,
   Route,
   ShieldCheck,
   Truck,
@@ -32,8 +34,7 @@ const registrationDesign = {
 
   accountTitle: "text-lg font-bold text-white",
 
-  accountDescription:
-    "mt-2 text-xs leading-6 text-white/65",
+  accountDescription: "mt-2 text-xs leading-6 text-white/65",
 
   iconContainer:
     "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-[#335963] text-white shadow-sm",
@@ -49,11 +50,9 @@ const registrationDesign = {
   activeStepNumber:
     "relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-[#e6ad18] bg-transparent text-sm font-bold text-[#f4c430] shadow-[0_0_0_3px_rgba(230,173,24,0.08)]",
 
-  activeStepTitle:
-    "text-sm font-bold text-white",
+  activeStepTitle: "text-sm font-bold text-white",
 
-  activeStepDescription:
-    "mt-1 text-[11px] leading-5 text-white/65",
+  activeStepDescription: "mt-1 text-[11px] leading-5 text-white/65",
 
   activeStepIcon:
     "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#47717a] text-white",
@@ -64,11 +63,9 @@ const registrationDesign = {
   completedStepNumber:
     "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-[#e6ad18] bg-[#e6ad18] text-sm font-bold text-[#123f47]",
 
-  completedStepTitle:
-    "text-sm font-bold text-white",
+  completedStepTitle: "text-sm font-bold text-white",
 
-  completedStepDescription:
-    "mt-1 text-[11px] leading-5 text-white/55",
+  completedStepDescription: "mt-1 text-[11px] leading-5 text-white/55",
 
   completedStepIcon:
     "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#416b74] text-white",
@@ -79,11 +76,9 @@ const registrationDesign = {
   inactiveStepNumber:
     "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-white/25 bg-white/5 text-sm font-bold text-white/60",
 
-  inactiveStepTitle:
-    "text-sm font-semibold text-white/70",
+  inactiveStepTitle: "text-sm font-semibold text-white/70",
 
-  inactiveStepDescription:
-    "mt-1 text-[11px] leading-5 text-white/40",
+  inactiveStepDescription: "mt-1 text-[11px] leading-5 text-white/40",
 
   inactiveStepIcon:
     "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#294f57] text-white",
@@ -94,12 +89,8 @@ const registrationDesign = {
 | توحيد رمز اللغة
 |--------------------------------------------------------------------------
 */
-const normalizeLanguage = (
-  language = "ar",
-) => {
-  const value = String(
-    language || "ar",
-  )
+const normalizeLanguage = (language = "ar") => {
+  const value = String(language || "ar")
     .trim()
     .toLowerCase();
 
@@ -119,23 +110,11 @@ const normalizeLanguage = (
 | قراءة النص المناسب للغة
 |--------------------------------------------------------------------------
 */
-const getLocalizedValue = (
-  value,
-  language = "ar",
-) => {
-  if (
-    value &&
-    typeof value === "object" &&
-    !Array.isArray(value)
-  ) {
-    const normalizedLanguage =
-      normalizeLanguage(language);
+const getLocalizedValue = (value, language = "ar") => {
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    const normalizedLanguage = normalizeLanguage(language);
 
-    return (
-      value[normalizedLanguage] ??
-      value.ar ??
-      ""
-    );
+    return value[normalizedLanguage] ?? value.ar ?? "";
   }
 
   return value;
@@ -259,8 +238,7 @@ const roleDefinitions = {
 
       isImage: false,
 
-      tone:
-        "bg-[#335963] text-white border border-white/10 shadow-sm",
+      tone: "bg-[#335963] text-white border border-white/10 shadow-sm",
 
       design: registrationDesign,
 
@@ -330,6 +308,11 @@ const roleDefinitions = {
         icon: MapPin,
       },
       {
+        to: "/app/pharmacy/license",
+        label: "الترخيص والتحقق",
+        icon: FileCheck2,
+      },
+      {
         to: "/app/pharmacy/working-hours",
         label: "ساعات العمل",
         icon: Clock3,
@@ -385,13 +368,11 @@ const roleDefinitions = {
         tr: "Eczane bilgilerini, stokları ve ilaç siparişlerini yönetmek için.",
       },
 
-      icon:
-        "/assets/app/home/icons/Asclepius.png",
+      icon: "/assets/app/home/icons/Asclepius.png",
 
       isImage: true,
 
-      tone:
-        "bg-[#335963] text-white border border-white/10 shadow-sm",
+      tone: "bg-[#335963] text-white border border-white/10 shadow-sm",
 
       design: registrationDesign,
 
@@ -430,8 +411,7 @@ const roleDefinitions = {
             tr: "Eczane bilgilerini ve konumunu girin.",
           },
 
-          icon:
-            "/assets/app/home/icons/Asclepius.png",
+          icon: "/assets/app/home/icons/Asclepius.png",
 
           isImage: true,
         },
@@ -471,43 +451,33 @@ const roleDefinitions = {
     navigation: [
       {
         to: "/app/warehouse/inventory",
-        label: "مخزون المستودع",
+        label: "المخزون والدفعات",
         icon: PackageSearch,
       },
       {
         to: "/app/warehouse/orders",
-        label: "طلبات الصيدليات",
+        label: "الطلبات والشحنات",
         icon: ClipboardList,
       },
       {
-        to: "/app/warehouse/shipments",
-        label: "الشحنات والتوصيل",
-        icon: Truck,
+        to: "/app/warehouse/invoices",
+        label: "الفواتير والمدفوعات",
+        icon: ReceiptText,
+      },
+      {
+        to: "/app/warehouse/returns",
+        label: "المرتجعات",
+        icon: RotateCcw,
+      },
+      {
+        to: "/app/warehouse/recalls",
+        label: "استدعاءات الدفعات",
+        icon: Megaphone,
       },
       {
         to: "/app/warehouse/representatives",
         label: "إدارة المندوبين",
         icon: Route,
-      },
-      {
-        to: "/app/warehouse/batches",
-        label: "الدُفعات الدوائية",
-        icon: PackageCheck,
-      },
-      {
-        to: "/app/warehouse/profile",
-        label: "الملف والموقع",
-        icon: MapPin,
-      },
-      {
-        to: "/app/warehouse/working-hours",
-        label: "ساعات العمل",
-        icon: Clock3,
-      },
-      {
-        to: "/app/supply-chain",
-        label: "مركز سلسلة التوريد",
-        icon: Warehouse,
       },
     ],
 
@@ -520,39 +490,27 @@ const roleDefinitions = {
       actions: [
         {
           to: "/app/warehouse/inventory",
-          label: "إدارة المخزون",
-          text: "عرض الأدوية والكميات والدُفعات المتوفرة داخل المستودع.",
+          label: "المخزون والدفعات",
+          text: "إدارة الأدوية والكميات وأرقام الدُفعات والصلاحية من مكان واحد.",
           icon: PackageSearch,
         },
         {
           to: "/app/warehouse/orders",
-          label: "طلبات الصيدليات",
-          text: "مراجعة طلبات التوريد الواردة من الصيدليات وتحديث حالتها.",
+          label: "الطلبات والشحنات",
+          text: "مراجعة طلبات الصيدليات وتجهيز الشحنات ومتابعتها حتى التسليم.",
           icon: ClipboardList,
         },
         {
-          to: "/app/warehouse/shipments",
-          label: "الشحنات والتوصيل",
-          text: "إنشاء الشحنات ومتابعة حالة التوصيل حتى تأكيد الاستلام.",
-          icon: Truck,
+          to: "/app/warehouse/invoices",
+          label: "الفواتير والمدفوعات",
+          text: "متابعة المستحقات وتسجيل الدفعات وحالة التحصيل.",
+          icon: ReceiptText,
         },
         {
           to: "/app/warehouse/representatives",
           label: "إدارة المندوبين",
           text: "إسناد الطلبات للمندوبين ومتابعة مسارات التوصيل.",
           icon: Route,
-        },
-        {
-          to: "/app/warehouse/batches",
-          label: "الدُفعات الدوائية",
-          text: "إدارة أرقام الدُفعات وتواريخ الإنتاج والانتهاء والاستدعاءات.",
-          icon: PackageCheck,
-        },
-        {
-          to: "/app/warehouse/profile",
-          label: "بيانات المستودع",
-          text: "تحديث بيانات المستودع والترخيص والموقع وخيارات التوصيل.",
-          icon: Warehouse,
         },
       ],
     },
@@ -582,8 +540,7 @@ const roleDefinitions = {
 
       isImage: false,
 
-      tone:
-        "bg-[#335963] text-white border border-white/10 shadow-sm",
+      tone: "bg-[#335963] text-white border border-white/10 shadow-sm",
 
       design: registrationDesign,
 
@@ -648,7 +605,7 @@ const roleDefinitions = {
       ],
     },
   },
-    /*
+  /*
   |--------------------------------------------------------------------------
   | المندوب
   |--------------------------------------------------------------------------
@@ -808,8 +765,7 @@ const roleDefinitions = {
 
       isImage: false,
 
-      tone:
-        "bg-[#335963] text-white border border-white/10 shadow-sm",
+      tone: "bg-[#335963] text-white border border-white/10 shadow-sm",
 
       design: registrationDesign,
 
@@ -962,14 +918,8 @@ const rolePriority = [
 | توحيد أسماء الأدوار
 |--------------------------------------------------------------------------
 */
-export function normalizeRoles(
-  roles = [],
-) {
-  const values = Array.isArray(
-    roles,
-  )
-    ? roles
-    : [roles];
+export function normalizeRoles(roles = []) {
+  const values = Array.isArray(roles) ? roles : [roles];
 
   return [
     ...new Set(
@@ -993,39 +943,24 @@ export function normalizeRoles(
 | التحقق من امتلاك دور
 |--------------------------------------------------------------------------
 */
-export const hasRole = (
-  roles,
-  expectedRole,
-) =>
-  normalizeRoles(roles).includes(
-    expectedRole,
-  );
+export const hasRole = (roles, expectedRole) =>
+  normalizeRoles(roles).includes(expectedRole);
 
 /*
 |--------------------------------------------------------------------------
 | الحصول على الدور الأساسي
 |--------------------------------------------------------------------------
 */
-export const getPrimaryRole = (
-  roles,
-) =>
-  rolePriority.find((role) =>
-    normalizeRoles(roles).includes(
-      role,
-    ),
-  ) || "User";
+export const getPrimaryRole = (roles) =>
+  rolePriority.find((role) => normalizeRoles(roles).includes(role)) || "User";
 
 /*
 |--------------------------------------------------------------------------
 | الحصول على إعدادات الدور
 |--------------------------------------------------------------------------
 */
-export const getRoleDefinition = (
-  role,
-) =>
-  roleDefinitions[
-    normalizeRoles(role)[0]
-  ] ?? roleDefinitions.User;
+export const getRoleDefinition = (role) =>
+  roleDefinitions[normalizeRoles(role)[0]] ?? roleDefinitions.User;
 
 /*
 |--------------------------------------------------------------------------
@@ -1042,44 +977,27 @@ export const getRoleDefinition = (
 | tr-TR
 |--------------------------------------------------------------------------
 */
-export function getRegistrationDefinitions(
-  language = "ar",
-) {
-  const normalizedLanguage =
-    normalizeLanguage(language);
+export function getRegistrationDefinitions(language = "ar") {
+  const normalizedLanguage = normalizeLanguage(language);
 
   return Object.fromEntries(
     Object.values(roleDefinitions)
-      .filter(
-        (role) =>
-          Boolean(role.registration),
-      )
+      .filter((role) => Boolean(role.registration))
       .map((role) => {
-        const registration =
-          role.registration;
+        const registration = role.registration;
 
-        const localizedSteps =
-          Array.isArray(
-            registration.steps,
-          )
-            ? registration.steps.map(
-                (step) => ({
-                  ...step,
+        const localizedSteps = Array.isArray(registration.steps)
+          ? registration.steps.map((step) => ({
+              ...step,
 
-                  title:
-                    getLocalizedValue(
-                      step.title,
-                      normalizedLanguage,
-                    ),
+              title: getLocalizedValue(step.title, normalizedLanguage),
 
-                  description:
-                    getLocalizedValue(
-                      step.description,
-                      normalizedLanguage,
-                    ),
-                }),
-              )
-            : [];
+              description: getLocalizedValue(
+                step.description,
+                normalizedLanguage,
+              ),
+            }))
+          : [];
 
         return [
           registration.type,
@@ -1089,35 +1007,23 @@ export function getRegistrationDefinitions(
 
             role: role.key,
 
-            title:
-              getLocalizedValue(
-                registration.title,
-                normalizedLanguage,
-              ),
+            title: getLocalizedValue(registration.title, normalizedLanguage),
 
-            subtitle:
-              getLocalizedValue(
-                registration.subtitle,
-                normalizedLanguage,
-              ),
+            subtitle: getLocalizedValue(
+              registration.subtitle,
+              normalizedLanguage,
+            ),
 
-            text:
-              getLocalizedValue(
-                registration.text,
-                normalizedLanguage,
-              ),
+            text: getLocalizedValue(registration.text, normalizedLanguage),
 
-            steps:
-              localizedSteps,
+            steps: localizedSteps,
           },
         ];
       }),
   );
 }
 
-
-export const registrationDefinitions =
-  getRegistrationDefinitions("ar");
+export const registrationDefinitions = getRegistrationDefinitions("ar");
 
 /*
 |--------------------------------------------------------------------------

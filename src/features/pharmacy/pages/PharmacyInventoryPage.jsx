@@ -1,16 +1,21 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import readXlsxFile from "read-excel-file";
 import {
   AlertTriangle,
+  BrainCircuit,
   CalendarClock,
   Check,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
   Edit3,
+  FileSpreadsheet,
   PackagePlus,
   Pill,
   Plus,
   Search,
+  ScanBarcode,
+  Sparkles,
   Trash2,
   X,
 } from "lucide-react";
@@ -18,10 +23,13 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { getApiErrorMessage } from "../../../shared/api/errors";
+import { MedicineAlternativesButton } from "../../intelligence/components/MedicineAlternativesButton";
 import {
   addInventoryMedicine,
+  addInventoryBatch,
   getInventory,
   pharmacyKeys,
+  predictInventoryStockout,
   removeInventoryMedicine,
   searchMedicineCatalog,
   updateInventoryMedicine,
@@ -51,14 +59,151 @@ const blank = {
   lowStockThreshold: 5,
 };
 
-function InventoryDialog({ item, onClose, onSave, pending }) {
+function StockPredictionDialog({ item, onClose }) {
+  const [form, setForm] = useState({
+    quantitySold: 0,
+    avgDailyConsumption: 1,
+    last7DaysSales: 0,
+    last30DaysSales: 0,
+  });
+  const prediction = useMutation({
+    mutationFn: () =>
+      predictInventoryStockout({
+        stockQuantity: item.quantity,
+        quantitySold: Number(form.quantitySold),
+        avgDailyConsumption: Number(form.avgDailyConsumption),
+        last7DaysSales: Number(form.last7DaysSales),
+        last30DaysSales: Number(form.last30DaysSales),
+        month: new Date().getMonth() + 1,
+      }),
+  });
+  const change = (key) => (event) =>
+    setForm((current) => ({ ...current, [key]: event.target.value }));
+  const risk = {
+    Critical: ["حرج", "bg-rose-50 text-rose-700 border-rose-100"],
+    High: ["مرتفع", "bg-orange-50 text-orange-700 border-orange-100"],
+    Medium: ["متوسط", "bg-amber-50 text-amber-700 border-amber-100"],
+    Low: ["منخفض", "bg-emerald-50 text-emerald-700 border-emerald-100"],
+  }[prediction.data?.riskLevel];
+
+  return (
+    <div className="fixed inset-0 z-[110] grid place-items-center bg-[#071f25]/65 p-4 backdrop-blur-sm">
+      <div className="w-full max-w-xl rounded-[1.75rem] bg-white p-6 shadow-2xl">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-black text-[#216474]">
+              تحليل المخزون الذكي
+            </p>
+            <h3 className="mt-1 text-xl font-black">{item.medicineName}</h3>
+            <p className="mt-1 text-xs text-[#829499]">
+              الكمية الحالية: {formatNumber(item.quantity)}
+            </p>
+          </div>
+          <button
+            className="icon-button grid"
+            onClick={onClose}
+            aria-label="إغلاق"
+          >
+            <X size={18} />
+          </button>
+        </div>
+        <form
+          className="mt-6 grid gap-4 sm:grid-cols-2"
+          onSubmit={(event) => {
+            event.preventDefault();
+            prediction.mutate();
+          }}
+        >
+          <PredictionField
+            label="المباع إجمالًا"
+            value={form.quantitySold}
+            onChange={change("quantitySold")}
+          />
+          <PredictionField
+            label="متوسط الاستهلاك اليومي"
+            value={form.avgDailyConsumption}
+            onChange={change("avgDailyConsumption")}
+            step="0.1"
+          />
+          <PredictionField
+            label="مبيعات آخر 7 أيام"
+            value={form.last7DaysSales}
+            onChange={change("last7DaysSales")}
+          />
+          <PredictionField
+            label="مبيعات آخر 30 يومًا"
+            value={form.last30DaysSales}
+            onChange={change("last30DaysSales")}
+          />
+          <button
+            disabled={prediction.isPending}
+            className="btn-primary justify-center sm:col-span-2"
+          >
+            <Sparkles size={17} />
+            {prediction.isPending ? "جاري التحليل..." : "توقع موعد نفاد الدواء"}
+          </button>
+        </form>
+        {prediction.isError && (
+          <p className="mt-4 rounded-xl bg-rose-50 p-3 text-sm font-bold text-rose-700">
+            {getApiErrorMessage(prediction.error)}
+          </p>
+        )}
+        {prediction.data && (
+          <div
+            className={`mt-5 rounded-2xl border p-5 ${risk?.[1] || "bg-slate-50"}`}
+          >
+            <div className="flex items-center justify-between">
+              <strong>
+                درجة الخطورة: {risk?.[0] || prediction.data.riskLevel}
+              </strong>
+              <Sparkles size={20} />
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-3 text-center">
+              <div className="rounded-xl bg-white/70 p-3">
+                <span className="block text-xs">المدة المتوقعة</span>
+                <strong className="mt-1 block text-xl">
+                  {prediction.data.daysUntilStockout} يوم
+                </strong>
+              </div>
+              <div className="rounded-xl bg-white/70 p-3">
+                <span className="block text-xs">كمية إعادة الطلب</span>
+                <strong className="mt-1 block text-xl">
+                  {prediction.data.recommendedReorderQuantity}
+                </strong>
+              </div>
+            </div>
+          </div>
+        )}
+        <p className="mt-4 text-[11px] leading-5 text-[#829499]">
+          النتيجة تقديرية وتعتمد على دقة أرقام المبيعات المدخلة، ويجب مراجعتها
+          قبل اعتماد طلب التوريد.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function PredictionField({ label, value, onChange, step = "1" }) {
+  return (
+    <label>
+      <span className="form-label">{label}</span>
+      <input
+        type="number"
+        min="0"
+        step={step}
+        required
+        className="form-input"
+        value={value}
+        onChange={onChange}
+      />
+    </label>
+  );
+}
+
+function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
   const { t, i18n } = useTranslation();
 
-  const currentLanguage = (
-    i18n.resolvedLanguage ||
-    i18n.language ||
-    "ar"
-  )
+  const currentLanguage = (i18n.resolvedLanguage || i18n.language || "ar")
     .split("-")[0]
     .toLowerCase();
 
@@ -79,10 +224,18 @@ function InventoryDialog({ item, onClose, onSave, pending }) {
             : "",
           lowStockThreshold: item.lowStockThreshold,
         }
-      : blank,
+      : {
+          ...blank,
+          medicineId: initialMedicine?.id || "",
+          medicineName:
+            initialMedicine?.displayName || initialMedicine?.name || "",
+          unitPrice: initialMedicine?.sellingPrice || 0,
+        },
   );
 
-  const [catalogSearch, setCatalogSearch] = useState("");
+  const [catalogSearch, setCatalogSearch] = useState(
+    initialMedicine?.barcode || "",
+  );
   const [catalogPage, setCatalogPage] = useState(1);
 
   const catalog = useQuery({
@@ -119,9 +272,7 @@ function InventoryDialog({ item, onClose, onSave, pending }) {
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#174b57]/8 bg-white/95 p-5 backdrop-blur">
           <div className={isArabic ? "text-right" : "text-left"}>
             <h3 className="text-xl font-black">
-              {item
-                ? t("تعديل بيانات الدواء")
-                : t("إضافة دواء إلى المخزون")}
+              {item ? t("تعديل بيانات الدواء") : t("إضافة دواء إلى المخزون")}
             </h3>
 
             <p className="mt-1 text-xs text-[#829499]">
@@ -160,9 +311,7 @@ function InventoryDialog({ item, onClose, onSave, pending }) {
           {!item && (
             <div>
               <label>
-                <span className="form-label">
-                  {t("البحث في دليل الأدوية")}
-                </span>
+                <span className="form-label">{t("البحث في دليل الأدوية")}</span>
 
                 <div className="field-control">
                   <span
@@ -181,9 +330,7 @@ function InventoryDialog({ item, onClose, onSave, pending }) {
                       setCatalogSearch(event.target.value);
                       setCatalogPage(1);
                     }}
-                    placeholder={t(
-                      "اسم الدواء أو الاسم العلمي أو الشركة",
-                    )}
+                    placeholder={t("اسم الدواء أو الاسم العلمي أو الشركة")}
                   />
                 </div>
               </label>
@@ -307,9 +454,7 @@ function InventoryDialog({ item, onClose, onSave, pending }) {
             </label>
 
             <label>
-              <span className="form-label">
-                {t("حد تنبيه انخفاض المخزون")}
-              </span>
+              <span className="form-label">{t("حد تنبيه انخفاض المخزون")}</span>
               <input
                 type="number"
                 min="0"
@@ -333,9 +478,7 @@ function InventoryDialog({ item, onClose, onSave, pending }) {
 
           <label className="mt-5 flex items-center justify-between rounded-2xl bg-[#f7faf9] p-4">
             <div className={isArabic ? "text-right" : "text-left"}>
-              <p className="text-sm font-extrabold">
-                {t("متاح للطلبات")}
-              </p>
+              <p className="text-sm font-extrabold">{t("متاح للطلبات")}</p>
               <p className="mt-1 text-xs text-[#829499]">
                 {t("يتوقف تلقائيًا عندما تصبح الكمية صفرًا")}
               </p>
@@ -374,11 +517,7 @@ function InventoryDialog({ item, onClose, onSave, pending }) {
               isArabic ? "justify-end" : "justify-end"
             }`}
           >
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={onClose}
-            >
+            <button type="button" className="btn-secondary" onClick={onClose}>
               {t("إلغاء")}
             </button>
 
@@ -400,14 +539,317 @@ function InventoryDialog({ item, onClose, onSave, pending }) {
   );
 }
 
+function BarcodeLookupDialog({ onClose, onFound }) {
+  const { t } = useTranslation();
+  const [barcode, setBarcode] = useState("");
+  const lookup = useMutation({
+    mutationFn: async () => {
+      const normalized = barcode.trim();
+      const result = await searchMedicineCatalog({
+        searchTerm: normalized,
+        pageNumber: 1,
+        pageSize: 10,
+      });
+      const medicine = result.items?.find(
+        (item) =>
+          String(item.barcode || "").toLowerCase() === normalized.toLowerCase(),
+      );
+      if (!medicine) {
+        throw new Error("لم يتم العثور على دواء مسجل بهذا الباركود.");
+      }
+      return medicine;
+    },
+    onSuccess: onFound,
+  });
+
+  return (
+    <div
+      className="fixed inset-0 z-[110] grid place-items-center bg-[#071f25]/65 p-4 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div
+        dir="rtl"
+        className="w-full max-w-lg rounded-[1.75rem] bg-white p-6 shadow-2xl"
+      >
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <span className="grid size-12 place-items-center rounded-2xl bg-[#EAF4F3] text-[#216474]">
+              <ScanBarcode size={25} />
+            </span>
+            <h3 className="mt-4 text-xl font-black text-[#174B57]">
+              إضافة دواء بالباركود
+            </h3>
+            <p className="mt-2 text-sm leading-7 text-[#71858A]">
+              امسح الباركود بالقارئ أو أدخله يدويًا، ثم اضغط بحث.
+            </p>
+          </div>
+          <button
+            type="button"
+            className="icon-button grid"
+            onClick={onClose}
+            aria-label={t("إغلاق")}
+          >
+            <X size={19} />
+          </button>
+        </div>
+        <form
+          className="mt-6"
+          onSubmit={(event) => {
+            event.preventDefault();
+            lookup.mutate();
+          }}
+        >
+          <label>
+            <span className="form-label">رقم الباركود</span>
+            <div className="field-control">
+              <span className="field-icon-shell">
+                <ScanBarcode size={18} />
+              </span>
+              <input
+                autoFocus
+                required
+                maxLength={64}
+                inputMode="numeric"
+                autoComplete="off"
+                className="form-input has-field-icon font-mono"
+                value={barcode}
+                onChange={(event) => {
+                  setBarcode(event.target.value.replace(/\s/g, ""));
+                  lookup.reset();
+                }}
+                placeholder="مثال: 8691234567890"
+              />
+            </div>
+          </label>
+          {lookup.isError && (
+            <p
+              role="alert"
+              className="mt-4 rounded-xl border border-rose-100 bg-rose-50 p-3 text-sm font-bold text-rose-700"
+            >
+              {lookup.error?.message || getApiErrorMessage(lookup.error)}
+            </p>
+          )}
+          <div className="mt-6 flex justify-end gap-2">
+            <button type="button" className="btn-secondary" onClick={onClose}>
+              إلغاء
+            </button>
+            <button
+              className="btn-primary"
+              disabled={lookup.isPending || !barcode.trim()}
+            >
+              <Search size={17} />{" "}
+              {lookup.isPending ? "جاري البحث..." : "البحث وإضافة الدواء"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function ExcelImportDialog({ onClose, onImport, pending }) {
+  const [rows, setRows] = useState([]);
+  const [errors, setErrors] = useState([]);
+  const [reading, setReading] = useState(false);
+
+  const readFile = async (file) => {
+    setReading(true);
+    setErrors([]);
+    setRows([]);
+    try {
+      const sheetRows = await readXlsxFile(file);
+      const headers = (sheetRows[0] || []).map((value) =>
+        String(value ?? "").trim(),
+      );
+      const rawRows = sheetRows
+        .slice(1, 101)
+        .map((row) =>
+          Object.fromEntries(
+            headers.map((header, index) => [header, row[index] ?? ""]),
+          ),
+        );
+      const resolved = [];
+      const rejected = [];
+      for (let index = 0; index < rawRows.length; index += 1) {
+        const row = rawRows[index];
+        const barcode = String(
+          row.Barcode || row.barcode || row["الباركود"] || "",
+        ).trim();
+        const quantity = Number(row.Quantity ?? row.quantity ?? row["الكمية"]);
+        const unitPrice = Number(
+          row.UnitPrice ?? row.unitPrice ?? row["السعر"],
+        );
+        if (
+          !barcode ||
+          !Number.isFinite(quantity) ||
+          quantity < 0 ||
+          !Number.isFinite(unitPrice) ||
+          unitPrice < 0
+        ) {
+          rejected.push(
+            `الصف ${index + 2}: الباركود أو الكمية أو السعر غير صالح.`,
+          );
+          continue;
+        }
+        const catalog = await searchMedicineCatalog({
+          searchTerm: barcode,
+          pageNumber: 1,
+          pageSize: 5,
+        });
+        const medicine = catalog.items?.find(
+          (item) => item.barcode === barcode,
+        );
+        if (!medicine) {
+          rejected.push(
+            `الصف ${index + 2}: لا يوجد دواء مسجل بالباركود ${barcode}.`,
+          );
+          continue;
+        }
+        const expiry =
+          row.ExpiryDate || row.expiryDate || row["تاريخ الانتهاء"];
+        const expiryDateUtc = expiry ? new Date(expiry) : null;
+        resolved.push({
+          medicineId: medicine.id,
+          medicineName: medicine.displayName || medicine.name,
+          barcode,
+          quantity,
+          unitPrice,
+          lowStockThreshold: Number(
+            row.LowStockThreshold ??
+              row.lowStockThreshold ??
+              row["حد التنبيه"] ??
+              5,
+          ),
+          isAvailable: quantity > 0,
+          isPriceVisibleToUsers: true,
+          expiryDateUtc:
+            expiryDateUtc && !Number.isNaN(expiryDateUtc.valueOf())
+              ? expiryDateUtc.toISOString()
+              : null,
+        });
+      }
+      const unique = [
+        ...new Map(resolved.map((row) => [row.medicineId, row])).values(),
+      ];
+      if (unique.length !== resolved.length)
+        rejected.push(
+          "تم تجاهل الباركودات المكررة والإبقاء على آخر صف لكل دواء.",
+        );
+      setRows(unique);
+      setErrors(rejected);
+    } catch {
+      setErrors([
+        "تعذر قراءة الملف. استخدم ملف Excel بصيغة .xlsx أو .xls وبعناوين الأعمدة المطلوبة.",
+      ]);
+    } finally {
+      setReading(false);
+    }
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] grid place-items-center bg-[#071f25]/65 p-4 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div className="max-h-[92vh] w-full max-w-3xl overflow-auto rounded-[1.75rem] bg-white p-6 shadow-2xl">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h3 className="text-xl font-black">استيراد مخزون من Excel</h3>
+            <p className="mt-1 text-xs text-[#829499]">
+              حتى 100 دواء في كل ملف
+            </p>
+          </div>
+          <button
+            className="icon-button grid"
+            onClick={onClose}
+            aria-label="إغلاق"
+          >
+            <X size={19} />
+          </button>
+        </div>
+        <div className="mt-5 rounded-2xl border border-dashed border-[#216474]/30 bg-[#f5faf9] p-5">
+          <p className="text-sm font-black">الأعمدة المطلوبة</p>
+          <code className="mt-2 block text-xs text-[#216474]">
+            Barcode | Quantity | UnitPrice | ExpiryDate | LowStockThreshold
+          </code>
+          <label className="btn-primary mt-4 cursor-pointer justify-center">
+            <FileSpreadsheet size={18} />{" "}
+            {reading ? "جاري قراءة الملف..." : "اختيار ملف Excel"}
+            <input
+              type="file"
+              accept=".xlsx,.xls"
+              className="hidden"
+              disabled={reading || pending}
+              onChange={(event) =>
+                event.target.files?.[0] && readFile(event.target.files[0])
+              }
+            />
+          </label>
+        </div>
+        {rows.length > 0 && (
+          <div className="mt-5">
+            <p className="font-black text-emerald-700">
+              جاهز للاستيراد: {rows.length} دواء
+            </p>
+            <div className="mt-3 max-h-48 overflow-auto rounded-xl border">
+              <table className="w-full text-sm">
+                <tbody>
+                  {rows.map((row) => (
+                    <tr key={row.medicineId} className="border-b last:border-0">
+                      <td className="p-3 font-bold">{row.medicineName}</td>
+                      <td className="p-3">{row.barcode}</td>
+                      <td className="p-3">{row.quantity}</td>
+                      <td className="p-3">{row.unitPrice}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+        {errors.length > 0 && (
+          <div className="mt-4 rounded-xl bg-amber-50 p-4 text-xs font-bold text-amber-800">
+            {errors.map((error) => (
+              <p key={error}>{error}</p>
+            ))}
+          </div>
+        )}
+        <div className="mt-6 flex justify-end gap-2">
+          <button className="btn-secondary" onClick={onClose}>
+            إلغاء
+          </button>
+          <button
+            className="btn-primary"
+            disabled={!rows.length || pending || reading}
+            onClick={() =>
+              onImport(
+                rows.map((row) => ({
+                  medicineId: row.medicineId,
+                  quantity: row.quantity,
+                  unitPrice: row.unitPrice,
+                  lowStockThreshold: row.lowStockThreshold,
+                  isAvailable: row.isAvailable,
+                  isPriceVisibleToUsers: row.isPriceVisibleToUsers,
+                  expiryDateUtc: row.expiryDateUtc,
+                })),
+              )
+            }
+          >
+            <FileSpreadsheet size={17} />
+            {pending ? "جاري الاستيراد..." : `استيراد ${rows.length} دواء`}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function PharmacyInventoryPage() {
   const { t, i18n } = useTranslation();
 
-  const currentLanguage = (
-    i18n.resolvedLanguage ||
-    i18n.language ||
-    "ar"
-  )
+  const currentLanguage = (i18n.resolvedLanguage || i18n.language || "ar")
     .split("-")[0]
     .toLowerCase();
 
@@ -425,6 +867,9 @@ export function PharmacyInventoryPage() {
 
   const [debounced, setDebounced] = useState(filters);
   const [editor, setEditor] = useState(null);
+  const [showBarcodeLookup, setShowBarcodeLookup] = useState(false);
+  const [showExcelImport, setShowExcelImport] = useState(false);
+  const [predictionItem, setPredictionItem] = useState(null);
   const [notice, setNotice] = useState(null);
 
   useEffect(() => {
@@ -484,12 +929,24 @@ export function PharmacyInventoryPage() {
       }),
   });
 
+  const importBatch = useMutation({
+    mutationFn: addInventoryBatch,
+    onSuccess: async (items) => {
+      setShowExcelImport(false);
+      setNotice({
+        ok: true,
+        text: t("تم استيراد {{count}} دواء إلى المخزون بنجاح.", {
+          count: items.length,
+        }),
+      });
+      await invalidate();
+    },
+    onError: (error) =>
+      setNotice({ ok: false, text: getApiErrorMessage(error) }),
+  });
+
   return (
-    <div
-      dir={direction}
-      lang={currentLanguage}
-      className="space-y-0"
-    >
+    <div dir={direction} lang={currentLanguage} className="space-y-0">
       {/* Hero */}
       <section className="relative isolate mb-5 min-h-[190px] overflow-hidden rounded-[14px] text-white shadow-[0_18px_45px_rgba(23,75,87,.12)] sm:min-h-[205px] lg:min-h-[220px]">
         <img
@@ -511,11 +968,7 @@ export function PharmacyInventoryPage() {
         />
 
         <div className="relative z-10 mt-7 flex min-h-[190px] flex-col justify-between gap-5 px-6 py-6 sm:min-h-[205px] md:flex-row md:items-center lg:min-h-[220px] lg:px-8">
-          <div
-            className={`min-w-0 ${
-              isArabic ? "text-right" : "text-left"
-            }`}
-          >
+          <div className={`min-w-0 ${isArabic ? "text-right" : "text-left"}`}>
             <div className="flex items-center gap-3">
               <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-white/[.10] text-[#E6F3F6] backdrop-blur-sm">
                 <PackagePlus size={20} strokeWidth={1.8} />
@@ -535,13 +988,29 @@ export function PharmacyInventoryPage() {
             </div>
           </div>
 
-          <button
-            className="inline-flex h-[58px] min-w-[185px] shrink-0 items-center justify-center gap-3 rounded-2xl border border-white/20 bg-white px-8 text-[15px] font-black text-[#216474] shadow-[0_12px_30px_rgba(7,31,37,.12)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#F8FBFB]"
-            onClick={() => setEditor({})}
-          >
-            <Plus size={21} strokeWidth={2.3} />
-            {t("إضافة دواء")}
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <button
+              className="inline-flex h-[58px] shrink-0 items-center justify-center gap-3 rounded-2xl border border-white/30 bg-white/10 px-6 text-[15px] font-black text-white backdrop-blur-sm transition hover:bg-white/20"
+              onClick={() => setShowBarcodeLookup(true)}
+            >
+              <ScanBarcode size={21} />
+              {t("إضافة بالباركود")}
+            </button>
+            <button
+              className="inline-flex h-[58px] shrink-0 items-center justify-center gap-3 rounded-2xl border border-white/30 bg-white/10 px-6 text-[15px] font-black text-white backdrop-blur-sm transition hover:bg-white/20"
+              onClick={() => setShowExcelImport(true)}
+            >
+              <FileSpreadsheet size={20} />
+              {t("استيراد Excel")}
+            </button>
+            <button
+              className="inline-flex h-[58px] min-w-[185px] shrink-0 items-center justify-center gap-3 rounded-2xl border border-white/20 bg-white px-8 text-[15px] font-black text-[#216474] shadow-[0_12px_30px_rgba(7,31,37,.12)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#F8FBFB]"
+              onClick={() => setEditor({})}
+            >
+              <Plus size={21} strokeWidth={2.3} />
+              {t("إضافة دواء")}
+            </button>
+          </div>
         </div>
       </section>
 
@@ -571,9 +1040,7 @@ export function PharmacyInventoryPage() {
             dir={direction}
             type="text"
             className={`h-11 w-full rounded-xl border border-[#DCE8EA] bg-white text-sm text-[#29464D] placeholder:text-[#A5A5A5] outline-none transition focus:border-[#216474] focus:ring-2 focus:ring-[#216474]/10 ${
-              isArabic
-                ? "pr-14 pl-4 text-right"
-                : "pl-14 pr-4 text-left"
+              isArabic ? "pr-14 pl-4 text-right" : "pl-14 pr-4 text-left"
             }`}
             value={filters.searchTerm}
             onChange={(event) =>
@@ -590,9 +1057,7 @@ export function PharmacyInventoryPage() {
           <select
             dir={direction}
             className={`h-11 w-full appearance-none rounded-xl border border-[#DCE8EA] bg-white text-sm text-[#60777D] outline-none transition focus:border-[#216474] focus:ring-2 focus:ring-[#216474]/10 ${
-              isArabic
-                ? "pr-4 pl-10 text-right"
-                : "pl-4 pr-10 text-left"
+              isArabic ? "pr-4 pl-10 text-right" : "pl-4 pr-10 text-left"
             }`}
             value={filters.stockStatus}
             onChange={(event) =>
@@ -620,9 +1085,7 @@ export function PharmacyInventoryPage() {
           <select
             dir={direction}
             className={`h-11 w-full appearance-none rounded-xl border border-[#DCE8EA] bg-white text-sm text-[#60777D] outline-none transition focus:border-[#216474] focus:ring-2 focus:ring-[#216474]/10 ${
-              isArabic
-                ? "pr-4 pl-10 text-right"
-                : "pl-4 pr-10 text-left"
+              isArabic ? "pr-4 pl-10 text-right" : "pl-4 pr-10 text-left"
             }`}
             value={filters.expiringWithinDays}
             onChange={(event) =>
@@ -663,9 +1126,7 @@ export function PharmacyInventoryPage() {
       </section>
 
       {inventory.isLoading ? (
-        <PharmacyLoadingState
-          label={t("جاري قراءة المخزون...")}
-        />
+        <PharmacyLoadingState label={t("جاري قراءة المخزون...")} />
       ) : inventory.isError ? (
         <PharmacyErrorState
           message={getApiErrorMessage(inventory.error)}
@@ -733,9 +1194,7 @@ export function PharmacyInventoryPage() {
                       isArabic ? "text-right" : "text-left"
                     }`}
                   >
-                    <p className="text-[11px] text-[#829499]">
-                      {t("الكمية")}
-                    </p>
+                    <p className="text-[11px] text-[#829499]">{t("الكمية")}</p>
                     <strong className="mt-1 block text-lg">
                       {formatNumber(item.quantity, currentLanguage)}
                     </strong>
@@ -773,11 +1232,7 @@ export function PharmacyInventoryPage() {
                   <span>
                     {t("الانتهاء")}:{" "}
                     {item.expiryDateUtc
-                      ? formatDate(
-                          item.expiryDateUtc,
-                          false,
-                          currentLanguage,
-                        )
+                      ? formatDate(item.expiryDateUtc, false, currentLanguage)
                       : t("غير محدد")}
                   </span>
 
@@ -801,6 +1256,21 @@ export function PharmacyInventoryPage() {
                 )}
 
                 <div className="mt-5 flex flex-wrap gap-2 border-t border-[#174b57]/8 pt-4">
+                  <MedicineAlternativesButton
+                    medicineName={item.medicineName}
+                    label={t("عرض البدائل")}
+                    className="inline-flex min-h-10 basis-[calc(50%-0.25rem)] items-center justify-center gap-2 rounded-xl border border-violet-100 bg-violet-50 px-3 text-xs font-black text-violet-700 transition hover:-translate-y-0.5 hover:bg-violet-100"
+                  />
+                  <button
+                    className="inline-flex min-h-10 basis-[calc(50%-0.25rem)] items-center justify-center gap-2 rounded-xl border border-cyan-100 bg-cyan-50 px-3 text-xs font-black text-cyan-800 transition hover:-translate-y-0.5 hover:bg-cyan-100"
+                    onClick={() => setPredictionItem(item)}
+                    aria-label={t("تحليل مخزون {{name}}", {
+                      name: item.medicineName,
+                    })}
+                  >
+                    <BrainCircuit size={16} />
+                    {t("توقع النفاد")}
+                  </button>
                   <button
                     className="btn-secondary flex-1 justify-center"
                     onClick={() => setEditor(item)}
@@ -837,9 +1307,32 @@ export function PharmacyInventoryPage() {
       {editor && (
         <InventoryDialog
           item={editor.inventoryItemId ? editor : null}
+          initialMedicine={editor.initialMedicine}
           pending={save.isPending}
           onClose={() => setEditor(null)}
           onSave={(payload) => save.mutate(payload)}
+        />
+      )}
+      {showBarcodeLookup && (
+        <BarcodeLookupDialog
+          onClose={() => setShowBarcodeLookup(false)}
+          onFound={(medicine) => {
+            setShowBarcodeLookup(false);
+            setEditor({ initialMedicine: medicine });
+          }}
+        />
+      )}
+      {showExcelImport && (
+        <ExcelImportDialog
+          pending={importBatch.isPending}
+          onClose={() => setShowExcelImport(false)}
+          onImport={(items) => importBatch.mutate(items)}
+        />
+      )}
+      {predictionItem && (
+        <StockPredictionDialog
+          item={predictionItem}
+          onClose={() => setPredictionItem(null)}
         />
       )}
     </div>

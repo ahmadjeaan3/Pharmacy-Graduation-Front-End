@@ -48,26 +48,25 @@ export const campaignStatuses = [
   },
 ];
 
-export const campaignStatusMeta =
-  Object.fromEntries(
-    campaignStatuses
-      .filter((item) => item.value)
-      .map((item) => [
-        item.value,
-        {
-          label: item.label,
+export const campaignStatusMeta = Object.fromEntries(
+  campaignStatuses
+    .filter((item) => item.value)
+    .map((item) => [
+      item.value,
+      {
+        label: item.label,
 
-          tone:
-            item.value === "Active"
-              ? "bg-emerald-50 text-emerald-700"
-              : item.value === "Draft"
-                ? "bg-amber-50 text-amber-700"
-                : item.value === "Cancelled"
-                  ? "bg-rose-50 text-rose-700"
-                  : "bg-slate-100 text-slate-600",
-        },
-      ]),
-  );
+        tone:
+          item.value === "Active"
+            ? "bg-emerald-50 text-emerald-700"
+            : item.value === "Draft"
+              ? "bg-amber-50 text-amber-700"
+              : item.value === "Cancelled"
+                ? "bg-rose-50 text-rose-700"
+                : "bg-slate-100 text-slate-600",
+      },
+    ]),
+);
 
 export const documentTypes = [
   {
@@ -93,21 +92,15 @@ export const documentTypes = [
 ];
 
 export const documentTypeLabel = (value) =>
-  documentTypes.find(
-    (item) => item.value === value,
-  )?.label ||
+  documentTypes.find((item) => item.value === value)?.label ||
   value ||
   "غير محدد";
 
 /**
  * يعيد Locale مناسبًا للغة الحالية.
  */
-export const getOrganizationLocale = (
-  currentLanguage = "ar",
-) => {
-  const language = String(
-    currentLanguage || "ar",
-  )
+export const getOrganizationLocale = (currentLanguage = "ar") => {
+  const language = String(currentLanguage || "ar")
     .split("-")[0]
     .toLowerCase();
 
@@ -128,10 +121,7 @@ export const getOrganizationLocale = (
  * في حال عدم وجود تاريخ تعيد الدالة المفتاح العربي
  * "غير محدد"، ويجب تمريره إلى t() داخل الصفحة.
  */
-export const formatOrgDate = (
-  value,
-  currentLanguage = "ar",
-) => {
+export const formatOrgDate = (value, currentLanguage = "ar") => {
   if (!value) {
     return "غير محدد";
   }
@@ -142,9 +132,7 @@ export const formatOrgDate = (
     return "غير محدد";
   }
 
-  const locale = getOrganizationLocale(
-    currentLanguage,
-  );
+  const locale = getOrganizationLocale(currentLanguage);
 
   return new Intl.DateTimeFormat(locale, {
     day: "numeric",
@@ -156,56 +144,33 @@ export const formatOrgDate = (
 /**
  * تنسيق حجم الملف حسب اللغة الحالية.
  */
-export const formatFileSize = (
-  bytes,
-  currentLanguage = "ar",
-) => {
-  const language = String(
-    currentLanguage || "ar",
-  )
+export const formatFileSize = (bytes, currentLanguage = "ar") => {
+  const language = String(currentLanguage || "ar")
     .split("-")[0]
     .toLowerCase();
 
-  const locale = getOrganizationLocale(
-    language,
-  );
+  const locale = getOrganizationLocale(language);
 
   const normalizedBytes = Number(bytes);
 
-  if (
-    !Number.isFinite(normalizedBytes) ||
-    normalizedBytes <= 0
-  ) {
-    return language === "ar"
-      ? "0 ك.ب"
-      : "0 KB";
+  if (!Number.isFinite(normalizedBytes) || normalizedBytes <= 0) {
+    return language === "ar" ? "0 ك.ب" : "0 KB";
   }
 
   if (normalizedBytes >= 1048576) {
-    const size = (
-      normalizedBytes / 1048576
-    ).toLocaleString(locale, {
+    const size = (normalizedBytes / 1048576).toLocaleString(locale, {
       maximumFractionDigits: 1,
     });
 
-    return language === "ar"
-      ? `${size} م.ب`
-      : `${size} MB`;
+    return language === "ar" ? `${size} م.ب` : `${size} MB`;
   }
 
-  const size = Math.ceil(
-    normalizedBytes / 1024,
-  ).toLocaleString(locale);
+  const size = Math.ceil(normalizedBytes / 1024).toLocaleString(locale);
 
-  return language === "ar"
-    ? `${size} ك.ب`
-    : `${size} KB`;
+  return language === "ar" ? `${size} ك.ب` : `${size} KB`;
 };
 
 /**
  * تحويل التاريخ المختار إلى بداية اليوم بتوقيت UTC.
  */
-export const toUtcDate = (value) =>
-  value
-    ? `${value}T00:00:00.000Z`
-    : null;
+export const toUtcDate = (value) => (value ? `${value}T00:00:00.000Z` : null);

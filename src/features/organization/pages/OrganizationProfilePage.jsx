@@ -54,11 +54,7 @@ export function OrganizationProfilePage() {
   const { t, i18n } = useTranslation();
   const client = useQueryClient();
 
-  const currentLanguage = (
-    i18n.resolvedLanguage ||
-    i18n.language ||
-    "ar"
-  )
+  const currentLanguage = (i18n.resolvedLanguage || i18n.language || "ar")
     .split("-")[0]
     .toLowerCase();
 
@@ -67,12 +63,9 @@ export function OrganizationProfilePage() {
 
   const [form, setForm] = useState(initialForm);
   const [notice, setNotice] = useState(null);
-  const [documentType, setDocumentType] = useState(
-    "RegistrationCertificate",
-  );
+  const [documentType, setDocumentType] = useState("RegistrationCertificate");
   const [file, setFile] = useState(null);
-  const [downloadingId, setDownloadingId] =
-    useState(null);
+  const [downloadingId, setDownloadingId] = useState(null);
 
   const profile = useQuery({
     queryKey: organizationKeys.profile,
@@ -88,17 +81,13 @@ export function OrganizationProfilePage() {
     if (!profile.data) return;
 
     setForm({
-      organizationName:
-        profile.data.organizationName || "",
-      registrationNumber:
-        profile.data.registrationNumber || "",
-      phoneNumber:
-        profile.data.phoneNumber || "",
+      organizationName: profile.data.organizationName || "",
+      registrationNumber: profile.data.registrationNumber || "",
+      phoneNumber: profile.data.phoneNumber || "",
       city: profile.data.city || "",
       area: profile.data.area || "",
       address: profile.data.address || "",
-      description:
-        profile.data.description || "",
+      description: profile.data.description || "",
     });
   }, [profile.data]);
 
@@ -111,8 +100,7 @@ export function OrganizationProfilePage() {
         queryKey: organizationKeys.dashboard,
       }),
       client.invalidateQueries({
-        queryKey:
-          organizationKeys.verification,
+        queryKey: organizationKeys.verification,
       }),
     ]);
 
@@ -122,9 +110,7 @@ export function OrganizationProfilePage() {
     onSuccess: async () => {
       setNotice({
         ok: true,
-        text: t(
-          "تم حفظ بيانات المنظمة بنجاح.",
-        ),
+        text: t("تم حفظ بيانات المنظمة بنجاح."),
       });
 
       await refresh();
@@ -143,9 +129,7 @@ export function OrganizationProfilePage() {
     onSuccess: async () => {
       setNotice({
         ok: true,
-        text: t(
-          "تم رفع المستند وإرساله للمراجعة بنجاح.",
-        ),
+        text: t("تم رفع المستند وإرساله للمراجعة بنجاح."),
       });
 
       setFile(null);
@@ -172,28 +156,17 @@ export function OrganizationProfilePage() {
     if (!file) {
       setNotice({
         ok: false,
-        text: t(
-          "اختر المستند الذي تريد رفعه.",
-        ),
+        text: t("اختر المستند الذي تريد رفعه."),
       });
       return;
     }
 
-    const extension = file.name
-      .split(".")
-      .pop()
-      ?.toLowerCase();
+    const extension = file.name.split(".").pop()?.toLowerCase();
 
-    if (
-      !["pdf", "png", "jpg", "jpeg"].includes(
-        extension,
-      )
-    ) {
+    if (!["pdf", "png", "jpg", "jpeg"].includes(extension)) {
       setNotice({
         ok: false,
-        text: t(
-          "الصيغ المقبولة هي PDF وPNG وJPG فقط.",
-        ),
+        text: t("الصيغ المقبولة هي PDF وPNG وJPG فقط."),
       });
       return;
     }
@@ -201,9 +174,7 @@ export function OrganizationProfilePage() {
     if (file.size > 10 * 1024 * 1024) {
       setNotice({
         ok: false,
-        text: t(
-          "يجب ألا يتجاوز حجم المستند 10 ميغابايت.",
-        ),
+        text: t("يجب ألا يتجاوز حجم المستند 10 ميغابايت."),
       });
       return;
     }
@@ -218,21 +189,14 @@ export function OrganizationProfilePage() {
     try {
       setDownloadingId(document.documentId);
 
-      const response =
-        await downloadVerificationDocument(
-          document.documentId,
-        );
+      const response = await downloadVerificationDocument(document.documentId);
 
-      const url = URL.createObjectURL(
-        response.data,
-      );
+      const url = URL.createObjectURL(response.data);
 
-      const anchor =
-        window.document.createElement("a");
+      const anchor = window.document.createElement("a");
 
       anchor.href = url;
-      anchor.download =
-        document.originalFileName;
+      anchor.download = document.originalFileName;
       anchor.click();
 
       URL.revokeObjectURL(url);
@@ -246,29 +210,14 @@ export function OrganizationProfilePage() {
     }
   };
 
-  if (
-    profile.isLoading ||
-    verification.isLoading
-  ) {
-    return (
-      <UserLoadingState
-        label={t(
-          "جاري تحميل ملف المنظمة...",
-        )}
-      />
-    );
+  if (profile.isLoading || verification.isLoading) {
+    return <UserLoadingState label={t("جاري تحميل ملف المنظمة...")} />;
   }
 
-  if (
-    profile.isError ||
-    verification.isError
-  ) {
+  if (profile.isError || verification.isError) {
     return (
       <UserErrorState
-        message={getApiErrorMessage(
-          profile.error ||
-            verification.error,
-        )}
+        message={getApiErrorMessage(profile.error || verification.error)}
         onRetry={() => {
           profile.refetch();
           verification.refetch();
@@ -277,13 +226,10 @@ export function OrganizationProfilePage() {
     );
   }
 
-  const verificationData =
-    verification.data;
+  const verificationData = verification.data;
 
   const status =
-    verificationMeta[
-      verificationData.verificationStatus
-    ] ||
+    verificationMeta[verificationData.verificationStatus] ||
     verificationMeta.PendingDocuments;
 
   return (
@@ -314,17 +260,12 @@ export function OrganizationProfilePage() {
         <div className="relative z-10 flex h-full items-center px-8">
           <div
             className={`flex min-w-0 flex-col items-start ${
-              isArabic
-                ? "text-right"
-                : "text-left"
+              isArabic ? "text-right" : "text-left"
             }`}
           >
             <div className="flex items-center gap-3">
               <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-white/10 text-white backdrop-blur-sm">
-                <FileText
-                  size={21}
-                  strokeWidth={1.8}
-                />
+                <FileText size={21} strokeWidth={1.8} />
               </span>
 
               <h1 className="text-[28px] font-bold leading-none text-white">
@@ -340,7 +281,7 @@ export function OrganizationProfilePage() {
           </div>
         </div>
       </section>
-            {/* Notice */}
+      {/* Notice */}
       {notice && (
         <div
           className={`rounded-xl border px-4 py-3 text-sm font-bold ${
@@ -482,12 +423,10 @@ export function OrganizationProfilePage() {
           >
             <Save size={16} />
 
-            {save.isPending
-              ? t("جاري الحفظ...")
-              : t("حفظ بيانات المنظمة")}
+            {save.isPending ? t("جاري الحفظ...") : t("حفظ بيانات المنظمة")}
           </button>
         </form>
-                {/* Verification side */}
+        {/* Verification side */}
         <div className="space-y-5">
           <section className="rounded-xl border border-[#DCE8EA] bg-white p-5 shadow-[0_8px_30px_rgba(23,75,87,.04)]">
             <div className="flex items-start justify-between gap-4">
@@ -496,13 +435,7 @@ export function OrganizationProfilePage() {
                   <ShieldCheck size={19} />
                 </span>
 
-                <div
-                  className={
-                    isArabic
-                      ? "text-right"
-                      : "text-left"
-                  }
-                >
+                <div className={isArabic ? "text-right" : "text-left"}>
                   <h2 className="font-bold text-[#29464D]">
                     {t("حالة التحقق")}
                   </h2>
@@ -514,25 +447,19 @@ export function OrganizationProfilePage() {
               </div>
 
               <VerificationBadge
-                status={
-                  verificationData.verificationStatus
-                }
+                status={verificationData.verificationStatus}
                 label={t(status.label)}
               />
             </div>
 
             <p
               className={`mt-4 text-sm leading-7 text-[#71858A] ${
-                isArabic
-                  ? "text-right"
-                  : "text-left"
+                isArabic ? "text-right" : "text-left"
               }`}
             >
               {verificationData.verificationNotes ||
                 (verificationData.isApproved
-                  ? t(
-                      "تم اعتماد المنظمة ويمكنها إدارة الحملات والطلبات.",
-                    )
+                  ? t("تم اعتماد المنظمة ويمكنها إدارة الحملات والطلبات.")
                   : t(
                       "ارفع المستندات الرسمية الواضحة ليتم إرسال الملف إلى المراجعة.",
                     ))}
@@ -556,11 +483,11 @@ export function OrganizationProfilePage() {
                 icon={CalendarDays}
                 label={t("تاريخ الإرسال")}
                 value={t(
-  formatOrgDate(
-    verificationData.verificationSubmittedAtUtc,
-    currentLanguage,
-  ),
-)}
+                  formatOrgDate(
+                    verificationData.verificationSubmittedAtUtc,
+                    currentLanguage,
+                  ),
+                )}
                 direction={direction}
               />
             </div>
@@ -570,13 +497,7 @@ export function OrganizationProfilePage() {
             onSubmit={submitDocument}
             className="rounded-xl border border-[#DCE8EA] bg-white p-5 shadow-[0_8px_30px_rgba(23,75,87,.04)]"
           >
-            <div
-              className={
-                isArabic
-                  ? "text-right"
-                  : "text-left"
-              }
-            >
+            <div className={isArabic ? "text-right" : "text-left"}>
               <h2 className="font-bold text-[#29464D]">
                 {t("رفع مستند تحقق")}
               </h2>
@@ -594,29 +515,17 @@ export function OrganizationProfilePage() {
                   {t("نوع المستند")}
                 </span>
 
-                <div
-                  dir={direction}
-                  className="relative"
-                >
+                <div dir={direction} className="relative">
                   <select
                     value={documentType}
-                    onChange={(event) =>
-                      setDocumentType(
-                        event.target.value,
-                      )
-                    }
+                    onChange={(event) => setDocumentType(event.target.value)}
                     className="h-11 w-full appearance-none rounded-lg border border-[#D8E5E7] bg-[#F8FBFB] pe-10 ps-3 text-sm font-medium text-[#47666D] outline-none transition hover:border-[#AFC9CD] focus:border-[#216474] focus:bg-white"
                   >
-                    {documentTypes.map(
-                      (item) => (
-                        <option
-                          key={item.value}
-                          value={item.value}
-                        >
-                          {t(item.label)}
-                        </option>
-                      ),
-                    )}
+                    {documentTypes.map((item) => (
+                      <option key={item.value} value={item.value}>
+                        {t(item.label)}
+                      </option>
+                    ))}
                   </select>
 
                   <ChevronDown
@@ -630,11 +539,7 @@ export function OrganizationProfilePage() {
                 <FileUp className="mx-auto text-[#216474]" />
 
                 <strong className="mt-2 block truncate text-sm text-[#36565D]">
-                  {file
-                    ? file.name
-                    : t(
-                        "اختر ملفًا من جهازك",
-                      )}
+                  {file ? file.name : t("اختر ملفًا من جهازك")}
                 </strong>
 
                 <small className="mt-1 block text-[#93A4A8]">
@@ -645,141 +550,93 @@ export function OrganizationProfilePage() {
                   type="file"
                   className="sr-only"
                   accept=".pdf,.png,.jpg,.jpeg"
-                  onChange={(event) =>
-                    setFile(
-                      event.target.files?.[0] ||
-                        null,
-                    )
-                  }
+                  onChange={(event) => setFile(event.target.files?.[0] || null)}
                 />
               </label>
 
               <button
                 type="submit"
-                disabled={
-                  upload.isPending || !file
-                }
+                disabled={upload.isPending || !file}
                 className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-[#CFE0E3] bg-white text-sm font-bold text-[#216474] transition hover:bg-[#EAF4F3] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {upload.isPending ? (
-                  <LoaderCircle
-                    size={16}
-                    className="animate-spin"
-                  />
+                  <LoaderCircle size={16} className="animate-spin" />
                 ) : (
                   <FileUp size={16} />
                 )}
 
                 {upload.isPending
                   ? t("جاري الرفع...")
-                  : t(
-                      "رفع وإرسال للمراجعة",
-                    )}
+                  : t("رفع وإرسال للمراجعة")}
               </button>
             </div>
           </form>
         </div>
       </section>
-            {/* Documents */}
+      {/* Documents */}
       <section className="rounded-xl border border-[#DCE8EA] bg-white p-6 shadow-[0_8px_30px_rgba(23,75,87,.04)]">
-        <div
-          className={
-            isArabic
-              ? "text-right"
-              : "text-left"
-          }
-        >
+        <div className={isArabic ? "text-right" : "text-left"}>
           <h2 className="text-lg font-bold text-[#29464D]">
             {t("المستندات المرفوعة")}
           </h2>
 
           <p className="mt-1 text-xs text-[#93A4A8]">
-            {t(
-              "النسخة الفعالة من كل مستند في ملف المنظمة",
-            )}
+            {t("النسخة الفعالة من كل مستند في ملف المنظمة")}
           </p>
         </div>
 
         <div className="mt-5 grid gap-3 md:grid-cols-2">
           {verificationData.documents.length ? (
-            verificationData.documents.map(
-              (document) => (
-                <article
-                  key={document.documentId}
-                  dir={direction}
-                  className="flex items-center gap-4 rounded-xl border border-[#E1EAEC] bg-[#FAFCFC] p-4"
+            verificationData.documents.map((document) => (
+              <article
+                key={document.documentId}
+                dir={direction}
+                className="flex items-center gap-4 rounded-xl border border-[#E1EAEC] bg-[#FAFCFC] p-4"
+              >
+                <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-[#E6F3F6] text-[#216474]">
+                  <FileCheck2 size={18} />
+                </span>
+
+                <div
+                  className={`min-w-0 flex-1 ${
+                    isArabic ? "text-right" : "text-left"
+                  }`}
                 >
-                  <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-[#E6F3F6] text-[#216474]">
-                    <FileCheck2 size={18} />
-                  </span>
+                  <h3 className="truncate text-sm font-bold text-[#36565D]">
+                    {t(documentTypeLabel(document.documentType))}
+                  </h3>
 
-                  <div
-                    className={`min-w-0 flex-1 ${
-                      isArabic
-                        ? "text-right"
-                        : "text-left"
-                    }`}
-                  >
-                    <h3 className="truncate text-sm font-bold text-[#36565D]">
-                      {t(
-                        documentTypeLabel(
-                          document.documentType,
-                        ),
-                      )}
-                    </h3>
+                  <p className="mt-1 truncate text-xs text-[#93A4A8]">
+                    {document.originalFileName}
+                    {" • "}
+                    {formatFileSize(document.fileSizeBytes)}
+                  </p>
+                </div>
 
-                    <p className="mt-1 truncate text-xs text-[#93A4A8]">
-                      {document.originalFileName}
-                      {" • "}
-                      {formatFileSize(
-                        document.fileSizeBytes,
-                      )}
-                    </p>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      download(document)
-                    }
-                    disabled={
-                      downloadingId ===
-                      document.documentId
-                    }
-                    className="grid size-9 shrink-0 place-items-center rounded-lg border border-[#D5E3E5] bg-white text-[#216474] transition hover:bg-[#EAF4F3] disabled:opacity-50"
-                    aria-label={t(
-                      "تنزيل {{fileName}}",
-                      {
-                        fileName:
-                          document.originalFileName,
-                      },
-                    )}
-                    title={t("تنزيل")}
-                  >
-                    {downloadingId ===
-                    document.documentId ? (
-                      <LoaderCircle
-                        size={16}
-                        className="animate-spin"
-                      />
-                    ) : (
-                      <Download size={16} />
-                    )}
-                  </button>
-                </article>
-              ),
-            )
+                <button
+                  type="button"
+                  onClick={() => download(document)}
+                  disabled={downloadingId === document.documentId}
+                  className="grid size-9 shrink-0 place-items-center rounded-lg border border-[#D5E3E5] bg-white text-[#216474] transition hover:bg-[#EAF4F3] disabled:opacity-50"
+                  aria-label={t("تنزيل {{fileName}}", {
+                    fileName: document.originalFileName,
+                  })}
+                  title={t("تنزيل")}
+                >
+                  {downloadingId === document.documentId ? (
+                    <LoaderCircle size={16} className="animate-spin" />
+                  ) : (
+                    <Download size={16} />
+                  )}
+                </button>
+              </article>
+            ))
           ) : (
             <div className="col-span-full rounded-xl border border-dashed border-[#CFE0E3] bg-[#FAFCFC] py-10 text-center">
-              <FileCheck2
-                size={28}
-                className="mx-auto text-[#8FA8AD]"
-              />
+              <FileCheck2 size={28} className="mx-auto text-[#8FA8AD]" />
 
               <p className="mt-3 text-sm text-[#829499]">
-                {t(
-                  "لم تُرفع مستندات تحقق بعد.",
-                )}
+                {t("لم تُرفع مستندات تحقق بعد.")}
               </p>
             </div>
           )}
@@ -789,10 +646,7 @@ export function OrganizationProfilePage() {
   );
 }
 
-function Field({
-  label,
-  children,
-}) {
+function Field({ label, children }) {
   return (
     <label>
       <span className="mb-2 block text-xs font-bold text-[#3F646C]">
@@ -804,32 +658,23 @@ function Field({
   );
 }
 
-function VerificationBadge({
-  status,
-  label,
-}) {
+function VerificationBadge({ status, label }) {
   const styles = {
-    Approved:
-      "border-[#C9E0E5] bg-[#EAF4F3] text-[#216474]",
+    Approved: "border-[#C9E0E5] bg-[#EAF4F3] text-[#216474]",
 
-    Verified:
-      "border-[#C9E0E5] bg-[#EAF4F3] text-[#216474]",
+    Verified: "border-[#C9E0E5] bg-[#EAF4F3] text-[#216474]",
 
-    UnderReview:
-      "border-[#D4E3E6] bg-[#F0F6F7] text-[#52727A]",
+    UnderReview: "border-[#D4E3E6] bg-[#F0F6F7] text-[#52727A]",
 
-    PendingDocuments:
-      "border-[#E8DDBE] bg-[#FFF8E8] text-[#A87818]",
+    PendingDocuments: "border-[#E8DDBE] bg-[#FFF8E8] text-[#A87818]",
 
-    Rejected:
-      "border-[#F1D4D7] bg-[#FFF1F2] text-[#C34A57]",
+    Rejected: "border-[#F1D4D7] bg-[#FFF1F2] text-[#C34A57]",
   };
 
   return (
     <span
       className={`shrink-0 rounded-full border px-3 py-1.5 text-[11px] font-bold ${
-        styles[status] ||
-        "border-[#D4E3E6] bg-[#F0F6F7] text-[#52727A]"
+        styles[status] || "border-[#D4E3E6] bg-[#F0F6F7] text-[#52727A]"
       }`}
     >
       {label}
@@ -837,25 +682,15 @@ function VerificationBadge({
   );
 }
 
-function InfoCard({
-  icon: Icon,
-  label,
-  value,
-  direction = "rtl",
-}) {
+function InfoCard({ icon: Icon, label, value, direction = "rtl" }) {
   return (
     <div
       dir={direction}
       className="rounded-xl border border-[#E1EAEC] bg-[#F8FBFB] p-3"
     >
-      <Icon
-        size={16}
-        className="text-[#216474]"
-      />
+      <Icon size={16} className="text-[#216474]" />
 
-      <span className="mt-2 block text-[10px] text-[#93A4A8]">
-        {label}
-      </span>
+      <span className="mt-2 block text-[10px] text-[#93A4A8]">{label}</span>
 
       <strong className="mt-1 block truncate text-xs text-[#36565D]">
         {value || "—"}
