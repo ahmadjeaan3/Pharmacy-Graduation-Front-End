@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { getPrimaryRole } from "../../../shared/config/roles";
 import { MedicineAlternativesButton } from "../../intelligence/components/MedicineAlternativesButton";
 import { useAuth } from "../../auth/hooks/useAuth";
@@ -56,6 +57,8 @@ import {
   recordSupplyPayment,
 } from "../api/supplyChainApi";
 
+const SUPPLY_HERO_IMAGE = "/assets/app/pharmacy.png";
+
 const labels = {
   Submitted: "طلب جديد",
   Accepted: "مقبول",
@@ -71,27 +74,64 @@ const labels = {
   Failed: "تعذر التسليم",
   Returned: "أعيدت للمستودع",
 };
-const money = (v) => `${Number(v || 0).toLocaleString("ar-SY")} ل.س`;
+const localeMap = {
+  ar: "ar-SY",
+  en: "en-US",
+  tr: "tr-TR",
+};
+
+const normalizeLanguage = (language = "ar") =>
+  String(language).split("-")[0].toLowerCase();
+
+const resolveLocale = (language = "ar") =>
+  localeMap[normalizeLanguage(language)] || localeMap.ar;
+
+const money = (value, language = "ar") => {
+  const lang = normalizeLanguage(language);
+  const locale = resolveLocale(lang);
+  const formatted = Number(value || 0).toLocaleString(locale, {
+    maximumFractionDigits: 2,
+  });
+  return `${formatted} ${lang === "ar" ? "ل.س" : "SYP"}`;
+};
+
+const formatDate = (value, language = "ar", withTime = false) => {
+  if (!value) return "";
+  return new Intl.DateTimeFormat(
+    resolveLocale(language),
+    withTime
+      ? { dateStyle: "medium", timeStyle: "short" }
+      : { dateStyle: "medium" },
+  ).format(new Date(value));
+};
+
 const tone = (s) =>
   s === "Delivered"
-    ? "bg-emerald-50 text-emerald-700"
+    ? "bg-[#EAF4F3] text-[#174B57]"
     : ["Rejected", "Cancelled"].includes(s)
-      ? "bg-rose-50 text-rose-700"
-      : "bg-amber-50 text-amber-700";
+      ? "bg-[#FFF1F2] text-[#E11D48]"
+      : "bg-[#FFF7DF] text-[#DFAE0D]";
 
-function Stat({ icon: Icon, label, value, hint, className }) {
+function Stat({ icon: Icon, label, value, hint, className, isArabic = true, currentLanguage = "ar" }) {
   return (
-    <article className="surface p-5">
+    <article className="relative min-h-[145px] overflow-hidden rounded-[1.35rem] border border-[#DCE8EA] bg-white p-5 shadow-[0_10px_30px_rgba(23,75,87,.04)]">
       <span
-        className={`grid size-12 place-items-center rounded-2xl ${className}`}
+        className={`absolute top-5 grid size-11 place-items-center rounded-xl ${
+          isArabic ? "right-5" : "left-5"
+        } ${className}`}
       >
-        <Icon size={22} />
+        <Icon size={20} strokeWidth={1.8} />
       </span>
-      <strong className="mt-5 block text-3xl font-black">
-        {Number(value || 0).toLocaleString("ar-SY")}
-      </strong>
-      <p className="mt-1 font-extrabold">{label}</p>
-      <p className="mt-1 text-xs text-[#829499]">{hint}</p>
+
+      <div className={isArabic ? "pr-16 text-right" : "pl-16 text-left"}>
+        <p className="text-[12px] font-semibold text-[#71858A]">{label}</p>
+
+        <strong className="mt-3 block text-[28px] font-black leading-none text-[#17363E]">
+          {Number(value || 0).toLocaleString(resolveLocale(currentLanguage))}
+        </strong>
+
+        <p className="mt-4 text-[11px] leading-5 text-[#A5A5A5]">{hint}</p>
+      </div>
     </article>
   );
 }
@@ -102,6 +142,9 @@ function OrderCard({
   busy,
   representatives = [],
   onDetails,
+  t,
+  currentLanguage,
+  isArabic,
 }) {
   const next =
     role === "Warehouse"
@@ -120,45 +163,45 @@ function OrderCard({
   const visibleStatus =
     order.shipment?.status === "Arrived" ? "Arrived" : order.status;
   return (
-    <article className="rounded-[1.5rem] border border-[#174b57]/8 bg-white p-5 shadow-[0_12px_35px_rgba(18,63,73,.07)]">
+    <article className="rounded-[1.35rem] border border-[#DCE8EA] bg-white p-5 shadow-[0_10px_28px_rgba(23,75,87,.04)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_34px_rgba(23,75,87,.07)]">
       <div className="flex flex-wrap justify-between gap-3">
         <div>
-          <p className="font-mono text-xs font-black text-[#287184]">
+          <p className="font-mono text-xs font-black text-[#216474]">
             {order.orderCode}
           </p>
           <h3 className="mt-2 text-lg font-black">
             {role === "Pharmacy" ? order.warehouseName : order.pharmacyName}
           </h3>
           <p className="mt-1 text-xs text-[#829499]">
-            {new Date(order.createdAtUtc).toLocaleString("ar-SY")}
+            {formatDate(order.createdAtUtc, currentLanguage, true)}
           </p>
         </div>
         <span
           className={`h-fit rounded-full px-3 py-1.5 text-xs font-black ${tone(visibleStatus)}`}
         >
-          {labels[visibleStatus] || visibleStatus}
+          {t(labels[visibleStatus] || visibleStatus)}
         </span>
       </div>
       <div className="my-4 grid gap-2 sm:grid-cols-2">
         {order.items.map((i) => (
           <div
             key={i.id}
-            className="rounded-xl bg-[#f5f9f8] px-3 py-2.5 text-sm"
+            className="rounded-xl bg-[#F8FBFB] px-3 py-2.5 text-sm"
           >
             <b>{i.medicineName}</b>
             <span className="float-left">× {i.approvedQuantity}</span>
-            <p className="mt-1 text-[11px] text-[#8a9ba0]">
-              {i.batchNumber && `دفعة ${i.batchNumber}`}
+            <p className="mt-1 text-[11px] text-[#829499]">
+              {i.batchNumber && `${t("دفعة")} ${i.batchNumber}`}
             </p>
           </div>
         ))}
       </div>
-      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#174b57]/8 pt-4">
-        <strong>{money(order.totalAmount)}</strong>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#174B57]/8 pt-4">
+        <strong>{money(order.totalAmount, currentLanguage)}</strong>
         <div className="flex flex-wrap gap-2">
           <button onClick={() => onDetails(order)} className="btn-secondary">
             <Eye size={17} />
-            عرض التفاصيل
+            {t("عرض التفاصيل")}
           </button>
           {next && (
             <button
@@ -173,7 +216,7 @@ function OrderCard({
               className="btn-primary"
             >
               <PackageCheck size={17} />
-              {labels[next] || next}
+              {t(labels[next] || next)}
             </button>
           )}
           {role === "Warehouse" &&
@@ -193,8 +236,8 @@ function OrderCard({
               >
                 <Truck size={17} />
                 {representatives.some((r) => r.isAvailable)
-                  ? "إسناد لمندوب متاح"
-                  : "لا يوجد مندوب متاح"}
+                  ? t("إسناد لمندوب متاح")
+                  : t("لا يوجد مندوب متاح")}
               </button>
             )}
         </div>
@@ -202,16 +245,16 @@ function OrderCard({
       {role === "Pharmacy" &&
         order.shipment?.pickupQrToken &&
         order.status !== "Delivered" && (
-          <div className="mt-4 flex flex-col items-center rounded-2xl border border-dashed border-[#287184]/30 bg-[#f7fbfa] p-4">
+          <div className="mt-4 flex flex-col items-center rounded-2xl border border-dashed border-[#216474]/30 bg-[#F8FBFB] p-4">
             {order.shipment.status === "Arrived" ? (
               <>
                 <QRCodeSVG
                   value={order.shipment.pickupQrToken}
                   size={112}
-                  fgColor="#123f49"
+                  fgColor="#174B57"
                 />
                 <p className="mt-3 text-xs font-bold">
-                  رمز استلام آمن — تحقق من الأدوية ثم أكد الاستلام
+                  {t("رمز استلام آمن — تحقق من الأدوية ثم أكد الاستلام")}
                 </p>
                 <button
                   onClick={() =>
@@ -224,17 +267,17 @@ function OrderCard({
                   className="btn-primary mt-3"
                 >
                   <ScanLine size={17} />
-                  تأكيد الاستلام وإضافة الكمية للمخزون
+                  {t("تأكيد الاستلام وإضافة الكمية للمخزون")}
                 </button>
               </>
             ) : (
               <>
-                <Truck className="text-[#287184]" />
+                <Truck className="text-[#216474]" />
                 <p className="mt-3 text-sm font-black">
-                  الشحنة قيد التجهيز أو التوصيل
+                  {t("الشحنة قيد التجهيز أو التوصيل")}
                 </p>
                 <p className="mt-1 text-xs text-[#829499]">
-                  سيظهر رمز التأكيد عند وصول المندوب إلى الصيدلية.
+                  {t("سيظهر رمز التأكيد عند وصول المندوب إلى الصيدلية.")}
                 </p>
               </>
             )}
@@ -244,6 +287,17 @@ function OrderCard({
   );
 }
 export function SupplyChainWorkspacePage() {
+  const { t, i18n } = useTranslation();
+
+  const currentLanguage = normalizeLanguage(
+    i18n.resolvedLanguage ||
+      i18n.language ||
+      "ar",
+  );
+
+  const isArabic = currentLanguage === "ar";
+  const direction = isArabic ? "rtl" : "ltr";
+
   const { user } = useAuth();
   const role = getPrimaryRole(user.roles);
   const qc = useQueryClient();
@@ -375,22 +429,24 @@ export function SupplyChainWorkspacePage() {
     mutation.mutate({ type, id, value });
   };
   const d = dashboard.data;
-  const title =
+  const title = t(
     role === "Warehouse"
       ? "مركز قيادة سلسلة التوريد"
       : role === "Representative"
         ? "مسار المندوب الذكي"
         : role === "Admin"
           ? "مراقبة سلسلة التوريد"
-          : "سوق توريد الصيدلية";
-  const sub =
+          : "سوق توريد الصيدلية",
+  );
+  const sub = t(
     role === "Warehouse"
       ? "راقب الدُفعات والطلبات والتوصيل والاستدعاءات من لوحة موحّدة."
       : role === "Representative"
         ? "مهام واضحة، تتبّع لحظي وتسليم موثّق بالرمز."
         : role === "Admin"
           ? "تابع طلبات التوريد والشحنات بين المستودعات والصيدليات."
-          : "قارن المستودعات، أعد تعبئة النواقص وتابع الشحنة حتى الاستلام.";
+          : "قارن المستودعات، أعد تعبئة النواقص وتابع الشحنة حتى الاستلام.",
+  );
   const tabs = [
     "orders",
     "invoices",
@@ -401,76 +457,121 @@ export function SupplyChainWorkspacePage() {
         : []),
   ];
   return (
-    <div>
-      <section className="relative overflow-hidden rounded-[2.2rem] bg-[linear-gradient(125deg,#0d3943,#176173)] p-7 text-white shadow-[0_28px_80px_rgba(18,63,73,.22)] lg:p-10">
-        <div className="absolute -start-20 -top-24 size-72 rounded-full border-[45px] border-white/[.04]" />
-        <div className="relative flex flex-col justify-between gap-7 lg:flex-row lg:items-center">
-          <div>
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-bold text-[#8edbd5]">
-              <Sparkles size={14} />
-              شبكة حياة دوائية B2B
-            </span>
-            <h1 className="mt-5 text-3xl font-black lg:text-5xl">{title}</h1>
-            <p className="mt-3 max-w-2xl text-sm leading-7 text-white/62">
-              {sub}
-            </p>
+    <div dir={direction} lang={currentLanguage}>
+           <section className="relative isolate min-h-[220px] overflow-hidden rounded-[14px] text-white shadow-[0_22px_55px_rgba(23,75,87,.16)]
+sm:min-h-[230px]
+lg:min-h-[250px]">
+        <img
+          src={SUPPLY_HERO_IMAGE}
+          alt=""
+          aria-hidden="true"
+          className={`absolute inset-0 h-full w-full object-cover object-[center_38%] ${isArabic ? "scale-x-[-1]" : ""}`}
+        />
+
+        <div
+          className="absolute inset-0"
+          style={{
+            background: isArabic
+              ? "linear-gradient(270deg, #10505A 0%, rgba(16,80,90,.90) 38%, rgba(33,100,116,.48) 70%, rgba(33,100,116,.08) 100%)"
+              : "linear-gradient(90deg, #10505A 0%, rgba(16,80,90,.90) 38%, rgba(33,100,116,.48) 70%, rgba(33,100,116,.08) 100%)",
+          }}
+        />
+
+        <div className="relative z-10 flex min-h-[190px] flex-col justify-between gap-6 px-6 py-6 sm:min-h-[205px] lg:min-h-[220px] lg:flex-row lg:items-center lg:px-8">
+          <div className={`min-w-0 ${isArabic ? "text-right" : "text-left"}`}>
+            <div className="flex items-center gap-3">
+              <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-white/[.10] text-[#E6F3F6] backdrop-blur-sm">
+                <Truck size={25} strokeWidth={1.8} />
+              </span>
+
+              <div>
+                <p className="text-xs font-bold text-[#E6F3F6]/80">
+                  {t("شبكة حياة دوائية B2B")}
+                </p>
+
+                <h1 className="mt-1 text-[24px] font-black text-white sm:text-[28px]">
+                  {title}
+                </h1>
+
+                <p className="mt-1 max-w-2xl text-xs leading-6 text-[#D6D6D6] sm:text-sm">
+                  {sub}
+                </p>
+              </div>
+            </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-2xl border border-white/10 bg-white/[.07] p-4">
-              <Truck className="text-[#f5cb72]" />
-              <b className="mt-3 block">
+
+          <div className="grid w-full gap-3 sm:grid-cols-2 lg:w-auto lg:min-w-[280px]">
+            <div className={`relative min-h-[88px] rounded-[12px] border border-[rgba(102,102,102,.16)] bg-[rgba(2,77,82,.56)] p-4 backdrop-blur-[10px] ${isArabic ? "pl-14 text-right" : "pr-14 text-left"}`}>
+              <span className={`absolute top-1/2 grid size-9 -translate-y-1/2 place-items-center mt-2 rounded-lg text-[#F5CB72] ${isArabic ? "left-4 ml-2" : "right-4 mr-2"}`}>
+                <Truck size={22} strokeWidth={1.8}  />
+              </span>
+
+              <p className="text-xs text-[#D6D6D6]">{t("شحنات جارية")}</p>
+
+              <strong className="mt-2 block text-2xl font-black text-[#E6F3F6]">
                 {orders.data?.filter((x) => x.status === "OutForDelivery")
                   .length || 0}
-              </b>
-              <small className="text-white/50">شحنات جارية</small>
+              </strong>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-white/[.07] p-4">
-              <CheckCircle2 className="text-[#8edbd5]" />
-              <b className="mt-3 block">
+
+            <div className={`relative min-h-[88px] rounded-[12px] border border-[rgba(102,102,102,.16)] bg-[rgba(2,77,82,.56)] p-4 backdrop-blur-[10px] ${isArabic ? "pl-14 text-right" : "pr-14 text-left"}`}>
+              <span className={`absolute top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-lg mt-2 text-[#E6F3F6] ${isArabic ? "left-4 ml-2" : "right-4 mr-2"}`}>
+                <CheckCircle2 size={22} strokeWidth={1.8} />
+              </span>
+
+              <p className="text-xs text-[#D6D6D6]">{t("تم تسليمها")}</p>
+
+              <strong className="mt-2 block text-2xl font-black text-[#E6F3F6]">
                 {orders.data?.filter((x) => x.status === "Delivered").length ||
                   0}
-              </b>
-              <small className="text-white/50">تم تسليمها</small>
+              </strong>
             </div>
           </div>
         </div>
       </section>
       {role === "Warehouse" && dashboard.isError && (
-        <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm font-bold text-amber-800">
+        <div className="mt-5 rounded-2xl border border-[#F5CB72]/45 bg-amber-50 p-5 text-sm font-bold text-amber-800">
           <AlertTriangle className="me-2 inline" size={18} />
-          تعذر تحميل مؤشرات المستودع. تأكد من اعتماد الحساب وتطبيق تحديث قاعدة
-          البيانات، ثم أعد المحاولة.
+          {t("تعذر تحميل مؤشرات المستودع. تأكد من اعتماد الحساب وتطبيق تحديث قاعدة البيانات، ثم أعد المحاولة.")}
         </div>
       )}
       {role === "Warehouse" && d && (
         <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <Stat
             icon={Boxes}
-            label="دفعات فعالة"
+            label={t("دفعات فعالة")}
             value={d.activeBatches}
-            hint={`${d.lowStockBatches} تحتاج تعبئة`}
-            className="bg-cyan-50 text-cyan-700"
+            hint={t("{{count}} تحتاج تعبئة", { count: d.lowStockBatches })}
+            className="bg-[#EAF4F3] text-[#216474]"
+            isArabic={isArabic}
+            currentLanguage={currentLanguage}
           />
           <Stat
             icon={Clock3}
-            label="قريبة الانتهاء"
+            label={t("قريبة الانتهاء")}
             value={d.expiringBatches}
-            hint="خلال 90 يومًا"
-            className="bg-amber-50 text-amber-700"
+            hint={t("خلال 90 يومًا")}
+            className="bg-[#FFF7DF] text-[#DFAE0D]"
+            isArabic={isArabic}
+            currentLanguage={currentLanguage}
           />
           <Stat
             icon={ShoppingCart}
-            label="طلبات معلقة"
+            label={t("طلبات معلقة")}
             value={d.pendingOrders}
-            hint="بانتظار الإجراء"
-            className="bg-violet-50 text-violet-700"
+            hint={t("بانتظار الإجراء")}
+            className="bg-[#F0F6F7] text-[#216474]"
+            isArabic={isArabic}
+            currentLanguage={currentLanguage}
           />
           <Stat
             icon={Route}
-            label="توصيلات فعالة"
+            label={t("توصيلات فعالة")}
             value={d.activeDeliveries}
-            hint={money(d.inventoryValue)}
-            className="bg-emerald-50 text-emerald-700"
+            hint={money(d.inventoryValue, currentLanguage)}
+            className="bg-[#EAF4F3] text-[#174B57]"
+            isArabic={isArabic}
+            currentLanguage={currentLanguage}
           />
         </div>
       )}
@@ -479,9 +580,9 @@ export function SupplyChainWorkspacePage() {
           <button
             key={x}
             onClick={() => setTab(x)}
-            className={`rounded-xl px-5 py-3 text-sm font-black ${tab === x ? "bg-[#123f49] text-white shadow-lg" : "bg-white text-[#60777c]"}`}
+            className={`rounded-xl px-5 py-3 text-sm font-black ${tab === x ? "bg-[#174B57] text-white shadow-lg" : "bg-white text-[#60777D]"}`}
           >
-            {
+            {t(
               {
                 orders: "الطلبات والشحنات",
                 invoices: "الفواتير والمدفوعات",
@@ -489,24 +590,24 @@ export function SupplyChainWorkspacePage() {
                 team: "فريق المندوبين",
                 marketplace: "المستودعات",
                 suggestions: "اقتراحات ذكية",
-              }[x]
-            }
+              }[x],
+            )}
           </button>
         ))}
       </div>
       {mutation.isError && (
-        <div className="mt-4 flex items-start gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm font-bold text-rose-700">
+        <div className="mt-4 flex items-start gap-3 rounded-2xl border border-[#FECDD3] bg-rose-50 p-4 text-sm font-bold text-[#E11D48]">
           <AlertTriangle className="mt-0.5 shrink-0" size={18} />
           <div className="flex-1">
             <p>
               {mutation.error?.response?.data?.error ||
                 mutation.error?.response?.data?.detail ||
                 mutation.error?.message ||
-                "تعذر تنفيذ الإجراء. تحقق من حالة المندوب والطلب ثم حاول مجددًا."}
+                t("تعذر تنفيذ الإجراء. تحقق من حالة المندوب والطلب ثم حاول مجددًا.")}
             </p>
             {mutation.error?.response?.data?.traceId && (
               <p className="mt-2 font-mono text-[10px] font-normal opacity-70">
-                رقم التتبع: {mutation.error.response.data.traceId}
+                {t("رقم التتبع")}: {mutation.error.response.data.traceId}
               </p>
             )}
           </div>
@@ -514,7 +615,7 @@ export function SupplyChainWorkspacePage() {
             type="button"
             onClick={() => mutation.reset()}
             aria-label="إخفاء رسالة الخطأ"
-            className="grid size-8 shrink-0 place-items-center rounded-lg hover:bg-rose-100"
+            className="grid size-8 shrink-0 place-items-center rounded-lg hover:bg-[#FFE4E6]"
           >
             <X size={17} />
           </button>
@@ -526,12 +627,12 @@ export function SupplyChainWorkspacePage() {
             {orders.isLoading ? (
               <div className="surface col-span-full p-12 text-center">
                 <Clock3 className="mx-auto animate-pulse" />
-                <h3 className="mt-3 font-black">جاري تحميل المهام...</h3>
+                <h3 className="mt-3 font-black">{t("جاري تحميل المهام...")}</h3>
               </div>
             ) : orders.isError ? (
-              <div className="surface col-span-full border border-rose-200 p-12 text-center">
-                <AlertTriangle className="mx-auto text-rose-600" />
-                <h3 className="mt-3 font-black text-rose-700">
+              <div className="surface col-span-full border border-[#FECDD3] p-12 text-center">
+                <AlertTriangle className="mx-auto text-[#E11D48]" />
+                <h3 className="mt-3 font-black text-[#E11D48]">
                   تعذر تحميل الطلبات والشحنات
                 </h3>
                 <p className="mt-2 text-sm text-[#829499]">
@@ -557,12 +658,15 @@ export function SupplyChainWorkspacePage() {
                   busy={mutation.isPending}
                   representatives={reps.data || []}
                   onDetails={setDetailsOrder}
+                  t={t}
+                  currentLanguage={currentLanguage}
+                  isArabic={isArabic}
                 />
               ))
             ) : (
               <div className="surface col-span-full p-12 text-center">
                 <ShoppingCart className="mx-auto" />
-                <h3 className="mt-3 font-black">لا توجد طلبات بعد</h3>
+                <h3 className="mt-3 font-black">{t("لا توجد طلبات بعد")}</h3>
                 <p className="mt-2 text-sm text-[#829499]">
                   {role === "Warehouse"
                     ? "ستظهر هنا طلبات التوريد الواردة من الصيدليات."
@@ -583,7 +687,7 @@ export function SupplyChainWorkspacePage() {
           <div className="surface p-5">
             <div className="mb-5 flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-black">دفعات الأدوية</h2>
+                <h2 className="text-lg font-black">{t("دفعات الأدوية")}</h2>
                 <p className="mt-1 text-xs text-[#829499]">
                   الكميات المحجوزة والصلاحية والتسعير بالجملة
                 </p>
@@ -600,11 +704,11 @@ export function SupplyChainWorkspacePage() {
               {batches.data?.map((b) => (
                 <article
                   key={b.id}
-                  className="rounded-2xl border border-[#174b57]/8 p-4"
+                  className="rounded-2xl border border-[#174B57]/8 p-4"
                 >
                   <div className="flex justify-between">
                     <span
-                      className={`rounded-full px-2.5 py-1 text-[11px] font-black ${b.health === "Healthy" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}
+                      className={`rounded-full px-2.5 py-1 text-[11px] font-black ${b.health === "Healthy" ? "bg-[#EAF4F3] text-[#174B57]" : "bg-[#FFF7DF] text-[#DFAE0D]"}`}
                     >
                       {b.health}
                     </span>
@@ -619,20 +723,20 @@ export function SupplyChainWorkspacePage() {
                       المتاح <b>{b.sellableQuantity}</b> / المحجوز{" "}
                       {b.quantityReserved}
                     </span>
-                    <span>{money(b.wholesalePrice)}</span>
+                    <span>{money(b.wholesalePrice, currentLanguage)}</span>
                   </div>
                   <p className="mt-3 text-xs text-[#829499]">
                     الصلاحية:{" "}
-                    {new Date(b.expiryDateUtc).toLocaleDateString("ar-SY")}
+                    {new Date(b.expiryDateUtc).toLocaleDateString(resolveLocale(currentLanguage))}
                   </p>
                   <MedicineAlternativesButton
                     medicineName={b.medicineName}
-                    className="mt-4 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-violet-100 bg-violet-50 px-3 text-xs font-black text-violet-700 transition hover:-translate-y-0.5 hover:bg-violet-100"
+                    className="mt-4 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-[#DCE8EA] bg-violet-50 px-3 text-xs font-black text-violet-700 transition hover:-translate-y-0.5 hover:bg-[#EAF4F3]"
                   />
                 </article>
               ))}
               {!batches.data?.length && (
-                <div className="col-span-full rounded-2xl bg-[#f7faf9] p-10 text-center text-sm text-[#71858a]">
+                <div className="col-span-full rounded-2xl bg-[#F8FBFB] p-10 text-center text-sm text-[#71858A]">
                   لا توجد دفعات. أضف أول دفعة لتصبح الأدوية متاحة للصيدليات.
                 </div>
               )}
@@ -643,7 +747,7 @@ export function SupplyChainWorkspacePage() {
           <div>
             <div className="mb-4 flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-black">فريق التوزيع</h2>
+                <h2 className="text-lg font-black">{t("فريق التوزيع")}</h2>
                 <p className="mt-1 text-xs text-[#829499]">
                   حساب مستقل وآمن لكل مندوب
                 </p>
@@ -660,25 +764,25 @@ export function SupplyChainWorkspacePage() {
               {reps.data?.map((r) => (
                 <article key={r.id} className="surface p-5">
                   <div className="flex items-start justify-between">
-                    <span className="grid size-12 place-items-center rounded-2xl bg-[#eaf5f3]">
+                    <span className="grid size-12 place-items-center rounded-2xl bg-[#EAF4F3]">
                       <UserRoundCheck />
                     </span>
                     <span
                       className={`rounded-full px-3 py-1 text-[11px] font-black ${
                         !r.isEnabled
-                          ? "bg-rose-50 text-rose-700"
+                          ? "bg-[#FFF1F2] text-[#E11D48]"
                           : r.isAvailable
-                            ? "bg-emerald-50 text-emerald-700"
-                            : "bg-amber-50 text-amber-700"
+                            ? "bg-[#EAF4F3] text-[#174B57]"
+                            : "bg-[#FFF7DF] text-[#DFAE0D]"
                       }`}
                     >
                       {!r.isEnabled
-                        ? "موقوف"
+                        ? t("موقوف")
                         : r.isAvailable
-                          ? "متاح للتكليف"
+                          ? t("متاح للتكليف")
                           : r.isOnShift
-                            ? "مشغول"
-                            : "خارج الوردية"}
+                            ? t("مشغول")
+                            : t("خارج الوردية")}
                     </span>
                   </div>
                   <h3 className="mt-4 font-black">{r.fullName}</h3>
@@ -686,32 +790,32 @@ export function SupplyChainWorkspacePage() {
                     {r.employeeCode} · {r.vehiclePlateNumber || "دون مركبة"}
                   </p>
                   <div className="mt-4 grid grid-cols-2 gap-2 text-center text-xs">
-                    <div className="rounded-xl bg-[#f6f9f8] p-3">
+                    <div className="rounded-xl bg-[#F8FBFB] p-3">
                       <b className="block text-base">{r.activeDeliveries}</b>
                       شحنات فعالة
                     </div>
-                    <div className="rounded-xl bg-[#f6f9f8] p-3">
+                    <div className="rounded-xl bg-[#F8FBFB] p-3">
                       <b className="block text-base">{r.completedDeliveries}</b>
                       مكتملة
                     </div>
                   </div>
-                  <p className="mt-3 text-xs text-[#71858a]">
+                  <p className="mt-3 text-xs text-[#71858A]">
                     الوردية:{" "}
                     {r.shiftStart && r.shiftEnd
                       ? `${String(r.shiftStart).slice(0, 5)} — ${String(r.shiftEnd).slice(0, 5)}`
-                      : "دوام مفتوح"}
+                      : t("دوام مفتوح")}
                   </p>
                   <button
                     onClick={() => setRepresentativeToEdit(r)}
                     className="btn-secondary mt-4 w-full justify-center"
                   >
                     <Pencil size={16} />
-                    إدارة الحساب والدوام
+                    {t("إدارة الحساب والدوام")}
                   </button>
                 </article>
               ))}
               {!reps.data?.length && (
-                <div className="surface col-span-full p-10 text-center text-sm text-[#71858a]">
+                <div className="surface col-span-full p-10 text-center text-sm text-[#71858A]">
                   لم تتم إضافة مندوبين بعد.
                 </div>
               )}
@@ -756,17 +860,17 @@ export function SupplyChainWorkspacePage() {
                 key={i.medicineId}
                 className="surface flex items-center gap-4 p-5"
               >
-                <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-amber-50 text-amber-700">
+                <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[#FFF7DF] text-[#DFAE0D]">
                   <AlertTriangle />
                 </span>
                 <div>
                   <h3 className="font-black">{i.medicineName}</h3>
                   <p className="mt-1 text-xs text-[#829499]">
-                    المتوفر {i.currentQuantity} · المقترح {i.suggestedQuantity}
+                    {t("المتوفر")} {i.currentQuantity} · {t("المقترح")} {i.suggestedQuantity}
                   </p>
-                  <p className="mt-2 text-sm font-bold text-[#287184]">
-                    {i.recommendedWarehouseName || "لا يوجد مستودع متاح"}{" "}
-                    {i.bestPrice ? `· ${money(i.bestPrice)}` : ""}
+                  <p className="mt-2 text-sm font-bold text-[#216474]">
+                    {i.recommendedWarehouseName || t("لا يوجد مستودع متاح")}{" "}
+                    {i.bestPrice ? `· ${money(i.bestPrice, currentLanguage)}` : ""}
                   </p>
                 </div>
               </article>
@@ -845,6 +949,13 @@ function OrderDetailsDialog({
   onAction,
   onClose,
 }) {
+  const { t, i18n } = useTranslation();
+  const currentLanguage = normalizeLanguage(
+    i18n.resolvedLanguage || i18n.language || "ar",
+  );
+  const isArabic = currentLanguage === "ar";
+  const direction = isArabic ? "rtl" : "ltr";
+
   const [representativeId, setRepresentativeId] = useState(
     representatives.find((x) => x.isAvailable)?.id || "",
   );
@@ -882,9 +993,11 @@ function OrderDetailsDialog({
         onMouseDown={(event) => event.stopPropagation()}
         role="dialog"
         aria-modal="true"
-        className="max-h-[94vh] w-full max-w-4xl overflow-auto rounded-[1.8rem] bg-[#f7faf9] shadow-2xl"
+        className="max-h-[94vh] w-full max-w-4xl overflow-auto rounded-[1.8rem] bg-[#F8FBFB] shadow-2xl"
+        dir={direction}
+        lang={currentLanguage}
       >
-        <header className="relative overflow-hidden bg-[linear-gradient(125deg,#123f49,#216474)] p-6 text-white">
+        <header className="relative overflow-hidden bg-[linear-gradient(270deg,#10505A_0%,#216474_100%)] p-6 text-white">
           <div className="pointer-events-none absolute -end-14 -top-20 size-52 rounded-full border-[28px] border-white/[.04]" />
           <button
             type="button"
@@ -895,7 +1008,7 @@ function OrderDetailsDialog({
             <X />
           </button>
           <div className="relative z-10 pe-14">
-            <p className="font-mono text-xs font-black text-[#8edbd5]">
+            <p className="font-mono text-xs font-black text-[#E6F3F6]">
               {order.orderCode}
             </p>
             <div className="mt-3 flex flex-wrap items-center gap-3">
@@ -905,19 +1018,19 @@ function OrderDetailsDialog({
               <span
                 className={`rounded-full px-3 py-1 text-xs font-black ${tone(order.status)}`}
               >
-                {labels[order.status] || order.status}
+                {t(labels[order.status] || order.status)}
               </span>
             </div>
             <p className="mt-2 flex items-center gap-2 text-sm text-white/55">
               <CalendarDays size={15} />
-              {new Date(order.createdAtUtc).toLocaleString("ar-SY")}
+              {formatDate(order.createdAtUtc, currentLanguage, true)}
             </p>
           </div>
         </header>
         <div className="grid gap-5 p-5 lg:grid-cols-[1fr_310px]">
           <main className="space-y-5">
             <section className="surface p-5">
-              <h3 className="font-black">مراحل معالجة الطلب</h3>
+              <h3 className="font-black">{t("مراحل معالجة الطلب")}</h3>
               <div className="mt-5 flex items-start">
                 {steps.map((step, index) => (
                   <div
@@ -934,8 +1047,8 @@ function OrderDetailsDialog({
                         className={`absolute start-1/2 top-3.5 h-1 w-full ${index < current ? "bg-[#5eb3ad]" : "bg-slate-200"}`}
                       />
                     )}
-                    <span className="relative z-10 mt-2 hidden text-[10px] font-bold text-[#60777c] sm:block">
-                      {labels[step]}
+                    <span className="relative z-10 mt-2 hidden text-[10px] font-bold text-[#60777D] sm:block">
+                      {t(labels[step])}
                     </span>
                   </div>
                 ))}
@@ -944,14 +1057,14 @@ function OrderDetailsDialog({
             <section className="surface p-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-black">تفاصيل الأدوية</h3>
+                  <h3 className="font-black">{t("تفاصيل الأدوية")}</h3>
                   <p className="mt-1 text-xs text-[#829499]">
                     {order.items.length} بنود ضمن الطلب
                   </p>
                 </div>
                 <Boxes className="text-[#216474]" />
               </div>
-              <div className="mt-4 overflow-hidden rounded-2xl border border-[#174b57]/8">
+              <div className="mt-4 overflow-hidden rounded-2xl border border-[#174B57]/8">
                 {order.items.map((item, index) => (
                   <div
                     key={item.id}
@@ -962,20 +1075,20 @@ function OrderDetailsDialog({
                       <p className="mt-1 text-xs text-[#829499]">
                         {item.batchNumber
                           ? `رقم الدفعة: ${item.batchNumber}`
-                          : "لم تحدد الدفعة"}
+                          : t("لم تحدد الدفعة")}
                       </p>
                     </div>
                     <span>
                       الكمية: <b>{item.approvedQuantity}</b>
                     </span>
-                    <b>{money(item.unitPrice * item.approvedQuantity)}</b>
+                    <b>{money(item.unitPrice * item.approvedQuantity, currentLanguage)}</b>
                   </div>
                 ))}
               </div>
             </section>
             {order.shipment && (
               <section className="surface p-5">
-                <h3 className="font-black">بيانات الشحنة والتتبع</h3>
+                <h3 className="font-black">{t("بيانات الشحنة والتتبع")}</h3>
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   <InfoBox
                     label="رقم الشحنة"
@@ -983,7 +1096,7 @@ function OrderDetailsDialog({
                   />
                   <InfoBox
                     label="المندوب"
-                    value={order.shipment.representativeName || "لم يحدد"}
+                    value={order.shipment.representativeName || t("لم يحدد")}
                   />
                   <InfoBox
                     label="حالة الشحنة"
@@ -997,8 +1110,8 @@ function OrderDetailsDialog({
                       order.shipment.dispatchedAtUtc
                         ? new Date(
                             order.shipment.dispatchedAtUtc,
-                          ).toLocaleString("ar-SY")
-                        : "لم تنطلق"
+                          ).toLocaleString(resolveLocale(currentLanguage))
+                        : t("لم تنطلق")
                     }
                   />
                 </div>
@@ -1007,11 +1120,11 @@ function OrderDetailsDialog({
                     {order.shipment.tracking.map((event, index) => (
                       <div
                         key={`${event.occurredAtUtc}-${index}`}
-                        className="flex gap-3 rounded-xl bg-[#f7faf9] p-3 text-sm"
+                        className="flex gap-3 rounded-xl bg-[#F8FBFB] p-3 text-sm"
                       >
-                        <span className="mt-1 size-2 rounded-full bg-[#2b8a91]" />
+                        <span className="mt-1 size-2 rounded-full bg-[#216474]" />
                         <div>
-                          <b>{labels[event.status] || event.status}</b>
+                          <b>{t(labels[event.status] || event.status)}</b>
                           <p className="mt-1 text-xs text-[#829499]">
                             {new Date(event.occurredAtUtc).toLocaleString(
                               "ar-SY",
@@ -1029,18 +1142,18 @@ function OrderDetailsDialog({
           <aside className="space-y-5">
             <section className="surface p-5">
               <div className="flex items-center gap-3">
-                <span className="grid size-11 place-items-center rounded-xl bg-[#eaf5f3] text-[#216474]">
+                <span className="grid size-11 place-items-center rounded-xl bg-[#EAF4F3] text-[#216474]">
                   <Building2 size={20} />
                 </span>
                 <div>
-                  <p className="text-xs text-[#829499]">بيانات الصيدلية</p>
+                  <p className="text-xs text-[#829499]">{t("بيانات الصيدلية")}</p>
                   <h3 className="font-black">{order.pharmacyName}</h3>
                 </div>
               </div>
               <div className="mt-5 space-y-3 text-sm">
                 <DetailLine
                   icon={Phone}
-                  value={order.pharmacyPhoneNumber || "رقم الهاتف غير مضاف"}
+                  value={order.pharmacyPhoneNumber || t("رقم الهاتف غير مضاف")}
                   ltr
                 />
                 <DetailLine
@@ -1051,7 +1164,7 @@ function OrderDetailsDialog({
                 />
                 <DetailLine
                   icon={Building2}
-                  value={order.pharmacyAddress || "العنوان غير مضاف"}
+                  value={order.pharmacyAddress || t("العنوان غير مضاف")}
                 />
               </div>
               <div className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
@@ -1084,25 +1197,25 @@ function OrderDetailsDialog({
               )}
             </section>
             <section className="surface p-5">
-              <h3 className="font-black">ملخص التكلفة</h3>
+              <h3 className="font-black">{t("ملخص التكلفة")}</h3>
               <div className="mt-4 space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span>قيمة الأدوية</span>
-                  <b>{money(order.subtotal)}</b>
+                  <span>{t("قيمة الأدوية")}</span>
+                  <b>{money(order.subtotal, currentLanguage)}</b>
                 </div>
                 <div className="flex justify-between">
-                  <span>التوصيل</span>
-                  <b>{money(order.deliveryFee)}</b>
+                  <span>{t("التوصيل")}</span>
+                  <b>{money(order.deliveryFee, currentLanguage)}</b>
                 </div>
                 <div className="flex justify-between border-t border-slate-100 pt-3 text-base">
-                  <strong>الإجمالي</strong>
-                  <strong>{money(order.totalAmount)}</strong>
+                  <strong>{t("الإجمالي")}</strong>
+                  <strong>{money(order.totalAmount, currentLanguage)}</strong>
                 </div>
               </div>
             </section>
             {role === "Warehouse" && (
               <section className="surface p-5">
-                <h3 className="font-black">إجراءات المستودع</h3>
+                <h3 className="font-black">{t("إجراءات المستودع")}</h3>
                 {next && (
                   <button
                     disabled={busy}
@@ -1110,7 +1223,7 @@ function OrderDetailsDialog({
                     className="btn-primary mt-4 w-full justify-center"
                   >
                     <PackageCheck size={17} />
-                    {labels[next]}
+                    {t(labels[next])}
                   </button>
                 )}
                 {order.status === "ReadyForDispatch" &&
@@ -1118,13 +1231,13 @@ function OrderDetailsDialog({
                     ["Failed", "Returned"].includes(order.shipment.status)) && (
                     <>
                       <label className="mt-4 block">
-                        <span className="form-label">اختر المندوب</span>
+                        <span className="form-label">{t("اختر المندوب")}</span>
                         <select
                           value={representativeId}
                           onChange={(e) => setRepresentativeId(e.target.value)}
                           className="form-input"
                         >
-                          <option value="">اختر مندوبًا</option>
+                          <option value="">{t("اختر مندوبًا")}</option>
                           {representatives
                             .filter((rep) => rep.isAvailable)
                             .map((rep) => (
@@ -1151,7 +1264,7 @@ function OrderDetailsDialog({
                 {!next &&
                   order.shipment &&
                   !["Failed", "Returned"].includes(order.shipment.status) && (
-                    <div className="mt-4 rounded-xl bg-emerald-50 p-3 text-center text-sm font-bold text-emerald-700">
+                    <div className="mt-4 rounded-xl bg-emerald-50 p-3 text-center text-sm font-bold text-[#174B57]">
                       {order.status === "Delivered"
                         ? "اكتمل تسليم الطلب"
                         : "الطلب مسند وجاهز للمتابعة"}
@@ -1167,16 +1280,17 @@ function OrderDetailsDialog({
 }
 function DetailLine({ icon: Icon, value, ltr }) {
   return (
-    <div className="flex items-start gap-3 text-[#60777c]">
-      <Icon size={16} className="mt-0.5 shrink-0 text-[#2b7c86]" />
+    <div className="flex items-start gap-3 text-[#60777D]">
+      <Icon size={16} className="mt-0.5 shrink-0 text-[#216474]" />
       <span dir={ltr ? "ltr" : undefined}>{value}</span>
     </div>
   );
 }
 function InfoBox({ label, value }) {
+  const { t } = useTranslation();
   return (
-    <div className="rounded-xl bg-[#f7faf9] p-3">
-      <p className="text-[10px] text-[#829499]">{label}</p>
+    <div className="rounded-xl bg-[#F8FBFB] p-3">
+      <p className="text-[10px] text-[#829499]">{t(label)}</p>
       <b className="mt-1 block text-sm">{value}</b>
     </div>
   );
@@ -1196,11 +1310,18 @@ function MarketplacePanel({
   submitting,
   error,
 }) {
+  const { t, i18n } = useTranslation();
+  const currentLanguage = normalizeLanguage(
+    i18n.resolvedLanguage || i18n.language || "ar",
+  );
+  const isArabic = currentLanguage === "ar";
+  const direction = isArabic ? "rtl" : "ltr";
+
   if (!selected)
     return (
       <div>
         <div className="mb-4">
-          <h2 className="text-xl font-black">اختر مستودع التوريد</h2>
+          <h2 className="text-xl font-black">{t("اختر مستودع التوريد")}</h2>
           <p className="mt-1 text-sm text-[#829499]">
             تظهر فقط المستودعات المعتمدة والفعالة. افتح الكتالوج لتحديد الأدوية
             والكميات.
@@ -1210,14 +1331,14 @@ function MarketplacePanel({
           {warehouses.map((w) => (
             <article
               key={w.id}
-              className="surface p-5 transition hover:-translate-y-1 hover:border-[#216474]/25"
+              className="rounded-[1.35rem] border border-[#DCE8EA] bg-white p-5 shadow-[0_10px_28px_rgba(23,75,87,.04)] transition hover:-translate-y-0.5 hover:border-[#AFC9CD] hover:shadow-[0_16px_34px_rgba(23,75,87,.07)]"
             >
               <div className="flex items-start justify-between">
-                <span className="grid size-12 place-items-center rounded-2xl bg-cyan-50 text-cyan-700">
+                <span className="grid size-12 place-items-center rounded-2xl bg-[#EAF4F3] text-[#216474]">
                   <Building2 />
                 </span>
                 {w.distanceKm != null && (
-                  <span className="rounded-full bg-[#edf6f5] px-3 py-1 text-xs font-bold text-[#216474]">
+                  <span className="rounded-full bg-[#EAF4F3] px-3 py-1 text-xs font-bold text-[#216474]">
                     {w.distanceKm} كم
                   </span>
                 )}
@@ -1226,19 +1347,19 @@ function MarketplacePanel({
               <p className="mt-1 text-xs text-[#829499]">
                 {w.area}، {w.city}
               </p>
-              <p className="mt-1 truncate text-xs text-[#9aa8ab]">
+              <p className="mt-1 truncate text-xs text-[#A5A5A5]">
                 {w.address}
               </p>
               <div className="mt-4 grid grid-cols-3 gap-2 text-center text-[11px]">
-                <div className="rounded-xl bg-[#f5f9f8] p-3">
+                <div className="rounded-xl bg-[#F8FBFB] p-3">
                   <b className="block text-base">{w.availableMedicines}</b>دواء
                 </div>
-                <div className="rounded-xl bg-[#f5f9f8] p-3">
-                  <b className="block text-sm">{money(w.minimumOrderAmount)}</b>
+                <div className="rounded-xl bg-[#F8FBFB] p-3">
+                  <b className="block text-sm">{money(w.minimumOrderAmount, currentLanguage)}</b>
                   الحد الأدنى
                 </div>
-                <div className="rounded-xl bg-[#f5f9f8] p-3">
-                  <b className="block text-sm">{money(w.deliveryFee)}</b>التوصيل
+                <div className="rounded-xl bg-[#F8FBFB] p-3">
+                  <b className="block text-sm">{money(w.deliveryFee, currentLanguage)}</b>التوصيل
                 </div>
               </div>
               <button
@@ -1255,7 +1376,7 @@ function MarketplacePanel({
           ))}
           {!warehouses.length && (
             <div className="surface col-span-full p-12 text-center">
-              <Building2 className="mx-auto text-[#8aa0a4]" />
+              <Building2 className="mx-auto text-[#829499]" />
               <h3 className="mt-3 font-black">
                 لا توجد مستودعات جاهزة للتوريد
               </h3>
@@ -1291,7 +1412,7 @@ function MarketplacePanel({
           <div className="flex items-center gap-3">
             <button
               onClick={onBack}
-              className="grid size-10 place-items-center rounded-xl bg-[#edf5f4] text-[#216474]"
+              className="grid size-10 place-items-center rounded-xl bg-[#EAF4F3] text-[#216474]"
             >
               <ArrowRight size={18} />
             </button>
@@ -1301,7 +1422,7 @@ function MarketplacePanel({
                 {selected.area}، {selected.city} ·{" "}
                 {selected.distanceKm != null
                   ? `${selected.distanceKm} كم`
-                  : "المسافة غير محددة"}
+                  : t("المسافة غير محددة")}
               </p>
             </div>
           </div>
@@ -1326,25 +1447,25 @@ function MarketplacePanel({
               return (
                 <article
                   key={item.medicineId}
-                  className="flex flex-col gap-4 rounded-2xl border border-[#174b57]/8 p-4 sm:flex-row sm:items-center"
+                  className="flex flex-col gap-4 rounded-2xl border border-[#174B57]/8 p-4 sm:flex-row sm:items-center"
                 >
-                  <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-[#eaf5f3] text-[#216474]">
+                  <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-[#EAF4F3] text-[#216474]">
                     <Boxes size={19} />
                   </span>
                   <div className="min-w-0 flex-1">
                     <h3 className="truncate font-black">{item.medicineName}</h3>
                     <p className="mt-1 truncate text-xs text-[#829499]">
-                      {item.scientificName || "لا يوجد اسم علمي"} · أقرب صلاحية{" "}
-                      {new Date(item.nearestExpiry).toLocaleDateString("ar-SY")}
+                      {item.scientificName || t("لا يوجد اسم علمي")} · أقرب صلاحية{" "}
+                      {new Date(item.nearestExpiry).toLocaleDateString(resolveLocale(currentLanguage))}
                     </p>
                   </div>
                   <div className="text-sm">
-                    <b>{money(item.bestPrice)}</b>
+                    <b>{money(item.bestPrice, currentLanguage)}</b>
                     <p className="mt-1 text-xs text-[#829499]">
                       {item.availableQuantity} متوفر
                     </p>
                   </div>
-                  <div className="flex items-center rounded-xl border border-[#174b57]/10 bg-[#f8fbfa] p-1">
+                  <div className="flex items-center rounded-xl border border-[#174B57]/10 bg-[#F8FBFB] p-1">
                     <button
                       type="button"
                       disabled={!quantity}
@@ -1358,7 +1479,7 @@ function MarketplacePanel({
                       type="button"
                       disabled={quantity >= item.availableQuantity}
                       onClick={() => change(item, 1)}
-                      className="grid size-9 place-items-center rounded-lg bg-[#174b57] text-white disabled:opacity-40"
+                      className="grid size-9 place-items-center rounded-lg bg-[#174B57] text-white disabled:opacity-40"
                     >
                       <Plus size={16} />
                     </button>
@@ -1377,10 +1498,10 @@ function MarketplacePanel({
       <aside className="surface h-fit p-5 xl:sticky xl:top-28">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs font-bold text-[#216474]">ملخص طلب التوريد</p>
-            <h3 className="mt-1 text-xl font-black">السلة</h3>
+            <p className="text-xs font-bold text-[#216474]">{t("ملخص طلب التوريد")}</p>
+            <h3 className="mt-1 text-xl font-black">{t("السلة")}</h3>
           </div>
-          <span className="grid size-12 place-items-center rounded-2xl bg-[#eaf5f3] text-[#216474]">
+          <span className="grid size-12 place-items-center rounded-2xl bg-[#EAF4F3] text-[#216474]">
             <ShoppingCart />
           </span>
         </div>
@@ -1388,14 +1509,14 @@ function MarketplacePanel({
           {lines.map((line) => (
             <div
               key={line.item.medicineId}
-              className="flex items-center gap-2 rounded-xl bg-[#f7faf9] p-3"
+              className="flex items-center gap-2 rounded-xl bg-[#F8FBFB] p-3"
             >
               <div className="min-w-0 flex-1">
                 <b className="block truncate text-sm">
                   {line.item.medicineName}
                 </b>
                 <small className="text-[#829499]">
-                  {line.quantity} × {money(line.item.bestPrice)}
+                  {line.quantity} × {money(line.item.bestPrice, currentLanguage)}
                 </small>
               </div>
               <button
@@ -1406,14 +1527,14 @@ function MarketplacePanel({
                     return n;
                   })
                 }
-                className="text-rose-500"
+                className="text-[#E11D48]"
               >
                 <Trash2 size={17} />
               </button>
             </div>
           ))}
           {!lines.length && (
-            <div className="rounded-xl border border-dashed border-[#174b57]/15 p-7 text-center text-sm text-[#829499]">
+            <div className="rounded-xl border border-dashed border-[#174B57]/15 p-7 text-center text-sm text-[#829499]">
               اختر الأدوية وحدد الكميات.
             </div>
           )}
@@ -1421,27 +1542,27 @@ function MarketplacePanel({
         <div className="mt-5 space-y-3 border-t border-slate-100 pt-4 text-sm">
           <div className="flex justify-between">
             <span>الأدوية ({count})</span>
-            <b>{money(subtotal)}</b>
+            <b>{money(subtotal, currentLanguage)}</b>
           </div>
           <div className="flex justify-between">
-            <span>التوصيل</span>
-            <b>{money(selected.deliveryFee)}</b>
+            <span>{t("التوصيل")}</span>
+            <b>{money(selected.deliveryFee, currentLanguage)}</b>
           </div>
           <div className="flex justify-between border-t border-slate-100 pt-3 text-base">
-            <strong>الإجمالي</strong>
-            <strong>{money(total)}</strong>
+            <strong>{t("الإجمالي")}</strong>
+            <strong>{money(total, currentLanguage)}</strong>
           </div>
         </div>
         {!minimumReached && lines.length > 0 && (
           <div className="mt-4 rounded-xl bg-amber-50 p-3 text-xs font-bold leading-6 text-amber-800">
-            الحد الأدنى لهذا المستودع {money(selected.minimumOrderAmount)}. أضف
-            أدوية بقيمة {money(selected.minimumOrderAmount - total)}.
+            الحد الأدنى لهذا المستودع {money(selected.minimumOrderAmount, currentLanguage)}. أضف
+            أدوية بقيمة {money(selected.minimumOrderAmount - total, currentLanguage)}.
           </div>
         )}
         {error && (
-          <div className="mt-4 rounded-xl bg-rose-50 p-3 text-xs font-bold text-rose-700">
+          <div className="mt-4 rounded-xl bg-[#FFF1F2] p-3 text-xs font-bold text-[#E11D48]">
             {error.response?.data?.error ||
-              "تعذر إرسال الطلب. راجع المخزون والكميات."}
+              t("تعذر إرسال الطلب. راجع المخزون والكميات.")}
           </div>
         )}
         <button
@@ -1467,6 +1588,13 @@ function MarketplacePanel({
 }
 
 function WarehouseDialog({ mode, onClose, onSaved }) {
+  const { t, i18n } = useTranslation();
+  const currentLanguage = normalizeLanguage(
+    i18n.resolvedLanguage || i18n.language || "ar",
+  );
+  const isArabic = currentLanguage === "ar";
+  const direction = isArabic ? "rtl" : "ltr";
+
   const isBatch = mode === "batch";
   const [form, setForm] = useState(
     isBatch
@@ -1513,10 +1641,12 @@ function WarehouseDialog({ mode, onClose, onSaved }) {
   });
   return (
     <div className="fixed inset-0 z-[100] grid place-items-center bg-[#071f25]/65 p-4 backdrop-blur-sm">
-      <div className="max-h-[92vh] w-full max-w-2xl overflow-auto rounded-[1.8rem] bg-white shadow-2xl">
-        <div className="flex items-center justify-between bg-[#123f49] p-6 text-white">
+      <div className="max-h-[92vh] w-full max-w-2xl overflow-auto rounded-[1.8rem] bg-white shadow-2xl"
+        dir={direction}
+        lang={currentLanguage}>
+        <div className="flex items-center justify-between bg-[#174B57] p-6 text-white">
           <div>
-            <p className="text-xs font-bold text-[#8edbd5]">إدارة المستودع</p>
+            <p className="text-xs font-bold text-[#E6F3F6]">{t("إدارة المستودع")}</p>
             <h2 className="mt-1 text-2xl font-black">
               {isBatch ? "إضافة دفعة دوائية" : "إنشاء حساب مندوب"}
             </h2>
@@ -1544,7 +1674,7 @@ function WarehouseDialog({ mode, onClose, onSaved }) {
                   className="form-input"
                   {...field("medicineId")}
                 >
-                  <option value="">اختر من دليل الأدوية</option>
+                  <option value="">{t("اختر من دليل الأدوية")}</option>
                   {medicines.data?.items?.map((m) => (
                     <option key={m.id} value={m.id}>
                       {m.name} {m.scientificName ? `— ${m.scientificName}` : ""}
@@ -1645,7 +1775,7 @@ function WarehouseDialog({ mode, onClose, onSaved }) {
             </>
           )}
           {save.isError && (
-            <div className="sm:col-span-2 rounded-xl bg-rose-50 p-3 text-sm font-bold text-rose-700">
+            <div className="sm:col-span-2 rounded-xl bg-rose-50 p-3 text-sm font-bold text-[#E11D48]">
               {save.error?.response?.data?.error ||
                 "تعذر الحفظ. راجع البيانات وحاول مجددًا."}
             </div>
@@ -1664,9 +1794,10 @@ function WarehouseDialog({ mode, onClose, onSaved }) {
   );
 }
 function Field({ label, children }) {
+  const { t } = useTranslation();
   return (
     <label>
-      <span className="form-label">{label}</span>
+      <span className="form-label">{t(label)}</span>
       {children}
     </label>
   );
@@ -1694,6 +1825,13 @@ const paymentMethodLabels = {
 };
 
 function InvoicesPanel({ invoices, loading, role, onManage }) {
+  const { t, i18n } = useTranslation();
+  const currentLanguage = normalizeLanguage(
+    i18n.resolvedLanguage || i18n.language || "ar",
+  );
+  const isArabic = currentLanguage === "ar";
+  const direction = isArabic ? "rtl" : "ltr";
+
   const paid = invoices.filter((x) => x.paymentStatus === "Paid").length;
   const outstanding = invoices.reduce(
     (sum, x) => sum + Number(x.remainingAmount || 0),
@@ -1711,23 +1849,23 @@ function InvoicesPanel({ invoices, loading, role, onManage }) {
           label="إجمالي الفواتير"
           value={invoices.length}
           hint="مرتبطة بطلبات التوريد"
-          className="bg-cyan-50 text-cyan-700"
+          className="bg-[#EAF4F3] text-[#216474]"
         />
         <Stat
           icon={CheckCircle2}
           label="فواتير مسددة"
           value={paid}
           hint="مغلقة ماليًا"
-          className="bg-emerald-50 text-emerald-700"
+          className="bg-[#EAF4F3] text-[#174B57]"
         />
         <article className="surface p-5">
-          <span className="grid size-12 place-items-center rounded-2xl bg-amber-50 text-amber-700">
+          <span className="grid size-12 place-items-center rounded-2xl bg-[#FFF7DF] text-[#DFAE0D]">
             <WalletCards />
           </span>
           <strong className="mt-5 block text-2xl font-black">
-            {money(outstanding)}
+            {money(outstanding, currentLanguage)}
           </strong>
-          <p className="mt-1 font-extrabold">الرصيد المستحق</p>
+          <p className="mt-1 font-extrabold">{t("الرصيد المستحق")}</p>
           <p className="mt-1 text-xs text-[#829499]">
             بانتظار التحصيل أو التحويل
           </p>
@@ -1738,7 +1876,7 @@ function InvoicesPanel({ invoices, loading, role, onManage }) {
           <article key={invoice.id} className="surface overflow-hidden">
             <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 p-5">
               <div>
-                <p className="font-mono text-xs font-black text-[#287184]">
+                <p className="font-mono text-xs font-black text-[#216474]">
                   {invoice.invoiceNumber}
                 </p>
                 <h3 className="mt-2 font-black">
@@ -1753,29 +1891,29 @@ function InvoicesPanel({ invoices, loading, role, onManage }) {
               <span
                 className={`rounded-full px-3 py-1.5 text-xs font-black ${
                   invoice.paymentStatus === "Paid"
-                    ? "bg-emerald-50 text-emerald-700"
+                    ? "bg-[#EAF4F3] text-[#174B57]"
                     : invoice.paymentStatus === "PartiallyPaid"
-                      ? "bg-amber-50 text-amber-700"
-                      : "bg-rose-50 text-rose-700"
+                      ? "bg-[#FFF7DF] text-[#DFAE0D]"
+                      : "bg-[#FFF1F2] text-[#E11D48]"
                 }`}
               >
-                {paymentLabels[invoice.paymentStatus] || invoice.paymentStatus}
+                {t(paymentLabels[invoice.paymentStatus] || invoice.paymentStatus)}
               </span>
             </div>
             <div className="grid grid-cols-3 gap-2 p-5 text-center text-xs">
-              <div className="rounded-xl bg-[#f6f9f8] p-3">
-                <b className="block text-sm">{money(invoice.totalAmount)}</b>
+              <div className="rounded-xl bg-[#F8FBFB] p-3">
+                <b className="block text-sm">{money(invoice.totalAmount, currentLanguage)}</b>
                 الإجمالي
               </div>
-              <div className="rounded-xl bg-[#f6f9f8] p-3">
-                <b className="block text-sm text-emerald-700">
-                  {money(invoice.paidAmount)}
+              <div className="rounded-xl bg-[#F8FBFB] p-3">
+                <b className="block text-sm text-[#174B57]">
+                  {money(invoice.paidAmount, currentLanguage)}
                 </b>
                 المدفوع
               </div>
-              <div className="rounded-xl bg-[#f6f9f8] p-3">
-                <b className="block text-sm text-rose-700">
-                  {money(invoice.remainingAmount)}
+              <div className="rounded-xl bg-[#F8FBFB] p-3">
+                <b className="block text-sm text-[#E11D48]">
+                  {money(invoice.remainingAmount, currentLanguage)}
                 </b>
                 المتبقي
               </div>
@@ -1783,7 +1921,7 @@ function InvoicesPanel({ invoices, loading, role, onManage }) {
             <div className="flex items-center justify-between gap-3 px-5 pb-5">
               <p className="text-xs text-[#829499]">
                 الاستحقاق{" "}
-                {new Date(invoice.dueAtUtc).toLocaleDateString("ar-SY")}
+                {new Date(invoice.dueAtUtc).toLocaleDateString(resolveLocale(currentLanguage))}
               </p>
               <button
                 onClick={() => onManage(invoice)}
@@ -1796,8 +1934,8 @@ function InvoicesPanel({ invoices, loading, role, onManage }) {
         ))}
         {!invoices.length && (
           <div className="surface col-span-full p-12 text-center">
-            <ReceiptText className="mx-auto text-[#8aa0a4]" />
-            <h3 className="mt-3 font-black">لا توجد فواتير بعد</h3>
+            <ReceiptText className="mx-auto text-[#829499]" />
+            <h3 className="mt-3 font-black">{t("لا توجد فواتير بعد")}</h3>
             <p className="mt-2 text-sm text-[#829499]">
               تُنشأ الفاتورة تلقائيًا عند قبول طلب التوريد.
             </p>
@@ -1815,6 +1953,13 @@ function RepresentativeManagementDialog({
   onClose,
   onSave,
 }) {
+  const { t, i18n } = useTranslation();
+  const currentLanguage = normalizeLanguage(
+    i18n.resolvedLanguage || i18n.language || "ar",
+  );
+  const isArabic = currentLanguage === "ar";
+  const direction = isArabic ? "rtl" : "ltr";
+
   const [form, setForm] = useState({
     fullName: representative.fullName,
     employeeCode: representative.employeeCode,
@@ -1855,10 +2000,12 @@ function RepresentativeManagementDialog({
           });
         }}
         className="max-h-[92vh] w-full max-w-2xl overflow-auto rounded-[1.8rem] bg-white shadow-2xl"
+        dir={direction}
+        lang={currentLanguage}
       >
-        <header className="flex items-center justify-between bg-[#123f49] p-6 text-white">
+        <header className="flex items-center justify-between bg-[#174B57] p-6 text-white">
           <div>
-            <p className="text-xs text-[#8edbd5]">إدارة فريق التوزيع</p>
+            <p className="text-xs text-[#E6F3F6]">{t("إدارة فريق التوزيع")}</p>
             <h2 className="mt-1 text-2xl font-black">
               {representative.fullName}
             </h2>
@@ -1909,7 +2056,7 @@ function RepresentativeManagementDialog({
                   isAvailable: form.isEnabled ? false : form.isAvailable,
                 })
               }
-              className={`rounded-xl border p-3 text-sm font-black ${form.isEnabled ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-rose-200 bg-rose-50 text-rose-700"}`}
+              className={`rounded-xl border p-3 text-sm font-black ${form.isEnabled ? "border-[#CFE4E7] bg-[#EAF4F3] text-[#174B57]" : "border-[#FECDD3] bg-[#FFF1F2] text-[#E11D48]"}`}
             >
               <Power className="mx-auto mb-1" size={18} />
               {form.isEnabled ? "الحساب مفعّل" : "الحساب موقوف"}
@@ -1920,23 +2067,23 @@ function RepresentativeManagementDialog({
               onClick={() =>
                 setForm({ ...form, isAvailable: !form.isAvailable })
               }
-              className={`rounded-xl border p-3 text-sm font-black ${form.isAvailable ? "border-cyan-200 bg-cyan-50 text-cyan-700" : "border-slate-200 bg-slate-50 text-slate-600"}`}
+              className={`rounded-xl border p-3 text-sm font-black ${form.isAvailable ? "border-[#CFE4E7] bg-[#EAF4F3] text-[#216474]" : "border-slate-200 bg-slate-50 text-slate-600"}`}
             >
               <UserRoundCheck className="mx-auto mb-1" size={18} />
-              {form.isAvailable ? "متاح للتكليف" : "غير متاح"}
+              {form.isAvailable ? t("متاح للتكليف") : "غير متاح"}
             </button>
           </div>
           <div className="sm:col-span-2">
-            <span className="form-label">أيام العمل</span>
+            <span className="form-label">{t("أيام العمل")}</span>
             <div className="grid grid-cols-4 gap-2 sm:grid-cols-7">
               {dayNames.map((name, day) => (
                 <button
                   key={name}
                   type="button"
                   onClick={() => toggleDay(day)}
-                  className={`rounded-xl px-2 py-3 text-xs font-black ${form.workingDays.includes(day) ? "bg-[#174b57] text-white" : "bg-[#f3f7f6] text-[#60777c]"}`}
+                  className={`rounded-xl px-2 py-3 text-xs font-black ${form.workingDays.includes(day) ? "bg-[#174B57] text-white" : "bg-[#F0F6F7] text-[#60777D]"}`}
                 >
-                  {name}
+                  {t(name)}
                 </button>
               ))}
             </div>
@@ -1981,7 +2128,7 @@ function RepresentativeManagementDialog({
             </div>
           )}
           {error && (
-            <div className="sm:col-span-2 rounded-xl bg-rose-50 p-3 text-sm font-bold text-rose-700">
+            <div className="sm:col-span-2 rounded-xl bg-rose-50 p-3 text-sm font-bold text-[#E11D48]">
               {error.response?.data?.error || "تعذر تحديث المندوب."}
             </div>
           )}
@@ -2003,6 +2150,13 @@ function RepresentativeManagementDialog({
 }
 
 function InvoiceDialog({ invoice, role, busy, error, onClose, onSubmit }) {
+  const { t, i18n } = useTranslation();
+  const currentLanguage = normalizeLanguage(
+    i18n.resolvedLanguage || i18n.language || "ar",
+  );
+  const isArabic = currentLanguage === "ar";
+  const direction = isArabic ? "rtl" : "ltr";
+
   const [mode, setMode] = useState("details");
   const [form, setForm] = useState({
     paymentMethod: invoice.paymentMethod,
@@ -2017,10 +2171,12 @@ function InvoiceDialog({ invoice, role, busy, error, onClose, onSubmit }) {
   });
   return (
     <div className="fixed inset-0 z-[110] grid place-items-center bg-[#071f25]/65 p-4 backdrop-blur-sm">
-      <div className="max-h-[94vh] w-full max-w-3xl overflow-auto rounded-[1.8rem] bg-[#f7faf9] shadow-2xl">
-        <header className="flex items-center justify-between bg-[#123f49] p-6 text-white">
+      <div className="max-h-[94vh] w-full max-w-3xl overflow-auto rounded-[1.8rem] bg-[#F8FBFB] shadow-2xl"
+        dir={direction}
+        lang={currentLanguage}>
+        <header className="flex items-center justify-between bg-[#174B57] p-6 text-white">
           <div>
-            <p className="font-mono text-xs text-[#8edbd5]">
+            <p className="font-mono text-xs text-[#E6F3F6]">
               {invoice.invoiceNumber}
             </p>
             <h2 className="mt-1 text-2xl font-black">
@@ -2038,29 +2194,29 @@ function InvoiceDialog({ invoice, role, busy, error, onClose, onSubmit }) {
           <main className="space-y-4">
             <section className="surface p-5">
               <div className="grid grid-cols-3 gap-3 text-center text-xs">
-                <InfoBox label="الإجمالي" value={money(invoice.totalAmount)} />
-                <InfoBox label="المدفوع" value={money(invoice.paidAmount)} />
+                <InfoBox label="الإجمالي" value={money(invoice.totalAmount, currentLanguage)} />
+                <InfoBox label="المدفوع" value={money(invoice.paidAmount, currentLanguage)} />
                 <InfoBox
                   label="المتبقي"
-                  value={money(invoice.remainingAmount)}
+                  value={money(invoice.remainingAmount, currentLanguage)}
                 />
               </div>
               <div className="mt-5 space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span>قيمة الأدوية</span>
-                  <b>{money(invoice.subtotal)}</b>
+                  <span>{t("قيمة الأدوية")}</span>
+                  <b>{money(invoice.subtotal, currentLanguage)}</b>
                 </div>
                 <div className="flex justify-between">
-                  <span>التوصيل</span>
-                  <b>{money(invoice.deliveryFee)}</b>
+                  <span>{t("التوصيل")}</span>
+                  <b>{money(invoice.deliveryFee, currentLanguage)}</b>
                 </div>
                 <div className="flex justify-between">
-                  <span>الخصم</span>
-                  <b>{money(invoice.discountAmount)}</b>
+                  <span>{t("الخصم")}</span>
+                  <b>{money(invoice.discountAmount, currentLanguage)}</b>
                 </div>
                 <div className="flex justify-between">
-                  <span>الضريبة</span>
-                  <b>{money(invoice.taxAmount)}</b>
+                  <span>{t("الضريبة")}</span>
+                  <b>{money(invoice.taxAmount, currentLanguage)}</b>
                 </div>
               </div>
             </section>
@@ -2100,7 +2256,7 @@ function InvoiceDialog({ invoice, role, busy, error, onClose, onSubmit }) {
                   >
                     {Object.entries(paymentMethodLabels).map(([v, l]) => (
                       <option key={v} value={v}>
-                        {l}
+                        {t(l)}
                       </option>
                     ))}
                   </select>
@@ -2156,7 +2312,7 @@ function InvoiceDialog({ invoice, role, busy, error, onClose, onSubmit }) {
                   >
                     {Object.entries(paymentMethodLabels).map(([v, l]) => (
                       <option key={v} value={v}>
-                        {l}
+                        {t(l)}
                       </option>
                     ))}
                   </select>
@@ -2213,22 +2369,22 @@ function InvoiceDialog({ invoice, role, busy, error, onClose, onSubmit }) {
               </form>
             )}
             {error && (
-              <div className="rounded-xl bg-rose-50 p-3 text-sm font-bold text-rose-700">
+              <div className="rounded-xl bg-rose-50 p-3 text-sm font-bold text-[#E11D48]">
                 {error.response?.data?.error || "تعذر تنفيذ الإجراء المالي."}
               </div>
             )}
           </main>
           <aside className="surface h-fit p-5">
-            <h3 className="font-black">حالة الفاتورة</h3>
-            <span className="mt-3 inline-flex rounded-full bg-[#eaf5f3] px-3 py-1.5 text-xs font-black text-[#216474]">
-              {paymentLabels[invoice.paymentStatus]}
+            <h3 className="font-black">{t("حالة الفاتورة")}</h3>
+            <span className="mt-3 inline-flex rounded-full bg-[#EAF4F3] px-3 py-1.5 text-xs font-black text-[#216474]">
+              {t(paymentLabels[invoice.paymentStatus])}
             </span>
-            <p className="mt-4 text-xs leading-6 text-[#71858a]">
-              طريقة الدفع: {paymentMethodLabels[invoice.paymentMethod]}
+            <p className="mt-4 text-xs leading-6 text-[#71858A]">
+              طريقة الدفع: {t(paymentMethodLabels[invoice.paymentMethod])}
             </p>
-            <p className="text-xs leading-6 text-[#71858a]">
+            <p className="text-xs leading-6 text-[#71858A]">
               الاستحقاق:{" "}
-              {new Date(invoice.dueAtUtc).toLocaleDateString("ar-SY")}
+              {new Date(invoice.dueAtUtc).toLocaleDateString(resolveLocale(currentLanguage))}
             </p>
             {invoice.paymentStatus !== "Paid" && role !== "Admin" && (
               <button
@@ -2257,16 +2413,16 @@ function InvoiceDialog({ invoice, role, busy, error, onClose, onSubmit }) {
             </button>
             {invoice.payments?.length > 0 && (
               <div className="mt-5 border-t border-slate-100 pt-4">
-                <p className="text-xs font-black">سجل الدفعات</p>
+                <p className="text-xs font-black">{t("سجل الدفعات")}</p>
                 {invoice.payments.map((p) => (
                   <div
                     key={p.id}
-                    className="mt-2 rounded-xl bg-[#f6f9f8] p-3 text-xs"
+                    className="mt-2 rounded-xl bg-[#F8FBFB] p-3 text-xs"
                   >
-                    <b>{money(p.amount)}</b>
+                    <b>{money(p.amount, currentLanguage)}</b>
                     <p className="mt-1 text-[#829499]">
-                      {paymentMethodLabels[p.method]} ·{" "}
-                      {new Date(p.paidAtUtc).toLocaleDateString("ar-SY")}
+                      {t(paymentMethodLabels[p.method])} ·{" "}
+                      {new Date(p.paidAtUtc).toLocaleDateString(resolveLocale(currentLanguage))}
                     </p>
                   </div>
                 ))}

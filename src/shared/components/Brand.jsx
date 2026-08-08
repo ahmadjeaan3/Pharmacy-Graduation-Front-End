@@ -1,9 +1,9 @@
 import { HeartPulse } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useLanguage } from "../i18n/useLanguage";
+import { useTranslation } from "react-i18next";
 
 export function Brand({ light = false, compact = false, markOnly = false }) {
-  const { t } = useLanguage();
+  const { t } = useTranslation();
   return (
     <Link
       to="/"

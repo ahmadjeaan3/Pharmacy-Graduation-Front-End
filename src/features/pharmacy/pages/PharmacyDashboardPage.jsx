@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   AlertTriangle,
   ArrowLeft,
+  ArrowRight,
   BadgeCheck,
   Boxes,
   CalendarClock,
@@ -9,226 +10,437 @@ import {
   CircleOff,
   ClipboardList,
   Clock3,
+  FileText,
   MapPin,
   PackageCheck,
   Star,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+
 import { getApiErrorMessage } from "../../../shared/api/errors";
-import { getPharmacyDashboard, pharmacyKeys } from "../api/pharmacyApi";
+import {
+  getPharmacyDashboard,
+  pharmacyKeys,
+} from "../api/pharmacyApi";
 import {
   PharmacyErrorState,
   PharmacyLoadingState,
 } from "../components/PharmacyStates";
 import { formatNumber } from "../utils/pharmacyFormatters";
 
-const Stat = ({ icon: Icon, label, value, hint, tone }) => (
-  <article className="surface relative overflow-hidden p-5">
-    <span className={`grid size-11 place-items-center rounded-2xl ${tone}`}>
-      <Icon size={21} />
-    </span>
-    <p className="mt-5 text-3xl font-black text-[#123b45]">
-      {formatNumber(value)}
-    </p>
-    <p className="mt-1 text-sm font-extrabold text-[#29464d]">{label}</p>
-    <p className="mt-1 text-xs text-[#829499]">{hint}</p>
-  </article>
-);
+const PHARMACY_HERO_IMAGE = "/assets/app/pharmacy.png";
+
+const statTones = {
+  primary: "bg-[#EAF4F3] text-[#216474]",
+  success: "bg-[#F0F6F7] text-[#174B57]",
+  warning: "bg-[#FFF7DF] text-[#DFAE0D]",
+  danger: "bg-[#FFF1F2] text-[#E11D48]",
+};
+
+function Stat({
+  icon: Icon,
+  label,
+  value,
+  hint,
+  tone = "primary",
+  isArabic,
+}) {
+  return (
+    <article className="relative min-h-[150px] overflow-hidden rounded-[1.35rem] border border-[#DCE8EA] bg-white p-5 shadow-[0_10px_30px_rgba(23,75,87,.04)]">
+      <span
+        className={`absolute top-5 grid size-11 place-items-center rounded-xl ${
+          isArabic ? "right-5" : "left-5"
+        } ${statTones[tone] || statTones.primary}`}
+      >
+        <Icon size={20} strokeWidth={1.8} />
+      </span>
+
+      <div className={isArabic ? "pr-16 text-right" : "pl-16 text-left"}>
+        <p className="text-[12px] font-semibold text-[#71858A]">{label}</p>
+
+        <strong className="mt-3 block text-[30px] font-black leading-none text-[#17363E]">
+          {formatNumber(value)}
+        </strong>
+
+        <p className="mt-4 text-[11px] leading-5 text-[#A5A5A5]">{hint}</p>
+      </div>
+    </article>
+  );
+}
 
 export function PharmacyDashboardPage() {
+  const { t, i18n } = useTranslation();
+
+  const currentLanguage = (
+    i18n.resolvedLanguage ||
+    i18n.language ||
+    "ar"
+  )
+    .split("-")[0]
+    .toLowerCase();
+
+  const isArabic = currentLanguage === "ar";
+  const direction = isArabic ? "rtl" : "ltr";
+
   const query = useQuery({
     queryKey: pharmacyKeys.dashboard,
     queryFn: getPharmacyDashboard,
   });
+
   if (query.isLoading) return <PharmacyLoadingState />;
-  if (query.isError)
+
+  if (query.isError) {
     return (
       <PharmacyErrorState
         message={getApiErrorMessage(query.error)}
         onRetry={query.refetch}
       />
     );
+  }
+
   const data = query.data;
+
   const setup = [
-    { done: data.isApproved, label: "اعتماد حساب الصيدلية" },
-    { done: data.hasLocation, label: "تحديد موقع الصيدلية" },
-    { done: data.hasWorkingHoursConfigured, label: "إضافة ساعات العمل" },
-    { done: data.inventoryItemsCount > 0, label: "إضافة الأدوية إلى المخزون" },
+    {
+      done: data.isApproved,
+      label: t("اعتماد حساب الصيدلية"),
+    },
+    {
+      done: data.hasLocation,
+      label: t("إضافة موقع الصيدلية"),
+    },
+    {
+      done: data.hasWorkingHoursConfigured,
+      label: t("تحديد ساعات العمل"),
+    },
+    {
+      done: data.inventoryItemsCount > 0,
+      label: t("إضافة الأدوية للمخزون"),
+    },
   ];
+
   const alerts = [
     ...(data.lowStockItems || []),
     ...(data.expiringSoonItems || []),
   ].slice(0, 6);
+
+  const InventoryArrow = isArabic ? ArrowLeft : ArrowRight;
+
   return (
-    <div>
-      <section className="relative overflow-hidden rounded-[2rem] bg-[#123f49] p-6 text-white shadow-[0_25px_70px_rgba(18,63,73,.18)] lg:p-8">
-        <div className="absolute -left-16 -top-20 size-64 rounded-full bg-[#f5cb72]/12 blur-3xl" />
-        <div className="relative flex flex-col justify-between gap-7 xl:flex-row xl:items-center">
-          <div>
+    <div dir={direction} lang={currentLanguage} className="space-y-6">
+      {/* Hero */}
+      <section className="relative isolate min-h-[220px] overflow-hidden rounded-[14px] text-white shadow-[0_22px_55px_rgba(23,75,87,.16)] sm:min-h-[230px] lg:min-h-[250px]">
+        <img
+          src={PHARMACY_HERO_IMAGE}
+          alt=""
+          aria-hidden="true"
+          className={`absolute inset-0 h-full w-full object-cover object-[center_42%] ${
+            isArabic ? "scale-x-[-1]" : ""
+          }`}
+        />
+
+        <div
+          className="absolute inset-0"
+          style={{
+            background: isArabic
+              ? "linear-gradient(270deg, #10505A 0%, rgba(16,80,90,.88) 34%, rgba(33,100,116,.42) 68%, rgba(33,100,116,.08) 100%)"
+              : "linear-gradient(90deg, #10505A 0%, rgba(16,80,90,.88) 34%, rgba(33,100,116,.42) 68%, rgba(33,100,116,.08) 100%)",
+          }}
+        />
+
+        <div
+          aria-hidden="true"
+          className={`absolute -top-20 size-64 rounded-full border-[40px] border-white/[.04] ${
+            isArabic ? "-left-14" : "-right-14"
+          }`}
+        />
+
+        <div className="relative z-10 flex min-h-[220px] flex-col justify-between gap-8 px-6 py-7 sm:min-h-[230px] lg:min-h-[250px] lg:flex-row lg:items-center lg:px-9">
+          {/* Main pharmacy info */}
+          <div className={`min-w-0 ${isArabic ? "text-right" : "text-left"}`}>
             <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-bold">
-                مركز تشغيل الصيدلية
+              <span className="inline-flex items-center gap-2 rounded-full bg-[rgba(230,243,246,.84)] px-3 py-1.5 text-xs font-bold text-[#666666] backdrop-blur-sm">
+                <BadgeCheck size={14} />
+                {t("مركز تشغيل الصيدلية")}
               </span>
+
               <span
-                className={`rounded-full px-3 py-1.5 text-xs font-bold ${data.isOpenNow ? "bg-emerald-300/15 text-emerald-200" : "bg-white/10 text-white/65"}`}
+                className={`rounded-full px-3 py-1.5 text-xs font-bold ${
+                  data.isOpenNow
+                    ? "bg-[#FFF7DF] text-[#DFAE0D]"
+                    : "bg-[#F0F6F7]/90 text-[#60777D]"
+                }`}
               >
-                {data.isOpenNow ? "مفتوحة الآن" : "مغلقة الآن"}
+                {data.isOpenNow ? t("مفتوحة الآن") : t("مغلقة الآن")}
               </span>
             </div>
-            <h2 className="mt-4 text-3xl font-black lg:text-4xl">
-              {data.pharmacyName}
-            </h2>
-            <p className="mt-3 flex items-center gap-2 text-sm text-white/60">
+
+            <h1 className="mt-4 truncate text-3xl font-black lg:text-4xl">
+              {t(data.pharmacyName || "")}
+            </h1>
+
+            <p className="mt-3 flex items-center gap-2 text-sm text-[#D6D6D6]">
               <MapPin size={16} />
-              {[data.area, data.city].filter(Boolean).join("، ") ||
-                "لم يحدد الموقع بعد"}
+              {[
+                data.area ? t(data.area) : "",
+                data.city ? t(data.city) : "",
+              ]
+                .filter(Boolean)
+                .join(isArabic ? "، " : ", ") || t("لم يحدد الموقع بعد")}
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-2xl border border-white/10 bg-white/[.07] p-4">
-              <p className="text-xs text-white/50">اكتمال الملف</p>
-              <strong className="mt-1 block text-2xl">
-                {formatNumber(data.profileCompletionPercentage)}٪
+
+          {/* Hero summary cards */}
+          <div className="grid w-full gap-3 sm:grid-cols-2 lg:w-auto lg:min-w-[300px]">
+            <div
+              className={`relative min-h-[92px] rounded-[12px] border border-[rgba(102,102,102,.16)] bg-[rgba(2,77,82,.56)] p-4 backdrop-blur-[10px] ${
+                isArabic ? "pl-14 text-right" : "pr-14 text-left"
+              }`}
+            >
+              <span
+                className={`absolute top-1/2 mt-2 grid size-9 -translate-y-1/2 place-items-center rounded-lg text-[#E6F3F6] ${
+                  isArabic ? "left-4" : "right-4"
+                }`}
+              >
+                <FileText size={24} strokeWidth={1.8} />
+              </span>
+
+              <p className="text-xs text-[#D6D6D6]">{t("اكتمال الملف")}</p>
+
+              <strong className="mt-2 block text-2xl font-black text-[#E6F3F6]">
+                {formatNumber(data.profileCompletionPercentage)}%
               </strong>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-white/[.07] p-4">
-              <p className="text-xs text-white/50">التقييم</p>
-              <strong className="mt-1 flex items-center gap-1 text-2xl">
-                {Number(data.averageRating || 0).toFixed(1)}{" "}
-                <Star size={17} className="fill-[#f5cb72] text-[#f5cb72]" />
+
+            <div
+              className={`relative min-h-[92px] rounded-[12px] border border-[rgba(102,102,102,.16)] bg-[rgba(2,77,82,.56)] p-4 backdrop-blur-[10px] ${
+                isArabic ? "pl-14 text-right" : "pr-14 text-left"
+              }`}
+            >
+              <span
+                className={`absolute top-1/2 mt-2 grid size-9 -translate-y-1/2 place-items-center rounded-lg ${
+                  isArabic ? "left-4" : "right-4"
+                }`}
+              >
+                <Star
+                  size={24}
+                  className="fill-[#DFAE0D] text-[#DFAE0D]"
+                />
+              </span>
+
+              <p className="text-xs text-[#D6D6D6]">{t("التقييم")}</p>
+
+              <strong className="mt-2 block text-2xl font-black text-[#E6F3F6]">
+                {Number(data.averageRating || 0).toFixed(1)}
               </strong>
             </div>
           </div>
         </div>
       </section>
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+
+      {/* Stats */}
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Stat
           icon={Boxes}
           value={data.inventoryItemsCount}
-          label="أصناف المخزون"
-          hint={`${formatNumber(data.availableMedicinesCount)} صنف متاح للمرضى`}
-          tone="bg-[#e9f5f3] text-[#216474]"
+          label={t("أصناف المخزون")}
+          hint={t("{{count}} صنف متاح للمرضى", {
+            count: formatNumber(data.availableMedicinesCount),
+          })}
+          tone="primary"
+          isArabic={isArabic}
         />
+
         <Stat
           icon={PackageCheck}
           value={data.inStockCount}
-          label="متوفر بالمخزون"
-          hint={`${formatNumber(data.lowStockCount)} أصناف منخفضة`}
-          tone="bg-emerald-50 text-emerald-700"
+          label={t("متوفر بالمخزون")}
+          hint={t("{{count}} أصناف منخفضة", {
+            count: formatNumber(data.lowStockCount),
+          })}
+          tone="success"
+          isArabic={isArabic}
         />
+
         <Stat
           icon={ClipboardList}
           value={data.pendingRequestsCount}
-          label="طلبات تنتظر الرد"
-          hint={`${formatNumber(data.activeRequestsCount)} طلبات نشطة`}
-          tone="bg-amber-50 text-amber-700"
+          label={t("طلبات تنتظر الرد")}
+          hint={t("{{count}} طلبات نشطة", {
+            count: formatNumber(data.activeRequestsCount),
+          })}
+          tone="warning"
+          isArabic={isArabic}
         />
+
         <Stat
           icon={CalendarClock}
           value={data.expiringSoonCount}
-          label="قريبة الانتهاء"
-          hint={`${formatNumber(data.outOfStockCount)} أصناف غير متوفرة`}
-          tone="bg-rose-50 text-rose-700"
+          label={t("قريبة الانتهاء")}
+          hint={t("{{count}} أصناف غير متوفرة", {
+            count: formatNumber(data.outOfStockCount),
+          })}
+          tone="danger"
+          isArabic={isArabic}
         />
-      </div>
-      <div className="mt-6 grid gap-6 xl:grid-cols-[1.25fr_.75fr]">
-        <section className="surface p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-black">تنبيهات تستحق المتابعة</h3>
+      </section>
+
+      {/* Bottom sections */}
+      <section className="grid gap-6 xl:grid-cols-[1.25fr_.75fr]">
+        {/* Alerts */}
+        <div className="overflow-hidden rounded-[1.55rem] border border-[#DCE8EA] bg-white shadow-[0_12px_35px_rgba(23,75,87,.045)]">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E6EEF0] bg-[#FAFCFC] px-6 py-5">
+            <div className={isArabic ? "text-right" : "text-left"}>
+              <h2 className="font-black text-[#29464D]">
+                {t("تنبيهات تستحق المتابعة")}
+              </h2>
               <p className="mt-1 text-xs text-[#829499]">
-                أهم حالات المخزون مرتبة لتسهيل القرار
+                {t("أهم حالات المخزون مرتبة لتسهيل القرار")}
               </p>
             </div>
-            <Link className="btn-quiet" to="/app/pharmacy/inventory">
-              عرض المخزون <ArrowLeft size={16} />
+
+            <Link
+              className="inline-flex items-center gap-2 rounded-xl bg-[#EAF4F3] px-3.5 py-2 text-xs font-bold text-[#216474] transition hover:bg-[#DCEFED]"
+              to="/app/pharmacy/inventory"
+            >
+              {t("عرض المخزون")}
+              <InventoryArrow size={16} />
             </Link>
           </div>
-          <div className="mt-5 space-y-3">
+
+          <div className="space-y-3 p-5">
             {alerts.length ? (
-              alerts.map((item) => (
-                <div
-                  key={`${item.alertType}-${item.inventoryItemId}`}
-                  className="flex items-center gap-3 rounded-2xl border border-[#174b57]/8 bg-[#f8fbfa] p-4"
-                >
-                  <span
-                    className={`grid size-10 shrink-0 place-items-center rounded-xl ${item.alertType === "ExpiringSoon" ? "bg-rose-50 text-rose-600" : "bg-amber-50 text-amber-700"}`}
+              alerts.map((item) => {
+                const isExpiring = item.alertType === "ExpiringSoon";
+
+                return (
+                  <div
+                    key={`${item.alertType}-${item.inventoryItemId}`}
+                    className="flex items-center gap-3 rounded-xl border border-[#E6EEF0] bg-[#F8FBFB] p-4"
                   >
-                    <AlertTriangle size={18} />
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-extrabold">
-                      {item.medicineName}
-                    </p>
-                    <p className="mt-1 text-xs text-[#829499]">
-                      {item.alertType === "ExpiringSoon"
-                        ? `متبقي ${formatNumber(item.daysUntilExpiry)} يومًا على الانتهاء`
-                        : `الكمية الحالية ${formatNumber(item.quantity)} والحد الأدنى ${formatNumber(item.lowStockThreshold)}`}
-                    </p>
+                    <span
+                      className={`grid size-10 shrink-0 place-items-center rounded-xl ${
+                        isExpiring
+                          ? "bg-[#FFF1F2] text-[#E11D48]"
+                          : "bg-[#FFF7DF] text-[#DFAE0D]"
+                      }`}
+                    >
+                      <AlertTriangle size={18} />
+                    </span>
+
+                    <div className={`min-w-0 flex-1 ${isArabic ? "text-right" : "text-left"}`}>
+                      <p className="truncate text-sm font-bold text-[#29464D]">
+                        {item.medicineName}
+                      </p>
+
+                      <p className="mt-1 text-xs leading-5 text-[#829499]">
+                        {isExpiring
+                          ? t("متبقي {{count}} يومًا على الانتهاء", {
+                              count: formatNumber(item.daysUntilExpiry),
+                            })
+                          : t(
+                              "الكمية الحالية {{quantity}} والحد الأدنى {{threshold}}",
+                              {
+                                quantity: formatNumber(item.quantity),
+                                threshold: formatNumber(item.lowStockThreshold),
+                              },
+                            )}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             ) : (
-              <div className="rounded-2xl bg-emerald-50 p-5 text-center text-sm font-bold text-emerald-700">
-                <CheckCircle2 className="mx-auto mb-2" />
-                لا توجد تنبيهات عاجلة في المخزون
+              <div className="grid min-h-[180px] place-items-center rounded-xl border border-dashed border-[#CFE0E3] bg-[#F8FBFB] p-6 text-center">
+                <div>
+                  <span className="mx-auto grid size-12 place-items-center rounded-xl bg-[#EAF4F3] text-[#216474]">
+                    <CheckCircle2 size={22} />
+                  </span>
+
+                  <h3 className="mt-4 font-bold text-[#29464D]">
+                    {t("لا توجد تنبيهات عاجلة")}
+                  </h3>
+
+                  <p className="mt-2 text-sm text-[#829499]">
+                    {t("حالة المخزون جيدة حاليًا")}
+                  </p>
+                </div>
               </div>
             )}
           </div>
-        </section>
-        <section className="surface p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-black">جاهزية الصيدلية</h3>
+        </div>
+
+        {/* Readiness */}
+        <div className="overflow-hidden rounded-[1.55rem] border border-[#DCE8EA] bg-white shadow-[0_12px_35px_rgba(23,75,87,.045)]">
+          <div className="flex items-center justify-between gap-3 border-b border-[#E6EEF0] bg-[#FAFCFC] px-6 py-5">
+            <div className={isArabic ? "text-right" : "text-left"}>
+              <h2 className="font-black text-[#29464D]">
+                {t("جاهزية الصيدلية")}
+              </h2>
+
               <p className="mt-1 text-xs text-[#829499]">
-                خطوات ظهور بياناتك بدقة
+                {t("خطوات ظهور بياناتك بدقة")}
               </p>
             </div>
-            <span className="grid size-11 place-items-center rounded-2xl bg-[#edf6f5] text-[#216474]">
+
+            <span className="grid size-11 place-items-center rounded-xl bg-[#EAF4F3] text-[#216474]">
               <BadgeCheck size={21} />
             </span>
           </div>
-          <div className="mt-5 space-y-3">
-            {setup.map((item) => (
-              <div
-                key={item.label}
-                className="flex items-center gap-3 rounded-xl py-1"
+
+          <div className="p-5">
+            <div className="space-y-3">
+              {setup.map((item) => (
+                <div
+                  key={item.label}
+                  className="flex items-center gap-3 rounded-xl border border-[#E6EEF0] bg-[#F8FBFB] px-4 py-3"
+                >
+                  <span
+                    className={`grid size-8 shrink-0 place-items-center rounded-full ${
+                      item.done
+                        ? "bg-[#EAF4F3] text-[#216474]"
+                        : "bg-[#F0F6F7] text-[#A5A5A5]"
+                    }`}
+                  >
+                    {item.done ? (
+                      <CheckCircle2 size={17} />
+                    ) : (
+                      <CircleOff size={17} />
+                    )}
+                  </span>
+
+                  <span
+                    className={`text-sm font-bold ${
+                      item.done ? "text-[#29464D]" : "text-[#829499]"
+                    }`}
+                  >
+                    {item.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-6 grid grid-cols-2 gap-3">
+              <Link
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#DCE8EA] bg-white px-3 text-xs font-bold text-[#216474] transition hover:bg-[#EAF4F3]"
+                to="/app/pharmacy/profile"
               >
-                <span
-                  className={`grid size-8 place-items-center rounded-full ${item.done ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-400"}`}
-                >
-                  {item.done ? (
-                    <CheckCircle2 size={17} />
-                  ) : (
-                    <CircleOff size={17} />
-                  )}
-                </span>
-                <span
-                  className={`text-sm font-bold ${item.done ? "text-[#29464d]" : "text-[#829499]"}`}
-                >
-                  {item.label}
-                </span>
-              </div>
-            ))}
+                <MapPin size={16} />
+                {t("الملف والموقع")}
+              </Link>
+
+              <Link
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#DCE8EA] bg-white px-3 text-xs font-bold text-[#216474] transition hover:bg-[#EAF4F3]"
+                to="/app/pharmacy/working-hours"
+              >
+                <Clock3 size={16} />
+                {t("ساعات العمل")}
+              </Link>
+            </div>
           </div>
-          <div className="mt-6 grid grid-cols-2 gap-2">
-            <Link
-              className="btn-secondary justify-center"
-              to="/app/pharmacy/profile"
-            >
-              <MapPin size={16} />
-              الملف والموقع
-            </Link>
-            <Link
-              className="btn-secondary justify-center"
-              to="/app/pharmacy/working-hours"
-            >
-              <Clock3 size={16} />
-              ساعات العمل
-            </Link>
-          </div>
-        </section>
-      </div>
+        </div>
+      </section>
     </div>
   );
 }

@@ -15,6 +15,7 @@ import {
   Star,
 } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { getApiErrorMessage } from "../../../shared/api/errors";
 import {
   getLocationCandidates,
@@ -24,11 +25,12 @@ import {
   updatePharmacyLocation,
   updatePharmacyProfile,
 } from "../api/pharmacyApi";
-import { PharmacyPageHeader } from "../components/PharmacyPageHeader";
 import {
   PharmacyErrorState,
   PharmacyLoadingState,
 } from "../components/PharmacyStates";
+
+const PHARMACY_HERO_IMAGE = "/assets/app/pharmacy.png";
 
 const initialForm = {
   pharmacyName: "",
@@ -41,6 +43,19 @@ const initialForm = {
 };
 
 export function PharmacyProfilePage() {
+  const { t, i18n } = useTranslation();
+
+  const currentLanguage = (
+    i18n.resolvedLanguage ||
+    i18n.language ||
+    "ar"
+  )
+    .split("-")[0]
+    .toLowerCase();
+
+  const isArabic = currentLanguage === "ar";
+  const direction = isArabic ? "rtl" : "ltr";
+
   const client = useQueryClient();
   const [formDraft, setFormDraft] = useState(null);
   const [coords, setCoords] = useState(null);
@@ -74,7 +89,7 @@ export function PharmacyProfilePage() {
     mutationFn: updatePharmacyProfile,
     onSuccess: async () => {
       setFormDraft(null);
-      setMessage({ ok: true, text: "تم حفظ بيانات الصيدلية بنجاح." });
+      setMessage({ ok: true, text: t("تم حفظ بيانات الصيدلية بنجاح.") });
       await refresh();
     },
     onError: (error) =>
@@ -86,8 +101,8 @@ export function PharmacyProfilePage() {
       setMessage({
         ok: true,
         text: variables.tryVerifyWithGoogle
-          ? "تم حفظ موقع الجهاز، ويمكنك الآن مراجعة نتيجة المطابقة أدناه."
-          : "تم حفظ الإحداثيات اليدوية بنجاح، ويمكنك مطابقة الصيدلية مع الموقع الصحيح أدناه.",
+          ? t("تم حفظ موقع الجهاز، ويمكنك الآن مراجعة نتيجة المطابقة أدناه.")
+          : t("تم حفظ الإحداثيات اليدوية بنجاح، ويمكنك مطابقة الصيدلية مع الموقع الصحيح أدناه."),
       });
       await refresh();
     },
@@ -113,7 +128,7 @@ export function PharmacyProfilePage() {
   const linkLocation = useMutation({
     mutationFn: linkPharmacyLocation,
     onSuccess: async () => {
-      setMessage({ ok: true, text: "تم ربط الصيدلية بالموقع المعتمد بنجاح." });
+      setMessage({ ok: true, text: t("تم ربط الصيدلية بالموقع المعتمد بنجاح.") });
       await refresh();
       await client.invalidateQueries({
         queryKey: ["pharmacy", "location-candidates"],
@@ -126,7 +141,7 @@ export function PharmacyProfilePage() {
     if (!navigator.geolocation)
       return setMessage({
         ok: false,
-        text: "تحديد الموقع غير مدعوم في هذا المتصفح.",
+        text: t("تحديد الموقع غير مدعوم في هذا المتصفح."),
       });
     setFinding(true);
     navigator.geolocation.getCurrentPosition(
@@ -153,7 +168,7 @@ export function PharmacyProfilePage() {
         setFinding(false);
         setMessage({
           ok: false,
-          text: "لم نتمكن من قراءة موقعك. اسمح للمتصفح بالوصول إلى الموقع ثم أعد المحاولة.",
+          text: t("لم نتمكن من قراءة موقعك. اسمح للمتصفح بالوصول إلى الموقع ثم أعد المحاولة."),
         });
       },
       { enableHighAccuracy: true, timeout: 15000 },
@@ -192,20 +207,66 @@ export function PharmacyProfilePage() {
           : event.target.value,
     }));
   return (
-    <div>
-      <PharmacyPageHeader
-        eyebrow="هوية الصيدلية"
-        title="الملف والموقع"
-        description="حافظ على بيانات الصيدلية وموقعها محدثين كي يصل المرضى إليك بسهولة وتظهر ساعات الخدمة بصورة صحيحة."
-      />
+    <div dir={direction} lang={currentLanguage}>
+<section className="relative isolate min-h-[220px] overflow-hidden rounded-[14px] text-white shadow-[0_22px_55px_rgba(23,75,87,.16)]
+sm:min-h-[230px]
+lg:min-h-[250px]">
+        <img
+          src={PHARMACY_HERO_IMAGE}
+          alt=""
+          aria-hidden="true"
+          className={`absolute inset-0 h-full w-full object-cover object-[center_38%] ${isArabic ? "scale-x-[-1]" : ""}`}
+        />
+
+        <div
+          className="absolute inset-0"
+          style={{
+            background: isArabic
+              ? "linear-gradient(270deg,#10505A 0%,rgba(16,80,90,.90) 38%,rgba(33,100,116,.48) 70%,rgba(33,100,116,.08) 100%)"
+              : "linear-gradient(90deg,#10505A 0%,rgba(16,80,90,.90) 38%,rgba(33,100,116,.48) 70%,rgba(33,100,116,.08) 100%)",
+          }}
+        />
+
+   <div className="relative z-10 flex min-h-[220px] items-center px-8 py-7
+sm:min-h-[230px]
+lg:min-h-[250px]
+lg:px-10">
+  <div
+            className={`absolute top-1/2 flex -translate-y-1/2 items-center gap-5 ${
+              isArabic
+                ? "right-10 flex-row-reverse"
+                : "left-10 flex-row-reverse"
+            }`}
+          >
+            
+
+            <div className={`min-w-0 ${isArabic ? "text-right" : "text-left"}`}>
+            
+
+              <h1 className="mt-2 text-[28px] font-medium leading-[1.2] text-white">
+                {t("الملف والموقع")}
+              </h1>
+
+              <p className="mt-3 max-w-[560px] text-[14px] leading-7 text-[#D6D6D6]">
+                {t(
+                  "حافظ على بيانات الصيدلية وموقعها محدثين كي يصل المرضى إليك بسهولة .",
+                )}
+              </p>
+            </div>
+            <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-white/[.10] text-[#E6F3F6] backdrop-blur-sm">
+              <MapPin size={28} strokeWidth={1.7} />
+            </span>
+          </div>
+        </div>
+      </section>
       {message && (
         <div
-          className={`mb-5 rounded-2xl border p-4 text-sm font-bold ${message.ok ? "border-emerald-100 bg-emerald-50 text-emerald-700" : "border-rose-100 bg-rose-50 text-rose-700"}`}
+          className={`mb-5 rounded-2xl border p-4 text-sm font-bold ${message.ok ? "border-[#CFE4E7] bg-[#EAF4F3] text-[#216474]" : "border-rose-100 bg-rose-50 text-rose-700"}`}
         >
           {message.text}
         </div>
       )}
-      <div className="grid gap-6 xl:grid-cols-[1.1fr_.9fr]">
+      <div className="grid gap-6 xl:grid-cols-[1.1fr_.9fr] mt-15">
         <form
           className="surface p-6"
           onSubmit={(e) => {
@@ -214,20 +275,20 @@ export function PharmacyProfilePage() {
             saveProfile.mutate(form);
           }}
         >
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 ">
             <span className="grid size-11 place-items-center rounded-2xl bg-[#eaf4f3] text-[#216474]">
               <Building2 size={21} />
             </span>
-            <div>
-              <h3 className="font-black">بيانات التعريف</h3>
+            <div className={isArabic ? "text-right" : "text-left"}>
+              <h3 className="font-black">{t("بيانات التعريف")}</h3>
               <p className="mt-1 text-xs text-[#829499]">
-                تظهر هذه المعلومات للمرضى عند فتح صفحة الصيدلية
+                {t("تظهر هذه المعلومات للمرضى عند فتح صفحة الصيدلية")}
               </p>
             </div>
           </div>
           <div className="mt-6 grid gap-5 md:grid-cols-2">
             <label>
-              <span className="form-label">اسم الصيدلية</span>
+              <span className="form-label">{t("اسم الصيدلية")}</span>
               <input
                 className="form-input"
                 value={form.pharmacyName}
@@ -237,7 +298,7 @@ export function PharmacyProfilePage() {
               />
             </label>
             <label>
-              <span className="form-label">المدينة</span>
+              <span className="form-label">{t("المدينة")}</span>
               <input
                 className="form-input"
                 value={form.city}
@@ -247,7 +308,7 @@ export function PharmacyProfilePage() {
               />
             </label>
             <label>
-              <span className="form-label">المنطقة أو الحي</span>
+              <span className="form-label">{t("المنطقة أو الحي")}</span>
               <input
                 className="form-input"
                 value={form.area}
@@ -257,19 +318,19 @@ export function PharmacyProfilePage() {
               />
             </label>
             <label>
-              <span className="form-label">المنطقة الزمنية</span>
+              <span className="form-label">{t("المنطقة الزمنية")}</span>
               <select
                 className="form-input"
                 value={form.timeZoneId}
                 onChange={change("timeZoneId")}
               >
-                <option value="Asia/Riyadh">توقيت الرياض</option>
-                <option value="Asia/Damascus">توقيت دمشق</option>
-                <option value="Asia/Baghdad">توقيت بغداد</option>
+                <option value="Asia/Riyadh">{t("توقيت الرياض")}</option>
+                <option value="Asia/Damascus">{t("توقيت دمشق")}</option>
+                <option value="Asia/Baghdad">{t("توقيت بغداد")}</option>
               </select>
             </label>
             <label className="md:col-span-2">
-              <span className="form-label">العنوان التفصيلي</span>
+              <span className="form-label">{t("العنوان التفصيلي")}</span>
               <input
                 className="form-input"
                 value={form.address}
@@ -279,21 +340,21 @@ export function PharmacyProfilePage() {
               />
             </label>
             <label className="md:col-span-2">
-              <span className="form-label">نبذة عن الصيدلية</span>
+              <span className="form-label">{t("نبذة عن الصيدلية")}</span>
               <textarea
                 className="form-textarea min-h-28"
                 value={form.description}
                 onChange={change("description")}
                 maxLength={1000}
-                placeholder="الخدمات والتخصصات التي تميز الصيدلية"
+                placeholder={t("الخدمات والتخصصات التي تميز الصيدلية")}
               />
             </label>
           </div>
           <label className="mt-5 flex cursor-pointer items-center justify-between rounded-2xl border border-[#174b57]/10 bg-[#f8fbfa] p-4">
             <div>
-              <span className="text-sm font-extrabold">خدمة توصيل الأدوية</span>
+              <span className="text-sm font-extrabold">{t("خدمة توصيل الأدوية")}</span>
               <p className="mt-1 text-xs text-[#829499]">
-                فعّلها فقط إذا كانت الخدمة متاحة فعليًا
+                {t("فعّلها فقط إذا كانت الخدمة متاحة فعليًا")}
               </p>
             </div>
             <input
@@ -305,48 +366,61 @@ export function PharmacyProfilePage() {
           </label>
           <button disabled={saveProfile.isPending} className="btn-primary mt-6">
             <Save size={17} />
-            {saveProfile.isPending ? "جاري الحفظ..." : "حفظ البيانات"}
+            {saveProfile.isPending ? t("جاري الحفظ...") : t("حفظ البيانات")}
           </button>
         </form>
         <div className="space-y-6">
           <section className="surface overflow-hidden">
-            <div className="relative bg-[#123f49] p-6 text-white">
-              <div className="absolute left-4 top-4 text-[#f5cb72]/20">
-                <Navigation size={90} />
+            <div className="relative overflow-hidden border-b border-[#DCE8EA] bg-[#F2F8F8] p-6">
+              <div
+                className={`pointer-events-none absolute top-1/2 -translate-y-1/2 text-[#174B57]/10 ${
+                  isArabic ? "left-5" : "right-5"
+                }`}
+              >
+                <Navigation size={96} strokeWidth={1.6} />
               </div>
+
               <div className="relative">
-                <div className="flex items-center justify-between">
-                  <span className="grid size-11 place-items-center rounded-2xl bg-white/10">
-                    <MapPin size={21} />
-                  </span>
-                  {data.isLocationVerified && (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-300/15 px-3 py-1 text-xs font-bold text-emerald-200">
-                      <ShieldCheck size={14} />
-                      موقع مطابق
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex min-w-0 items-start gap-4">
+                    <span className="grid size-11 shrink-0 place-items-center rounded-xl border border-[#DCE8EA] bg-white text-[#174B57] shadow-[0_4px_12px_rgba(23,75,87,.06)]">
+                      <MapPin size={21} strokeWidth={1.9} />
                     </span>
-                  )}
+
+                    <div className={`min-w-0 ${isArabic ? "text-right" : "text-left"}`}>
+                      <h3 className="text-xl font-black text-[#29464D]">
+                        {t("موقع الصيدلية")}
+                      </h3>
+
+                      <p className="mt-2 text-sm leading-6 text-[#60777D]">
+                        {data.hasLocation
+                          ? data.address
+                          : t("لم يحدد موقع الصيدلية بعد")}
+                      </p>
+
+                      {data.hasLocation && (
+                        <p
+                          className="mt-3 text-xs font-medium text-[#829499]"
+                          dir="ltr"
+                        >
+                          {Number(data.latitude).toFixed(6)},{" "}
+                          {Number(data.longitude).toFixed(6)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                 
                 </div>
-                <h3 className="mt-5 text-xl font-black">موقع الصيدلية</h3>
-                <p className="mt-2 text-sm leading-6 text-white/55">
-                  {data.hasLocation
-                    ? data.address
-                    : "لم يحدد موقع الصيدلية بعد"}
-                </p>
-                {data.hasLocation && (
-                  <p className="mt-3 text-xs text-white/40" dir="ltr">
-                    {Number(data.latitude).toFixed(6)},{" "}
-                    {Number(data.longitude).toFixed(6)}
-                  </p>
-                )}
               </div>
             </div>
             <div className="p-5">
               <div className="mb-4">
                 <h4 className="font-extrabold text-[#173f48]">
-                  اختر طريقة تحديد الموقع
+                  {t("اختر طريقة تحديد الموقع")}
                 </h4>
                 <p className="mt-1 text-xs leading-5 text-[#829499]">
-                  استخدم موقع الجهاز أو أدخل الإحداثيات بنفسك
+                  {t("استخدم موقع الجهاز أو أدخل الإحداثيات بنفسك")}
                 </p>
               </div>
               <div className="rounded-2xl border border-[#174b57]/10 bg-[#f8fbfa] p-4">
@@ -354,10 +428,10 @@ export function PharmacyProfilePage() {
                   <span className="grid size-9 place-items-center rounded-xl bg-[#e7f2f0] text-[#216474]">
                     <Crosshair size={17} />
                   </span>
-                  <div>
-                    <h5 className="text-sm font-extrabold">الموقع الحالي</h5>
+                  <div className={isArabic ? "text-right" : "text-left"}>
+                    <h5 className="text-sm font-extrabold">{t("الموقع الحالي")}</h5>
                     <p className="mt-0.5 text-[11px] text-[#829499]">
-                      يتطلب السماح للمتصفح بمعرفة موقع الجهاز
+                      {t("يتطلب السماح للمتصفح بمعرفة موقع الجهاز")}
                     </p>
                   </div>
                 </div>
@@ -368,12 +442,12 @@ export function PharmacyProfilePage() {
                   className="btn-primary w-full justify-center"
                 >
                   <Crosshair size={17} />
-                  {finding ? "جاري تحديد الموقع..." : "استخدام موقعي الحالي"}
+                  {finding ? t("جاري تحديد الموقع...") : t("استخدام موقعي الحالي")}
                 </button>
               </div>
               <div className="my-3 flex items-center gap-3 text-[11px] font-bold text-[#9aabad]">
                 <span className="h-px flex-1 bg-[#174b57]/10" />
-                <span>أو</span>
+                <span>{t("أو")}</span>
                 <span className="h-px flex-1 bg-[#174b57]/10" />
               </div>
               <ManualLocationForm
@@ -381,6 +455,9 @@ export function PharmacyProfilePage() {
                 currentLongitude={data.longitude}
                 pending={saveLocation.isPending}
                 onSave={saveManualLocation}
+                t={t}
+                isArabic={isArabic}
+                direction={direction}
               />
               {data.locationGoogleMapsUrl && (
                 <a
@@ -389,26 +466,26 @@ export function PharmacyProfilePage() {
                   rel="noreferrer"
                   className="btn-quiet mt-3 w-full justify-center"
                 >
-                  فتح الموقع على الخريطة <ExternalLink size={15} />
+                  {t("فتح الموقع على الخريطة")} <ExternalLink size={15} />
                 </a>
               )}
             </div>
           </section>
           <section className="surface p-5">
-            <h3 className="font-black">بيانات ثابتة</h3>
+            <h3 className="font-black">{t("بيانات ثابتة")}</h3>
             <div className="mt-4 space-y-3 text-sm">
               <div className="flex items-center gap-3">
                 <BadgeCheck className="text-[#216474]" size={17} />
-                <span className="text-[#829499]">رقم الترخيص</span>
+                <span className="text-[#829499]">{t("رقم الترخيص")}</span>
                 <strong className="ms-auto" dir="ltr">
                   {data.licenseNumber}
                 </strong>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="text-[#216474]" size={17} />
-                <span className="text-[#829499]">الهاتف</span>
+                <span className="text-[#829499]">{t("الهاتف")}</span>
                 <strong className="ms-auto" dir="ltr">
-                  {data.phoneNumber || "غير مسجل"}
+                  {data.phoneNumber || t("غير مسجل")}
                 </strong>
               </div>
             </div>
@@ -418,10 +495,11 @@ export function PharmacyProfilePage() {
       <section className="surface mt-6 p-6">
         <div className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
           <div>
-            <h3 className="text-lg font-black">مطابقة الموقع</h3>
+            <h3 className="text-lg font-black">{t("مطابقة الموقع")}</h3>
             <p className="mt-1 text-xs text-[#829499]">
-              اختر النتيجة التي تمثل صيدليتك بدقة لتثبيت الاسم والعنوان على
-              الخريطة
+              {t(
+                "اختر النتيجة التي تمثل صيدليتك بدقة لتثبيت الاسم والعنوان على الخريطة",
+              )}
             </p>
           </div>
           {candidates.isFetching && (
@@ -448,7 +526,7 @@ export function PharmacyProfilePage() {
                       <h4 className="font-extrabold">{item.name}</h4>
                       {item.isBestMatch && (
                         <span className="rounded-full bg-[#216474] px-2 py-1 text-[10px] font-bold text-white">
-                          الأقرب للموقع
+                          {t("الأقرب للموقع")}
                         </span>
                       )}
                     </div>
@@ -456,7 +534,7 @@ export function PharmacyProfilePage() {
                       {item.address}
                     </p>
                     <p className="mt-2 flex items-center gap-3 text-xs text-[#829499]">
-                      <span>{Math.round(item.distanceMeters)} م</span>
+                      <span>{Math.round(item.distanceMeters)} {t("م")}</span>
                       <span className="flex items-center gap-1">
                         <Star
                           size={12}
@@ -484,10 +562,10 @@ export function PharmacyProfilePage() {
                   {data.externalPlaceId === item.placeId ? (
                     <>
                       <Check size={16} />
-                      الموقع مرتبط
+                      {t("الموقع مرتبط")}
                     </>
                   ) : (
-                    "اعتماد هذا الموقع"
+                    t("اعتماد هذا الموقع")
                   )}
                 </button>
               </article>
@@ -504,6 +582,9 @@ function ManualLocationForm({
   currentLongitude,
   pending,
   onSave,
+  t,
+  isArabic,
+  direction,
 }) {
   const [values, setValues] = useState({
     latitude: currentLatitude ?? "",
@@ -517,17 +598,18 @@ function ManualLocationForm({
   const submit = (event) => {
     event.preventDefault();
     if (values.latitude === "" || values.longitude === "")
-      return setValidationError("أدخل خط العرض وخط الطول قبل الحفظ.");
+      return setValidationError(t("أدخل خط العرض وخط الطول قبل الحفظ."));
     const latitude = Number(values.latitude);
     const longitude = Number(values.longitude);
     if (!Number.isFinite(latitude) || latitude < -90 || latitude > 90)
-      return setValidationError("يجب أن يكون خط العرض رقمًا بين ‎-90 و90.");
+      return setValidationError(t("يجب أن يكون خط العرض رقمًا بين ‎-90 و90."));
     if (!Number.isFinite(longitude) || longitude < -180 || longitude > 180)
-      return setValidationError("يجب أن يكون خط الطول رقمًا بين ‎-180 و180.");
+      return setValidationError(t("يجب أن يكون خط الطول رقمًا بين ‎-180 و180."));
     onSave({ latitude, longitude });
   };
   return (
     <form
+      dir={direction}
       onSubmit={submit}
       className="rounded-2xl border border-[#174b57]/10 p-4"
     >
@@ -536,15 +618,15 @@ function ManualLocationForm({
           <Keyboard size={17} />
         </span>
         <div>
-          <h5 className="text-sm font-extrabold">إدخال الإحداثيات يدويًا</h5>
+          <h5 className="text-sm font-extrabold">{t("إدخال الإحداثيات يدويًا")}</h5>
           <p className="mt-0.5 text-[11px] text-[#829499]">
-            انسخ القيم الدقيقة من تطبيق الخرائط
+            {t("انسخ القيم الدقيقة من تطبيق الخرائط")}
           </p>
         </div>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
         <label>
-          <span className="form-label">خط العرض</span>
+          <span className="form-label">{t("خط العرض")}</span>
           <input
             className="form-input"
             dir="ltr"
@@ -562,7 +644,7 @@ function ManualLocationForm({
           />
         </label>
         <label>
-          <span className="form-label">خط الطول</span>
+          <span className="form-label">{t("خط الطول")}</span>
           <input
             className="form-input"
             dir="ltr"
@@ -594,7 +676,7 @@ function ManualLocationForm({
         className="btn-secondary mt-4 w-full justify-center"
       >
         <Save size={16} />
-        {pending ? "جاري الحفظ..." : "حفظ الإحداثيات"}
+        {pending ? t("جاري الحفظ...") : t("حفظ الإحداثيات")}
       </button>
     </form>
   );

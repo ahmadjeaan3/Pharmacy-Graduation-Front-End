@@ -1,595 +1,2090 @@
-import { useQuery } from "@tanstack/react-query";
-import { motion as Motion } from "framer-motion";
-import {
-  ArrowLeft,
-  ArrowUpLeft,
-  BadgeCheck,
-  BellRing,
-  Bot,
-  Building2,
-  Check,
-  Clock3,
-  FileText,
-  HeartHandshake,
-  HeartPulse,
-  MapPin,
-  PackageCheck,
-  PackageSearch,
-  Search,
-  ShieldCheck,
-  Sparkles,
-  UserRound,
-  QrCode,
-} from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { apiClient } from "../../../shared/api/client";
-import { Brand } from "../../../shared/components/Brand";
-import { PublicHeader } from "../../../shared/components/PublicHeader";
+import { LanguageSwitcher } from "../../../shared/components/LanguageSwitcher";
+import {
+  getLanguageDirection,
+  normalizeLanguage,
+} from "../../../shared/i18n/i18n";
 
-const services = [
-  {
-    icon: Search,
-    number: "01",
-    title: "ابحث عن دوائك",
-    text: "اكتب اسم الدواء وشاهد توفره وأسعاره في الصيدليات القريبة منك.",
-  },
-  {
-    icon: MapPin,
-    number: "02",
-    title: "اختر الصيدلية",
-    text: "قارن المسافة وحالة العمل والتقييم، ثم اختر الأنسب خلال ثوانٍ.",
-  },
-  {
-    icon: HeartHandshake,
-    number: "03",
-    title: "شارك في العطاء",
-    text: "استعرض حملات المنظمات المعتمدة وقدّم عروض التبرع أو طلبات المساعدة.",
-  },
-];
+import {
+  Building2,
+  UserRound,
+  Warehouse,
+} from "lucide-react";
 
-const smartFeatures = [
+const ASSETS = {
+  logo: "/assets/app/brand/logo.png",
+  hero: "/assets/app/home/hero.png",
+  servicesPhoto: "/assets/app/auth/servicesPhoto.png",
+  security: "/assets/app/home/security.png",
+  cta: "/assets/app/home/cta.png",
+
+  sparkle: "/assets/app/home/icons/Sparkle.png",
+  arrowWhite: "/assets/app/home/icons/Diagonal Right Up Arrow.png",
+  arrowTeal: "/assets/app/home/icons/chevron-down.svg",
+  verified: "/assets/app/home/icons/verified.png",
+  quickSearch: "/assets/app/home/icons/Clock-orange.png",
+  fastAccess: "/assets/app/home/icons/Clock.png",
+  accuracy: "/assets/app/home/icons/MagnifyingGlassPlus.png",
+  smartChoice: "/assets/app/home/icons/MagicWand.png",
+  updatedInfo: "/assets/app/home/icons/ArrowsClockwise.png",
+  Diagonal: "/assets/app/home/icons/Diagonal.png",
+
+  user: "/assets/app/home/icons/user.png",
+  pharmacy: "/assets/app/home/icons/pharmacy.png",
+  organization: "/assets/app/home/icons/organization.png",
+  admin: "/assets/app/home/icons/admin.png",
+
+  medicineSearch: "/assets/app/home/icons/medicine-search.png",
+  choosePharmacy: "/assets/app/home/icons/choose-pharmacy.png",
+  donation: "/assets/app/home/icons/donation.png",
+
+  lock: "/assets/app/home/icons/lock.png",
+  shield: "/assets/app/home/icons/shield.png",
+  transparency: "/assets/app/home/icons/transparency.png",
+
+  star: "/assets/app/home/icons/star.png",
+  quote: "/assets/app/home/icons/quote.png",
+
+  whatsapp: "/assets/app/social/whatsapp.png",
+  facebook: "/assets/app/social/facebook.png",
+  email: "/assets/app/social/email.png",
+  instagram: "/assets/app/social/instagram.png",
+};
+
+const features = [
   {
-    icon: FileText,
-    title: "الوصفة الذكية",
-    text: "ارفع وصفة مطبوعة واستخرج الأدوية منها ضمن مسار واضح للمراجعة والطلب.",
-    tone: "from-cyan-50 to-white text-cyan-700",
-    label: "استخراج وتحليل",
+    image: ASSETS.fastAccess,
+    title: "وصول سريع",
+    text: "ابحث عن دوائك بسرعة",
   },
   {
-    icon: Bot,
-    title: "المساعد الدوائي",
-    text: "محادثة ذكية مدعومة بدليل الأدوية للإجابة والبحث وتوجيه المستخدم.",
-    tone: "from-violet-50 to-white text-violet-700",
-    label: "مساعدة ذكية",
+    image: ASSETS.accuracy,
+    title: "دقة عالية",
+    text: "نحدد أقرب الصيدليات إليك بدقة",
   },
   {
-    icon: QrCode,
-    title: "حجز واستلام",
-    text: "احجز الدواء لمدة محددة واستلمه باستخدام رمز QR واضح وآمن.",
-    tone: "from-amber-50 to-white text-amber-700",
-    label: "QR للاستلام",
+    image: ASSETS.smartChoice,
+    title: "اختيار ذكي",
+    text: "نرشح أفضل الصيدليات حسب احتياجك",
   },
   {
-    icon: HeartPulse,
-    title: "ملف صحي متكامل",
-    text: "حساسيات وأمراض وأدوية حالية تساعد على إظهار التنبيهات المهمة.",
-    tone: "from-emerald-50 to-white text-emerald-700",
-    label: "تنبيهات صحية",
+    image: ASSETS.updatedInfo,
+    title: "معلومات محدثة",
+    text: "بيانات الصيدليات تحدث باستمرار",
   },
 ];
 
 const roles = [
   {
+    number: "01",
+    type: "user",
     icon: UserRound,
-    title: "المستخدم",
-    text: "بحث وطلبات وتتبع وملف صحي في تجربة بسيطة.",
+    title: "مستخدم",
+    text: "يبحث عن الأدوية بسهولة ويحدد أقرب الصيدليات المتوفرة حسب موقعه",
+    active: true,
+    iconBackground:
+      "bg-[linear-gradient(180deg,rgba(33,100,116,0.12)_0%,rgba(33,100,116,0.03)_100%)]",
   },
   {
-    icon: Building2,
-    title: "الصيدلية",
-    text: "إدارة المخزون والطلبات وساعات العمل من مكان واحد.",
+    number: "02",
+    type: "pharmacy",
+    image: ASSETS.pharmacy,
+    title: "صيدلية",
+    text: "تعرض معلومات الصيدلية والأدوية والمتوفر لتظهر للمستخدمين بطريقة دقيقة",
+    active: false,
+    iconBackground:
+      "bg-[linear-gradient(180deg,rgba(249,209,45,0.1452)_0%,rgba(251,244,177,0)_100%)]",
   },
   {
-    icon: HeartHandshake,
-    title: "المنظمة",
-    text: "إدارة حملات التبرع وعروض الأدوية وطلبات المساعدة.",
+    number: "03",
+    type: "organization",
+    image: ASSETS.organization,
+    title: "المنظمات",
+    text: "تدير الطلبات بشكل واضح وتتابع احتياجات المستخدمين لضمان أفضل تجربة",
+    active: false,
+    iconBackground:
+      "bg-[linear-gradient(180deg,rgba(255,234,204,0.66)_0%,rgba(255,243,226,0)_100%)]",
   },
   {
-    icon: ShieldCheck,
-    title: "الإدارة",
-    text: "مراجعة واعتماد ورقابة دقيقة على عمليات المنصة.",
+    number: "04",
+    type: "warehouse",
+    icon: Warehouse,
+    title: "مستودع أدوية",
+    text: "يدير مخزون الأدوية ويستقبل طلبات الصيدليات ويتابع عمليات التوريد والتوصيل بين المستودعات والصيدليات.",
+    active: false,
+    iconBackground:
+      "bg-[linear-gradient(180deg,rgba(91,141,239,0.16)_0%,rgba(219,231,255,0)_100%)]",
   },
 ];
 
-export function LandingPage() {
-  const health = useQuery({
-    queryKey: ["api-health"],
-    queryFn: async () => (await apiClient.get("/pharmacies/health")).data,
-    retry: false,
-  });
-  const ticker = useQuery({
-    queryKey: ["home-ticker"],
-    queryFn: async () => (await apiClient.get("/home-ticker")).data,
-    retry: false,
-    staleTime: 60_000,
-  });
-  const tickerItems = ticker.data?.length
-    ? ticker.data
-    : [
-        {
-          id: "default-duty",
-          type: "DutyPharmacy",
-          title: "صيدليات مناوبة الآن",
-          message: "اعثر على أقرب صيدلية مفتوحة ومتوفرة لخدمتك",
-        },
-        {
-          id: "default-announcement",
-          type: "Announcement",
-          title: "إعلانات وتنبيهات المنصة",
-          message: "تابع أحدث الخدمات والتنبيهات الدوائية",
-        },
-      ];
+const services = [
+  {
+    number: "01",
+    icon: "search",
+    title: "ابحث عن دوائك",
+    text: "اكتب اسم الدواء وشاهد توفره وأسعاره في الصيدليات القريبة منك.",
+  },
+  {
+    number: "02",
+    icon: "pharmacy",
+    title: "اختر الصيدلية",
+    text: "قارن المسافة وحالة العمل والتقييم، ثم اختر الأنسب خلال ثوانٍ.",
+  },
+  {
+    number: "03",
+    icon: "heart",
+    title: "شارك في العطاء",
+    text: "استعرض حملات المنظمات المعتمدة وقدّم عروض التبرع أو طلبات المساعدة.",
+  },
+];
+
+const testimonials = [
+  {
+    name: "لارا مراد",
+    role: "مستخدمة",
+    image: "/assets/app/home/user-1.png",
+    rating: 5,
+    text: "تطبيق رائع وسهل الاستخدام، قدرت ألاقي دوائي وأقرب صيدلية خلال ثوانٍ، ووفر علي وقت وجهد كبير.",
+  },
+  {
+    name: "عمر شيرو",
+    role: "مستخدم",
+    image: "/assets/app/home/user-2.png",
+    rating: 4,
+    text: "البحث سريع والنتائج واضحة، وأكثر شيء أعجبني معرفة الصيدليات الأقرب بحسب موقعي مباشرة.",
+  },
+  {
+    name: "نور موفق",
+    role: "مستخدمة",
+    image: "/assets/app/home/user-3.png",
+    rating: 5,
+    text: "واجهة مرتبة وسهلة، ووصلت إلى الدواء المطلوب بدون اتصالات كثيرة أو بحث طويل بين الصيدليات.",
+  },
+  {
+    name: "سارة محمود",
+    role: "مستخدمة",
+    image: "/assets/app/home/user-1.png",
+    rating: 5,
+    text: "وفرت المنصة علي وقتًا كبيرًا، وعرفت الصيدلية التي يتوفر فيها الدواء قبل أن أخرج من المنزل.",
+  },
+  {
+    name: "أحمد خالد",
+    role: "مستخدم",
+    image: "/assets/app/home/user-2.png",
+    rating: 4,
+    text: "تجربة ممتازة، خصوصًا عرض المسافة والمعلومات المهمة بطريقة بسيطة ومفهومة.",
+  },
+  {
+    name: "ريم حسن",
+    role: "مستخدمة",
+    image: "/assets/app/home/user-3.png",
+    rating: 5,
+    text: "استخدمت المنصة أكثر من مرة وكانت النتائج دقيقة، والتصميم مريح جدًا أثناء الاستخدام.",
+  },
+  {
+    name: "محمد علي",
+    role: "مستخدم",
+    image: "/assets/app/home/user-1.png",
+    rating: 5,
+    text: "خدمة مفيدة فعلًا، ساعدتني في الوصول إلى أقرب صيدلية متوفر فيها الدواء بسرعة.",
+  },
+  {
+    name: "جنى يوسف",
+    role: "مستخدمة",
+    image: "/assets/app/home/user-2.png",
+    rating: 4,
+    text: "أعجبتني سهولة التنقل بين النتائج ووضوح بيانات الصيدلية والدواء.",
+  },
+  {
+    name: "سامر إبراهيم",
+    role: "مستخدم",
+    image: "/assets/app/home/user-3.png",
+    rating: 5,
+    text: "منصة منظمة وسريعة، وأصبحت أول خيار أستخدمه عندما أبحث عن دواء قريب مني.",
+  },
+];
+
+const securityFeatures = [
+  {
+    image: ASSETS.lock,
+    title: "خصوصية كاملة",
+    text: "بياناتك بأمان",
+  },
+  {
+    image: ASSETS.shield,
+    title: "حماية متقدمة",
+    text: "نستخدم أحدث التقنيات",
+  },
+  {
+    image: ASSETS.transparency,
+    title: "شفافية مطلقة",
+    text: "وضوح كامل باستخدام بياناتك",
+  },
+];
+
+const socialLinks = [
+  {
+    label: "واتساب",
+    href: "#",
+    image: ASSETS.whatsapp,
+  },
+  {
+    label: "فيسبوك",
+    href: "#",
+    image: ASSETS.facebook,
+  },
+  {
+    label: "البريد الإلكتروني",
+    href: "mailto:info@medicallife.com",
+    image: ASSETS.email,
+  },
+  {
+    label: "إنستغرام",
+    href: "#",
+    image: ASSETS.instagram,
+  },
+];
+
+function ImageIcon({
+  src,
+  alt = "",
+  className = "h-6 w-6",
+}) {
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className={`${className} object-contain`}
+    />
+  );
+}
+
+function Logo() {
+  return (
+    <Link
+      to="/"
+      className="flex h-[59.79px] w-[62px] shrink-0 items-center justify-center"
+    >
+      <img
+        src={ASSETS.logo}
+        alt="Medical Life"
+        className="h-[55px] w-[55px] object-contain"
+      />
+    </Link>
+  );
+}
+
+function SectionHeading({
+  label,
+  title,
+  text,
+}) {
+  const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen overflow-hidden bg-[#f7faf9] text-[#142e35]">
-      <PublicHeader />
-      <main>
-        <aside
-          className="border-b border-[#174b57]/10 bg-[#174b57] text-white"
-          aria-label="إعلانات وتنبيهات المنصة"
+    <div className="mx-auto max-w-[650px] text-center">
+      {label ? (
+        <span className="inline-flex items-center gap-2 rounded-[30px] bg-[#EAF6F8] px-4 py-2 text-[13px] font-medium text-[#216474]">
+          <ImageIcon
+            src={ASSETS.sparkle}
+            className="h-4 w-4"
+          />
+
+          {t(label)}
+        </span>
+      ) : null}
+
+      <div className="mt-4 flex items-center justify-center gap-[58px]">
+        <span className="h-[3px] w-[69px] rounded-lg bg-gradient-to-l from-[#EEB73A] to-white" />
+
+        <h2 className="text-[32px] font-medium leading-8 text-[#333333]">
+          {t(title)}
+        </h2>
+
+        <span className="h-[3px] w-[69px] rounded-lg bg-gradient-to-r from-[#EEB73A] to-white" />
+      </div>
+
+      {text ? (
+        <p className="mt-5 text-[18px] font-normal leading-[29px] text-[#A5A5A5]">
+          {t(text)}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+function ServiceIcon({ type }) {
+  const commonProps = {
+    width: 24,
+    height: 24,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    xmlns: "http://www.w3.org/2000/svg",
+    "aria-hidden": true,
+  };
+
+  if (type === "search") {
+    return (
+      <svg {...commonProps}>
+        <circle
+          cx="10.8"
+          cy="10.8"
+          r="6.3"
+          stroke="#E6F3F6"
+          strokeWidth="1.8"
+        />
+
+        <path
+          d="M15.5 15.5L20 20"
+          stroke="#E6F3F6"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+        />
+      </svg>
+    );
+  }
+
+  if (type === "pharmacy") {
+    return (
+      <svg {...commonProps}>
+        <path
+          d="M12 3V21"
+          stroke="#E6F3F6"
+          strokeWidth="1.7"
+          strokeLinecap="round"
+        />
+
+        <path
+          d="M8.2 6.2C8.2 4.9 9.3 4 10.7 4H14.2C15.4 4 16.4 4.8 16.4 5.9C16.4 7.1 15.5 7.8 14.3 8.2L10.1 9.5C8.9 9.9 8.1 10.7 8.1 11.8C8.1 13 9.1 13.8 10.4 13.8H14.1C15.4 13.8 16.4 14.7 16.4 15.9C16.4 17 15.5 17.9 14.2 17.9H10.1"
+          stroke="#E6F3F6"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
+
+        <path
+          d="M7 7.2L17 16.8"
+          stroke="#E6F3F6"
+          strokeWidth="1.4"
+          strokeLinecap="round"
+          opacity="0.75"
+        />
+      </svg>
+    );
+  }
+
+  return (
+    <svg {...commonProps}>
+      <path
+        d="M20.2 5.9C18.4 4.1 15.4 4.1 13.6 5.9L12 7.5L10.4 5.9C8.6 4.1 5.6 4.1 3.8 5.9C2 7.7 2 10.7 3.8 12.5L12 20L20.2 12.5C22 10.7 22 7.7 20.2 5.9Z"
+        stroke="#E6F3F6"
+        strokeWidth="1.7"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function LandingPage() {
+  const { t, i18n } = useTranslation();
+
+  const currentLanguage =
+    normalizeLanguage(
+      i18n.resolvedLanguage ||
+        i18n.language ||
+        "ar",
+    );
+
+  const isArabic =
+    currentLanguage === "ar";
+
+  const isTurkish =
+    currentLanguage === "tr";
+
+  const textDirection =
+    getLanguageDirection(
+      currentLanguage,
+    );
+
+  const textAlignClass =
+    isArabic
+      ? "text-right"
+      : "text-left";
+
+  const itemsAlignClass =
+    isArabic
+      ? "items-end"
+      : "items-start";
+  const [scrollProgress, setScrollProgress] =
+    useState(0);
+
+  useEffect(() => {
+  const updateScrollProgress = () => {
+    const page =
+      document.documentElement;
+
+    const scrollableHeight =
+      page.scrollHeight -
+      page.clientHeight;
+
+    const progress =
+      scrollableHeight > 0
+        ? Math.min(
+            100,
+            Math.max(
+              0,
+              (page.scrollTop /
+                scrollableHeight) *
+                100,
+            ),
+          )
+        : 0;
+
+    setScrollProgress(progress);
+  };
+
+  updateScrollProgress();
+
+  window.addEventListener(
+    "scroll",
+    updateScrollProgress,
+    {
+      passive: true,
+    },
+  );
+
+  window.addEventListener(
+    "resize",
+    updateScrollProgress,
+  );
+
+  return () => {
+    window.removeEventListener(
+      "scroll",
+      updateScrollProgress,
+    );
+
+    window.removeEventListener(
+      "resize",
+      updateScrollProgress,
+    );
+  };
+}, []);
+
+const cardsPerPage = 3;
+
+const totalTestimonialPages =
+  Math.ceil(
+    testimonials.length /
+      cardsPerPage,
+  );
+
+const [
+  testimonialPage,
+  setTestimonialPage,
+] = useState(0);
+
+  const visibleTestimonials =
+    useMemo(() => {
+      const startIndex =
+        testimonialPage *
+        cardsPerPage;
+
+      return Array.from(
+        {
+          length: cardsPerPage,
+        },
+        (_, offset) => {
+          return testimonials[
+            (startIndex + offset) %
+              testimonials.length
+          ];
+        },
+      );
+    }, [testimonialPage]);
+
+  const showPreviousTestimonials =
+    () => {
+      setTestimonialPage(
+        (currentPage) =>
+          currentPage === 0
+            ? totalTestimonialPages - 1
+            : currentPage - 1,
+      );
+    };
+
+  const showNextTestimonials =
+    () => {
+      setTestimonialPage(
+        (currentPage) =>
+          currentPage ===
+          totalTestimonialPages - 1
+            ? 0
+            : currentPage + 1,
+      );
+    };
+
+  const goToTestimonialPage =
+    (pageIndex) => {
+      setTestimonialPage(pageIndex);
+    };
+      return (
+    <div
+      dir={textDirection}
+      lang={currentLanguage}
+      className="min-h-screen overflow-x-hidden bg-[#F8FAFC] font-['IBM_Plex_Sans_Arabic'] text-[#333333]"
+    >
+      <style>{`
+        @keyframes ml-fade-up {
+          from {
+            opacity: 0;
+            transform: translateY(22px);
+          }
+
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes ml-fade-right {
+          from {
+            opacity: 0;
+            transform: translateX(26px);
+          }
+
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        @keyframes ml-fade-left {
+          from {
+            opacity: 0;
+            transform: translateX(-26px);
+          }
+
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        @keyframes ml-float {
+          0%,
+          100% {
+            transform: translateY(0);
+          }
+
+          50% {
+            transform: translateY(-8px);
+          }
+        }
+
+        @keyframes ml-float-soft {
+          0%,
+          100% {
+            transform: translateY(0) rotate(0deg);
+          }
+
+          50% {
+            transform: translateY(-5px) rotate(0.25deg);
+          }
+        }
+
+        @keyframes ml-float-soft-reverse {
+          0%,
+          100% {
+            transform: translateY(0) rotate(0deg);
+          }
+
+          50% {
+            transform: translateY(5px) rotate(-0.25deg);
+          }
+        }
+
+        @keyframes ml-glow {
+          0%,
+          100% {
+            transform: scale(1);
+            opacity: 0.72;
+          }
+
+          50% {
+            transform: scale(1.08);
+            opacity: 1;
+          }
+        }
+
+        .ml-navbar-enter {
+          animation: ml-fade-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .ml-hero-image-enter {
+          animation:
+            ml-fade-left 0.7s cubic-bezier(0.22, 1, 0.36, 1) both,
+            ml-float 5.5s ease-in-out 0.8s infinite;
+        }
+
+        .ml-hero-copy-enter {
+          animation: ml-fade-right 0.72s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .ml-floating-card-one {
+          animation: ml-float-soft 4.4s ease-in-out 0.4s infinite;
+        }
+
+        .ml-floating-card-two {
+          animation: ml-float-soft-reverse 4.8s ease-in-out 0.9s infinite;
+        }
+
+        .ml-glow-blue {
+          animation: ml-glow 8s ease-in-out infinite;
+        }
+
+        .ml-glow-yellow {
+          animation: ml-glow 9s ease-in-out 0.8s infinite;
+        }
+
+        .ml-card {
+          transition:
+            transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+            box-shadow 0.3s ease,
+            border-color 0.3s ease;
+        }
+
+        .ml-card:hover {
+          transform: translateY(-7px);
+          border-color: rgba(33, 100, 116, 0.25);
+          box-shadow: 0 18px 40px rgba(33, 100, 116, 0.1);
+        }
+
+        .ml-card-icon {
+          transition:
+            transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+            box-shadow 0.3s ease,
+            filter 0.3s ease;
+        }
+
+        .ml-card:hover .ml-card-icon {
+          transform: translateY(-3px) scale(1.04);
+          box-shadow: 0 8px 18px rgba(33, 100, 116, 0.1);
+          filter: brightness(1.02);
+        }
+
+        .ml-button {
+          transition:
+            transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+            box-shadow 0.25s ease,
+            background-color 0.25s ease;
+        }
+
+        .ml-button:hover {
+          transform: translateY(-3px);
+        }
+
+        .ml-button:active {
+          transform: translateY(0) scale(0.98);
+        }
+
+        .ml-nav-link {
+          position: relative;
+          transition: color 0.25s ease;
+        }
+
+        .ml-nav-link::after {
+          content: "";
+          position: absolute;
+          right: 0;
+          bottom: -6px;
+          width: 0;
+          height: 2px;
+          border-radius: 999px;
+          background: #dfae0d;
+          transition: width 0.25s ease;
+        }
+
+        .ml-nav-link:hover::after {
+          width: 100%;
+        }
+
+        html {
+          scroll-behavior: smooth;
+          scrollbar-width: thin;
+          scrollbar-color: #2a7380 #edf4f4;
+        }
+
+        body::-webkit-scrollbar {
+          width: 11px;
+        }
+
+        body::-webkit-scrollbar-track {
+          background: linear-gradient(
+            180deg,
+            #f5f9f9 0%,
+            #eaf2f2 100%
+          );
+        }
+
+        body::-webkit-scrollbar-thumb {
+          min-height: 70px;
+          border: 3px solid #edf4f4;
+          border-radius: 999px;
+          background: linear-gradient(
+            180deg,
+            #216474 0%,
+            #2f7f8d 58%,
+            #dfae0d 100%
+          );
+          background-clip: padding-box;
+          box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+        }
+
+        body::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(
+            180deg,
+            #174b57 0%,
+            #216474 58%,
+            #c99a08 100%
+          );
+          background-clip: padding-box;
+        }
+
+        .ml-scroll-progress {
+          position: absolute;
+          right: 0;
+          bottom: -1px;
+          height: 3px;
+          border-radius: 999px 0 0 999px;
+          background: linear-gradient(
+            90deg,
+            #dfae0d 0%,
+            #f1c94f 32%,
+            #216474 100%
+          );
+          box-shadow: 0 1px 8px rgba(33, 100, 116, 0.28);
+          transition: width 0.08s linear;
+        }
+
+        .ml-safe-text {
+          overflow-wrap: anywhere;
+          word-break: normal;
+          hyphens: auto;
+        }
+
+        @media (max-width: 1100px) {
+          .ml-desktop-nav {
+            gap: 1rem;
+            font-size: 15px;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .ml-navbar-enter,
+          .ml-hero-image-enter,
+          .ml-hero-copy-enter,
+          .ml-floating-card-one,
+          .ml-floating-card-two,
+          .ml-glow-blue,
+          .ml-glow-yellow {
+            animation: none !important;
+          }
+
+          .ml-card,
+          .ml-card-icon,
+          .ml-button,
+          .ml-nav-link::after {
+            transition: none !important;
+          }
+        }
+      `}</style>
+
+      {/* Navbar */}
+      <header className="ml-navbar-enter sticky top-0 z-50 h-[72px] border-b border-[rgba(102,102,102,0.16)] bg-white/95 shadow-[0_5px_24px_rgba(23,75,87,.04)] backdrop-blur-xl">
+        <div
+          dir="ltr"
+          className="mx-auto flex h-full w-full max-w-[1200px] items-center justify-between px-5 xl:px-0"
         >
-          <div className="mx-auto flex max-w-[1360px] items-center gap-3 px-5 py-3 lg:px-8">
-            <span className="relative grid size-9 shrink-0 place-items-center rounded-xl bg-[#f5cb72] text-[#173d46]">
-              <BellRing size={18} aria-hidden="true" />
-              <span className="absolute -left-0.5 -top-0.5 size-2.5 rounded-full border-2 border-[#174b57] bg-rose-400" />
-            </span>
-            <div
-              className="landing-ticker min-w-0 flex-1 overflow-hidden"
-              dir="ltr"
-            >
-              <div className="landing-ticker-track flex w-max items-center">
-                {[0, 1].map((copy) => (
-                  <div
-                    key={copy}
-                    className="flex shrink-0 items-center gap-8 px-4"
-                    aria-hidden={copy === 1 ? "true" : undefined}
-                    dir="rtl"
-                  >
-                    {tickerItems.map((item) => (
-                      <span key={`${copy}-${item.id}`} className="contents">
-                        <strong
-                          className={`text-sm font-extrabold ${item.type === "DutyPharmacy" ? "text-[#f5cb72]" : "text-[#8bd0cb]"}`}
-                        >
-                          {item.title}
-                          {item.pharmacyName ? ` — ${item.pharmacyName}` : ""}
-                        </strong>
-                        <span className="text-white/30">•</span>
-                        <span className="text-sm font-semibold">
-                          {item.message}
-                        </span>
-                        <span className="text-white/30">•</span>
-                      </span>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            </div>
+          <div
+            dir={textDirection}
+            className="flex h-10 shrink-0 items-center gap-3"
+          >
+            <LanguageSwitcher />
+
             <Link
               to="/login"
-              className="hidden min-h-10 shrink-0 items-center justify-center gap-2 rounded-xl bg-white/10 px-4 text-sm font-bold transition hover:bg-white/18 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f5cb72] sm:inline-flex"
+              className="ml-button flex h-10 w-[124px] items-center justify-center rounded-lg border border-[#216474] bg-white text-[16px] font-medium leading-6 text-[#216474] hover:shadow-sm"
             >
-              استعرض الصيدليات <ArrowLeft size={16} aria-hidden="true" />
+              {t("تسجيل دخول")}
+            </Link>
+
+            <Link
+              to="/register"
+              className="ml-button flex h-10 w-[124px] items-center justify-center rounded-lg bg-[#174B57] text-[16px] font-medium leading-6 text-white hover:bg-[#123F49] hover:shadow-md"
+            >
+              {t("إنشاء حساب")}
             </Link>
           </div>
-        </aside>
-        <section className="relative isolate overflow-hidden bg-[#f4f9f8]">
-          <div className="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_80%_15%,rgba(99,183,184,.22),transparent_28%),radial-gradient(circle_at_12%_72%,rgba(245,203,114,.18),transparent_25%)]" />
-          <img
-            src="/assets/app/home/hero-bg.png"
-            alt=""
-            className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-[.11]"
-          />
-          <div className="mx-auto grid min-h-[680px] max-w-[1360px] items-center gap-12 px-5 py-16 lg:grid-cols-[1fr_.92fr] lg:px-8 lg:py-20">
-            <Motion.div
-              initial={{ opacity: 0, y: 22 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.65 }}
-            >
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#216474]/15 bg-white/80 px-4 py-2 text-xs font-bold text-[#216474] shadow-sm backdrop-blur">
-                <Sparkles size={15} /> منصة دوائية متكاملة بين يديك
-              </div>
-              <h1 className="max-w-3xl text-[2.7rem] font-black leading-[1.2] tracking-[-.04em] text-[#102d34] sm:text-6xl lg:text-[4.4rem]">
-                دواؤك أقرب إليك
-                <br />
-                <span className="relative text-[#216474]">
-                  بخطوات ذكية وآمنة
-                  <span className="absolute -bottom-2 right-0 h-2 w-4/5 rounded-full bg-[#f5cb72]/70 -z-10" />
-                </span>
-              </h1>
-              <p className="mt-7 max-w-xl text-base leading-8 text-[#5d7277] sm:text-lg">
-                ابحث في الصيدليات القريبة، ارفع وصفتك المطبوعة، احجز دواءك وتابع
-                طلبك لحظيًا ضمن منصة تربط المستخدم والصيدلية والمنظمة.
-              </p>
-              <div className="mt-9 flex flex-wrap gap-3">
-                <Link to="/register" className="btn-primary px-6 py-3.5">
-                  أنشئ حسابك مجانًا <ArrowLeft size={18} />
-                </Link>
-                <Link to="/login" className="btn-secondary px-6 py-3.5">
-                  تسجيل الدخول <ArrowUpLeft size={18} />
-                </Link>
-              </div>
-              <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-[#60757a]">
-                {["صيدليات معتمدة", "متابعة لحظية", "بيانات صحية محمية"].map(
-                  (item) => (
-                    <span key={item} className="flex items-center gap-2">
-                      <span className="grid size-5 place-items-center rounded-full bg-[#dcefed] text-[#216474]">
-                        <Check size={12} strokeWidth={3} />
-                      </span>
-                      {item}
-                    </span>
-                  ),
-                )}
-              </div>
-            </Motion.div>
 
-            <Motion.div
-              initial={{ opacity: 0, scale: 0.94 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.75, delay: 0.1 }}
-              className="relative mx-auto w-full max-w-[610px]"
+          <nav
+            dir={textDirection}
+            className="ml-desktop-nav hidden h-[32px] min-w-0 items-center gap-7 whitespace-nowrap text-[16px] leading-6 text-[#666666] lg:flex xl:gap-8"
+          >
+            <a
+              href="#home"
+              className="flex h-[32px] shrink-0 flex-col items-center font-medium text-[#216474]"
             >
-              <div className="absolute inset-[12%] -z-10 rounded-full bg-[#87c7c3]/35 blur-3xl" />
-              <div className="relative px-2 py-4 sm:p-4">
+              <span className="h-[27px] whitespace-nowrap text-[17px] leading-[27px]">
+                {t("الرئيسية")}
+              </span>
+
+              <span className="w-full border-t-2 border-[#DFAE0D]" />
+            </a>
+
+            <a
+              href="#features"
+              className="transition-colors duration-300 hover:text-[#216474]"
+            >
+              {t("الخدمات")}
+            </a>
+
+            <a
+              href="#roles"
+              className="transition-colors duration-300 hover:text-[#216474]"
+            >
+              {t("كيف يعمل")}
+            </a>
+
+            <a
+              href="#testimonials"
+              className="transition-colors duration-300 hover:text-[#216474]"
+            >
+              {t("المستخدمون")}
+            </a>
+
+            <a
+              href="#footer"
+              className="transition-colors duration-300 hover:text-[#216474]"
+            >
+              {t("تواصل معنا")}
+            </a>
+          </nav>
+
+          <Logo />
+        </div>
+
+        <span
+          aria-hidden="true"
+          className="ml-scroll-progress"
+          style={{
+            width: `${scrollProgress}%`,
+          }}
+        />
+      </header>
+
+      <main>
+        {/* Hero */}
+        <section
+          id="home"
+          className="relative overflow-hidden bg-[#F8FAFC] pb-[44px] pt-[44px]"
+        >
+          <div className="ml-glow-blue pointer-events-none absolute -right-[205px] -top-[145px] h-[496px] w-[448px] rounded-full bg-[rgba(21,142,171,0.18)] blur-[150px]" />
+
+          <div className="ml-glow-yellow pointer-events-none absolute -left-[125px] top-[255px] h-[418px] w-[375px] rounded-full bg-[rgba(254,226,82,0.20)] blur-[150px]" />
+
+          <div className="relative mx-auto flex min-h-[622px] w-full max-w-[1200px] flex-col gap-[44px] px-5 xl:px-0">
+            <div
+              dir="ltr"
+              className={`relative flex min-h-[411px] w-full items-center justify-between ${
+                isArabic
+                  ? "flex-row gap-[36px]"
+                  : "flex-row-reverse gap-[90px]"
+              }`}
+            >
+              {/* Hero image */}
+              <div className="relative z-0 h-[411px] w-[445px] shrink-0">
                 <img
-                  src="/assets/app/home/hero.png"
-                  alt="خدمات الصيدليات والأدوية"
-                  className="mx-auto w-full max-w-[540px] drop-shadow-[0_28px_32px_rgba(23,75,87,.18)]"
+                  src={ASSETS.hero}
+                  alt={t("البحث عن الأدوية والصيدليات")}
+                  className="ml-hero-image-enter h-[411px] w-[445px] object-contain"
                 />
-                <div className="absolute -right-2 top-[13%] flex items-center gap-3 rounded-2xl border border-white bg-white/95 p-3 shadow-xl sm:-right-8">
-                  <span className="grid size-10 place-items-center rounded-xl bg-emerald-50 text-emerald-600">
-                    <BadgeCheck size={21} />
-                  </span>
-                  <span>
-                    <strong className="block text-sm">صيدليات مسجّلة</strong>
-                    <small className="text-slate-400">
-                      بيانات الصيدلية والدواء
-                    </small>
-                  </span>
-                </div>
-                <div className="absolute -bottom-5 left-2 flex items-center gap-3 rounded-2xl border border-white bg-[#174b57] p-3.5 text-white shadow-xl sm:left-8">
-                  <span className="grid size-10 place-items-center rounded-xl bg-white/10">
-                    <Clock3 size={20} />
-                  </span>
-                  <span>
-                    <strong className="block text-sm">بحث موحّد</strong>
-                    <small className="text-white/60">
-                      وصول إلى بيانات الدواء
-                    </small>
-                  </span>
-                </div>
-              </div>
-            </Motion.div>
-          </div>
-          <div className="mx-auto max-w-[1360px] px-5 pb-10 lg:px-8">
-            <div className="surface flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
-              <div className="flex items-center gap-3">
-                <span
-                  className={`relative flex size-3 ${health.isPending ? "bg-amber-400" : health.isSuccess ? "bg-emerald-500" : "bg-rose-500"} rounded-full`}
+
+                {/* Registered pharmacies card */}
+                <div
+                  dir="ltr"
+                  className={`ml-floating-card-one ml-40 absolute top-[88px] z-20 hidden min-h-[74px] w-[238px] items-center justify-between gap-3 rounded-xl border border-[#216474]/10 bg-white px-5 py-3 shadow-[0_8px_24px_rgba(33,100,116,0.14)] lg:flex ${
+                    isArabic
+                      ? "left-[175px] flex-row-reverse"
+                      : "right-[175px] flex-row"
+                  }`}
                 >
-                  <span className="absolute inset-0 animate-ping rounded-full bg-current opacity-30" />
-                </span>
-                <div>
-                  <strong className="block text-sm">
-                    {health.isSuccess
-                      ? "المنصة جاهزة لخدمتك"
-                      : health.isPending
-                        ? "جاري التحقق من جاهزية الخدمات"
-                        : "الخدمات غير متاحة مؤقتاً"}
-                  </strong>
-                  <span className="text-xs text-slate-400">
-                    حالة خدمات حياة دوائية
+                  {/* Icon */}
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#DDEEEE] text-[#174B57] shadow-[0_4px_12px_rgba(33,100,116,0.12)]">
+                    <Building2
+                      size={22}
+                      strokeWidth={2}
+                      aria-hidden="true"
+                    />
                   </span>
+
+                  {/* Text */}
+                  <div
+                    dir={textDirection}
+                    className={`flex min-h-[44px] min-w-0 flex-1 flex-col justify-center  gap-1 ${
+                      isArabic
+                        ? "items-end text-right"
+                        : "items-start text-left"
+                    }`}
+                  >
+                    <strong className="w-full overflow-hidden text-[15px] font-semibold leading-5 text-[#333333]">
+                      {t("صيدليات مسجلة")}
+                    </strong>
+
+                    <small className="w-full overflow-hidden text-[11px] font-normal leading-4 tracking-[0.01em] text-[#7E8E92]">
+                      {t("بيانات الصيدلية والدواء")}
+                    </small>
+                  </div>
+                </div>
+
+                {/* Quick search card */}
+                <div
+                  dir="ltr"
+                  className={`ml-floating-card-two absolute top-[345px] z-30 hidden min-h-[72px] w-[230px] items-center justify-between gap-3 rounded-xl border border-[#DFAE0D]/10 bg-white px-5 py-3 shadow-[0_8px_24px_rgba(136,136,136,0.18)] lg:flex ${
+                    isArabic
+                      ? "left-[-20px] flex-row-reverse"
+                      : "right-[-20px] flex-row"
+                  }`}
+                >
+                  {/* Icon */}
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[rgba(251,244,177,0.32)]">
+                    <ImageIcon
+                      src={ASSETS.quickSearch}
+                      alt=""
+                      className="h-5 w-5"
+                    />
+                  </span>
+
+                  {/* Text */}
+                  <div
+                    dir={textDirection}
+                    className={`flex min-h-[42px] min-w-0 flex-1 flex-col justify-center gap-1 ${
+                      isArabic
+                        ? "items-end text-right"
+                        : "items-start text-left"
+                    }`}
+                  >
+                    <strong className="w-full text-[15px] font-medium leading-5 text-[#333333]">
+                      {t("بحث سريع")}
+                    </strong>
+
+                    <small className="w-full text-[11px] font-normal leading-4 tracking-[0.01em] text-[#A5A5A5]">
+                      {t("وصول إلى أقرب صيدلية")}
+                    </small>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center gap-6 text-xs font-semibold text-slate-500">
-                <span>خصوصية محفوظة</span>
-                <span>دخول آمن</span>
-                <span className="hidden sm:inline">خدمات موثوقة</span>
+
+              {/* Hero content */}
+              <div
+                className={`ml-hero-copy-enter z-10 flex min-h-[268px] w-[646px] shrink-0 flex-col gap-8 ${itemsAlignClass} ${textAlignClass}`}
+              >
+                <div
+                  className={`flex w-[646px] flex-col gap-7 ${itemsAlignClass}`}
+                >
+                  <div
+                    className={`flex w-[646px] flex-col gap-4 ${itemsAlignClass}`}
+                  >
+                    <div
+                      dir={textDirection}
+                      className={`inline-flex min-h-10 min-w-[228px] max-w-[340px] items-center justify-center gap-2 rounded-[34px] bg-white px-5 py-2 ${
+                        isArabic
+                          ? "flex-row"
+                          : "flex-row"
+                      }`}
+                    >
+                      {isArabic ? (
+                        <>
+                          <span
+                            className={`min-w-0 text-[15px] font-normal leading-6 text-[#444444] ${textAlignClass}`}
+                          >
+                            {t("حل ذكي للعثور على الأدوية")}
+                          </span>
+
+                          <ImageIcon
+                            src={ASSETS.sparkle}
+                            className="h-5 w-5"
+                          />
+                        </>
+                      ) : (
+                        <>
+                          <ImageIcon
+                            src={ASSETS.sparkle}
+                            className="h-5 w-5"
+                          />
+
+                          <span
+                            className={`min-w-0 text-[15px] font-normal leading-6 text-[#444444] ${textAlignClass}`}
+                          >
+                            {t("حل ذكي للعثور على الأدوية")}
+                          </span>
+                        </>
+                      )}
+                    </div>
+
+                    <h1
+                      dir={textDirection}
+                      className={`w-full break-words text-[44px] font-medium leading-[1.25] text-[#333333] xl:text-[48px] ${textAlignClass}`}
+                    >
+                      {isTurkish ? (
+                        <>
+                          <span>{t("دواؤك...")}</span>{" "}
+                          <span>{t("مما تتوقع")}</span>{" "}
+                          <span className="text-[#DFAE0D]">
+                            {t("أقرب")}
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <span>{t("دواؤك...")}</span>{" "}
+                          <span className="text-[#DFAE0D]">
+                            {t("أقرب")}
+                          </span>{" "}
+                          <span>{t("مما تتوقع")}</span>
+                        </>
+                      )}
+                    </h1>
+                  </div>
+
+                  <p
+                    dir={textDirection}
+                    className={`w-full break-words text-[16px] font-normal leading-7 text-[#666666] ${textAlignClass}`}
+                  >
+                    {t(
+                      "نساعدك في العثور على الأدوية المتوفرة في الصيدليات القريبة منك بسرعة ودقة عالية",
+                    )}
+                  </p>
+                </div>
+
+                {/* Hero buttons */}
+                <div
+                  dir={textDirection}
+                  className="flex min-h-[58px] w-auto flex-wrap items-center gap-3"
+                >
+                <a
+  href="#roles"
+  dir="ltr"
+  className={`ml-button inline-flex h-[58px] w-[180px] items-center justify-center gap-2 rounded-lg border border-[#216474] bg-transparent text-[20px] font-medium leading-[30px] text-[#216474] hover:bg-white hover:shadow-[0_12px_28px_rgba(33,100,116,0.12)] ${
+    isArabic ? "flex-row-reverse" : "flex-row"
+  }`}
+>
+  <span dir={textDirection}>
+    {t("كيف يعمل")}
+  </span>
+
+  <ImageIcon
+    src={ASSETS.arrowTeal}
+    className={`h-6 w-6 transition-transform duration-300 ${
+      isArabic ? "" : "rotate-180"
+    }`}
+  />
+</a>
+
+<Link
+  to="/register"
+  dir="ltr"
+  className={`ml-button inline-flex h-[58px] w-[180px] items-center justify-center gap-2 rounded-lg bg-[#174B57] text-[20px] font-medium leading-[30px] text-white hover:bg-[#123F49] hover:shadow-[0_14px_30px_rgba(23,75,87,0.25)] ${
+    isArabic ? "flex-row-reverse" : "flex-row"
+  }`}
+>
+  <span dir={textDirection}>
+    {t("ابدأ تجربتك")}
+  </span>
+
+  <ImageIcon
+    src={ASSETS.Diagonal}
+    className={`h-6 w-6 transition-transform duration-300 ${
+      isArabic ? "" : "rotate-100"
+    }`}
+  />
+</Link>
+                </div>
               </div>
             </div>
+
+            {/* Features */}
+            <section
+              id="features"
+              className="relative bg-[#F8FAFC] pb-[56px]"
+            >
+              <div className="mx-auto w-full max-w-[1200px] px-5 xl:px-0">
+                <div
+                  dir="ltr"
+                  className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
+                >
+                  {features.map(
+                    ({
+                      image,
+                      title,
+                      text,
+                    }) => (
+                      <article
+                        key={title}
+                        dir={textDirection}
+                        className="ml-card flex min-h-[190px] w-full flex-col items-center justify-center gap-6 rounded-xl border border-[rgba(102,102,102,0.16)] bg-white px-4 py-6"
+                      >
+                        <span className="ml-card-icon grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[#E6F3F6]">
+                          <ImageIcon
+                            src={image}
+                            alt={t(title)}
+                            className="h-6 w-6"
+                          />
+                        </span>
+
+                        <div className="flex min-h-[76px] w-full flex-col items-center justify-center gap-3">
+                          <h3 className="text-center text-[20px] font-medium leading-5 text-[#333333]">
+                            {t(title)}
+                          </h3>
+
+                          <p className="line-clamp-3 min-h-[52px] text-center text-[16px] font-normal leading-[26px] tracking-[0.01em] text-[#A5A5A5]">
+                            {t(text)}
+                          </p>
+                        </div>
+                      </article>
+                    ),
+                  )}
+                </div>
+              </div>
+            </section>
           </div>
         </section>
+                {/* Roles */}
+       {/* Roles */}
+<section
+  id="roles"
+  className="bg-[#F8FAFC] pb-[100px] pt-[56px]"
+>
+  <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-[44px] px-5 xl:px-0">
+    {/* Section heading */}
+    <div className="flex min-h-[68px] w-full flex-col items-center gap-5">
+      <div
+        dir="ltr"
+        className="flex h-[30px] w-full max-w-[526px] items-center justify-center gap-[58px]"
+      >
+        <span className="h-[3px] min-w-0 flex-1 rounded-lg bg-gradient-to-r from-white to-[#EEB73A]" />
 
-        <section
-          id="services"
-          className="mx-auto max-w-[1360px] px-5 py-24 lg:px-8"
+        <h2
+          dir={textDirection}
+          className="shrink-0 whitespace-nowrap text-center text-[32px] font-medium leading-none text-[#333333]"
         >
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="eyebrow">
-                <span className="h-px w-8 bg-[#f2b84b]" /> خدماتك اليومية
-              </p>
-              <h2 className="section-title mt-3">
-                كل ما تحتاجه لدوائك
-                <br />
-                في مكان واحد
-              </h2>
-            </div>
-            <p className="max-w-md leading-7 text-[#63777c]">
-              صممنا التجربة لتكون واضحة وسريعة، بلا خطوات زائدة أو مصطلحات
-              معقدة.
-            </p>
-          </div>
-          <div className="mt-12 grid gap-5 md:grid-cols-3">
-            {services.map(({ icon: Icon, number, title, text }) => (
-              <article
-                key={title}
-                className="group relative overflow-hidden rounded-[1.75rem] border border-[#174b57]/10 bg-white p-7 transition duration-300 hover:-translate-y-2 hover:border-[#216474]/25 hover:shadow-[0_24px_60px_rgba(23,75,87,.1)]"
+          {t("تجربة مصممة لكل دور")}
+        </h2>
+
+        <span className="h-[3px] min-w-0 flex-1 rounded-lg bg-gradient-to-l from-white to-[#EEB73A]" />
+      </div>
+
+      <p className="max-w-[650px] text-center text-[18px] font-normal leading-[29px] text-[#A5A5A5]">
+        {t(
+          "نظامنا مصمم لأربع فئات رئيسية تعمل معاً لتوفير تجربة سهلة وفعالة.",
+        )}
+      </p>
+    </div>
+
+    {/* Roles cards */}
+    <div
+      dir={textDirection}
+      className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"
+    >
+      {roles.map(
+        ({
+          number,
+          type,
+          image,
+          icon: Icon,
+          title,
+          text,
+          iconBackground,
+        }) => (
+          <article
+            key={number}
+            dir={textDirection}
+            className="ml-card flex min-h-[270px] w-full flex-col rounded-2xl border border-[rgba(102,102,102,0.16)] bg-white px-6 pb-8 pt-7"
+          >
+            <div className="flex h-full w-full flex-1 flex-col">
+              {/* Icon and number */}
+              <div
+                dir="ltr"
+                className="flex h-10 w-full shrink-0 items-start justify-between"
               >
-                <span className="absolute left-6 top-4 text-5xl font-black text-[#174b57]/[.045]">
+                {/* Number - always left */}
+                <span
+                  dir="ltr"
+                  className="block min-w-[46px] text-left text-[38px] font-bold leading-[38px] text-transparent"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, #E6F3F6 0%, rgba(230,243,246,0.12) 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                  }}
+                >
                   {number}
                 </span>
-                <span className="grid size-13 place-items-center rounded-2xl bg-[#eaf4f3] text-[#216474] transition group-hover:bg-[#174b57] group-hover:text-white">
-                  <Icon size={24} />
-                </span>
-                <h3 className="mt-7 text-xl font-extrabold text-[#102d34]">
-                  {title}
-                </h3>
-                <p className="mt-3 leading-7 text-[#65797e]">{text}</p>
-              </article>
-            ))}
-          </div>
-        </section>
 
-        <section id="journey" className="bg-[#102f37] py-24 text-white">
-          <div className="noise mx-auto grid max-w-[1360px] items-center gap-14 px-5 lg:grid-cols-[.9fr_1.1fr] lg:px-8">
-            <div className="relative">
-              <div className="absolute -inset-7 rounded-[2.5rem] bg-[#2f7180]/20 blur-2xl" />
-              <img
-                src="/assets/app/auth/login-bg.png"
-                alt="صيدلية رقمية"
-                className="relative aspect-[4/3] w-full rounded-[2rem] object-cover shadow-2xl"
-              />
-              <div className="absolute -bottom-5 right-5 rounded-2xl bg-[#f5cb72] px-5 py-4 text-[#173d46] shadow-xl">
-                <strong className="block text-2xl font-black">
-                  منصة واحدة
-                </strong>
-                <span className="text-sm font-semibold">
-                  للبحث والإدارة والعطاء
-                </span>
-              </div>
-            </div>
-            <div>
-              <p className="eyebrow !text-[#8bd0cb]">
-                <span className="h-px w-8 bg-[#f5cb72]" /> خدمات المنصة
-              </p>
-              <h2 className="section-title mt-4 !text-white">
-                وظائف واضحة تخدم
-                <br />
-                منظومة الدواء
-              </h2>
-              <div className="mt-9 space-y-4">
-                {services.map(({ icon: Icon, number, title, text }) => (
-                  <div
-                    key={title}
-                    className="flex gap-4 rounded-2xl border border-white/10 bg-white/[.055] p-4.5 transition hover:bg-white/[.09]"
-                  >
-                    <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-white/10 text-[#8bd0cb]">
-                      <Icon size={22} />
-                    </span>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-black text-[#f5cb72]">
-                          {number}
-                        </span>
-                        <h3 className="font-extrabold">{title}</h3>
-                      </div>
-                      <p className="mt-1 text-sm leading-6 text-white/60">
-                        {text}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="relative isolate overflow-hidden py-24">
-          <div className="absolute inset-x-0 top-0 -z-10 mx-auto h-full max-w-[1360px] rounded-[3rem] bg-[linear-gradient(135deg,#eef7f5,#f9fbfa)]" />
-          <div className="mx-auto max-w-[1360px] px-5 lg:px-12">
-            <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-              <div className="max-w-2xl">
-                <p className="eyebrow">
-                  <Sparkles size={16} /> تجربة أذكى
-                </p>
-                <h2 className="section-title mt-3">
-                  أكثر من مجرد بحث
-                  <br />
-                  عن اسم دواء
-                </h2>
-              </div>
-              <p className="max-w-md leading-7 text-[#65797e]">
-                أدوات مترابطة تختصر رحلة المستخدم من الوصفة والبحث حتى الحجز
-                والاستلام والمتابعة الصحية.
-              </p>
-            </div>
-            <div className="mt-12 grid gap-4 md:grid-cols-2">
-              {smartFeatures.map(
-                ({ icon: Icon, title, text, tone, label }, index) => (
-                  <article
-                    key={title}
-                    className={`group relative overflow-hidden rounded-[1.7rem] border border-white bg-gradient-to-br ${tone} p-6 shadow-[0_14px_35px_rgba(23,75,87,.055)] transition hover:-translate-y-1 hover:shadow-[0_22px_55px_rgba(23,75,87,.1)]`}
-                  >
-                    <span className="absolute -end-3 -top-7 text-8xl font-black opacity-[.045]">
-                      0{index + 1}
-                    </span>
-                    <div className="relative flex items-start gap-4">
-                      <span className="grid size-13 shrink-0 place-items-center rounded-2xl bg-white shadow-sm">
-                        <Icon size={24} />
-                      </span>
-                      <div>
-                        <span className="text-[10px] font-black opacity-65">
-                          {label}
-                        </span>
-                        <h3 className="mt-1 text-xl font-black text-[#17363e]">
-                          {title}
-                        </h3>
-                        <p className="mt-2 text-sm leading-7 text-[#65797e]">
-                          {text}
-                        </p>
-                      </div>
-                    </div>
-                  </article>
-                ),
-              )}
-            </div>
-          </div>
-        </section>
-
-        <section
-          id="roles"
-          className="border-y border-[#174b57]/8 bg-white py-24"
-        >
-          <div className="mx-auto max-w-[1360px] px-5 lg:px-8">
-            <div className="max-w-2xl">
-              <p className="eyebrow">منصة متكاملة</p>
-              <h2 className="section-title mt-3">تجربة مصممة لكل دور</h2>
-              <p className="mt-4 leading-7 text-[#65797e]">
-                كل مستخدم يرى الأدوات والبيانات التي يحتاجها فقط، ضمن صلاحيات
-                واضحة وآمنة.
-              </p>
-            </div>
-            <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {roles.map(({ icon: Icon, title, text }, index) => (
-                <article
-                  key={title}
-                  className={`rounded-[1.5rem] p-6 ${index === 0 ? "bg-[#174b57] text-white" : "border border-[#174b57]/10 bg-[#f7faf9]"}`}
+                {/* Icon - always right */}
+                <span
+                  className={`ml-card-icon grid h-10 w-10 shrink-0 place-items-center rounded-lg ${iconBackground}`}
                 >
-                  <span
-                    className={`grid size-11 place-items-center rounded-xl ${index === 0 ? "bg-white/10 text-[#f5cb72]" : "bg-white text-[#216474] shadow-sm"}`}
-                  >
-                    <Icon size={22} />
-                  </span>
-                  <h3 className="mt-6 text-lg font-extrabold">{title}</h3>
-                  <p
-                    className={`mt-2 text-sm leading-6 ${index === 0 ? "text-white/65" : "text-[#65797e]"}`}
-                  >
-                    {text}
-                  </p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
+                  {Icon ? (
+                    <Icon
+                      size={24}
+                      strokeWidth={2}
+                      className="text-[#216474]"
+                    />
+                  ) : (
+                    <ImageIcon
+                      src={image}
+                      alt={t(title)}
+                      className="h-6 w-6"
+                    />
+                  )}
+                </span>
+              </div>
 
-        <section
-          id="security"
-          className="mx-auto max-w-[1360px] px-5 py-24 lg:px-8"
-        >
-          <div className="relative overflow-hidden rounded-[2.25rem] bg-[#eaf4f3] px-6 py-12 sm:px-12 lg:flex lg:items-center lg:justify-between">
-            <div className="absolute -left-20 -top-24 size-72 rounded-full border-[42px] border-white/40" />
-            <div className="relative max-w-2xl">
-              <p className="eyebrow">
-                <ShieldCheck size={17} /> خصوصيتك أولويتنا
-              </p>
-              <h2 className="section-title mt-3">
-                بياناتك في عناية تليق بثقتك
-              </h2>
-              <p className="mt-4 leading-8 text-[#5e7378]">
-                نحرص على حماية بياناتك واحترام خصوصيتك، لتستخدم خدمات حياة
-                دوائية بثقة ووضوح في كل خطوة.
-              </p>
-              <div className="mt-6 flex flex-wrap gap-3">
-                {["خصوصية محفوظة", "دخول آمن", "استخدام مسؤول للبيانات"].map(
-                  (item) => (
-                    <span
-                      key={item}
-                      className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-[#36555c]"
+              {/* Content */}
+              <div
+                className={`mt-[14px] flex w-full flex-1 flex-col gap-4 ${
+                  isArabic ? "items-end" : "items-start"
+                }`}
+              >
+                <h3
+                  dir={textDirection}
+                  className={`w-full text-[20px] font-medium leading-6 tracking-[0.04em] text-[#333333] ${textAlignClass}`}
+                >
+                  {t(title)}
+                </h3>
+
+                <p
+                  dir={textDirection}
+                  className={`w-full flex-1 text-[14px] font-normal leading-[23px] tracking-[0.01em] text-[#666666] ${textAlignClass}`}
+                >
+                  {t(text)}
+                </p>
+              </div>
+
+              {/* Register button */}
+              <Link
+                to={`/register?type=${type}`}
+                dir="ltr"
+                className="mt-[18px] flex h-11 w-full shrink-0 items-center justify-center gap-3 rounded-lg border border-[rgba(102,102,102,0.16)] bg-white text-[16px] font-medium leading-[30px] text-[#A5A5A5] transition-all duration-300 hover:border-[#174B57] hover:bg-[#174B57] hover:text-white hover:shadow-md"
+              >
+                {isArabic ? (
+                  <>
+                    {/* Arabic: icon left, text right */}
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                      className="h-6 w-6 shrink-0"
                     >
-                      <PackageCheck size={16} className="text-[#216474]" />
-                      {item}
+                      <path
+                        d="M14.5 6.5L9 12l5.5 5.5"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+
+                    <span dir="rtl">
+                      {t("ابدأ الآن")}
                     </span>
+                  </>
+                ) : (
+                  <>
+                    {/* English/Turkish: text left, icon right */}
+                    <span dir="ltr">
+                      {t("ابدأ الآن")}
+                    </span>
+
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                      className="h-6 w-6 shrink-0"
+                    >
+                      <path
+                        d="M9.5 6.5L15 12l-5.5 5.5"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </>
+                )}
+              </Link>
+            </div>
+          </article>
+        ),
+      )}
+    </div>
+  </div>
+</section>
+
+        {/* Services */}
+      {/* Services */}
+<section
+  id="services"
+  className="relative isolate w-full overflow-hidden bg-[#163A42]"
+>
+  {/* Desktop */}
+  <div className="relative hidden h-[477px] w-full overflow-hidden lg:block">
+    {/* Background glow */}
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute left-[1123px] top-[-201.66px] z-0 h-[496px] w-[448px] -rotate-90 bg-[rgba(118,229,255,0.18)] blur-[150px]"
+    />
+
+    {/* Section image */}
+    <img
+      src={ASSETS.servicesPhoto}
+      alt={t("خدمات المنصة")}
+      className="absolute left-0 top-0 z-10 h-[477px] w-auto max-w-none object-contain object-left"
+    />
+
+    {/* Services content */}
+    <div
+      dir={textDirection}
+      className="absolute right-[120px] top-1/2 z-20 mr-40 flex h-[340px] w-[489px] -translate-y-1/2 flex-col items-start gap-5"
+    >
+      {/* Heading */}
+      <div
+        className={`flex h-7 w-[180px] flex-col justify-center gap-[5px] ${
+          isArabic ? "items-end" : "items-start"
+        }`}
+      >
+        <h2
+          dir={textDirection}
+          className={`flex h-5 w-full items-center whitespace-nowrap text-[20px] font-medium leading-5 text-white ${
+            isArabic
+              ? "justify-start text-right"
+              : "justify-start text-left"
+          }`}
+        >
+          {t("خدمات المنصة")}
+        </h2>
+
+        <span
+          className={`h-[3px] w-full rounded-lg ${
+            isArabic
+              ? "bg-[linear-gradient(90deg,rgba(22,58,66,0)_0%,#FEE252_100%)]"
+              : "bg-[linear-gradient(270deg,rgba(22,58,66,0)_0%,#FEE252_100%)]"
+          }`}
+        />
+      </div>
+
+      {/* Service cards */}
+      <div className="flex h-[283px] w-[489px] flex-col gap-5">
+        {services.map(({ number, icon, title, text }) => (
+          <article
+            key={number}
+            dir="ltr"
+            className={`flex h-[90px] w-[489px] shrink-0 items-center gap-3 rounded-xl border border-[#174B57] bg-[rgba(255,255,255,0.06)] px-[18px] py-5 ${
+              isArabic ? "flex-row-reverse" : "flex-row"
+            }`}
+          >
+            {/* Icon */}
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[rgba(230,243,246,0.10)]">
+              <ServiceIcon type={icon} />
+            </span>
+
+            {/* Number */}
+            <span
+              dir="ltr"
+              className="w-7 shrink-0 text-center text-[16px] font-bold leading-5 text-[#DFAE0D]"
+            >
+              {number}
+            </span>
+
+            {/* Text */}
+            <div
+              dir={textDirection}
+              className={`flex min-w-0 flex-1 flex-col justify-center gap-2 ${
+                isArabic ? "items-end" : "items-start"
+              }`}
+            >
+              <h3
+                className={`line-clamp-1 w-full text-[20px] font-medium leading-6 text-[#E6F3F6] ${
+                  isArabic ? "text-right" : "text-left"
+                }`}
+              >
+                {t(title)}
+              </h3>
+
+              <p
+                className={`line-clamp-2 w-full overflow-hidden break-words text-[12px] font-normal leading-[18px] tracking-[0.01em] text-[#D6D6D6] ${
+                  isArabic ? "text-right" : "text-left"
+                }`}
+              >
+                {t(text)}
+              </p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  {/* Mobile and tablet */}
+  <div className="relative flex w-full flex-col overflow-hidden bg-[#163A42] lg:hidden">
+    {/* Background glow */}
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute right-[-180px] top-[-170px] z-0 h-[420px] w-[380px] bg-[rgba(118,229,255,0.16)] blur-[130px]"
+    />
+
+    {/* Section image */}
+    <img
+      src={ASSETS.servicesPhoto}
+      alt={t("خدمات المنصة")}
+      className="relative z-10 h-auto w-full object-contain"
+    />
+
+    {/* Mobile content */}
+    <div
+      dir={textDirection}
+      className="relative z-20 px-5 py-10 sm:px-8"
+    >
+      {/* Heading */}
+     {/* Heading */}
+<div
+  dir={textDirection}
+  className={`flex w-full flex-col gap-[5px] ${
+    isArabic ? "items-end" : "items-start"
+  }`}
+>
+  <h2
+    className={`w-full text-[20px] font-medium leading-6 text-white ${
+      isArabic ? "text-right" : "text-left"
+    }`}
+  >
+    {t("خدمات المنصة")}
+  </h2>
+
+  <span
+    className={`h-[3px] w-[156px] rounded-lg ${
+      isArabic
+        ? "self-end bg-[linear-gradient(90deg,rgba(22,58,66,0)_0%,#FEE252_100%)]"
+        : "self-start bg-[linear-gradient(270deg,rgba(22,58,66,0)_0%,#FEE252_100%)]"
+    }`}
+  />
+</div>
+      {/* Mobile cards */}
+      <div className="mt-7 flex flex-col gap-5">
+        {services.map(({ number, icon, title, text }) => (
+          <article
+            key={number}
+            dir="ltr"
+            className={`flex min-h-[88px] w-full items-center gap-3 rounded-xl border border-[#174B57] bg-white/[0.06] px-[18px] py-5 ${
+              isArabic ? "flex-row-reverse" : "flex-row"
+            }`}
+          >
+            {/* Icon */}
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[rgba(230,243,246,0.10)]">
+              <ServiceIcon type={icon} />
+            </span>
+
+            {/* Number */}
+            <span
+              dir="ltr"
+              className="w-7 shrink-0 text-center text-[15px] font-bold leading-5 text-[#DFAE0D]"
+            >
+              {number}
+            </span>
+
+            {/* Text */}
+            <div
+              dir={textDirection}
+              className={`flex min-w-0 flex-1 flex-col justify-center gap-2 ${
+                isArabic ? "items-end" : "items-start"
+              }`}
+            >
+              <h3
+                className={`w-full text-[18px] font-medium leading-6 text-[#E6F3F6] ${
+                  isArabic ? "text-right" : "text-left"
+                }`}
+              >
+                {t(title)}
+              </h3>
+
+              <p
+                className={`w-full text-[12px] leading-5 text-[#D6D6D6] ${
+                  isArabic ? "text-right" : "text-left"
+                }`}
+              >
+                {t(text)}
+              </p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+        {/* Testimonials */}
+        <section
+          id="testimonials"
+          className="bg-[#F8FAFC] py-[84px]"
+        >
+          <div className="mx-auto flex w-full max-w-[1200px] flex-col items-center gap-[44px] px-5 xl:px-0">
+            {/* Heading */}
+            <div
+              dir="ltr"
+              className="flex min-h-[68px] w-full items-end justify-center gap-4"
+            >
+              <button
+                type="button"
+                onClick={
+                  showPreviousTestimonials
+                }
+                aria-label={t(
+                  "عرض الآراء السابقة",
+                )}
+                className="grid h-[46px] w-[46px] shrink-0 place-items-center rounded-full border border-[rgba(102,102,102,0.16)] bg-white text-[#444444] transition duration-200 hover:border-[#216474] hover:bg-[#F1F8F8] hover:text-[#216474] active:scale-95"
+              >
+                <svg
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  aria-hidden="true"
+                  className="h-4 w-4"
+                >
+                  <path
+                    d="M10 3L5 8L10 13"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+
+              <div
+                dir={textDirection}
+                className="flex min-h-[68px] min-w-0 flex-1 flex-col items-center gap-5"
+              >
+                <div
+                  dir="ltr"
+                  className="flex h-[30px] w-full max-w-[526px] items-center justify-center gap-[58px]"
+                >
+                  <span className="h-[3px] min-w-0 flex-1 rounded-lg bg-gradient-to-r from-white to-[#EEB73A]" />
+
+                  <h2
+                    dir={textDirection}
+                    className="shrink-0 whitespace-nowrap text-center text-[32px] font-medium leading-none text-[#333333]"
+                  >
+                    {t("آراء المستخدمين")}
+                  </h2>
+
+                  <span className="h-[3px] min-w-0 flex-1 rounded-lg bg-gradient-to-l from-white to-[#EEB73A]" />
+                </div>
+
+                <p className="max-w-[527px] text-center text-[18px] font-normal leading-[29px] text-[#A5A5A5]">
+                  {t(
+                    "نفتخر بثقة عملائنا، وهذه بعض آرائهم عن تجربتهم معنا.",
+                  )}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={
+                  showNextTestimonials
+                }
+                aria-label={t(
+                  "عرض الآراء التالية",
+                )}
+                className="grid h-[46px] w-[46px] shrink-0 place-items-center rounded-full border border-[rgba(102,102,102,0.16)] bg-white text-[#444444] transition duration-200 hover:border-[#216474] hover:bg-[#F1F8F8] hover:text-[#216474] active:scale-95"
+              >
+                <svg
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  aria-hidden="true"
+                  className="h-4 w-4"
+                >
+                  <path
+                    d="M6 3L11 8L6 13"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            {/* Carousel */}
+            <div className="flex w-full flex-col items-center gap-8 overflow-hidden">
+              <div
+                key={testimonialPage}
+                dir={textDirection}
+                className="grid w-full animate-[ml-fade-up_.38s_ease_both] grid-cols-1 gap-5 md:grid-cols-3"
+              >
+                {visibleTestimonials.map(
+                  (
+                    item,
+                    cardIndex,
+                  ) => (
+                    <article
+                      key={`${testimonialPage}-${cardIndex}-${item.name}`}
+                      dir={textDirection}
+                      className={`flex min-h-[300px] w-full flex-col gap-4 rounded-lg border border-[rgba(102,102,102,0.16)] bg-white p-6 transition duration-300 hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(33,100,116,0.08)] ${itemsAlignClass}`}
+                    >
+                      {/* Quote and rating */}
+                      <div
+                        dir="ltr"
+                        className="flex h-8 w-full items-center justify-between gap-[10px]"
+                      >
+                        <ImageIcon
+                          src={
+                            ASSETS.quote
+                          }
+                          alt=""
+                          className="h-8 w-8"
+                        />
+
+                        <div
+                          dir="ltr"
+                          className="flex flex-1 items-center justify-end gap-[2px]"
+                          aria-label={t(
+                            "تقييم {{rating}} من 5",
+                            {
+                              rating:
+                                item.rating,
+                            },
+                          )}
+                        >
+                          {Array.from({
+                            length: 5,
+                          }).map(
+                            (
+                              _,
+                              starIndex,
+                            ) => (
+                              <svg
+                                key={
+                                  starIndex
+                                }
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                                className={[
+                                  "h-[13px] w-[13px]",
+                                  starIndex <
+                                  item.rating
+                                    ? "text-[#F59E0B]"
+                                    : "text-[rgba(102,102,102,0.16)]",
+                                ].join(
+                                  " ",
+                                )}
+                              >
+                                <path
+                                  fill="currentColor"
+                                  d="M12 2.8l2.75 5.57 6.15.9-4.45 4.33 1.05 6.12L12 16.83l-5.5 2.89 1.05-6.12L3.1 9.27l6.15-.9L12 2.8z"
+                                />
+                              </svg>
+                            ),
+                          )}
+                        </div>
+                      </div>
+
+                      <p
+                        dir={
+                          textDirection
+                        }
+                        className={`w-full flex-1 break-words text-[16px] font-normal leading-7 text-[#333333] ${textAlignClass}`}
+                      >
+                        “{t(item.text)}”
+                      </p>
+
+                      {/* User */}
+                      <div
+                        dir="ltr"
+                        className={`mt-auto flex h-12 w-full items-center gap-2 ${
+                          isArabic
+                            ? "flex-row-reverse justify-end"
+                            : "flex-row justify-start"
+                        }`}
+                      >
+                        <img
+                          src={
+                            item.image
+                          }
+                          alt={t(
+                            item.name,
+                          )}
+                          className="h-12 w-12 shrink-0 rounded-full object-cover"
+                        />
+
+                        <div
+                          dir={
+                            textDirection
+                          }
+                          className={`flex min-w-0 flex-1 flex-col ${
+                            isArabic
+                              ? "items-end"
+                              : "items-start"
+                          }`}
+                        >
+                          <strong
+                            className={`w-full break-words text-[18px] font-medium leading-[25px] text-[#444444] ${textAlignClass}`}
+                          >
+                            {t(
+                              item.name,
+                            )}
+                          </strong>
+
+                          <small
+                            className={`w-full break-words text-[14px] font-normal leading-[21px] text-[#A5A5A5] ${textAlignClass}`}
+                          >
+                            {t(
+                              item.role,
+                            )}
+                          </small>
+                        </div>
+                      </div>
+                    </article>
                   ),
                 )}
               </div>
+
+              {/* Pagination */}
+              <div
+                dir="ltr"
+                className="flex h-[10px] items-center gap-[5px]"
+                role="tablist"
+                aria-label={t(
+                  "صفحات آراء المستخدمين",
+                )}
+              >
+                {Array.from({
+                  length:
+                    totalTestimonialPages,
+                }).map(
+                  (
+                    _,
+                    pageIndex,
+                  ) => {
+                    const isActive =
+                      pageIndex ===
+                      testimonialPage;
+
+                    return (
+                      <button
+                        key={
+                          pageIndex
+                        }
+                        type="button"
+                        onClick={() =>
+                          goToTestimonialPage(
+                            pageIndex,
+                          )
+                        }
+                        aria-label={t(
+                          "الانتقال إلى صفحة الآراء {{page}}",
+                          {
+                            page:
+                              pageIndex +
+                              1,
+                          },
+                        )}
+                        aria-selected={
+                          isActive
+                        }
+                        role="tab"
+                        className={[
+                          "h-[10px] rounded-full transition-all duration-300",
+                          isActive
+                            ? "w-[53.33px] bg-[#216474]"
+                            : "w-[10px] bg-[#D6D6D6] hover:bg-[#9DB8BE]",
+                        ].join(
+                          " ",
+                        )}
+                      />
+                    );
+                  },
+                )}
+              </div>
             </div>
-            <div className="relative mt-9 grid size-32 shrink-0 place-items-center rounded-[2rem] bg-[#174b57] text-[#f5cb72] shadow-[0_22px_50px_rgba(23,75,87,.22)] lg:me-8 lg:mt-0">
-              <ShieldCheck size={58} strokeWidth={1.5} />
+          </div>
+        </section>
+                {/* Security */}
+        <section className="bg-[#F8FAFC] py-[84px]">
+          <div className="mx-auto w-full max-w-[1200px] px-5 xl:px-0">
+            <div
+              dir="ltr"
+              className={`flex min-h-[360px] w-full items-center justify-between gap-14 rounded-xl border border-[rgba(102,102,102,0.16)] bg-white px-10 py-10 ${
+                isArabic
+                  ? "flex-row"
+                  : "flex-row-reverse"
+              }`}
+            >
+              {/* Security illustration */}
+              <div className="relative mx-auto h-[256px] w-[268px] shrink-0">
+                <div className="absolute left-0 top-0 h-[252px] w-[251px] rounded-full border-[1.6px] border-[#E6F3F6]" />
+
+                <div className="absolute left-[18px] top-[17px] h-[217px] w-[216px] rounded-full border-[1.6px] border-[rgba(230,243,246,0.47)]" />
+
+                <span className="absolute left-[40px] top-[17px] h-5 w-5 rounded-full bg-[#E6F3F6]" />
+
+                <span className="absolute left-[-3px] top-[152px] h-3 w-3 rounded-full bg-[#E6F3F6]" />
+
+                <span className="absolute bottom-[-1px] left-[60px] h-5 w-5 rounded-full bg-[#E6F3F6]" />
+
+                <span className="absolute right-[12px] top-[179px] h-4 w-4 rounded-full bg-[#E6F3F6]" />
+
+                <span className="absolute right-[26px] top-[22px] h-3 w-3 rounded-full bg-[#E6F3F6]" />
+
+                <span className="absolute right-[48px] top-0 h-2 w-2 rounded-full bg-[rgba(33,100,116,0.60)]" />
+
+                <span className="absolute bottom-[-4px] left-[36px] h-2 w-2 rounded-full bg-[rgba(33,100,116,0.60)]" />
+
+                <span className="absolute right-[-14px] top-[178px] h-[14px] w-[14px] rounded-full bg-[rgba(33,100,116,0.44)]" />
+
+                <img
+                  src={ASSETS.security}
+                  alt={t("حماية البيانات")}
+                  className="absolute left-0 top-[48px] z-10 h-[168px] w-[252px] object-contain"
+                />
+              </div>
+
+              {/* Security content */}
+              <div
+                dir={textDirection}
+                className={`mx-auto flex w-full max-w-[700px] shrink-0 flex-col justify-center ${itemsAlignClass}`}
+              >
+                {/* Badge */}
+                <div
+                  className={`flex w-full ${
+                    isArabic
+                      ? "justify-start"
+                      : "justify-start"
+                  }`}
+                >
+                  <span
+                    dir="ltr"
+                    className={`inline-flex min-h-[34px] min-w-[139px] max-w-[200px] items-center justify-center gap-2 rounded-[34px] bg-[#E6F3F6] py-2 pl-4 pr-5 text-[12px] font-normal leading-[18px] text-[#216474] ${
+                      isArabic
+                        ? "flex-row-reverse"
+                        : "flex-row"
+                    }`}
+                  >
+                    <ImageIcon
+                      src={ASSETS.sparkle}
+                      alt=""
+                      className="h-4 w-4"
+                    />
+
+                    <span dir={textDirection}>
+                      {t("خصوصيتك بأمان")}
+                    </span>
+                  </span>
+                </div>
+
+                <h2
+                  dir={textDirection}
+                  className={`mt-[18px] w-full break-words text-[34px] font-bold leading-[1.35] text-[#174B57] xl:text-[36px] ${textAlignClass}`}
+                >
+                  {t(
+                    "بياناتك محمية بأعلى معايير الأمان",
+                  )}
+                </h2>
+
+                <p
+                  dir={textDirection}
+                  className={`mt-2 w-full break-words text-[14px] font-normal leading-6 tracking-[0.01em] text-[#A5A5A5] ${textAlignClass}`}
+                >
+                  {t(
+                    "نحافظ على خصوصيتك ونضمن لك تجربة آمنة وموثوقة في كل خطوة.",
+                  )}
+                </p>
+
+                {/* Security features */}
+                <div
+                  dir={textDirection}
+                  className="mt-8 grid w-full grid-cols-1 items-stretch gap-6 md:grid-cols-3"
+                >
+                  {securityFeatures.map(
+                    ({
+                      image,
+                      title,
+                      text,
+                    }) => (
+                      <div
+                        key={title}
+                        dir="ltr"
+                        className={`flex min-w-0 items-start gap-3 ${
+                          isArabic
+                            ? "flex-row-reverse justify-end"
+                            : "flex-row justify-start"
+                        }`}
+                      >
+                        {/* Icon */}
+                        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[#E6F3F6]">
+                          <ImageIcon
+                            src={image}
+                            alt={t(title)}
+                            className="h-5 w-6"
+                          />
+                        </span>
+
+                        {/* Text */}
+                        <div
+                          dir={textDirection}
+                          className={`flex min-w-0 flex-1 flex-col gap-2 ${
+                            isArabic
+                              ? "items-end"
+                              : "items-start"
+                          }`}
+                        >
+                          <strong
+                            className={`w-full break-words text-[16px] font-medium leading-6 text-[#666666] ${textAlignClass}`}
+                          >
+                            {t(title)}
+                          </strong>
+
+                          <small
+                            className={`w-full break-words text-[12px] font-normal leading-5 tracking-[0.01em] text-[#A5A5A5] ${textAlignClass}`}
+                          >
+                            {t(text)}
+                          </small>
+                        </div>
+                      </div>
+                    ),
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </section>
 
-        <section className="px-5 pb-24 lg:px-8">
-          <div className="relative mx-auto grid max-w-[1360px] overflow-hidden rounded-[2.4rem] bg-[#123f49] text-white shadow-[0_30px_80px_rgba(23,75,87,.2)] lg:grid-cols-[1.05fr_.95fr]">
-            <div className="relative p-7 sm:p-10 lg:p-14">
-              <div className="absolute -start-24 -top-32 size-72 rounded-full border-[44px] border-white/[.035]" />
-              <div className="relative">
-                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[.06] px-3.5 py-2 text-xs font-black text-[#9ed7d2]">
-                  <Sparkles size={14} />
-                  خطوتك الأولى نحو تجربة أسهل
-                </span>
-                <h2 className="mt-5 max-w-xl text-3xl font-black leading-tight sm:text-4xl">
-                  كل خدماتك الدوائية
-                  <br />
-                  تبدأ من حساب واحد
-                </h2>
-                <p className="mt-4 max-w-xl text-sm leading-7 text-white/60 sm:text-base">
-                  اختر نوع حسابك وابدأ باستخدام الأدوات المصممة لك، سواء كنت
-                  مستخدمًا أو صيدلية أو منظمة.
-                </p>
-                <div className="mt-7 flex flex-wrap gap-3">
-                  <Link
-                    to="/register"
-                    className="inline-flex items-center gap-2 rounded-xl bg-[#f5cb72] px-5 py-3.5 text-sm font-black text-[#173d46] transition hover:-translate-y-0.5 hover:bg-[#ffd989]"
-                  >
-                    إنشاء حساب جديد <ArrowLeft size={17} />
-                  </Link>
-                  <Link
-                    to="/login"
-                    className="inline-flex items-center gap-2 rounded-xl border border-white/12 bg-white/[.07] px-5 py-3.5 text-sm font-black text-white transition hover:bg-white/[.12]"
-                  >
-                    لدي حساب بالفعل
-                  </Link>
-                </div>
-              </div>
-            </div>
+        {/* CTA */}
+        <section className="bg-[#F8FAFC] py-[84px]">
+          <div className="mx-auto w-full max-w-[1200px] px-5 xl:px-0">
+            <div
+              dir="ltr"
+              className="relative flex min-h-[190px] w-full items-center rounded-lg bg-[#174B57] px-10 py-6"
+            >
+              {/* Buttons */}
+              <div
+                dir="ltr"
+                className={`flex h-10 w-[304px] shrink-0 items-center gap-5 ${
+                  isArabic
+                    ? "flex-row-reverse"
+                    : "flex-row"
+                }`}
+              >
+                <Link
+                  to="/login"
+                  className="ml-button flex h-10 w-[142px] items-center justify-center rounded-lg border border-white bg-transparent text-[16px] font-medium leading-6 text-white hover:bg-white/10"
+                >
+                  {t("تسجيل دخول")}
+                </Link>
 
-            <div className="relative border-t border-white/8 bg-white/[.045] p-7 sm:p-10 lg:border-s lg:border-t-0 lg:p-12">
-              <div className="absolute -bottom-24 -end-16 size-64 rounded-full bg-[#8bd0cb]/10 blur-3xl" />
-              <p className="relative text-xs font-black text-[#f5cb72]">
-                ماذا ستحصل عليه؟
-              </p>
-              <div className="relative mt-5 grid gap-3">
-                {[
-                  [Search, "بحث أسرع", "نتائج دوائية وصيدليات قريبة"],
-                  [FileText, "أدوات ذكية", "وصفة ذكية ومساعد دوائي"],
-                  [ShieldCheck, "تجربة آمنة", "صلاحيات وبيانات صحية محمية"],
-                ].map(([Icon, title, text]) => (
-                  <div
-                    key={title}
-                    className="flex items-center gap-4 rounded-2xl border border-white/8 bg-white/[.055] p-4"
-                  >
-                    <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-white/[.08] text-[#9ed7d2]">
-                      <Icon size={20} />
-                    </span>
-                    <span>
-                      <strong className="block text-sm">{title}</strong>
-                      <small className="mt-1 block text-white/45">{text}</small>
-                    </span>
-                  </div>
-                ))}
+                <Link
+                  to="/register"
+                  className="ml-button flex h-10 w-[142px] items-center justify-center rounded-lg bg-white text-[16px] font-medium leading-6 text-[#216474] hover:bg-[#F3F8F9]"
+                >
+                  {t("إنشاء حساب")}
+                </Link>
               </div>
+
+              {/* CTA text */}
+              <div
+                dir={textDirection}
+                className="ml-[70px] flex min-h-[100px] w-[390px] shrink-0 flex-col items-center justify-center gap-3 text-center"
+              >
+                <h2 className="flex w-full items-center justify-center break-words text-[30px] font-bold leading-[1.2] text-white xl:text-[32px]">
+                  {t(
+                    "ابدأ باستخدام المنصة الآن",
+                  )}
+                </h2>
+
+                <p className="w-full break-words text-center text-[12px] font-normal leading-5 tracking-[0.01em] text-[#D6D6D6]">
+                  {t(
+                    "سجل حسابك لتتمكن من البحث عن الصيدليات بسهولة وفر الوقت.",
+                  )}
+                </p>
+              </div>
+
+              <img
+                src={ASSETS.cta}
+                alt={t("استخدام المنصة")}
+                className="absolute right-[100px] top-[-15px] z-10 h-[205px] w-[200px] object-contain"
+              />
             </div>
           </div>
         </section>
       </main>
-      <footer className="border-t border-[#174b57]/10 bg-white">
-        <div className="mx-auto flex max-w-[1360px] flex-col gap-6 px-5 py-9 sm:flex-row sm:items-center sm:justify-between lg:px-8">
-          <Brand />
-          <p className="text-sm text-[#718287]">
-            مشروع حياة دوائية © 2026 — رعاية أقرب، تجربة أذكى.
-          </p>
+
+      {/* Footer */}
+      <footer
+        id="footer"
+        className="border-t border-[#DFE7E9] bg-white"
+      >
+        <div className="mx-auto flex max-w-[1200px] flex-col gap-8 px-5 py-10 lg:flex-row lg:items-center lg:justify-between xl:px-0">
+          <div
+            className={`max-w-sm ${
+              isArabic
+                ? "text-right"
+                : "text-left"
+            }`}
+          >
+            <div
+              className="justify-start"
+            >
+              <Logo />
+            </div>
+
+            <p
+              dir={textDirection}
+              className={`mt-4 text-[14px] leading-7 text-[#8C989C] ${textAlignClass}`}
+            >
+              {t(
+                "منصة تساعدك في العثور على أقرب صيدلية وتوفر الأدوية بشكل أسرع وبصورة أكثر موثوقية.",
+              )}
+            </p>
+          </div>
+
+          <div
+            dir="ltr"
+            className={`flex items-center gap-3 ${
+              isArabic
+                ? "flex-row-reverse"
+                : "flex-row"
+            }`}
+          >
+            {socialLinks.map(
+              ({
+                label,
+                href,
+                image,
+              }) => (
+                <a
+                  key={label}
+                  href={href}
+                  aria-label={t(label)}
+                  className="grid h-15 w-15 place-items-center rounded-full border border-[#D9E5E7] bg-white transition hover:bg-[#EDF7F8]"
+                >
+                  <ImageIcon
+                    src={image}
+                    alt={t(label)}
+                    className="h-[22px] w-[22px]"
+                  />
+                </a>
+              ),
+            )}
+          </div>
         </div>
       </footer>
     </div>

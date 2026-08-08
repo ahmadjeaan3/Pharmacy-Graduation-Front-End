@@ -1,10 +1,21 @@
-@import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap");
 @import "tailwindcss";
 
 .dashboard-nav-scroll {
   scrollbar-gutter: stable;
   scrollbar-width: thin;
   scrollbar-color: rgb(139 208 203 / 45%) transparent;
+}
+/* Hide scrollbar but keep scrolling */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE & Edge */
+  scrollbar-width: none;    /* Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .dashboard-nav-scroll::-webkit-scrollbar {
@@ -30,11 +41,24 @@
 }
 
 :root {
-  font-family: "Tajawal", system-ui, sans-serif;
+ font-family: "IBM Plex Sans Arabic", system-ui, sans-serif;
   color: #142e35;
   background: #f7faf9;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+}
+html,
+body,
+#root,
+*,
+*::before,
+*::after,
+button,
+input,
+textarea,
+select,
+option {
+  font-family: "IBM Plex Sans Arabic", system-ui, sans-serif;
 }
 * {
   box-sizing: border-box;
@@ -534,21 +558,13 @@ button {
   }
 }
 @keyframes landing-ticker-rtl {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(50%);
-  }
+  from { transform: translateX(0); }
+  to { transform: translateX(50%); }
 }
 
 @keyframes landing-ticker-ltr {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
 }
 
 .landing-ticker-track {
@@ -566,7 +582,5 @@ button {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .landing-ticker-track {
-    animation: none;
-  }
+  .landing-ticker-track { animation: none; }
 }

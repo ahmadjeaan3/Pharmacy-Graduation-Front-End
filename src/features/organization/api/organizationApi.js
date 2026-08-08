@@ -41,6 +41,25 @@ export const getOrganizationCampaigns = async (params = {}) =>
       params: compact(params),
     })
   ).data;
+  export const updateOrganizationCampaign = async (
+  campaignId,
+  payload,
+) =>
+  (
+    await apiClient.put(
+      `/organization/me/campaigns/${campaignId}`,
+      payload,
+    )
+  ).data;
+
+export const deleteOrganizationCampaign = async (
+  campaignId,
+) =>
+  (
+    await apiClient.delete(
+      `/organization/me/campaigns/${campaignId}`,
+    )
+  ).data;
 export const createOrganizationCampaign = async (payload) =>
   (await apiClient.post("/organization/me/campaigns", payload)).data;
 export const updateOrganizationCampaignStatus = async (campaignId, status) =>
