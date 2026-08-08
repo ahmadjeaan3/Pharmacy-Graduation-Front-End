@@ -311,7 +311,7 @@ function SectionHeading({ label, title, text }) {
   const { t } = useTranslation();
 
   return (
-    <div className="mx-auto max-w-[650px] text-center">
+    <div className="mx-auto w-full max-w-[650px] px-1 text-center">
       {label ? (
         <span className="inline-flex items-center gap-2 rounded-[30px] bg-[#EAF6F8] px-4 py-2 text-[13px] font-medium text-[#216474]">
           <ImageIcon src={ASSETS.sparkle} className="h-4 w-4" />
@@ -320,18 +320,18 @@ function SectionHeading({ label, title, text }) {
         </span>
       ) : null}
 
-      <div className="mt-4 flex items-center justify-center gap-[58px]">
-        <span className="h-[3px] w-[69px] rounded-lg bg-gradient-to-l from-[#EEB73A] to-white" />
+      <div className="mt-4 flex items-center justify-center gap-3 sm:gap-8 lg:gap-[58px]">
+        <span className="h-[3px] min-w-0 flex-1 rounded-lg bg-gradient-to-l from-[#EEB73A] to-white sm:max-w-[69px]" />
 
-        <h2 className="text-[32px] font-medium leading-8 text-[#333333]">
+        <h2 className="min-w-0 text-2xl font-medium leading-tight text-[#333333] sm:text-[28px] lg:text-[32px]">
           {t(title)}
         </h2>
 
-        <span className="h-[3px] w-[69px] rounded-lg bg-gradient-to-r from-[#EEB73A] to-white" />
+        <span className="h-[3px] min-w-0 flex-1 rounded-lg bg-gradient-to-r from-[#EEB73A] to-white sm:max-w-[69px]" />
       </div>
 
       {text ? (
-        <p className="mt-5 text-[18px] font-normal leading-[29px] text-[#A5A5A5]">
+        <p className="mt-4 text-sm font-normal leading-7 text-[#A5A5A5] sm:text-base lg:mt-5 lg:text-[18px] lg:leading-[29px]">
           {t(text)}
         </p>
       ) : null}
@@ -791,27 +791,27 @@ export function LandingPage() {
       `}</style>
 
       {/* Navbar */}
-      <header className="ml-navbar-enter sticky top-0 z-50 h-[72px] border-b border-[rgba(102,102,102,0.16)] bg-white/95 shadow-[0_5px_24px_rgba(23,75,87,.04)] backdrop-blur-xl">
+      <header className="ml-navbar-enter sticky top-0 z-50 h-16 border-b border-[rgba(102,102,102,0.16)] bg-white/95 shadow-[0_5px_24px_rgba(23,75,87,.04)] backdrop-blur-xl sm:h-[72px]">
         <div
           dir="ltr"
-          className="mx-auto flex h-full w-full max-w-[1200px] items-center justify-between px-5 xl:px-0"
+          className="mx-auto flex h-full w-full max-w-[1200px] items-center justify-between gap-2 px-3 sm:px-5 xl:px-0"
         >
           <div
             dir={textDirection}
-            className="flex h-10 shrink-0 items-center gap-3"
+            className="flex h-10 min-w-0 shrink items-center gap-1.5 sm:shrink-0 sm:gap-3"
           >
             <LanguageSwitcher />
 
             <Link
               to="/login"
-              className="ml-button flex h-10 w-[124px] items-center justify-center rounded-lg border border-[#216474] bg-white text-[16px] font-medium leading-6 text-[#216474] hover:shadow-sm"
+              className="ml-button flex h-9 w-auto min-w-[76px] items-center justify-center rounded-lg border border-[#216474] bg-white px-2 text-xs font-medium text-[#216474] hover:shadow-sm sm:h-10 sm:min-w-[108px] sm:px-3 sm:text-[15px] lg:w-[124px] lg:text-[16px]"
             >
               {t("تسجيل دخول")}
             </Link>
 
             <Link
               to="/register"
-              className="ml-button flex h-10 w-[124px] items-center justify-center rounded-lg bg-[#174B57] text-[16px] font-medium leading-6 text-white hover:bg-[#123F49] hover:shadow-md"
+              className="ml-button hidden h-9 w-auto min-w-[82px] items-center justify-center rounded-lg bg-[#174B57] px-2 text-xs font-medium text-white hover:bg-[#123F49] hover:shadow-md min-[390px]:flex sm:h-10 sm:min-w-[108px] sm:px-3 sm:text-[15px] lg:w-[124px] lg:text-[16px]"
             >
               {t("إنشاء حساب")}
             </Link>
@@ -877,31 +877,31 @@ export function LandingPage() {
         {/* Hero */}
         <section
           id="home"
-          className="relative overflow-hidden bg-[#F8FAFC] pb-[44px] pt-[44px]"
+          className="relative overflow-hidden bg-[#F8FAFC] pb-10 pt-7 sm:pb-[44px] sm:pt-10 lg:pt-[44px]"
         >
           <div className="ml-glow-blue pointer-events-none absolute -right-[205px] -top-[145px] h-[496px] w-[448px] rounded-full bg-[rgba(21,142,171,0.18)] blur-[150px]" />
 
           <div className="ml-glow-yellow pointer-events-none absolute -left-[125px] top-[255px] h-[418px] w-[375px] rounded-full bg-[rgba(254,226,82,0.20)] blur-[150px]" />
 
-          <div className="relative mx-auto flex min-h-[622px] w-full max-w-[1200px] flex-col gap-[44px] px-5 xl:px-0">
+          <div className="relative mx-auto flex w-full max-w-[1200px] flex-col gap-10 px-5 sm:px-6 lg:min-h-[622px] lg:gap-[44px] xl:px-0">
             <div
               dir="ltr"
-              className={`relative flex min-h-[411px] w-full items-center justify-between ${
-                isArabic ? "flex-row gap-[36px]" : "flex-row-reverse gap-[90px]"
+              className={`relative flex w-full flex-col-reverse items-center justify-between gap-8 lg:min-h-[411px] ${
+                isArabic ? "lg:flex-row lg:gap-[36px]" : "lg:flex-row-reverse lg:gap-[60px] xl:gap-[90px]"
               }`}
             >
               {/* Hero image */}
-              <div className="relative z-0 h-[411px] w-[445px] shrink-0">
+              <div className="relative z-0 h-[260px] w-full max-w-[360px] shrink-0 sm:h-[330px] sm:max-w-[400px] lg:h-[411px] lg:w-[40%] lg:max-w-[445px]">
                 <img
                   src={ASSETS.hero}
                   alt={t("البحث عن الأدوية والصيدليات")}
-                  className="ml-hero-image-enter h-[411px] w-[445px] object-contain"
+                  className="ml-hero-image-enter h-full w-full object-contain"
                 />
 
                 {/* Registered pharmacies card */}
                 <div
                   dir="ltr"
-                  className={`ml-floating-card-one ml-40 absolute top-[88px] z-20 hidden min-h-[74px] w-[238px] items-center justify-between gap-3 rounded-xl border border-[#216474]/10 bg-white px-5 py-3 shadow-[0_8px_24px_rgba(33,100,116,0.14)] lg:flex ${
+                  className={`ml-floating-card-one ml-40 absolute top-[88px] z-20 hidden min-h-[74px] w-[238px] items-center justify-between gap-3 rounded-xl border border-[#216474]/10 bg-white px-5 py-3 shadow-[0_8px_24px_rgba(33,100,116,0.14)] xl:flex ${
                     isArabic
                       ? "left-[175px] flex-row-reverse"
                       : "right-[175px] flex-row"
@@ -934,7 +934,7 @@ export function LandingPage() {
                 {/* Quick search card */}
                 <div
                   dir="ltr"
-                  className={`ml-floating-card-two absolute top-[345px] z-30 hidden min-h-[72px] w-[230px] items-center justify-between gap-3 rounded-xl border border-[#DFAE0D]/10 bg-white px-5 py-3 shadow-[0_8px_24px_rgba(136,136,136,0.18)] lg:flex ${
+                  className={`ml-floating-card-two absolute top-[345px] z-30 hidden min-h-[72px] w-[230px] items-center justify-between gap-3 rounded-xl border border-[#DFAE0D]/10 bg-white px-5 py-3 shadow-[0_8px_24px_rgba(136,136,136,0.18)] xl:flex ${
                     isArabic
                       ? "left-[-20px] flex-row-reverse"
                       : "right-[-20px] flex-row"
@@ -971,17 +971,17 @@ export function LandingPage() {
 
               {/* Hero content */}
               <div
-                className={`ml-hero-copy-enter z-10 flex min-h-[268px] w-[646px] shrink-0 flex-col gap-8 ${itemsAlignClass} ${textAlignClass}`}
+                className={`ml-hero-copy-enter z-10 flex w-full min-w-0 max-w-[646px] flex-col gap-6 sm:gap-8 lg:min-h-[268px] lg:flex-1 ${itemsAlignClass} ${textAlignClass}`}
               >
                 <div
-                  className={`flex w-[646px] flex-col gap-7 ${itemsAlignClass}`}
+                  className={`flex w-full min-w-0 flex-col gap-5 sm:gap-7 ${itemsAlignClass}`}
                 >
                   <div
-                    className={`flex w-[646px] flex-col gap-4 ${itemsAlignClass}`}
+                    className={`flex w-full min-w-0 flex-col gap-4 ${itemsAlignClass}`}
                   >
                     <div
                       dir={textDirection}
-                      className={`inline-flex min-h-10 min-w-[228px] max-w-[340px] items-center justify-center gap-2 rounded-[34px] bg-white px-5 py-2 ${
+                      className={`inline-flex min-h-10 max-w-full items-center justify-center gap-2 rounded-[34px] bg-white px-4 py-2 sm:min-w-[228px] sm:max-w-[340px] sm:px-5 ${
                         isArabic ? "flex-row" : "flex-row"
                       }`}
                     >
@@ -1010,7 +1010,7 @@ export function LandingPage() {
 
                     <h1
                       dir={textDirection}
-                      className={`w-full break-words text-[44px] font-medium leading-[1.25] text-[#333333] xl:text-[48px] ${textAlignClass}`}
+                      className={`w-full break-words text-[32px] font-medium leading-[1.3] text-[#333333] sm:text-[40px] lg:text-[44px] xl:text-[48px] ${textAlignClass}`}
                     >
                       {isTurkish ? (
                         <>
@@ -1041,12 +1041,12 @@ export function LandingPage() {
                 {/* Hero buttons */}
                 <div
                   dir={textDirection}
-                  className="flex min-h-[58px] w-auto flex-wrap items-center gap-3"
+                  className="grid w-full grid-cols-1 gap-3 min-[420px]:grid-cols-2 sm:flex sm:min-h-[58px] sm:w-auto sm:flex-wrap sm:items-center"
                 >
                   <a
                     href="#roles"
                     dir="ltr"
-                    className={`ml-button inline-flex h-[58px] w-[180px] items-center justify-center gap-2 rounded-lg border border-[#216474] bg-transparent text-[20px] font-medium leading-[30px] text-[#216474] hover:bg-white hover:shadow-[0_12px_28px_rgba(33,100,116,0.12)] ${
+                    className={`ml-button inline-flex h-[52px] w-full items-center justify-center gap-2 rounded-lg border border-[#216474] bg-transparent px-4 text-base font-medium text-[#216474] hover:bg-white hover:shadow-[0_12px_28px_rgba(33,100,116,0.12)] sm:h-[58px] sm:w-[180px] sm:text-[20px] ${
                       isArabic ? "flex-row-reverse" : "flex-row"
                     }`}
                   >
@@ -1063,7 +1063,7 @@ export function LandingPage() {
                   <Link
                     to="/register"
                     dir="ltr"
-                    className={`ml-button inline-flex h-[58px] w-[180px] items-center justify-center gap-2 rounded-lg bg-[#174B57] text-[20px] font-medium leading-[30px] text-white hover:bg-[#123F49] hover:shadow-[0_14px_30px_rgba(23,75,87,0.25)] ${
+                    className={`ml-button inline-flex h-[52px] w-full items-center justify-center gap-2 rounded-lg bg-[#174B57] px-4 text-base font-medium text-white hover:bg-[#123F49] hover:shadow-[0_14px_30px_rgba(23,75,87,0.25)] sm:h-[58px] sm:w-[180px] sm:text-[20px] ${
                       isArabic ? "flex-row-reverse" : "flex-row"
                     }`}
                   >
@@ -1167,13 +1167,13 @@ export function LandingPage() {
             <div className="flex min-h-[68px] w-full flex-col items-center gap-5">
               <div
                 dir="ltr"
-                className="flex h-[30px] w-full max-w-[526px] items-center justify-center gap-[58px]"
+                className="flex min-h-[30px] w-full max-w-[526px] items-center justify-center gap-3 sm:gap-8 lg:gap-[58px]"
               >
                 <span className="h-[3px] min-w-0 flex-1 rounded-lg bg-gradient-to-r from-white to-[#EEB73A]" />
 
                 <h2
                   dir={textDirection}
-                  className="shrink-0 whitespace-nowrap text-center text-[32px] font-medium leading-none text-[#333333]"
+                  className="min-w-0 text-center text-2xl font-medium leading-tight text-[#333333] sm:text-[28px] lg:text-[32px]"
                 >
                   {t("تجربة مصممة لكل دور")}
                 </h2>
@@ -1181,7 +1181,7 @@ export function LandingPage() {
                 <span className="h-[3px] min-w-0 flex-1 rounded-lg bg-gradient-to-l from-white to-[#EEB73A]" />
               </div>
 
-              <p className="max-w-[650px] text-center text-[18px] font-normal leading-[29px] text-[#A5A5A5]">
+              <p className="max-w-[650px] text-center text-sm font-normal leading-7 text-[#A5A5A5] sm:text-base lg:text-[18px] lg:leading-[29px]">
                 {t(
                   "نظامنا مصمم لأربع فئات رئيسية تعمل معاً لتوفير تجربة سهلة وفعالة.",
                 )}
@@ -1532,13 +1532,13 @@ export function LandingPage() {
             {/* Heading */}
             <div
               dir="ltr"
-              className="flex min-h-[68px] w-full items-end justify-center gap-4"
+              className="flex min-h-[68px] w-full items-center justify-center gap-2 sm:gap-4"
             >
               <button
                 type="button"
                 onClick={showPreviousTestimonials}
                 aria-label={t("عرض الآراء السابقة")}
-                className="grid h-[46px] w-[46px] shrink-0 place-items-center rounded-full border border-[rgba(102,102,102,0.16)] bg-white text-[#444444] transition duration-200 hover:border-[#216474] hover:bg-[#F1F8F8] hover:text-[#216474] active:scale-95"
+                className="grid size-10 shrink-0 place-items-center rounded-full border border-[rgba(102,102,102,0.16)] bg-white text-[#444444] transition duration-200 hover:border-[#216474] hover:bg-[#F1F8F8] hover:text-[#216474] active:scale-95 sm:size-[46px]"
               >
                 <svg
                   viewBox="0 0 16 16"
@@ -1562,13 +1562,13 @@ export function LandingPage() {
               >
                 <div
                   dir="ltr"
-                  className="flex h-[30px] w-full max-w-[526px] items-center justify-center gap-[58px]"
+                  className="flex min-h-[30px] w-full max-w-[526px] items-center justify-center gap-3 sm:gap-8 lg:gap-[58px]"
                 >
                   <span className="h-[3px] min-w-0 flex-1 rounded-lg bg-gradient-to-r from-white to-[#EEB73A]" />
 
                   <h2
                     dir={textDirection}
-                    className="shrink-0 whitespace-nowrap text-center text-[32px] font-medium leading-none text-[#333333]"
+                    className="min-w-0 text-center text-2xl font-medium leading-tight text-[#333333] sm:text-[28px] lg:text-[32px]"
                   >
                     {t("آراء المستخدمين")}
                   </h2>
@@ -1576,7 +1576,7 @@ export function LandingPage() {
                   <span className="h-[3px] min-w-0 flex-1 rounded-lg bg-gradient-to-l from-white to-[#EEB73A]" />
                 </div>
 
-                <p className="max-w-[527px] text-center text-[18px] font-normal leading-[29px] text-[#A5A5A5]">
+                <p className="max-w-[527px] text-center text-sm font-normal leading-7 text-[#A5A5A5] sm:text-base lg:text-[18px] lg:leading-[29px]">
                   {t("نفتخر بثقة عملائنا، وهذه بعض آرائهم عن تجربتهم معنا.")}
                 </p>
               </div>
@@ -1585,7 +1585,7 @@ export function LandingPage() {
                 type="button"
                 onClick={showNextTestimonials}
                 aria-label={t("عرض الآراء التالية")}
-                className="grid h-[46px] w-[46px] shrink-0 place-items-center rounded-full border border-[rgba(102,102,102,0.16)] bg-white text-[#444444] transition duration-200 hover:border-[#216474] hover:bg-[#F1F8F8] hover:text-[#216474] active:scale-95"
+                className="grid size-10 shrink-0 place-items-center rounded-full border border-[rgba(102,102,102,0.16)] bg-white text-[#444444] transition duration-200 hover:border-[#216474] hover:bg-[#F1F8F8] hover:text-[#216474] active:scale-95 sm:size-[46px]"
               >
                 <svg
                   viewBox="0 0 16 16"
@@ -1609,7 +1609,7 @@ export function LandingPage() {
               <div
                 key={testimonialPage}
                 dir={textDirection}
-                className="grid w-full animate-[ml-fade-up_.38s_ease_both] grid-cols-1 gap-5 md:grid-cols-3"
+                className="grid w-full animate-[ml-fade-up_.38s_ease_both] grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
               >
                 {visibleTestimonials.map((item, cardIndex) => (
                   <article
@@ -1739,16 +1739,16 @@ export function LandingPage() {
           </div>
         </section>
         {/* Security */}
-        <section className="bg-[#F8FAFC] py-[84px]">
+        <section className="bg-[#F8FAFC] py-12 sm:py-16 lg:py-[84px]">
           <div className="mx-auto w-full max-w-[1200px] px-5 xl:px-0">
             <div
               dir="ltr"
-              className={`flex min-h-[360px] w-full items-center justify-between gap-14 rounded-xl border border-[rgba(102,102,102,0.16)] bg-white px-10 py-10 ${
-                isArabic ? "flex-row" : "flex-row-reverse"
+              className={`flex w-full flex-col items-center justify-between gap-8 rounded-xl border border-[rgba(102,102,102,0.16)] bg-white px-5 py-8 sm:px-8 lg:min-h-[360px] lg:gap-12 lg:px-10 lg:py-10 ${
+                isArabic ? "lg:flex-row" : "lg:flex-row-reverse"
               }`}
             >
               {/* Security illustration */}
-              <div className="relative mx-auto h-[256px] w-[268px] shrink-0">
+              <div className="relative mx-auto h-[218px] w-[228px] shrink-0 scale-[.85] sm:h-[256px] sm:w-[268px] sm:scale-100">
                 <div className="absolute left-0 top-0 h-[252px] w-[251px] rounded-full border-[1.6px] border-[#E6F3F6]" />
 
                 <div className="absolute left-[18px] top-[17px] h-[217px] w-[216px] rounded-full border-[1.6px] border-[rgba(230,243,246,0.47)]" />
@@ -1779,7 +1779,7 @@ export function LandingPage() {
               {/* Security content */}
               <div
                 dir={textDirection}
-                className={`mx-auto flex w-full max-w-[700px] shrink-0 flex-col justify-center ${itemsAlignClass}`}
+                className={`mx-auto flex w-full min-w-0 max-w-[700px] flex-col justify-center lg:flex-1 ${itemsAlignClass}`}
               >
                 {/* Badge */}
                 <div
@@ -1805,7 +1805,7 @@ export function LandingPage() {
 
                 <h2
                   dir={textDirection}
-                  className={`mt-[18px] w-full break-words text-[34px] font-bold leading-[1.35] text-[#174B57] xl:text-[36px] ${textAlignClass}`}
+                  className={`mt-[18px] w-full break-words text-2xl font-bold leading-[1.4] text-[#174B57] sm:text-[30px] lg:text-[34px] xl:text-[36px] ${textAlignClass}`}
                 >
                   {t("بياناتك محمية بأعلى معايير الأمان")}
                 </h2>
@@ -1822,7 +1822,7 @@ export function LandingPage() {
                 {/* Security features */}
                 <div
                   dir={textDirection}
-                  className="mt-8 grid w-full grid-cols-1 items-stretch gap-6 md:grid-cols-3"
+                  className="mt-7 grid w-full grid-cols-1 items-stretch gap-5 sm:grid-cols-3 lg:mt-8 lg:gap-6"
                 >
                   {securityFeatures.map(({ image, title, text }) => (
                     <div
@@ -1871,29 +1871,29 @@ export function LandingPage() {
         </section>
 
         {/* CTA */}
-        <section className="bg-[#F8FAFC] py-[84px]">
+        <section className="bg-[#F8FAFC] py-12 sm:py-16 lg:py-[84px]">
           <div className="mx-auto w-full max-w-[1200px] px-5 xl:px-0">
             <div
               dir="ltr"
-              className="relative flex min-h-[190px] w-full items-center rounded-lg bg-[#174B57] px-10 py-6"
+              className="relative flex w-full flex-col-reverse items-stretch justify-center gap-7 overflow-hidden rounded-xl bg-[#174B57] px-5 py-8 sm:px-8 lg:min-h-[190px] lg:flex-row lg:items-center lg:justify-between lg:gap-8 lg:px-10 lg:py-6"
             >
               {/* Buttons */}
               <div
                 dir="ltr"
-                className={`flex h-10 w-[304px] shrink-0 items-center gap-5 ${
+                className={`z-20 grid w-full shrink-0 grid-cols-1 gap-3 min-[420px]:grid-cols-2 lg:flex lg:h-10 lg:w-[304px] lg:items-center lg:gap-5 ${
                   isArabic ? "flex-row-reverse" : "flex-row"
                 }`}
               >
                 <Link
                   to="/login"
-                  className="ml-button flex h-10 w-[142px] items-center justify-center rounded-lg border border-white bg-transparent text-[16px] font-medium leading-6 text-white hover:bg-white/10"
+                  className="ml-button flex h-11 w-full items-center justify-center rounded-lg border border-white bg-transparent px-3 text-sm font-medium text-white hover:bg-white/10 lg:h-10 lg:w-[142px] lg:text-[16px]"
                 >
                   {t("تسجيل دخول")}
                 </Link>
 
                 <Link
                   to="/register"
-                  className="ml-button flex h-10 w-[142px] items-center justify-center rounded-lg bg-white text-[16px] font-medium leading-6 text-[#216474] hover:bg-[#F3F8F9]"
+                  className="ml-button flex h-11 w-full items-center justify-center rounded-lg bg-white px-3 text-sm font-medium text-[#216474] hover:bg-[#F3F8F9] lg:h-10 lg:w-[142px] lg:text-[16px]"
                 >
                   {t("إنشاء حساب")}
                 </Link>
@@ -1902,9 +1902,9 @@ export function LandingPage() {
               {/* CTA text */}
               <div
                 dir={textDirection}
-                className="ml-[70px] flex min-h-[100px] w-[390px] shrink-0 flex-col items-center justify-center gap-3 text-center"
+                className="z-20 flex w-full min-w-0 max-w-[520px] flex-col items-center justify-center gap-3 text-center lg:min-h-[100px] lg:max-w-[390px] lg:flex-1"
               >
-                <h2 className="flex w-full items-center justify-center break-words text-[30px] font-bold leading-[1.2] text-white xl:text-[32px]">
+                <h2 className="flex w-full items-center justify-center break-words text-2xl font-bold leading-tight text-white sm:text-[28px] xl:text-[32px]">
                   {t("ابدأ باستخدام المنصة الآن")}
                 </h2>
 
@@ -1918,7 +1918,7 @@ export function LandingPage() {
               <img
                 src={ASSETS.cta}
                 alt={t("استخدام المنصة")}
-                className="absolute right-[100px] top-[-15px] z-10 h-[205px] w-[200px] object-contain"
+                className="pointer-events-none absolute -bottom-8 -right-8 z-10 h-[150px] w-[150px] object-contain opacity-20 sm:h-[180px] sm:w-[180px] lg:-top-[15px] lg:bottom-auto lg:right-[40%] lg:h-[205px] lg:w-[200px] lg:opacity-35 xl:right-[100px] xl:opacity-100"
               />
             </div>
           </div>
