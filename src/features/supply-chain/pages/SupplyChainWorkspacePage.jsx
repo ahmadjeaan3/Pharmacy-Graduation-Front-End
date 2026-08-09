@@ -10,6 +10,7 @@ import {
   ExternalLink,
   Eye,
   MapPin,
+  Navigation,
   Megaphone,
   Minus,
   PackageCheck,
@@ -31,7 +32,7 @@ import {
   X,
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getPrimaryRole } from "../../../shared/config/roles";
@@ -55,6 +56,7 @@ import {
   getSupplyInvoices,
   getSupplyReturns,
   getMedicineRecalls,
+  getRepresentativeRoute,
   getWarehouseCatalog,
   supplyKeys,
   updateShipment,
@@ -65,6 +67,12 @@ import {
   reviewSupplyReturn,
   updateBatch,
 } from "../api/supplyChainApi";
+
+const RepresentativeRouteMap = lazy(() =>
+  import("../components/RepresentativeRouteMap").then((module) => ({
+    default: module.RepresentativeRouteMap,
+  })),
+);
 
 const SUPPLY_HERO_IMAGE = "/assets/app/pharmacy.png";
 
@@ -104,6 +112,7 @@ const labels = {
   Failed: "تعذر التسليم",
   Returned: "أعيدت للمستودع",
   Pending: "قيد المراجعة",
+  Requested: "بانتظار مراجعة المستودع",
   Approved: "مقبول",
   Collected: "تم الاستلام",
   Completed: "مكتمل",
@@ -346,6 +355,11 @@ export function SupplyChainWorkspacePage() {
   const location = useLocation();
   const navigate = useNavigate();
   const role = getPrimaryRole(user.roles);
+  const representativeView = location.pathname.endsWith("/route")
+    ? "route"
+    : location.pathname.endsWith("/history")
+      ? "history"
+      : "deliveries";
   const qc = useQueryClient();
   const requestedTab = new URLSearchParams(location.search).get("tab");
   const [tab, setTab] = useState(
@@ -362,9 +376,13 @@ export function SupplyChainWorkspacePage() {
   const [batchToEdit, setBatchToEdit] = useState(null);
   const [batchToRecall, setBatchToRecall] = useState(null);
   const [returnOrder, setReturnOrder] = useState(null);
+  const [returnReview, setReturnReview] = useState(null);
   const [selectedWarehouse, setSelectedWarehouse] = useState(null);
   const [catalogSearch, setCatalogSearch] = useState("");
   const [cart, setCart] = useState({});
+  const [representativeLocation, setRepresentativeLocation] = useState(null);
+  const [representativeLocationError, setRepresentativeLocationError] =
+    useState("");
   const dashboard = useQuery({
     queryKey: supplyKeys.dashboard,
     queryFn: getSupplyDashboard,
@@ -417,15 +435,15 @@ export function SupplyChainWorkspacePage() {
     enabled: role === "Pharmacy" && !!selectedWarehouse,
   });
   const mutation = useMutation({
-    mutationFn: ({ type, id, value }) =>
+    mutationFn: ({ type, id, value, coordinates, note }) =>
       type === "order"
         ? updateSupplyOrder(id, { status: value, note: "" })
         : type === "shipment"
           ? updateShipment(id, {
               status: value,
-              note: "",
-              latitude: null,
-              longitude: null,
+              note: note || "",
+              latitude: coordinates?.latitude ?? null,
+              longitude: coordinates?.longitude ?? null,
             })
           : type === "assign"
             ? assignShipment(id, {
@@ -499,7 +517,12 @@ export function SupplyChainWorkspacePage() {
   });
   const reviewReturnMutation = useMutation({
     mutationFn: ({ id, payload }) => reviewSupplyReturn(id, payload),
-    onSuccess: () => qc.invalidateQueries({ queryKey: supplyKeys.returns }),
+    onSuccess: () => {
+      setReturnReview(null);
+      qc.invalidateQueries({ queryKey: supplyKeys.returns });
+      qc.invalidateQueries({ queryKey: supplyKeys.batches });
+      qc.invalidateQueries({ queryKey: supplyKeys.dashboard });
+    },
   });
   const recallMutation = useMutation({
     mutationFn: createMedicineRecall,
@@ -510,9 +533,85 @@ export function SupplyChainWorkspacePage() {
       qc.invalidateQueries({ queryKey: supplyKeys.dashboard });
     },
   });
-  const act = (type, id, value) => {
+  const act = (type, id, value, note = "") => {
     mutation.reset();
-    mutation.mutate({ type, id, value });
+    if (type === "shipment" && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        ({ coords }) => {
+          const coordinates = {
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+          };
+          setRepresentativeLocation(coordinates);
+          setRepresentativeLocationError("");
+          mutation.mutate({ type, id, value, coordinates, note });
+        },
+        () => {
+          setRepresentativeLocationError(
+            "تعذر قراءة موقعك. فعّل إذن الموقع لتوثيق حركة الشحنة بدقة.",
+          );
+          mutation.mutate({ type, id, value, note });
+        },
+        { enableHighAccuracy: true, timeout: 12000, maximumAge: 15000 },
+      );
+      return;
+    }
+    mutation.mutate({ type, id, value, note });
+  };
+  const activeRepresentativeOrders = useMemo(
+    () =>
+      (orders.data || []).filter(
+        (order) =>
+          order.shipment &&
+          !["Delivered", "Failed", "Returned"].includes(order.shipment.status),
+      ),
+    [orders.data],
+  );
+  const completedRepresentativeOrders = useMemo(
+    () =>
+      (orders.data || []).filter((order) =>
+        ["Delivered", "Failed", "Returned"].includes(order.shipment?.status),
+      ),
+    [orders.data],
+  );
+  const activeRouteOrder = activeRepresentativeOrders[0] || null;
+  const representativeRoute = useQuery({
+    queryKey: [
+      "supply-chain",
+      "representative-route",
+      activeRouteOrder?.shipment?.id,
+      representativeLocation,
+    ],
+    queryFn: () =>
+      getRepresentativeRoute(
+        activeRouteOrder.shipment.id,
+        representativeLocation.latitude,
+        representativeLocation.longitude,
+      ),
+    enabled:
+      role === "Representative" &&
+      representativeView === "route" &&
+      Boolean(activeRouteOrder?.shipment?.id && representativeLocation),
+  });
+
+  const locateRepresentative = () => {
+    if (!navigator.geolocation) {
+      setRepresentativeLocationError("هذا الجهاز لا يدعم تحديد الموقع.");
+      return;
+    }
+    setRepresentativeLocationError("");
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) =>
+        setRepresentativeLocation({
+          latitude: coords.latitude,
+          longitude: coords.longitude,
+        }),
+      () =>
+        setRepresentativeLocationError(
+          "تعذر تحديد موقعك. اسمح للموقع باستخدام GPS ثم أعد المحاولة.",
+        ),
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
+    );
   };
   const d = dashboard.data;
   const title = t(
@@ -533,18 +632,25 @@ export function SupplyChainWorkspacePage() {
           ? "تابع طلبات التوريد والشحنات بين المستودعات والصيدليات."
           : "قارن المستودعات، أعد تعبئة النواقص وتابع الشحنة حتى الاستلام.",
   );
-  const tabs = [
-    "orders",
-    "invoices",
-    ...(["Warehouse", "Pharmacy", "Admin"].includes(role)
-      ? ["returns", "recalls"]
-      : []),
-    ...(role === "Warehouse"
-      ? ["inventory", "team"]
-      : role === "Pharmacy"
-        ? ["marketplace", "suggestions"]
-        : []),
-  ];
+  const tabs =
+    role === "Representative"
+      ? []
+      : [
+          "orders",
+          "invoices",
+          ...(["Warehouse", "Pharmacy", "Admin"].includes(role)
+            ? ["returns", "recalls"]
+            : []),
+          ...(role === "Warehouse"
+            ? ["inventory", "team"]
+            : role === "Pharmacy"
+              ? ["marketplace", "suggestions"]
+              : []),
+        ];
+  const representativeOrders =
+    representativeView === "history"
+      ? completedRepresentativeOrders
+      : activeRepresentativeOrders;
   return (
     <div dir={direction} lang={currentLanguage}>
       <section
@@ -680,6 +786,44 @@ lg:min-h-[250px]"
           />
         </div>
       )}
+      {role === "Representative" && (
+        <div className="mt-6 grid gap-4 sm:grid-cols-3">
+          <Stat
+            icon={Truck}
+            label={t("مهام فعالة")}
+            value={activeRepresentativeOrders.length}
+            hint={t("شحنات تحتاج متابعة اليوم")}
+            className="bg-[#EAF4F3] text-[#216474]"
+            isArabic={isArabic}
+            currentLanguage={currentLanguage}
+            onClick={() => navigate("/app/representative/deliveries")}
+          />
+          <Stat
+            icon={CheckCircle2}
+            label={t("توصيلات مكتملة")}
+            value={
+              completedRepresentativeOrders.filter(
+                (order) => order.shipment?.status === "Delivered",
+              ).length
+            }
+            hint={t("ضمن سجل مهامك")}
+            className="bg-emerald-50 text-emerald-700"
+            isArabic={isArabic}
+            currentLanguage={currentLanguage}
+            onClick={() => navigate("/app/representative/history")}
+          />
+          <Stat
+            icon={Route}
+            label={t("المحطة التالية")}
+            value={activeRouteOrder ? 1 : 0}
+            hint={activeRouteOrder?.pharmacyName || t("لا توجد مهمة حالية")}
+            className="bg-[#FFF7DF] text-[#B7791F]"
+            isArabic={isArabic}
+            currentLanguage={currentLanguage}
+            onClick={() => navigate("/app/representative/route")}
+          />
+        </div>
+      )}
       <div
         className={`mt-6 flex flex-wrap gap-2 ${role === "Warehouse" ? "hidden" : ""}`}
       >
@@ -738,7 +882,22 @@ lg:min-h-[250px]"
         </div>
       )}
       <section className="mt-4">
-        {activeTab === "orders" && (
+        {role === "Representative" && representativeLocationError && (
+          <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-bold text-amber-800">
+            <AlertTriangle className="me-2 inline" size={18} />
+            {representativeLocationError}
+          </div>
+        )}
+        {role === "Representative" && representativeView === "route" && (
+          <RepresentativeRoutePanel
+            order={activeRouteOrder}
+            location={representativeLocation}
+            routeQuery={representativeRoute}
+            onLocate={locateRepresentative}
+            onDetails={setDetailsOrder}
+          />
+        )}
+        {activeTab === "orders" && representativeView !== "route" && (
           <div className="grid gap-4 xl:grid-cols-2">
             {orders.isLoading ? (
               <div className="surface col-span-full p-12 text-center">
@@ -764,8 +923,12 @@ lg:min-h-[250px]"
                   إعادة المحاولة
                 </button>
               </div>
-            ) : orders.data?.length ? (
-              orders.data.map((o) => (
+            ) : (role === "Representative" ? representativeOrders : orders.data)
+                ?.length ? (
+              (role === "Representative"
+                ? representativeOrders
+                : orders.data
+              ).map((o) => (
                 <OrderCard
                   key={o.id}
                   order={o}
@@ -786,7 +949,9 @@ lg:min-h-[250px]"
                 <p className="mt-2 text-sm text-[#829499]">
                   {role === "Warehouse"
                     ? "ستظهر هنا طلبات التوريد الواردة من الصيدليات."
-                    : "لا توجد مهام مسندة حاليًا."}
+                    : representativeView === "history"
+                      ? "لا توجد توصيلات مكتملة أو مغلقة بعد."
+                      : "لا توجد مهام توصيل فعالة مسندة إليك حاليًا."}
                 </p>
                 <button
                   type="button"
@@ -969,11 +1134,11 @@ lg:min-h-[250px]"
           <ReturnsPanel
             items={returns.data || []}
             loading={returns.isLoading}
+            error={returns.error}
+            onRetry={returns.refetch}
             role={role}
             busy={reviewReturnMutation.isPending}
-            onReview={(id, status) =>
-              reviewReturnMutation.mutate({ id, payload: { status, note: "" } })
-            }
+            onReview={(item, status) => setReturnReview({ item, status })}
           />
         )}
         {activeTab === "recalls" && (
@@ -1106,8 +1271,8 @@ lg:min-h-[250px]"
           role={role}
           representatives={reps.data || []}
           busy={mutation.isPending}
-          onAction={(type, id, value) => {
-            act(type, id, value);
+          onAction={(type, id, value, note) => {
+            act(type, id, value, note);
             setDetailsOrder(null);
           }}
           onReturn={() => {
@@ -1120,11 +1285,26 @@ lg:min-h-[250px]"
       {returnOrder && (
         <ReturnDialog
           order={returnOrder}
+          returns={returns.data || []}
           busy={returnMutation.isPending}
           error={returnMutation.error}
           onClose={() => setReturnOrder(null)}
           onSubmit={(payload) =>
             returnMutation.mutate({ orderId: returnOrder.id, payload })
+          }
+        />
+      )}
+      {returnReview && (
+        <ReturnReviewDialog
+          review={returnReview}
+          busy={reviewReturnMutation.isPending}
+          error={reviewReturnMutation.error}
+          onClose={() => setReturnReview(null)}
+          onSubmit={(note) =>
+            reviewReturnMutation.mutate({
+              id: returnReview.item.id,
+              payload: { status: returnReview.status, note },
+            })
           }
         />
       )}
@@ -1151,6 +1331,7 @@ function OrderDetailsDialog({
   const [representativeId, setRepresentativeId] = useState(
     representatives.find((x) => x.isAvailable)?.id || "",
   );
+  const [shipmentIssueNote, setShipmentIssueNote] = useState("");
   useEffect(() => {
     const closeOnEscape = (event) => {
       if (event.key === "Escape") onClose();
@@ -1172,6 +1353,11 @@ function OrderDetailsDialog({
     Accepted: "Preparing",
     Preparing: "ReadyForDispatch",
   }[order.status];
+  const representativeNext = {
+    Assigned: "Loading",
+    Loading: "OutForDelivery",
+    OutForDelivery: "Arrived",
+  }[order.shipment?.status];
   const mapUrl =
     order.pharmacyLatitude != null && order.pharmacyLongitude != null
       ? `https://www.google.com/maps?q=${order.pharmacyLatitude},${order.pharmacyLongitude}`
@@ -1469,6 +1655,82 @@ function OrderDetailsDialog({
                         : "الطلب مسند وجاهز للمتابعة"}
                     </div>
                   )}
+              </section>
+            )}
+            {role === "Representative" && order.shipment && (
+              <section className="surface p-5">
+                <h3 className="font-black">إجراءات مهمة التوصيل</h3>
+                <p className="mt-2 text-xs leading-6 text-[#829499]">
+                  حدّث حالة الشحنة بالترتيب. يتم إرفاق موقعك الحالي مع كل تحديث
+                  عند السماح باستخدام GPS.
+                </p>
+                {representativeNext && (
+                  <button
+                    disabled={busy}
+                    onClick={() =>
+                      onAction(
+                        "shipment",
+                        order.shipment.id,
+                        representativeNext,
+                      )
+                    }
+                    className="btn-primary mt-4 w-full justify-center"
+                  >
+                    <PackageCheck size={17} />
+                    {labels[representativeNext] || representativeNext}
+                  </button>
+                )}
+                {!["Delivered", "Failed", "Returned"].includes(
+                  order.shipment.status,
+                ) && (
+                  <div className="mt-5 border-t border-slate-100 pt-4">
+                    <label className="block">
+                      <span className="form-label">ملاحظة عند تعذر المهمة</span>
+                      <textarea
+                        rows="3"
+                        maxLength="1000"
+                        className="form-input h-auto py-3"
+                        value={shipmentIssueNote}
+                        onChange={(event) =>
+                          setShipmentIssueNote(event.target.value)
+                        }
+                        placeholder="مثال: الصيدلية مغلقة أو تعذر التواصل"
+                      />
+                    </label>
+                    <div className="mt-3 grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        disabled={busy || shipmentIssueNote.trim().length < 5}
+                        onClick={() =>
+                          onAction(
+                            "shipment",
+                            order.shipment.id,
+                            "Failed",
+                            shipmentIssueNote.trim(),
+                          )
+                        }
+                        className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-3 text-xs font-black text-rose-700 disabled:opacity-40"
+                      >
+                        تعذر التسليم
+                      </button>
+                      <button
+                        type="button"
+                        disabled={busy || shipmentIssueNote.trim().length < 5}
+                        onClick={() =>
+                          onAction(
+                            "shipment",
+                            order.shipment.id,
+                            "Returned",
+                            shipmentIssueNote.trim(),
+                          )
+                        }
+                        className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-3 text-xs font-black text-amber-800 disabled:opacity-40"
+                      >
+                        إعادتها للمستودع
+                      </button>
+                    </div>
+                  </div>
+                )}
               </section>
             )}
             {role === "Pharmacy" && order.status === "Delivered" && (
@@ -1810,10 +2072,37 @@ function MarketplacePanel({
   );
 }
 
-function ReturnsPanel({ items, loading, role, busy, onReview }) {
+function ReturnsPanel({
+  items,
+  loading,
+  error,
+  onRetry,
+  role,
+  busy,
+  onReview,
+}) {
   if (loading)
     return (
       <div className="surface p-10 text-center">جاري تحميل المرتجعات...</div>
+    );
+  if (error)
+    return (
+      <div className="surface border border-rose-100 p-10 text-center">
+        <AlertTriangle className="mx-auto text-rose-600" />
+        <h3 className="mt-3 font-black text-rose-700">تعذر تحميل المرتجعات</h3>
+        <p className="mt-2 text-sm text-[#71858A]">
+          {error.response?.data?.error ||
+            error.response?.data?.detail ||
+            "تحقق من اعتماد الحساب وصلاحيته ثم حاول مجددًا."}
+        </p>
+        <button
+          type="button"
+          onClick={onRetry}
+          className="btn-secondary mx-auto mt-4"
+        >
+          إعادة المحاولة
+        </button>
+      </div>
     );
   return (
     <div className="grid gap-4 md:grid-cols-2">
@@ -1833,11 +2122,17 @@ function ReturnsPanel({ items, loading, role, busy, onReview }) {
           <p className="mt-1 font-mono text-xs text-[#829499]">
             {item.orderCode}
           </p>
+          <p className="mt-2 text-xs font-bold text-[#60777D]">
+            {role === "Warehouse" ? item.pharmacyName : item.warehouseName}
+          </p>
           <div className="mt-4 rounded-xl bg-[#F8FBFB] p-3 text-sm">
             <p>
               الكمية: <b>{item.quantity}</b>
             </p>
             <p className="mt-2 text-[#60777D]">السبب: {item.reason}</p>
+            <p className="mt-2 text-[#60777D]">
+              قيمة المرتجع: <b>{money(item.refundAmount)}</b>
+            </p>
             {item.reviewNote && (
               <p className="mt-2 text-[#60777D]">
                 ملاحظة المستودع: {item.reviewNote}
@@ -1848,18 +2143,18 @@ function ReturnsPanel({ items, loading, role, busy, onReview }) {
             item.status !== "Completed" &&
             item.status !== "Rejected" && (
               <div className="mt-4 flex flex-wrap gap-2">
-                {item.status === "Pending" && (
+                {item.status === "Requested" && (
                   <>
                     <button
                       disabled={busy}
-                      onClick={() => onReview(item.id, "Approved")}
+                      onClick={() => onReview(item, "Approved")}
                       className="btn-primary flex-1 justify-center"
                     >
                       قبول
                     </button>
                     <button
                       disabled={busy}
-                      onClick={() => onReview(item.id, "Rejected")}
+                      onClick={() => onReview(item, "Rejected")}
                       className="btn-secondary flex-1 justify-center"
                     >
                       رفض
@@ -1869,7 +2164,7 @@ function ReturnsPanel({ items, loading, role, busy, onReview }) {
                 {item.status === "Approved" && (
                   <button
                     disabled={busy}
-                    onClick={() => onReview(item.id, "Collected")}
+                    onClick={() => onReview(item, "Collected")}
                     className="btn-primary w-full justify-center"
                   >
                     تم استلام المرتجع
@@ -1878,7 +2173,7 @@ function ReturnsPanel({ items, loading, role, busy, onReview }) {
                 {item.status === "Collected" && (
                   <button
                     disabled={busy}
-                    onClick={() => onReview(item.id, "Completed")}
+                    onClick={() => onReview(item, "Completed")}
                     className="btn-primary w-full justify-center"
                   >
                     إكمال المعالجة
@@ -1893,6 +2188,148 @@ function ReturnsPanel({ items, loading, role, busy, onReview }) {
           لا توجد طلبات مرتجعات حاليًا.
         </div>
       )}
+    </div>
+  );
+}
+
+function RepresentativeRoutePanel({
+  order,
+  location,
+  routeQuery,
+  onLocate,
+  onDetails,
+}) {
+  if (!order)
+    return (
+      <div className="surface p-10 text-center sm:p-14">
+        <Route className="mx-auto text-[#216474]" size={34} />
+        <h3 className="mt-4 text-lg font-black">لا توجد محطة توصيل حالية</h3>
+        <p className="mt-2 text-sm text-[#71858A]">
+          عندما يسند المستودع شحنة إليك سيظهر مسارها هنا تلقائيًا.
+        </p>
+      </div>
+    );
+
+  return (
+    <div className="grid gap-4 xl:grid-cols-[1fr_320px]">
+      <div className="surface overflow-hidden p-3 sm:p-5">
+        {!location ? (
+          <div className="grid min-h-[360px] place-items-center rounded-2xl bg-[#F8FBFB] p-8 text-center">
+            <div>
+              <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-[#EAF4F3] text-[#216474]">
+                <Navigation size={26} />
+              </span>
+              <h3 className="mt-4 text-lg font-black">ابدأ من موقعك الحالي</h3>
+              <p className="mx-auto mt-2 max-w-md text-sm leading-7 text-[#71858A]">
+                فعّل GPS ليتم رسم طريق القيادة الحقيقي من مكانك إلى الصيدلية
+                وتوثيق حركة الشحنة بدقة.
+              </p>
+              <button
+                type="button"
+                onClick={onLocate}
+                className="btn-primary mx-auto mt-5"
+              >
+                <Navigation size={17} />
+                تحديد موقعي ورسم المسار
+              </button>
+            </div>
+          </div>
+        ) : routeQuery.isPending ? (
+          <div className="grid min-h-[360px] place-items-center rounded-2xl bg-[#F8FBFB] text-center">
+            <div>
+              <Route className="mx-auto animate-pulse text-[#216474]" />
+              <p className="mt-3 font-black">جاري حساب أفضل طريق...</p>
+            </div>
+          </div>
+        ) : routeQuery.isError ? (
+          <div className="grid min-h-[360px] place-items-center rounded-2xl bg-rose-50 p-8 text-center">
+            <div>
+              <AlertTriangle className="mx-auto text-rose-600" />
+              <p className="mt-3 font-black text-rose-700">
+                {routeQuery.error?.response?.data?.error ||
+                  "تعذر رسم المسار حاليًا."}
+              </p>
+              <button
+                type="button"
+                onClick={onLocate}
+                className="btn-secondary mx-auto mt-4"
+              >
+                إعادة تحديد الموقع
+              </button>
+            </div>
+          </div>
+        ) : (
+          <Suspense
+            fallback={
+              <div className="grid min-h-[360px] place-items-center">
+                جاري تحميل الخريطة...
+              </div>
+            }
+          >
+            <RepresentativeRouteMap route={routeQuery.data} />
+          </Suspense>
+        )}
+      </div>
+      <aside className="surface flex flex-col p-5">
+        <span
+          className={`w-fit rounded-full px-3 py-1 text-xs font-black ${tone(order.shipment.status)}`}
+        >
+          {labels[order.shipment.status] || order.shipment.status}
+        </span>
+        <p className="mt-4 font-mono text-xs font-black text-[#216474]">
+          {order.shipment.shipmentCode}
+        </p>
+        <h3 className="mt-2 text-xl font-black">{order.pharmacyName}</h3>
+        <p className="mt-3 flex items-start gap-2 text-sm leading-7 text-[#71858A]">
+          <MapPin className="mt-1 shrink-0 text-[#216474]" size={17} />
+          {order.pharmacyAddress}، {order.pharmacyArea}، {order.pharmacyCity}
+        </p>
+        {routeQuery.data?.routeAvailable && (
+          <div className="mt-5 grid grid-cols-2 gap-2">
+            <div className="rounded-xl bg-[#EAF4F3] p-3 text-center">
+              <small className="text-[#71858A]">المسافة</small>
+              <b className="mt-1 block text-[#174B57]">
+                {(routeQuery.data.distanceMeters / 1000).toLocaleString(
+                  "ar-SY",
+                  {
+                    maximumFractionDigits: 1,
+                  },
+                )}{" "}
+                كم
+              </b>
+            </div>
+            <div className="rounded-xl bg-[#FFF7DF] p-3 text-center">
+              <small className="text-[#8A6A20]">الوقت المتوقع</small>
+              <b className="mt-1 block text-[#8A6A20]">
+                {Math.max(
+                  1,
+                  Math.round(routeQuery.data.durationSeconds / 60),
+                ).toLocaleString("ar-SY")}{" "}
+                دقيقة
+              </b>
+            </div>
+          </div>
+        )}
+        <div className="mt-auto space-y-2 pt-5">
+          {order.pharmacyPhoneNumber && (
+            <a
+              href={`tel:${order.pharmacyPhoneNumber}`}
+              className="btn-secondary w-full justify-center"
+            >
+              <Phone size={16} />
+              اتصال بالصيدلية
+            </a>
+          )}
+          <button
+            type="button"
+            onClick={() => onDetails(order)}
+            className="btn-primary w-full justify-center"
+          >
+            <Eye size={16} />
+            تفاصيل المهمة وتحديث الحالة
+          </button>
+        </div>
+      </aside>
     </div>
   );
 }
@@ -1938,9 +2375,85 @@ function RecallsPanel({ items, loading }) {
   );
 }
 
-function ReturnDialog({ order, busy, error, onClose, onSubmit }) {
+function ReturnReviewDialog({ review, busy, error, onClose, onSubmit }) {
+  const [note, setNote] = useState("");
+  const { item, status } = review;
+  const decisionLabels = {
+    Approved: "قبول طلب المرتجع",
+    Rejected: "رفض طلب المرتجع",
+    Collected: "تأكيد استلام المرتجع",
+    Completed: "إكمال وتسوية المرتجع",
+  };
+  const requiresNote = status === "Rejected";
+
+  return (
+    <SimpleDialog
+      title={decisionLabels[status] || "مراجعة المرتجع"}
+      icon={RotateCcw}
+      onClose={onClose}
+    >
+      <form
+        className="space-y-4"
+        onSubmit={(event) => {
+          event.preventDefault();
+          onSubmit(note.trim() || null);
+        }}
+      >
+        <div className="rounded-2xl bg-[#F8FBFB] p-4 text-sm leading-7">
+          <b>{item.medicineName}</b>
+          <p>{item.pharmacyName}</p>
+          <p>الكمية: {item.quantity}</p>
+          <p>قيمة المرتجع: {money(item.refundAmount)}</p>
+        </div>
+        {status === "Completed" && (
+          <p className="rounded-xl bg-amber-50 p-3 text-xs leading-6 text-amber-900">
+            سيتم خصم الكمية من مخزون الصيدلية وإعادتها إلى دفعة المستودع. لا
+            يمكن التراجع عن هذه الخطوة.
+          </p>
+        )}
+        <Field label={requiresNote ? "سبب الرفض" : "ملاحظة المعالجة (اختياري)"}>
+          <textarea
+            required={requiresNote}
+            rows="4"
+            maxLength="1000"
+            className="form-input h-auto py-3"
+            value={note}
+            onChange={(event) => setNote(event.target.value)}
+            placeholder={
+              requiresNote
+                ? "وضّح للصيدلية سبب رفض المرتجع"
+                : "أضف أي تفاصيل تفيد الصيدلية"
+            }
+          />
+        </Field>
+        {error && (
+          <p className="rounded-xl bg-rose-50 p-3 text-sm font-bold text-rose-700">
+            {error.response?.data?.error ||
+              error.response?.data?.detail ||
+              "تعذر تحديث حالة المرتجع."}
+          </p>
+        )}
+        <button
+          disabled={busy || (requiresNote && note.trim().length < 3)}
+          className="btn-primary w-full justify-center disabled:opacity-50"
+        >
+          {busy ? "جاري الحفظ..." : "تأكيد الإجراء"}
+        </button>
+      </form>
+    </SimpleDialog>
+  );
+}
+
+function ReturnDialog({ order, returns, busy, error, onClose, onSubmit }) {
+  const returnedQuantity = (orderItemId) =>
+    returns
+      .filter(
+        (item) =>
+          item.orderItemId === orderItemId && item.status !== "Rejected",
+      )
+      .reduce((total, item) => total + Number(item.quantity || 0), 0);
   const eligibleItems = order.items.filter(
-    (item) => item.deliveredQuantity > 0,
+    (item) => item.deliveredQuantity - returnedQuantity(item.id) > 0,
   );
   const [form, setForm] = useState({
     orderItemId: eligibleItems[0]?.id || "",
@@ -1948,6 +2461,9 @@ function ReturnDialog({ order, busy, error, onClose, onSubmit }) {
     reason: "",
   });
   const selected = eligibleItems.find((item) => item.id === form.orderItemId);
+  const selectedRemaining = selected
+    ? selected.deliveredQuantity - returnedQuantity(selected.id)
+    : 0;
   return (
     <SimpleDialog title="إنشاء طلب مرتجع" icon={RotateCcw} onClose={onClose}>
       <form
@@ -1972,7 +2488,8 @@ function ReturnDialog({ order, busy, error, onClose, onSubmit }) {
           >
             {eligibleItems.map((item) => (
               <option key={item.id} value={item.id}>
-                {item.medicineName} — المستلم {item.deliveredQuantity}
+                {item.medicineName} — المتاح للإرجاع{" "}
+                {item.deliveredQuantity - returnedQuantity(item.id)}
               </option>
             ))}
           </select>
@@ -1981,7 +2498,7 @@ function ReturnDialog({ order, busy, error, onClose, onSubmit }) {
           <input
             required
             min="1"
-            max={selected?.deliveredQuantity || 1}
+            max={selectedRemaining || 1}
             type="number"
             className="form-input"
             value={form.quantity}
@@ -2001,6 +2518,10 @@ function ReturnDialog({ order, busy, error, onClose, onSubmit }) {
             }
           />
         </Field>
+        <p className="rounded-xl bg-amber-50 p-3 text-xs leading-6 text-amber-900">
+          بعد موافقة المستودع وتسلمه للمرتجع، تُخصم الكمية من مخزون الصيدلية
+          وتُعاد إلى دفعة المستودع عند إكمال المعالجة.
+        </p>
         {error && (
           <p className="rounded-xl bg-rose-50 p-3 text-sm font-bold text-rose-700">
             {error.response?.data?.error || "تعذر إرسال طلب المرتجع."}

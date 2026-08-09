@@ -4,6 +4,7 @@ import {
   Filter,
   LocateFixed,
   MapPin,
+  Navigation,
   PackageSearch,
   Search,
   SlidersHorizontal,
@@ -15,6 +16,7 @@ import { useTranslation } from "react-i18next";
 import {
   getLocationContext,
   getNearestPharmacies,
+  getNearestPharmacyRoute,
   searchMedicines,
   userKeys,
 } from "../api/userApi";
@@ -44,10 +46,12 @@ const sortOptions = [
 ];
 
 export function MedicineSearchPage() {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState(searchParams.get("q") || "");
   const [radius, setRadius] = useState(5000);
   const [sortBy, setSortBy] = useState("BestMatch");
+  const [routePharmacy, setRoutePharmacy] = useState(null);
   const activeView =
     searchParams.get("view") === "pharmacies" ? "pharmacies" : "medicines";
   const locationQuery = useQuery({
@@ -91,6 +95,14 @@ export function MedicineSearchPage() {
     retry: 1,
     staleTime: 30_000,
   });
+  const routeQuery = useQuery({
+    queryKey: userKeys.nearestPharmacyRoute({
+      pharmacyId: routePharmacy?.pharmacyId,
+    }),
+    queryFn: () =>
+      getNearestPharmacyRoute({ pharmacyId: routePharmacy.pharmacyId }),
+    enabled: Boolean(routePharmacy?.pharmacyId),
+  });
   const searchMutation = {
     data: medicineSearchQuery.data,
     error: medicineSearchQuery.error,
@@ -132,6 +144,26 @@ export function MedicineSearchPage() {
     });
     return { ...locationQuery.data, mapMarkers: [...pharmacies.values()] };
   }, [locationQuery.data, results]);
+  const routeMapContext = useMemo(() => {
+    if (!routeQuery.data?.pharmacy) return null;
+    return {
+      latitude: routeQuery.data.originLatitude,
+      longitude: routeQuery.data.originLongitude,
+      mapMarkers: [routeQuery.data.pharmacy],
+    };
+  }, [routeQuery.data]);
+
+  const showRoute = (pharmacy) => {
+    setRoutePharmacy(pharmacy);
+    window.setTimeout(
+      () =>
+        document.getElementById("selected-pharmacy-route")?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        }),
+      80,
+    );
+  };
 
   const submit = (event) => {
     event.preventDefault();
@@ -259,8 +291,9 @@ export function MedicineSearchPage() {
             mutation={searchMutation}
             results={results}
             groupedCount={groupedCount}
+            onShowRoute={showRoute}
           />
-          {resultsMapContext?.mapMarkers?.length > 0 && (
+          {!routePharmacy && resultsMapContext?.mapMarkers?.length > 0 && (
             <Suspense
               fallback={
                 <UserLoadingState label="جاري تجهيز الخريطة داخل المنصة..." />
@@ -276,7 +309,36 @@ export function MedicineSearchPage() {
           )}
         </>
       ) : (
-        <PharmaciesResults query={pharmaciesQuery} />
+        <PharmaciesResults query={pharmaciesQuery} onShowRoute={showRoute} />
+      )}
+      {routePharmacy && (
+        <section id="selected-pharmacy-route" className="scroll-mt-24">
+          {routeQuery.isPending && (
+            <UserLoadingState
+              label={t("جاري رسم طريق الوصول إلى الصيدلية...")}
+            />
+          )}
+          {routeQuery.isError && (
+            <UserErrorState
+              message={getApiErrorMessage(routeQuery.error)}
+              onRetry={routeQuery.refetch}
+            />
+          )}
+          {routeMapContext && (
+            <Suspense
+              fallback={
+                <UserLoadingState label={t("جاري تحميل خريطة المسار...")} />
+              }
+            >
+              <NearbyPharmaciesMap
+                locationContext={routeMapContext}
+                route={routeQuery.data}
+                limit={1}
+                title={`${t("مسار الوصول إلى الصيدلية")} — ${routePharmacy.pharmacyName}`}
+              />
+            </Suspense>
+          )}
+        </section>
       )}
       {activeView === "pharmacies" &&
         locationQuery.data?.externalNearbyPharmacies?.length > 0 && (
@@ -325,7 +387,7 @@ export function MedicineSearchPage() {
   );
 }
 
-function MedicineResults({ mutation, results, groupedCount }) {
+function MedicineResults({ mutation, results, groupedCount, onShowRoute }) {
   const { t } = useTranslation();
   if (mutation.isPending)
     return <UserLoadingState label="نبحث في الصيدليات القريبة..." />;
@@ -401,7 +463,7 @@ function MedicineResults({ mutation, results, groupedCount }) {
                 value={`${Number(item.pharmacy.averageRating || 0).toLocaleString("ar-SY", { maximumFractionDigits: 1 })} ★`}
               />
             </div>
-            <div className="mt-4 flex items-center justify-between gap-3">
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
               <div className="min-w-0">
                 <strong className="block truncate text-sm text-[#29464d]">
                   {item.pharmacy.pharmacyName}
@@ -410,12 +472,25 @@ function MedicineResults({ mutation, results, groupedCount }) {
                   {item.pharmacy.statusText}
                 </span>
               </div>
-              <Link
-                to={`/app/pharmacies/${item.pharmacy.pharmacyId}?medicine=${item.medicineId}`}
-                className="btn-secondary shrink-0"
-              >
-                عرض وطلب الدواء
-              </Link>
+              <div className="flex flex-wrap gap-2">
+                {item.pharmacy.latitude != null &&
+                  item.pharmacy.longitude != null && (
+                    <button
+                      type="button"
+                      onClick={() => onShowRoute(item.pharmacy)}
+                      className="btn-secondary shrink-0"
+                    >
+                      <Navigation size={16} />
+                      {t("ارسم مسار الوصول")}
+                    </button>
+                  )}
+                <Link
+                  to={`/app/pharmacies/${item.pharmacy.pharmacyId}?medicine=${item.medicineId}`}
+                  className="btn-primary shrink-0"
+                >
+                  عرض وطلب الدواء
+                </Link>
+              </div>
             </div>
           </article>
         ))}
@@ -424,7 +499,7 @@ function MedicineResults({ mutation, results, groupedCount }) {
   );
 }
 
-function PharmaciesResults({ query }) {
+function PharmaciesResults({ query, onShowRoute }) {
   if (query.isPending)
     return <UserLoadingState label="نحدد الصيدليات الأقرب..." />;
   if (query.isError)
@@ -444,7 +519,11 @@ function PharmaciesResults({ query }) {
   return (
     <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
       {query.data.map((pharmacy) => (
-        <PharmacyCard key={pharmacy.pharmacyId} pharmacy={pharmacy} />
+        <PharmacyCard
+          key={pharmacy.pharmacyId}
+          pharmacy={pharmacy}
+          onShowRoute={onShowRoute}
+        />
       ))}
     </section>
   );

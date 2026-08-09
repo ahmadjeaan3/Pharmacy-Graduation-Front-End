@@ -72,6 +72,12 @@ export const updateShipment = async (id, payload) =>
       payload,
     )
   ).data;
+export const getRepresentativeRoute = async (id, latitude, longitude) =>
+  (
+    await apiClient.get(`/supply-chain/representative/shipments/${id}/route`, {
+      params: { latitude, longitude },
+    })
+  ).data;
 export const confirmShipment = async (id, payload) =>
   (
     await apiClient.post(

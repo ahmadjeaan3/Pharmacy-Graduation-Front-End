@@ -88,6 +88,12 @@ const resources = {
       "الحجز مرتبط برقم الطلب": "Reservation linked to the request number",
       "جاهز للتوجه": "Ready to go",
       "افتح الاتجاهات إلى الصيدلية": "Open directions to the pharmacy",
+      "ارسم مسار الوصول": "Draw the route",
+      "ارسم المسار": "Draw route",
+      "مسار الوصول إلى الصيدلية": "Route to the pharmacy",
+      "جاري رسم طريق الوصول إلى الصيدلية...":
+        "Drawing the route to the pharmacy...",
+      "جاري تحميل خريطة المسار...": "Loading the route map...",
       "تأكيد الاستلام": "Pickup confirmation",
       "تكتمل الرحلة عند التسليم": "The journey completes upon handover",
       "الدواء محجوز وجاهز. خذ رقم الطلب وتوجه إلى الصيدلية.":

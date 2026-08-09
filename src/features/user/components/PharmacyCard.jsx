@@ -1,8 +1,17 @@
-import { ArrowLeft, Bike, Clock3, MapPin, Star } from "lucide-react";
+import {
+  ArrowLeft,
+  Bike,
+  Clock3,
+  MapPin,
+  Navigation,
+  Star,
+} from "lucide-react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { formatDistance } from "../utils/userFormatters";
 
-export function PharmacyCard({ pharmacy }) {
+export function PharmacyCard({ pharmacy, onShowRoute }) {
+  const { t } = useTranslation();
   return (
     <article className="group flex h-full flex-col rounded-[1.4rem] border border-[#174b57]/8 bg-white p-5 transition hover:-translate-y-1 hover:border-[#216474]/20 hover:shadow-xl">
       <div className="flex items-start justify-between gap-3">
@@ -40,16 +49,30 @@ export function PharmacyCard({ pharmacy }) {
           </span>
         )}
       </div>
-      <Link
-        to={`/app/pharmacies/${pharmacy.pharmacyId}`}
-        className="mt-5 inline-flex items-center gap-2 border-t border-slate-100 pt-4 text-sm font-bold text-[#216474]"
-      >
-        عرض الصيدلية{" "}
-        <ArrowLeft
-          size={16}
-          className="transition group-hover:-translate-x-1"
-        />
-      </Link>
+      <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-4">
+        {onShowRoute &&
+          pharmacy.latitude != null &&
+          pharmacy.longitude != null && (
+            <button
+              type="button"
+              onClick={() => onShowRoute(pharmacy)}
+              className="btn-secondary flex-1 justify-center"
+            >
+              <Navigation size={16} />
+              {t("ارسم المسار")}
+            </button>
+          )}
+        <Link
+          to={`/app/pharmacies/${pharmacy.pharmacyId}`}
+          className="inline-flex flex-1 items-center justify-center gap-2 text-sm font-bold text-[#216474]"
+        >
+          عرض الصيدلية
+          <ArrowLeft
+            size={16}
+            className="transition group-hover:-translate-x-1"
+          />
+        </Link>
+      </div>
     </article>
   );
 }

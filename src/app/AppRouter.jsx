@@ -245,6 +245,24 @@ export function AppRouter() {
                 element={<Navigate to="/app/settings" replace />}
               />
             </Route>
+            <Route element={<RoleRoute allowedRoles={["Representative"]} />}>
+              <Route
+                path="representative/deliveries"
+                element={<SupplyChainWorkspacePage />}
+              />
+              <Route
+                path="representative/route"
+                element={<SupplyChainWorkspacePage />}
+              />
+              <Route
+                path="representative/history"
+                element={<SupplyChainWorkspacePage />}
+              />
+              <Route
+                path="representative/profile"
+                element={<Navigate to="/app/settings" replace />}
+              />
+            </Route>
             <Route element={<RoleRoute allowedRoles={["Admin"]} />}>
               <Route path="approvals" element={<AdminApprovalsPage />} />
               <Route path="home-ticker" element={<AdminHomeTickerPage />} />
