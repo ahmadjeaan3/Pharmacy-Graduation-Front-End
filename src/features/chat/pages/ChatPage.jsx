@@ -108,7 +108,7 @@ export function ChatPage() {
   const submitText = (text) => {
     const normalized = text.trim();
     if (
-      !normalized ||
+      normalized.length < 2 ||
       !activeSessionId ||
       session.data?.isEnded ||
       send.isPending
@@ -370,7 +370,7 @@ function ChatComposer({
           placeholder="اكتب سؤالك هنا..."
         />
         <button
-          disabled={pending || !message.trim()}
+          disabled={pending || message.trim().length < 2}
           className="btn-primary min-h-11 shrink-0 px-4"
           aria-label="إرسال الرسالة"
         >

@@ -83,10 +83,8 @@ export function AdminPharmacyReviewPage() {
   const licenseStatus = getVerificationStatus(
     pharmacy.licenseVerificationStatus,
   );
-  const isAutomaticMatch = license.data?.status === "Matched";
-  const isManualReview =
-    license.data?.status === "Failed" || license.data?.status === "NeedsReview";
-  const canDecide = isAutomaticMatch || isManualReview;
+  const isManualReview = Boolean(license.data);
+  const canDecide = Boolean(license.data);
   return (
     <div className="space-y-6">
       <Link to="/app/approvals?tab=pharmacies" className="btn-quiet">
@@ -237,22 +235,22 @@ export function AdminPharmacyReviewPage() {
               </p>
             </div>
           </div>
-          {isManualReview && (
+          {canDecide && (
             <div className="mt-5 flex gap-3 rounded-xl bg-sky-50 p-4 text-xs font-bold leading-6 text-sky-800">
               <ShieldAlert className="shrink-0" size={19} />
               <span>
                 <strong className="block text-sm">
                   المراجعة اليدوية متاحة
                 </strong>
-                تعذر الحسم آليًا. راجع صورة الترخيص ثم وثّق سبب قرارك قبل
-                الاعتماد أو الرفض.
+                هذا القرار مستقل عن نتيجة الذكاء. راجع صورة الترخيص والبيانات
+                الرسمية بنفسك ثم وثّق سبب الاعتماد أو الرفض.
               </span>
             </div>
           )}
           {!canDecide && (
             <div className="mt-5 flex gap-3 rounded-xl bg-amber-50 p-4 text-xs font-bold leading-6 text-amber-800">
               <ShieldAlert className="shrink-0" size={19} />
-              الطلب ما زال قيد الفحص الآلي، انتظر اكتماله قبل اتخاذ القرار.
+              يجب أن ترفع الصيدلية صورة الترخيص قبل اتخاذ قرار إداري يدوي.
             </div>
           )}
           <div className="mt-5 grid grid-cols-2 gap-3">
@@ -281,8 +279,7 @@ export function AdminPharmacyReviewPage() {
               {isManualReview ? "رفض يدوي" : "رفض"}
             </button>
           </div>
-          {(decision === "reject" ||
-            (decision === "approve" && isManualReview)) && (
+          {decision && (
             <label className="mt-5 block">
               <span className="form-label">
                 {decision === "approve" ? "سبب الاعتماد اليدوي" : "سبب الرفض"}
@@ -303,10 +300,7 @@ export function AdminPharmacyReviewPage() {
           <button
             className={`mt-5 w-full justify-center ${decision === "reject" ? "btn-secondary text-rose-700" : "btn-primary"}`}
             disabled={
-              !decision ||
-              review.isPending ||
-              (isManualReview && reason.trim().length < 10) ||
-              (decision === "reject" && reason.trim().length < 10)
+              !decision || review.isPending || reason.trim().length < 10
             }
             onClick={() => review.mutate()}
           >

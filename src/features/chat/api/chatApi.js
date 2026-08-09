@@ -12,6 +12,10 @@ export const startChatSession = async (title = null) =>
 export const getChatSession = async (sessionId) =>
   (await apiClient.get(`/Chat/sessions/${sessionId}`)).data;
 export const sendChatMessage = async (sessionId, payload) =>
-  (await apiClient.post(`/Chat/sessions/${sessionId}/messages`, payload)).data;
+  (
+    await apiClient.post(`/Chat/sessions/${sessionId}/messages`, payload, {
+      timeout: 120_000,
+    })
+  ).data;
 export const endChatSession = async (sessionId) =>
   (await apiClient.post(`/Chat/sessions/${sessionId}/end`)).data;

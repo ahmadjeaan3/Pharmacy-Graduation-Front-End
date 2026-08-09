@@ -1,4 +1,4 @@
-import { Building2, CheckCircle2, X } from "lucide-react";
+import { Building2, CheckCircle2, X, XCircle } from "lucide-react";
 
 export function ApprovalConfirmDialog({
   item,
@@ -6,6 +6,10 @@ export function ApprovalConfirmDialog({
   error,
   onCancel,
   onConfirm,
+  decision,
+  reason,
+  onDecisionChange,
+  onReasonChange,
 }) {
   if (!item) return null;
   return (
@@ -33,12 +37,38 @@ export function ApprovalConfirmDialog({
           id="approval-title"
           className="mt-5 text-xl font-black text-[#17363e]"
         >
-          تأكيد اعتماد {item.kindLabel}
+          التحقق اليدوي من {item.kindLabel}
         </h2>
         <p className="mt-2 leading-7 text-[#687c81]">
-          سيتم اعتماد <strong className="text-[#29464d]">{item.name}</strong>{" "}
-          وإرسال إشعار إلى صاحب الحساب.
+          راجع بيانات <strong className="text-[#29464d]">{item.name}</strong> ثم
+          اختر الاعتماد أو الرفض وسجّل سبب القرار الإداري.
         </p>
+        <div className="mt-5 grid grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={() => onDecisionChange("approve")}
+            className={`rounded-xl border p-3 font-black ${decision === "approve" ? "border-emerald-400 bg-emerald-50 text-emerald-700" : "border-slate-200"}`}
+          >
+            <CheckCircle2 className="mx-auto mb-1" size={19} /> اعتماد يدوي
+          </button>
+          <button
+            type="button"
+            onClick={() => onDecisionChange("reject")}
+            className={`rounded-xl border p-3 font-black ${decision === "reject" ? "border-rose-300 bg-rose-50 text-rose-700" : "border-slate-200"}`}
+          >
+            <XCircle className="mx-auto mb-1" size={19} /> رفض يدوي
+          </button>
+        </div>
+        <label className="mt-4 block">
+          <span className="form-label">ملاحظة التحقق اليدوي</span>
+          <textarea
+            value={reason}
+            onChange={(event) => onReasonChange(event.target.value)}
+            maxLength={2000}
+            className="form-textarea min-h-28"
+            placeholder="دوّن ما راجعته وسبب القرار بوضوح (10 أحرف على الأقل)"
+          />
+        </label>
         {error && (
           <p className="mt-4 rounded-xl bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">
             {error}
@@ -56,11 +86,11 @@ export function ApprovalConfirmDialog({
           <button
             type="button"
             onClick={onConfirm}
-            disabled={pending}
+            disabled={pending || !decision || reason.trim().length < 10}
             className="btn-primary justify-center disabled:opacity-60"
           >
             <CheckCircle2 size={17} />
-            {pending ? "جاري الاعتماد..." : "تأكيد الاعتماد"}
+            {pending ? "جاري حفظ القرار..." : "حفظ القرار اليدوي"}
           </button>
         </div>
       </div>

@@ -7,4 +7,4 @@ export const env = Object.freeze({
   isDevelopment: import.meta.env.DEV,
 });
 
-export const apiOrigin = new URL(env.apiBaseUrl).origin;
+export const apiOrigin = new URL(env.apiBaseUrl, window.location.origin).origin;

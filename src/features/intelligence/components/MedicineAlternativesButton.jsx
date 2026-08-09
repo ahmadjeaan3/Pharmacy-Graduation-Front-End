@@ -1,14 +1,20 @@
 import { useMutation } from "@tanstack/react-query";
 import { Pill, Sparkles, X } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { getApiErrorMessage } from "../../../shared/api/errors";
 import { recommendMedicineAlternatives } from "../api/intelligenceApi";
 
 export function MedicineAlternativesButton({
   medicineName,
+  label,
   className = "btn-secondary justify-center",
   compact = false,
 }) {
+  const { t, i18n } = useTranslation();
+  const language = (i18n.resolvedLanguage || i18n.language || "ar")
+    .split("-")[0]
+    .toLowerCase();
   const [open, setOpen] = useState(false);
   const alternatives = useMutation({
     mutationFn: () => recommendMedicineAlternatives(medicineName, 5),
@@ -20,9 +26,14 @@ export function MedicineAlternativesButton({
 
   return (
     <>
-      <button type="button" className={className} onClick={show}>
+      <button
+        type="button"
+        className={className}
+        onClick={show}
+        aria-label={label || t("اقتراح البدائل")}
+      >
         <Sparkles size={compact ? 15 : 17} />
-        {!compact && "اقتراح البدائل"}
+        {!compact && (label || t("اقتراح البدائل"))}
       </button>
       {open && (
         <div
@@ -30,25 +41,29 @@ export function MedicineAlternativesButton({
           role="dialog"
           aria-modal="true"
         >
-          <div className="max-h-[88vh] w-full max-w-2xl overflow-auto rounded-[1.75rem] bg-white p-6 shadow-2xl">
+          <div
+            dir={language === "ar" ? "rtl" : "ltr"}
+            lang={language}
+            className="max-h-[88vh] w-full max-w-2xl overflow-auto rounded-[1.75rem] bg-white p-4 shadow-2xl sm:p-6"
+          >
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-xs font-black text-violet-600">
-                  محرك البدائل الدوائية
+                  {t("محرك البدائل الدوائية")}
                 </p>
                 <h3 className="mt-1 text-xl font-black">{medicineName}</h3>
               </div>
               <button
                 className="icon-button grid"
                 onClick={() => setOpen(false)}
-                aria-label="إغلاق"
+                aria-label={t("إغلاق")}
               >
                 <X size={18} />
               </button>
             </div>
             {alternatives.isPending ? (
               <div className="grid min-h-48 place-items-center text-sm font-bold text-[#71858a]">
-                جاري تحليل المادة والتركيز والشكل الدوائي...
+                {t("جاري تحليل المادة والتركيز والشكل الدوائي...")}
               </div>
             ) : alternatives.isError ? (
               <div className="mt-5 rounded-2xl bg-rose-50 p-5 text-center text-sm font-bold text-rose-700">
@@ -57,12 +72,12 @@ export function MedicineAlternativesButton({
                   className="btn-secondary mt-4"
                   onClick={() => alternatives.mutate()}
                 >
-                  إعادة المحاولة
+                  {t("إعادة المحاولة")}
                 </button>
               </div>
             ) : !alternatives.data?.alternatives?.length ? (
               <div className="mt-5 rounded-2xl bg-[#f7faf9] p-8 text-center text-sm text-[#71858a]">
-                لم يتم العثور على بدائل موثوقة لهذا الدواء.
+                {t("لم يتم العثور على بدائل موثوقة لهذا الدواء.")}
               </div>
             ) : (
               <div className="mt-5 space-y-3">
@@ -79,7 +94,7 @@ export function MedicineAlternativesButton({
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <strong>{item.medicineName}</strong>
                           <span className="rounded-full bg-[#eaf4f3] px-2.5 py-1 text-[11px] font-black text-[#216474]">
-                            تطابق {Math.round(item.matchScore)}%
+                            {t("تطابق")} {Math.round(item.matchScore)}%
                           </span>
                         </div>
                         <p className="mt-2 text-xs leading-6 text-[#71858a]">
@@ -97,8 +112,9 @@ export function MedicineAlternativesButton({
               </div>
             )}
             <p className="mt-5 rounded-xl bg-amber-50 p-3 text-xs font-bold leading-6 text-amber-800">
-              هذه اقتراحات مساعدة فقط. لا يتم استبدال الدواء أو تغيير الجرعة إلا
-              بعد مراجعة صيدلي أو طبيب مختص.
+              {t(
+                "هذه اقتراحات مساعدة فقط. لا يتم استبدال الدواء أو تغيير الجرعة إلا بعد مراجعة صيدلي أو طبيب مختص.",
+              )}
             </p>
           </div>
         </div>

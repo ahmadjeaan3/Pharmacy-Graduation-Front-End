@@ -60,6 +60,10 @@ const blank = {
 };
 
 function StockPredictionDialog({ item, onClose }) {
+  const { t, i18n } = useTranslation();
+  const language = (i18n.resolvedLanguage || i18n.language || "ar")
+    .split("-")[0]
+    .toLowerCase();
   const [form, setForm] = useState({
     quantitySold: 0,
     avgDailyConsumption: 1,
@@ -80,29 +84,33 @@ function StockPredictionDialog({ item, onClose }) {
   const change = (key) => (event) =>
     setForm((current) => ({ ...current, [key]: event.target.value }));
   const risk = {
-    Critical: ["حرج", "bg-rose-50 text-rose-700 border-rose-100"],
-    High: ["مرتفع", "bg-orange-50 text-orange-700 border-orange-100"],
-    Medium: ["متوسط", "bg-amber-50 text-amber-700 border-amber-100"],
-    Low: ["منخفض", "bg-emerald-50 text-emerald-700 border-emerald-100"],
+    Critical: [t("حرج"), "bg-rose-50 text-rose-700 border-rose-100"],
+    High: [t("مرتفع"), "bg-orange-50 text-orange-700 border-orange-100"],
+    Medium: [t("متوسط"), "bg-amber-50 text-amber-700 border-amber-100"],
+    Low: [t("منخفض"), "bg-emerald-50 text-emerald-700 border-emerald-100"],
   }[prediction.data?.riskLevel];
 
   return (
     <div className="fixed inset-0 z-[110] grid place-items-center bg-[#071f25]/65 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-xl rounded-[1.75rem] bg-white p-6 shadow-2xl">
+      <div
+        dir={language === "ar" ? "rtl" : "ltr"}
+        lang={language}
+        className="max-h-[92vh] w-full max-w-xl overflow-auto rounded-[1.75rem] bg-white p-4 shadow-2xl sm:p-6"
+      >
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-xs font-black text-[#216474]">
-              تحليل المخزون الذكي
+              {t("تحليل المخزون الذكي")}
             </p>
             <h3 className="mt-1 text-xl font-black">{item.medicineName}</h3>
             <p className="mt-1 text-xs text-[#829499]">
-              الكمية الحالية: {formatNumber(item.quantity)}
+              {t("الكمية الحالية")}: {formatNumber(item.quantity, language)}
             </p>
           </div>
           <button
             className="icon-button grid"
             onClick={onClose}
-            aria-label="إغلاق"
+            aria-label={t("إغلاق")}
           >
             <X size={18} />
           </button>
@@ -115,23 +123,23 @@ function StockPredictionDialog({ item, onClose }) {
           }}
         >
           <PredictionField
-            label="المباع إجمالًا"
+            label={t("المباع إجمالًا")}
             value={form.quantitySold}
             onChange={change("quantitySold")}
           />
           <PredictionField
-            label="متوسط الاستهلاك اليومي"
+            label={t("متوسط الاستهلاك اليومي")}
             value={form.avgDailyConsumption}
             onChange={change("avgDailyConsumption")}
             step="0.1"
           />
           <PredictionField
-            label="مبيعات آخر 7 أيام"
+            label={t("مبيعات آخر 7 أيام")}
             value={form.last7DaysSales}
             onChange={change("last7DaysSales")}
           />
           <PredictionField
-            label="مبيعات آخر 30 يومًا"
+            label={t("مبيعات آخر 30 يومًا")}
             value={form.last30DaysSales}
             onChange={change("last30DaysSales")}
           />
@@ -140,7 +148,9 @@ function StockPredictionDialog({ item, onClose }) {
             className="btn-primary justify-center sm:col-span-2"
           >
             <Sparkles size={17} />
-            {prediction.isPending ? "جاري التحليل..." : "توقع موعد نفاد الدواء"}
+            {prediction.isPending
+              ? t("جاري التحليل...")
+              : t("توقع موعد نفاد الدواء")}
           </button>
         </form>
         {prediction.isError && (
@@ -154,29 +164,34 @@ function StockPredictionDialog({ item, onClose }) {
           >
             <div className="flex items-center justify-between">
               <strong>
-                درجة الخطورة: {risk?.[0] || prediction.data.riskLevel}
+                {t("درجة الخطورة")}: {risk?.[0] || prediction.data.riskLevel}
               </strong>
               <Sparkles size={20} />
             </div>
             <div className="mt-4 grid grid-cols-2 gap-3 text-center">
               <div className="rounded-xl bg-white/70 p-3">
-                <span className="block text-xs">المدة المتوقعة</span>
+                <span className="block text-xs">{t("المدة المتوقعة")}</span>
                 <strong className="mt-1 block text-xl">
-                  {prediction.data.daysUntilStockout} يوم
+                  {formatNumber(prediction.data.daysUntilStockout, language)}{" "}
+                  {t("يوم")}
                 </strong>
               </div>
               <div className="rounded-xl bg-white/70 p-3">
-                <span className="block text-xs">كمية إعادة الطلب</span>
+                <span className="block text-xs">{t("كمية إعادة الطلب")}</span>
                 <strong className="mt-1 block text-xl">
-                  {prediction.data.recommendedReorderQuantity}
+                  {formatNumber(
+                    prediction.data.recommendedReorderQuantity,
+                    language,
+                  )}
                 </strong>
               </div>
             </div>
           </div>
         )}
         <p className="mt-4 text-[11px] leading-5 text-[#829499]">
-          النتيجة تقديرية وتعتمد على دقة أرقام المبيعات المدخلة، ويجب مراجعتها
-          قبل اعتماد طلب التوريد.
+          {t(
+            "النتيجة تقديرية وتعتمد على دقة أرقام المبيعات المدخلة، ويجب مراجعتها قبل اعتماد طلب التوريد.",
+          )}
         </p>
       </div>
     </div>
@@ -385,6 +400,33 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
                 ))}
               </div>
 
+              {catalog.isLoading && (
+                <p className="mt-4 rounded-xl bg-[#f7faf9] p-4 text-center text-sm font-bold text-[#71858a]">
+                  {t("جاري البحث في دليل الأدوية...")}
+                </p>
+              )}
+
+              {catalog.isError && (
+                <div className="mt-4 rounded-xl bg-rose-50 p-4 text-center text-sm font-bold text-rose-700">
+                  <p>{getApiErrorMessage(catalog.error)}</p>
+                  <button
+                    type="button"
+                    className="btn-secondary mt-3"
+                    onClick={() => catalog.refetch()}
+                  >
+                    {t("إعادة المحاولة")}
+                  </button>
+                </div>
+              )}
+
+              {!catalog.isLoading &&
+                !catalog.isError &&
+                !(catalog.data?.items || []).length && (
+                  <p className="mt-4 rounded-xl bg-[#f7faf9] p-4 text-center text-sm text-[#71858a]">
+                    {t("لم يتم العثور على دواء مطابق في الدليل المعتمد.")}
+                  </p>
+                )}
+
               {catalog.data?.totalPages > 1 && (
                 <div className="mt-3 flex items-center justify-center gap-3">
                   <button
@@ -540,7 +582,10 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
 }
 
 function BarcodeLookupDialog({ onClose, onFound }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const language = (i18n.resolvedLanguage || i18n.language || "ar")
+    .split("-")[0]
+    .toLowerCase();
   const [barcode, setBarcode] = useState("");
   const lookup = useMutation({
     mutationFn: async () => {
@@ -552,10 +597,12 @@ function BarcodeLookupDialog({ onClose, onFound }) {
       });
       const medicine = result.items?.find(
         (item) =>
-          String(item.barcode || "").toLowerCase() === normalized.toLowerCase(),
+          String(item.barcode || "")
+            .trim()
+            .toLowerCase() === normalized.toLowerCase(),
       );
       if (!medicine) {
-        throw new Error("لم يتم العثور على دواء مسجل بهذا الباركود.");
+        throw new Error(t("لم يتم العثور على دواء مسجل بهذا الباركود."));
       }
       return medicine;
     },
@@ -569,8 +616,9 @@ function BarcodeLookupDialog({ onClose, onFound }) {
       aria-modal="true"
     >
       <div
-        dir="rtl"
-        className="w-full max-w-lg rounded-[1.75rem] bg-white p-6 shadow-2xl"
+        dir={language === "ar" ? "rtl" : "ltr"}
+        lang={language}
+        className="max-h-[92vh] w-full max-w-lg overflow-auto rounded-[1.75rem] bg-white p-4 shadow-2xl sm:p-6"
       >
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -578,10 +626,10 @@ function BarcodeLookupDialog({ onClose, onFound }) {
               <ScanBarcode size={25} />
             </span>
             <h3 className="mt-4 text-xl font-black text-[#174B57]">
-              إضافة دواء بالباركود
+              {t("إضافة دواء بالباركود")}
             </h3>
             <p className="mt-2 text-sm leading-7 text-[#71858A]">
-              امسح الباركود بالقارئ أو أدخله يدويًا، ثم اضغط بحث.
+              {t("امسح الباركود بالقارئ أو أدخله يدويًا، ثم اضغط بحث.")}
             </p>
           </div>
           <button
@@ -601,7 +649,7 @@ function BarcodeLookupDialog({ onClose, onFound }) {
           }}
         >
           <label>
-            <span className="form-label">رقم الباركود</span>
+            <span className="form-label">{t("رقم الباركود")}</span>
             <div className="field-control">
               <span className="field-icon-shell">
                 <ScanBarcode size={18} />
@@ -618,7 +666,7 @@ function BarcodeLookupDialog({ onClose, onFound }) {
                   setBarcode(event.target.value.replace(/\s/g, ""));
                   lookup.reset();
                 }}
-                placeholder="مثال: 8691234567890"
+                placeholder={t("مثال: 8691234567890")}
               />
             </div>
           </label>
@@ -632,14 +680,14 @@ function BarcodeLookupDialog({ onClose, onFound }) {
           )}
           <div className="mt-6 flex justify-end gap-2">
             <button type="button" className="btn-secondary" onClick={onClose}>
-              إلغاء
+              {t("إلغاء")}
             </button>
             <button
               className="btn-primary"
               disabled={lookup.isPending || !barcode.trim()}
             >
               <Search size={17} />{" "}
-              {lookup.isPending ? "جاري البحث..." : "البحث وإضافة الدواء"}
+              {lookup.isPending ? t("جاري البحث...") : t("البحث وإضافة الدواء")}
             </button>
           </div>
         </form>
@@ -649,6 +697,10 @@ function BarcodeLookupDialog({ onClose, onFound }) {
 }
 
 function ExcelImportDialog({ onClose, onImport, pending }) {
+  const { t, i18n } = useTranslation();
+  const language = (i18n.resolvedLanguage || i18n.language || "ar")
+    .split("-")[0]
+    .toLowerCase();
   const [rows, setRows] = useState([]);
   const [errors, setErrors] = useState([]);
   const [reading, setReading] = useState(false);
@@ -688,7 +740,9 @@ function ExcelImportDialog({ onClose, onImport, pending }) {
           unitPrice < 0
         ) {
           rejected.push(
-            `الصف ${index + 2}: الباركود أو الكمية أو السعر غير صالح.`,
+            t("الصف {{row}}: الباركود أو الكمية أو السعر غير صالح.", {
+              row: index + 2,
+            }),
           );
           continue;
         }
@@ -698,11 +752,14 @@ function ExcelImportDialog({ onClose, onImport, pending }) {
           pageSize: 5,
         });
         const medicine = catalog.items?.find(
-          (item) => item.barcode === barcode,
+          (item) => String(item.barcode || "").trim() === barcode,
         );
         if (!medicine) {
           rejected.push(
-            `الصف ${index + 2}: لا يوجد دواء مسجل بالباركود ${barcode}.`,
+            t("الصف {{row}}: لا يوجد دواء مسجل بالباركود {{barcode}}.", {
+              row: index + 2,
+              barcode,
+            }),
           );
           continue;
         }
@@ -734,13 +791,15 @@ function ExcelImportDialog({ onClose, onImport, pending }) {
       ];
       if (unique.length !== resolved.length)
         rejected.push(
-          "تم تجاهل الباركودات المكررة والإبقاء على آخر صف لكل دواء.",
+          t("تم تجاهل الباركودات المكررة والإبقاء على آخر صف لكل دواء."),
         );
       setRows(unique);
       setErrors(rejected);
     } catch {
       setErrors([
-        "تعذر قراءة الملف. استخدم ملف Excel بصيغة .xlsx أو .xls وبعناوين الأعمدة المطلوبة.",
+        t(
+          "تعذر قراءة الملف. استخدم ملف Excel بصيغة .xlsx وبعناوين الأعمدة المطلوبة.",
+        ),
       ]);
     } finally {
       setReading(false);
@@ -753,33 +812,39 @@ function ExcelImportDialog({ onClose, onImport, pending }) {
       role="dialog"
       aria-modal="true"
     >
-      <div className="max-h-[92vh] w-full max-w-3xl overflow-auto rounded-[1.75rem] bg-white p-6 shadow-2xl">
+      <div
+        dir={language === "ar" ? "rtl" : "ltr"}
+        lang={language}
+        className="max-h-[92vh] w-full max-w-3xl overflow-auto rounded-[1.75rem] bg-white p-4 shadow-2xl sm:p-6"
+      >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h3 className="text-xl font-black">استيراد مخزون من Excel</h3>
+            <h3 className="text-xl font-black">
+              {t("استيراد مخزون من Excel")}
+            </h3>
             <p className="mt-1 text-xs text-[#829499]">
-              حتى 100 دواء في كل ملف
+              {t("حتى 100 دواء في كل ملف")}
             </p>
           </div>
           <button
             className="icon-button grid"
             onClick={onClose}
-            aria-label="إغلاق"
+            aria-label={t("إغلاق")}
           >
             <X size={19} />
           </button>
         </div>
         <div className="mt-5 rounded-2xl border border-dashed border-[#216474]/30 bg-[#f5faf9] p-5">
-          <p className="text-sm font-black">الأعمدة المطلوبة</p>
+          <p className="text-sm font-black">{t("الأعمدة المطلوبة")}</p>
           <code className="mt-2 block text-xs text-[#216474]">
             Barcode | Quantity | UnitPrice | ExpiryDate | LowStockThreshold
           </code>
           <label className="btn-primary mt-4 cursor-pointer justify-center">
             <FileSpreadsheet size={18} />{" "}
-            {reading ? "جاري قراءة الملف..." : "اختيار ملف Excel"}
+            {reading ? t("جاري قراءة الملف...") : t("اختيار ملف Excel")}
             <input
               type="file"
-              accept=".xlsx,.xls"
+              accept=".xlsx"
               className="hidden"
               disabled={reading || pending}
               onChange={(event) =>
@@ -791,7 +856,8 @@ function ExcelImportDialog({ onClose, onImport, pending }) {
         {rows.length > 0 && (
           <div className="mt-5">
             <p className="font-black text-emerald-700">
-              جاهز للاستيراد: {rows.length} دواء
+              {t("جاهز للاستيراد")}: {formatNumber(rows.length, language)}{" "}
+              {t("دواء")}
             </p>
             <div className="mt-3 max-h-48 overflow-auto rounded-xl border">
               <table className="w-full text-sm">
@@ -818,7 +884,7 @@ function ExcelImportDialog({ onClose, onImport, pending }) {
         )}
         <div className="mt-6 flex justify-end gap-2">
           <button className="btn-secondary" onClick={onClose}>
-            إلغاء
+            {t("إلغاء")}
           </button>
           <button
             className="btn-primary"
@@ -838,7 +904,9 @@ function ExcelImportDialog({ onClose, onImport, pending }) {
             }
           >
             <FileSpreadsheet size={17} />
-            {pending ? "جاري الاستيراد..." : `استيراد ${rows.length} دواء`}
+            {pending
+              ? t("جاري الاستيراد...")
+              : t("استيراد {{count}} دواء", { count: rows.length })}
           </button>
         </div>
       </div>
@@ -988,23 +1056,23 @@ export function PharmacyInventoryPage() {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-3 md:w-auto">
             <button
-              className="inline-flex h-[58px] shrink-0 items-center justify-center gap-3 rounded-2xl border border-white/30 bg-white/10 px-6 text-[15px] font-black text-white backdrop-blur-sm transition hover:bg-white/20"
+              className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl border border-white/30 bg-white/10 px-4 text-sm font-black text-white backdrop-blur-sm transition hover:bg-white/20 sm:min-h-[58px] sm:gap-3 sm:px-5 sm:text-[15px]"
               onClick={() => setShowBarcodeLookup(true)}
             >
               <ScanBarcode size={21} />
               {t("إضافة بالباركود")}
             </button>
             <button
-              className="inline-flex h-[58px] shrink-0 items-center justify-center gap-3 rounded-2xl border border-white/30 bg-white/10 px-6 text-[15px] font-black text-white backdrop-blur-sm transition hover:bg-white/20"
+              className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl border border-white/30 bg-white/10 px-4 text-sm font-black text-white backdrop-blur-sm transition hover:bg-white/20 sm:min-h-[58px] sm:gap-3 sm:px-5 sm:text-[15px]"
               onClick={() => setShowExcelImport(true)}
             >
               <FileSpreadsheet size={20} />
               {t("استيراد Excel")}
             </button>
             <button
-              className="inline-flex h-[58px] min-w-[185px] shrink-0 items-center justify-center gap-3 rounded-2xl border border-white/20 bg-white px-8 text-[15px] font-black text-[#216474] shadow-[0_12px_30px_rgba(7,31,37,.12)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#F8FBFB]"
+              className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white px-4 text-sm font-black text-[#216474] shadow-[0_12px_30px_rgba(7,31,37,.12)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#F8FBFB] sm:min-h-[58px] sm:gap-3 sm:px-6 sm:text-[15px]"
               onClick={() => setEditor({})}
             >
               <Plus size={21} strokeWidth={2.3} />

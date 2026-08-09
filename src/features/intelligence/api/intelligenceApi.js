@@ -9,7 +9,7 @@ export const recommendMedicineAlternatives = async (medicineName, topN = 5) =>
         topN,
       },
       {
-        timeout: 15_000,
+        timeout: 120_000,
       },
     )
   ).data;

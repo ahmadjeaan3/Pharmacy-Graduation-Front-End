@@ -2,6 +2,7 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 
 import { autoMessages } from "./autoMessages";
+import { inventoryMessages } from "./inventoryMessages";
 import { landingMessages } from "./landingMessages";
 
 export const STORAGE_KEY = "hayat-dawaiya-language";
@@ -72,12 +73,15 @@ const resources = {
     translation: {
       ...autoMessages.en,
       ...landingMessages.en,
+      ...inventoryMessages.en,
       "حجوزات الأدوية": "Medicine reservations",
-      "تابع رحلة الدواء من الحجز والتجهيز حتى الاستلام من الصيدلية.": "Track your medicine from reservation and preparation through pharmacy pickup.",
+      "تابع رحلة الدواء من الحجز والتجهيز حتى الاستلام من الصيدلية.":
+        "Track your medicine from reservation and preparation through pharmacy pickup.",
       "حجز دواء": "Reserve medicine",
       "حجز من {{pharmacy}}": "Reserved from {{pharmacy}}",
       "رحلة الحصول على الدواء": "Medicine pickup journey",
-      "من نتيجة البحث حتى تأكيد الاستلام من الصيدلية": "From the search result to confirmed pharmacy pickup",
+      "من نتيجة البحث حتى تأكيد الاستلام من الصيدلية":
+        "From the search result to confirmed pharmacy pickup",
       "تم العثور على الدواء": "Medicine found",
       "ظهر ضمن مخزون الصيدلية": "Listed in the pharmacy inventory",
       "تم حجز الكمية": "Quantity reserved",
@@ -86,25 +90,34 @@ const resources = {
       "افتح الاتجاهات إلى الصيدلية": "Open directions to the pharmacy",
       "تأكيد الاستلام": "Pickup confirmation",
       "تكتمل الرحلة عند التسليم": "The journey completes upon handover",
-      "الدواء محجوز وجاهز. خذ رقم الطلب وتوجه إلى الصيدلية.": "Your medicine is reserved and ready. Take the request number to the pharmacy.",
-      "تم تسجيل الحجز وتنتظر تجهيز الصيدلية للكمية.": "Your reservation is recorded and awaiting pharmacy preparation.",
+      "الدواء محجوز وجاهز. خذ رقم الطلب وتوجه إلى الصيدلية.":
+        "Your medicine is reserved and ready. Take the request number to the pharmacy.",
+      "تم تسجيل الحجز وتنتظر تجهيز الصيدلية للكمية.":
+        "Your reservation is recorded and awaiting pharmacy preparation.",
       "إلغاء الحجز": "Cancel reservation",
       "ابدأ التوجه للصيدلية": "Navigate to pharmacy",
-      "ظهور الدواء في صفحة الصيدلية يعني أنه متوفر، وعند إنشاء الطلب تُربط الكمية برقم الحجز حتى الاستلام أو الإلغاء.": "A medicine shown on the pharmacy page is available. Once requested, its quantity is linked to the reservation until pickup or cancellation.",
+      "ظهور الدواء في صفحة الصيدلية يعني أنه متوفر، وعند إنشاء الطلب تُربط الكمية برقم الحجز حتى الاستلام أو الإلغاء.":
+        "A medicine shown on the pharmacy page is available. Once requested, its quantity is linked to the reservation until pickup or cancellation.",
       "جاهز للاستلام": "Ready for pickup",
       "تم الحجز": "Reserved",
       "تم الاستلام": "Collected",
       "انتهت مهلة الحجز": "Reservation expired",
       "محجوز لهذا الطلب": "Reserved for this request",
       "تجهيز الحجز": "Prepare reservation",
-      "الكمية محجوزة مسبقاً؛ أكد فقط أنها جاهزة للاستلام": "The quantity is already reserved; confirm when it is ready for pickup",
+      "الكمية محجوزة مسبقاً؛ أكد فقط أنها جاهزة للاستلام":
+        "The quantity is already reserved; confirm when it is ready for pickup",
       "الكمية محجوزة من المخزون": "Quantity reserved from inventory",
       "جاري التأكيد...": "Confirming...",
       "تأكيد الجاهزية للاستلام": "Confirm ready for pickup",
-      "تم تأكيد استلام المريض للدواء.": "The patient's medicine pickup was confirmed.",
+      "تم تأكيد استلام المريض للدواء.":
+        "The patient's medicine pickup was confirmed.",
       "تأكيد أن المريض استلم الدواء": "Confirm patient collected medicine",
       "المخزون والدفعات": "Inventory & batches",
-      "التوفر": "Availability",
+      التوفر: "Availability",
+      "نبض المنصة": "Platform pulse",
+      "تحديثات مباشرة": "Live updates",
+      "دواؤك أقرب مما تتوقع — ابحث، احجز وتوجه إلى الصيدلية بثقة.":
+        "Your medicine is closer than you think — search, reserve, and visit the pharmacy with confidence.",
     },
   },
 
@@ -112,12 +125,15 @@ const resources = {
     translation: {
       ...autoMessages.tr,
       ...landingMessages.tr,
+      ...inventoryMessages.tr,
       "حجوزات الأدوية": "İlaç rezervasyonları",
-      "تابع رحلة الدواء من الحجز والتجهيز حتى الاستلام من الصيدلية.": "İlacınızı rezervasyondan hazırlığa ve eczaneden teslim almaya kadar takip edin.",
+      "تابع رحلة الدواء من الحجز والتجهيز حتى الاستلام من الصيدلية.":
+        "İlacınızı rezervasyondan hazırlığa ve eczaneden teslim almaya kadar takip edin.",
       "حجز دواء": "İlaç ayırt",
       "حجز من {{pharmacy}}": "{{pharmacy}} eczanesinden ayrıldı",
       "رحلة الحصول على الدواء": "İlaç teslim alma yolculuğu",
-      "من نتيجة البحث حتى تأكيد الاستلام من الصيدلية": "Arama sonucundan eczane teslim onayına kadar",
+      "من نتيجة البحث حتى تأكيد الاستلام من الصيدلية":
+        "Arama sonucundan eczane teslim onayına kadar",
       "تم العثور على الدواء": "İlaç bulundu",
       "ظهر ضمن مخزون الصيدلية": "Eczane stoklarında listelendi",
       "تم حجز الكمية": "Miktar ayrıldı",
@@ -126,25 +142,34 @@ const resources = {
       "افتح الاتجاهات إلى الصيدلية": "Eczaneye yol tarifini açın",
       "تأكيد الاستلام": "Teslim alma onayı",
       "تكتمل الرحلة عند التسليم": "Teslimle süreç tamamlanır",
-      "الدواء محجوز وجاهز. خذ رقم الطلب وتوجه إلى الصيدلية.": "İlacınız ayrıldı ve hazır. Talep numarasıyla eczaneye gidin.",
-      "تم تسجيل الحجز وتنتظر تجهيز الصيدلية للكمية.": "Rezervasyonunuz kaydedildi ve eczanenin hazırlaması bekleniyor.",
+      "الدواء محجوز وجاهز. خذ رقم الطلب وتوجه إلى الصيدلية.":
+        "İlacınız ayrıldı ve hazır. Talep numarasıyla eczaneye gidin.",
+      "تم تسجيل الحجز وتنتظر تجهيز الصيدلية للكمية.":
+        "Rezervasyonunuz kaydedildi ve eczanenin hazırlaması bekleniyor.",
       "إلغاء الحجز": "Rezervasyonu iptal et",
       "ابدأ التوجه للصيدلية": "Eczaneye git",
-      "ظهور الدواء في صفحة الصيدلية يعني أنه متوفر، وعند إنشاء الطلب تُربط الكمية برقم الحجز حتى الاستلام أو الإلغاء.": "Eczane sayfasında görünen ilaç mevcuttur. Talep edildiğinde miktarı teslim alma veya iptale kadar rezervasyona bağlanır.",
+      "ظهور الدواء في صفحة الصيدلية يعني أنه متوفر، وعند إنشاء الطلب تُربط الكمية برقم الحجز حتى الاستلام أو الإلغاء.":
+        "Eczane sayfasında görünen ilaç mevcuttur. Talep edildiğinde miktarı teslim alma veya iptale kadar rezervasyona bağlanır.",
       "جاهز للاستلام": "Teslim almaya hazır",
       "تم الحجز": "Ayrıldı",
       "تم الاستلام": "Teslim alındı",
       "انتهت مهلة الحجز": "Rezervasyon süresi doldu",
       "محجوز لهذا الطلب": "Bu talep için ayrıldı",
       "تجهيز الحجز": "Rezervasyonu hazırla",
-      "الكمية محجوزة مسبقاً؛ أكد فقط أنها جاهزة للاستلام": "Miktar zaten ayrıldı; teslim almaya hazır olduğunda onaylayın",
+      "الكمية محجوزة مسبقاً؛ أكد فقط أنها جاهزة للاستلام":
+        "Miktar zaten ayrıldı; teslim almaya hazır olduğunda onaylayın",
       "الكمية محجوزة من المخزون": "Miktar stoktan ayrıldı",
       "جاري التأكيد...": "Onaylanıyor...",
       "تأكيد الجاهزية للاستلام": "Teslime hazır olduğunu onayla",
-      "تم تأكيد استلام المريض للدواء.": "Hastanın ilacı teslim aldığı onaylandı.",
+      "تم تأكيد استلام المريض للدواء.":
+        "Hastanın ilacı teslim aldığı onaylandı.",
       "تأكيد أن المريض استلم الدواء": "Hastanın ilacı aldığını onayla",
       "المخزون والدفعات": "Stok ve partiler",
-      "التوفر": "Mevcudiyet",
+      التوفر: "Mevcudiyet",
+      "نبض المنصة": "Platform gündemi",
+      "تحديثات مباشرة": "Canlı güncellemeler",
+      "دواؤك أقرب مما تتوقع — ابحث، احجز وتوجه إلى الصيدلية بثقة.":
+        "İlacınız düşündüğünüzden daha yakın — arayın, ayırtın ve eczaneye güvenle gidin.",
     },
   },
 };

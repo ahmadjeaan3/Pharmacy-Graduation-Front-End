@@ -93,10 +93,12 @@ export async function updateOrganizationApproval(organizationId, isApproved) {
 export async function getPendingWarehouses() {
   return (await apiClient.get("/admin/warehouses/pending")).data;
 }
-export async function updateWarehouseApproval(warehouseId, isApproved) {
+export async function updateWarehouseApproval(warehouseId, isApproved, reason) {
   return (
     await apiClient.put(`/admin/warehouses/${warehouseId}/approval`, {
       isApproved,
+      isManualDecision: true,
+      reason,
     })
   ).data;
 }

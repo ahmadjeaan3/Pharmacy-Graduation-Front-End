@@ -21,8 +21,6 @@ import {
   getPendingOrganizations,
   getPendingPharmacies,
   getPendingWarehouses,
-  updateOrganizationApproval,
-  updatePharmacyApproval,
   updateWarehouseApproval,
 } from "../api/adminApi";
 import { ApprovalConfirmDialog } from "../components/ApprovalConfirmDialog";
@@ -43,6 +41,8 @@ export function AdminApprovalsPage() {
     : "pharmacies";
   const [search, setSearch] = useState("");
   const [approvalTarget, setApprovalTarget] = useState(null);
+  const [manualDecision, setManualDecision] = useState(null);
+  const [manualReason, setManualReason] = useState("");
   const [notice, setNotice] = useState("");
   const queryClient = useQueryClient();
   const pharmacies = useQuery({
@@ -59,15 +59,19 @@ export function AdminApprovalsPage() {
   });
   const approval = useMutation({
     mutationFn: () =>
-      approvalTarget.type === "pharmacy"
-        ? updatePharmacyApproval(approvalTarget.id, true)
-        : approvalTarget.type === "warehouse"
-          ? updateWarehouseApproval(approvalTarget.id, true)
-          : updateOrganizationApproval(approvalTarget.id, true),
+      updateWarehouseApproval(
+        approvalTarget.id,
+        manualDecision === "approve",
+        manualReason.trim(),
+      ),
     onSuccess: async () => {
       const approvedName = approvalTarget.name;
       setApprovalTarget(null);
-      setNotice(`تم اعتماد ${approvedName} بنجاح.`);
+      setManualDecision(null);
+      setManualReason("");
+      setNotice(
+        `تم ${manualDecision === "approve" ? "اعتماد" : "رفض"} ${approvedName} يدويًا بنجاح.`,
+      );
       await queryClient.invalidateQueries({ queryKey: adminKeys.root });
     },
   });
@@ -199,6 +203,8 @@ export function AdminApprovalsPage() {
                         name: item.warehouseName,
                         kindLabel: "المستودع",
                       });
+                      setManualDecision(null);
+                      setManualReason("");
                     }}
                   />
                 ))
@@ -207,15 +213,6 @@ export function AdminApprovalsPage() {
                     key={item.organizationId}
                     item={item}
                     index={index}
-                    onApprove={() => {
-                      approval.reset();
-                      setApprovalTarget({
-                        type: "organization",
-                        id: item.organizationId,
-                        name: item.organizationName,
-                        kindLabel: "المنظمة",
-                      });
-                    }}
                   />
                 ))}
         </div>
@@ -225,9 +222,17 @@ export function AdminApprovalsPage() {
         pending={approval.isPending}
         error={approval.isError ? getApiErrorMessage(approval.error) : ""}
         onCancel={() => {
-          if (!approval.isPending) setApprovalTarget(null);
+          if (!approval.isPending) {
+            setApprovalTarget(null);
+            setManualDecision(null);
+            setManualReason("");
+          }
         }}
         onConfirm={() => approval.mutate()}
+        decision={manualDecision}
+        reason={manualReason}
+        onDecisionChange={setManualDecision}
+        onReasonChange={setManualReason}
       />
     </div>
   );
@@ -345,7 +350,7 @@ function PharmacyApprovalCard({ item, index }) {
   );
 }
 
-function OrganizationApprovalCard({ item, index, onApprove }) {
+function OrganizationApprovalCard({ item, index }) {
   const status = getVerificationStatus(item.verificationStatus);
   return (
     <ApprovalCardShell
@@ -371,20 +376,13 @@ function OrganizationApprovalCard({ item, index, onApprove }) {
         icon={FileCheck2}
         value={`${item.verificationDocumentsCount.toLocaleString("ar-SY")} مستندات تحقق`}
       />
-      <div className="mt-5 grid grid-cols-2 gap-3 border-t border-slate-100 pt-4">
+      <div className="mt-5 border-t border-slate-100 pt-4">
         <Link
           to={`/app/organizations/${item.organizationId}/review`}
-          className="btn-secondary justify-center"
+          className="btn-primary w-full justify-center"
         >
-          <FileCheck2 size={17} /> مراجعة الملف
+          <FileCheck2 size={17} /> مراجعة الملف واتخاذ قرار يدوي
         </Link>
-        <button
-          type="button"
-          onClick={onApprove}
-          className="btn-primary justify-center"
-        >
-          <CheckCircle2 size={17} /> اعتماد
-        </button>
       </div>
     </ApprovalCardShell>
   );

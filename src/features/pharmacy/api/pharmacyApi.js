@@ -29,7 +29,7 @@ export const getLicenseVerification = async () =>
   (await apiClient.get("/pharmacy/me/license-verification")).data;
 export const submitLicenseVerification = async (file) => {
   const form = new FormData();
-  form.append("licenseImage", file);
+  form.append("file", file, file.name);
   return (await apiClient.post("/pharmacy/me/license-verification", form)).data;
 };
 export const downloadLicenseDocument = async (verificationId) =>
@@ -67,7 +67,11 @@ export const updateInventoryMedicine = async (id, payload) =>
 export const removeInventoryMedicine = async (id) =>
   apiClient.delete(`/pharmacy/me/medicines/${id}`);
 export const predictInventoryStockout = async (payload) =>
-  (await apiClient.post("/intelligence/stockout", payload)).data;
+  (
+    await apiClient.post("/intelligence/stockout", payload, {
+      timeout: 120_000,
+    })
+  ).data;
 export const getPharmacyRequests = async (params = {}) =>
   (await apiClient.get("/pharmacy/me/requests", { params: compact(params) }))
     .data;

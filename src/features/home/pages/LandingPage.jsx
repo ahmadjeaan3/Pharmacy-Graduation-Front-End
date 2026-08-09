@@ -9,7 +9,7 @@ import {
   normalizeLanguage,
 } from "../../../shared/i18n/i18n";
 
-import { Building2, UserRound, Warehouse } from "lucide-react";
+import { BellRing, Building2, MapPin, Sparkles, UserRound, Warehouse } from "lucide-react";
 
 function getHomeVisitorId() {
   const storageKey = "hayat-dawaiya-visitor-id";
@@ -437,6 +437,23 @@ export function LandingPage() {
     retry: 1,
     staleTime: 5 * 60_000,
   });
+  const homeTicker = useQuery({
+    queryKey: ["home-ticker", "published"],
+    queryFn: async () => (await apiClient.get("/home-ticker")).data,
+    staleTime: 60_000,
+    refetchInterval: 5 * 60_000,
+    retry: 1,
+  });
+  const tickerItems = homeTicker.data?.length
+    ? homeTicker.data
+    : [
+        {
+          id: "platform-welcome",
+          type: "Announcement",
+          title: t("حياة دوائية"),
+          message: t("دواؤك أقرب مما تتوقع — ابحث، احجز وتوجه إلى الصيدلية بثقة."),
+        },
+      ];
   const statisticItems = [
     ["زوار المنصة", statistics.data?.uniqueVisitors],
     ["مستخدمون نشطون", statistics.data?.activeUsers],
@@ -605,6 +622,27 @@ export function LandingPage() {
             transform: scale(1.08);
             opacity: 1;
           }
+        }
+
+        @keyframes ml-ticker-ltr {
+          from { transform: translateX(0); }
+          to { transform: translateX(-50%); }
+        }
+
+        @keyframes ml-ticker-rtl {
+          from { transform: translateX(0); }
+          to { transform: translateX(50%); }
+        }
+
+        .ml-ticker-track {
+          width: max-content;
+          animation: ${isArabic ? "ml-ticker-rtl" : "ml-ticker-ltr"} 34s linear infinite;
+          will-change: transform;
+        }
+
+        .ml-ticker-shell:hover .ml-ticker-track,
+        .ml-ticker-shell:focus-within .ml-ticker-track {
+          animation-play-state: paused;
         }
 
         .ml-navbar-enter {
@@ -781,6 +819,11 @@ export function LandingPage() {
             animation: none !important;
           }
 
+          .ml-ticker-track {
+            animation: none !important;
+            transform: none !important;
+          }
+
           .ml-card,
           .ml-card-icon,
           .ml-button,
@@ -791,7 +834,7 @@ export function LandingPage() {
       `}</style>
 
       {/* Navbar */}
-      <header className="ml-navbar-enter sticky top-0 z-50 h-16 border-b border-[rgba(102,102,102,0.16)] bg-white/95 shadow-[0_5px_24px_rgba(23,75,87,.04)] backdrop-blur-xl sm:h-[72px]">
+      <header className="ml-navbar-enter fixed inset-x-0 top-0 z-[100] h-16 border-b border-[rgba(102,102,102,0.16)] bg-white/95 shadow-[0_5px_24px_rgba(23,75,87,.07)] backdrop-blur-xl sm:h-[72px]">
         <div
           dir="ltr"
           className="mx-auto flex h-full w-full max-w-[1200px] items-center justify-between gap-2 px-3 sm:px-5 xl:px-0"
@@ -872,6 +915,57 @@ export function LandingPage() {
           }}
         />
       </header>
+
+      <div aria-hidden="true" className="h-16 shrink-0 sm:h-[72px]" />
+
+      <section
+        aria-label={t("إعلانات وتنبيهات المنصة")}
+        className="ml-ticker-shell relative z-40 overflow-hidden border-b border-[#174B57]/10 bg-[#174B57] text-white shadow-[0_8px_24px_rgba(23,75,87,.08)]"
+      >
+        <div className={`pointer-events-none absolute inset-y-0 start-0 z-20 w-8 from-[#174B57] to-transparent sm:w-16 ${isArabic ? "bg-gradient-to-l" : "bg-gradient-to-r"}`} />
+        <div className={`pointer-events-none absolute inset-y-0 end-0 z-20 w-8 from-[#174B57] to-transparent sm:w-16 ${isArabic ? "bg-gradient-to-r" : "bg-gradient-to-l"}`} />
+        <div className="mx-auto flex min-h-[52px] w-full max-w-[1440px] items-stretch sm:min-h-[58px]">
+          <div className="relative z-30 flex shrink-0 items-center gap-2 border-e border-white/10 bg-[#123f49] px-3 sm:px-5">
+            <span className="relative grid size-8 place-items-center rounded-full bg-[#F5CB72]/15 text-[#F5CB72]">
+              <BellRing size={16} strokeWidth={1.9} />
+              <span className="absolute -end-0.5 -top-0.5 size-2 rounded-full bg-emerald-400 ring-2 ring-[#123f49]" />
+            </span>
+            <div className="hidden sm:block">
+              <strong className="block whitespace-nowrap text-xs font-bold text-white">{t("نبض المنصة")}</strong>
+              <span className="block whitespace-nowrap text-[9px] text-white/45">{t("تحديثات مباشرة")}</span>
+            </div>
+          </div>
+
+          <div className="min-w-0 flex-1 overflow-hidden" tabIndex={0}>
+            <div className="ml-ticker-track flex min-h-full items-center">
+              {Array.from({ length: 4 }).flatMap(() => tickerItems).map((item, index) => {
+                const duty = item.type === "DutyPharmacy";
+                const TickerIcon = duty ? MapPin : Sparkles;
+                return (
+                  <div
+                    key={`${item.id}-${index}`}
+                    className="flex min-w-[300px] max-w-[460px] shrink-0 items-center gap-3 px-5 py-2 sm:min-w-[390px] sm:px-8"
+                  >
+                    <span className={`grid size-8 shrink-0 place-items-center rounded-xl ${duty ? "bg-emerald-400/15 text-emerald-300" : "bg-[#F5CB72]/15 text-[#F5CB72]"}`}>
+                      <TickerIcon size={15} />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex min-w-0 items-center gap-2">
+                        <strong className="truncate text-xs font-bold text-white sm:text-sm">{item.title}</strong>
+                        {duty && <span className="shrink-0 rounded-full bg-emerald-400/15 px-2 py-0.5 text-[9px] font-bold text-emerald-200">{t("صيدلية مناوبة")}</span>}
+                      </div>
+                      <p className="mt-0.5 truncate text-[10px] text-white/60 sm:text-xs">
+                        {item.message}{item.pharmacyName ? ` — ${item.pharmacyName}` : ""}
+                      </p>
+                    </div>
+                    <span aria-hidden="true" className="ms-2 size-1.5 shrink-0 rounded-full bg-white/15" />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
 
       <main>
         {/* Hero */}
@@ -1875,12 +1969,12 @@ export function LandingPage() {
           <div className="mx-auto w-full max-w-[1200px] px-5 xl:px-0">
             <div
               dir="ltr"
-              className="relative flex w-full flex-col-reverse items-stretch justify-center gap-7 overflow-hidden rounded-xl bg-[#174B57] px-5 py-8 sm:px-8 lg:min-h-[190px] lg:flex-row lg:items-center lg:justify-between lg:gap-8 lg:px-10 lg:py-6"
+              className="relative grid w-full grid-cols-1 items-center gap-7 overflow-hidden rounded-xl bg-[#174B57] px-5 py-8 sm:px-8 lg:min-h-[210px] lg:grid-cols-[minmax(250px,304px)_minmax(280px,1fr)_180px] lg:gap-6 lg:px-8 lg:py-6 xl:min-h-[190px] xl:grid-cols-[304px_minmax(360px,1fr)_220px] xl:gap-10 xl:px-10"
             >
               {/* Buttons */}
               <div
                 dir="ltr"
-                className={`z-20 grid w-full shrink-0 grid-cols-1 gap-3 min-[420px]:grid-cols-2 lg:flex lg:h-10 lg:w-[304px] lg:items-center lg:gap-5 ${
+                className={`z-20 order-3 grid w-full grid-cols-1 gap-3 min-[420px]:grid-cols-2 lg:order-1 lg:flex lg:h-10 lg:w-full lg:items-center lg:gap-5 ${
                   isArabic ? "flex-row-reverse" : "flex-row"
                 }`}
               >
@@ -1902,7 +1996,7 @@ export function LandingPage() {
               {/* CTA text */}
               <div
                 dir={textDirection}
-                className="z-20 flex w-full min-w-0 max-w-[520px] flex-col items-center justify-center gap-3 text-center lg:min-h-[100px] lg:max-w-[390px] lg:flex-1"
+                className="z-20 order-1 mx-auto flex w-full min-w-0 max-w-[560px] flex-col items-center justify-center gap-3 text-center lg:order-2 lg:min-h-[100px] lg:max-w-none"
               >
                 <h2 className="flex w-full items-center justify-center break-words text-2xl font-bold leading-tight text-white sm:text-[28px] xl:text-[32px]">
                   {t("ابدأ باستخدام المنصة الآن")}
@@ -1918,7 +2012,7 @@ export function LandingPage() {
               <img
                 src={ASSETS.cta}
                 alt={t("استخدام المنصة")}
-                className="pointer-events-none absolute -bottom-8 -right-8 z-10 h-[150px] w-[150px] object-contain opacity-20 sm:h-[180px] sm:w-[180px] lg:-top-[15px] lg:bottom-auto lg:right-[40%] lg:h-[205px] lg:w-[200px] lg:opacity-35 xl:right-[100px] xl:opacity-100"
+                className="pointer-events-none order-2 mx-auto h-[130px] w-[150px] object-contain sm:h-[150px] sm:w-[180px] lg:order-3 lg:h-[175px] lg:w-[180px] xl:h-[205px] xl:w-[220px]"
               />
             </div>
           </div>

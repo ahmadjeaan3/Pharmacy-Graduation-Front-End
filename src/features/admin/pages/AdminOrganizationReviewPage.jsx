@@ -58,7 +58,7 @@ export function AdminOrganizationReviewPage() {
     mutationFn: () =>
       reviewOrganizationVerification(organizationId, {
         verificationStatus: review.verificationStatus,
-        verificationNotes: review.verificationNotes.trim() || null,
+        verificationNotes: review.verificationNotes.trim(),
       }),
     onSuccess: async (data) => {
       queryClient.setQueryData(
@@ -262,7 +262,7 @@ export function AdminOrganizationReviewPage() {
             <div>
               <h3 className="font-extrabold text-[#17363e]">قرار المراجعة</h3>
               <p className="text-xs text-slate-400">
-                سيُرسل إشعار بالقرار إلى المنظمة
+                قرار يدوي مستقل عن الذكاء وسيُرسل إلى المنظمة
               </p>
             </div>
           </div>
@@ -283,7 +283,7 @@ export function AdminOrganizationReviewPage() {
             </select>
           </label>
           <label className="mt-5 block">
-            <span className="form-label">ملاحظات المراجعة (اختياري)</span>
+            <span className="form-label">ملاحظة التحقق اليدوي (إلزامية)</span>
             <textarea
               value={review.verificationNotes}
               onChange={(event) =>
@@ -292,7 +292,7 @@ export function AdminOrganizationReviewPage() {
               maxLength={2000}
               rows={6}
               className="form-textarea"
-              placeholder="اكتب الملاحظات التي ستساعد المنظمة على فهم القرار"
+              placeholder="دوّن المستندات التي راجعتها وسبب القرار (10 أحرف على الأقل)"
             />
             <span
               className="mt-1 block text-left text-xs text-slate-400"
@@ -327,7 +327,11 @@ export function AdminOrganizationReviewPage() {
           )}
           <button
             type="submit"
-            disabled={!hasDocuments || mutation.isPending}
+            disabled={
+              !hasDocuments ||
+              mutation.isPending ||
+              review.verificationNotes.trim().length < 10
+            }
             className="btn-primary mt-6 w-full justify-center py-3 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Save size={17} />

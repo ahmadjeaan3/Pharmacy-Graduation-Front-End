@@ -25,6 +25,11 @@ function translateServerMessage(message) {
   const text = String(message);
   const normalized = text.toLowerCase();
   if (
+    normalized.includes("file field is required") ||
+    normalized.includes("pharmacy license image is required")
+  )
+    return "اختر صورة واضحة لترخيص الصيدلية ثم أعد المحاولة.";
+  if (
     normalized.includes("already taken") ||
     normalized.includes("duplicateemail") ||
     normalized.includes("duplicateusername")
@@ -46,6 +51,10 @@ function translateServerMessage(message) {
     return "يجب إرسال خط العرض وخط الطول معاً.";
   if (normalized.includes("organization has no verification documents"))
     return "لا تحتوي المنظمة على مستندات تحقق قابلة للمراجعة.";
+  if (normalized.includes("manual review note of at least 10 characters"))
+    return "ملاحظة التحقق اليدوي مطلوبة ويجب ألا تقل عن 10 أحرف.";
+  if (normalized.includes("must be recorded as manual decisions"))
+    return "يجب تسجيل قرار اعتماد المستودع كقرار إداري يدوي موثق.";
   if (
     normalized.includes("verification document") &&
     normalized.includes("not found")
@@ -61,6 +70,14 @@ function translateServerMessage(message) {
     return "تعذر العثور على الدواء في الدليل المعتمد.";
   if (normalized.includes("medicine name is required"))
     return "اسم الدواء مطلوب ولا يمكن أن يكون فارغًا.";
+  if (normalized.includes("alternative recommendation is unavailable"))
+    return "خدمة اقتراح البدائل غير متاحة مؤقتًا. حاول مجددًا بعد قليل.";
+  if (normalized.includes("stockout prediction is unavailable"))
+    return "خدمة توقع نفاد المخزون غير متاحة مؤقتًا. حاول مجددًا بعد قليل.";
+  if (normalized.includes("stock values cannot be negative"))
+    return "يجب ألا تكون قيم المخزون والمبيعات سالبة.";
+  if (normalized.includes("month must be between"))
+    return "رقم الشهر المرسل غير صالح.";
   if (normalized.includes("cannot be marked as available"))
     return "لا يمكن تأكيد توفر الدواء لأن كميته غير متاحة حاليًا في المخزون.";
   if (normalized.includes("medicine request was not found"))
