@@ -301,21 +301,6 @@ function ImageIcon({ src, alt = "", className = "h-6 w-6" }) {
 
 function Logo({ responsive = false }) {
   return <Brand responsive={responsive} />;
-
-function Logo() {
-  return (
-    <Link
-      to="/"
-      className="ml-logo-link group flex size-[58px] shrink-0 items-center justify-center rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#DFAE0D]/70 focus-visible:ring-offset-2 sm:size-[62px]"
-      aria-label="Medical Life"
-    >
-      <img
-        src={ASSETS.logo}
-        alt="Medical Life"
-        className="ml-logo-image size-[54px] object-contain sm:size-[57px]"
-      />
-    </Link>
-  );
 }
 
 function SectionHeading({ label, title, text }) {
@@ -462,9 +447,6 @@ export function LandingPage() {
           id: "platform-welcome",
           type: "Announcement",
           title: t("دوائي"),
-          message: t("دواؤك أقرب مما تتوقع — ابحث، احجز وتوجه إلى الصيدلية بثقة."),
-
-          title: t("حياة دوائية"),
           message: t(
             "دواؤك أقرب مما تتوقع — ابحث، احجز وتوجه إلى الصيدلية بثقة.",
           ),
@@ -884,24 +866,24 @@ export function LandingPage() {
       <header className="ml-navbar-enter fixed inset-x-0 top-0 z-[100] h-16 border-b border-[rgba(102,102,102,0.16)] bg-white/95 shadow-[0_5px_24px_rgba(23,75,87,.07)] backdrop-blur-xl sm:h-[72px]">
         <div
           dir="ltr"
-          className="flex h-full w-full items-center justify-between gap-3 px-4 sm:px-6 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:gap-8 lg:px-8 xl:px-12 2xl:px-16"
+          className="flex h-full w-full items-center justify-between gap-3 px-4 sm:px-6 xl:grid xl:grid-cols-[1fr_auto_1fr] xl:gap-5 xl:px-6 2xl:gap-8 2xl:px-16"
         >
           <div
             dir={textDirection}
-            className="flex h-10 min-w-0 shrink items-center gap-2 sm:shrink-0 sm:gap-3 lg:justify-self-start"
+            className="flex h-10 min-w-0 shrink items-center gap-2 sm:shrink-0 sm:gap-3 xl:justify-self-start"
           >
             <LanguageSwitcher />
 
             <Link
               to="/login"
-              className="ml-button flex h-9 w-auto min-w-[76px] items-center justify-center rounded-lg border border-[#216474] bg-white px-2 text-xs font-medium text-[#216474] hover:shadow-sm sm:h-10 sm:min-w-[108px] sm:px-3 sm:text-[15px] lg:w-[124px] lg:text-[16px]"
+              className="ml-button flex h-9 w-auto min-w-[76px] items-center justify-center whitespace-nowrap rounded-lg border border-[#216474] bg-white px-2 text-xs font-medium text-[#216474] hover:shadow-sm sm:h-10 sm:min-w-[108px] sm:px-3 sm:text-[15px] xl:w-[112px]"
             >
               {t("تسجيل دخول")}
             </Link>
 
             <Link
               to="/register"
-              className="ml-button hidden h-9 w-auto min-w-[82px] items-center justify-center rounded-lg bg-[#174B57] px-2 text-xs font-medium text-white hover:bg-[#123F49] hover:shadow-md min-[390px]:flex sm:h-10 sm:min-w-[108px] sm:px-3 sm:text-[15px] lg:w-[124px] lg:text-[16px]"
+              className="ml-button hidden h-9 w-auto min-w-[82px] items-center justify-center whitespace-nowrap rounded-lg bg-[#174B57] px-2 text-xs font-medium text-white hover:bg-[#123F49] hover:shadow-md min-[390px]:flex sm:h-10 sm:min-w-[108px] sm:px-3 sm:text-[15px] xl:w-[112px]"
             >
               {t("إنشاء حساب")}
             </Link>
@@ -909,7 +891,7 @@ export function LandingPage() {
 
           <nav
             dir={textDirection}
-            className="ml-desktop-nav hidden h-11 min-w-0 items-center gap-1.5 whitespace-nowrap text-[15px] font-semibold leading-6 text-[#52666b] lg:flex xl:gap-3 xl:text-[16px]"
+            className="ml-desktop-nav hidden h-11 min-w-0 items-center gap-1 whitespace-nowrap text-[15px] font-semibold leading-6 text-[#52666b] xl:flex 2xl:gap-2 2xl:text-[16px]"
           >
             <a
               href="#home"
@@ -949,10 +931,8 @@ export function LandingPage() {
             </a>
           </nav>
 
-          <Logo responsive />
-
-          <div className="justify-self-end">
-            <Logo />
+          <div className="shrink-0 justify-self-end">
+            <Logo responsive />
           </div>
         </div>
 
@@ -2143,5 +2123,4 @@ export function LandingPage() {
       </footer>
     </div>
   );
-}
 }
