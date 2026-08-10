@@ -4,15 +4,21 @@ import {
   AlertTriangle,
   BrainCircuit,
   CalendarClock,
+  CalendarX2,
   Check,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
   Edit3,
   FileSpreadsheet,
+  FilePlus2,
   PackagePlus,
+  Languages,
+  PackageCheck,
+  PackageX,
   Pill,
   Plus,
+  RefreshCw,
   Search,
   ScanBarcode,
   Sparkles,
@@ -23,10 +29,10 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { getApiErrorMessage } from "../../../shared/api/errors";
-import { MedicineAlternativesButton } from "../../intelligence/components/MedicineAlternativesButton";
 import {
   addInventoryMedicine,
   addInventoryBatch,
+  addManualInventoryMedicine,
   getInventory,
   pharmacyKeys,
   predictInventoryStockout,
@@ -45,6 +51,7 @@ import {
   formatNumber,
   stockMeta,
 } from "../utils/pharmacyFormatters";
+import { ManualInventoryDialog } from "../components/ManualInventoryDialog";
 
 const PHARMACY_HERO_IMAGE = "/assets/app/pharmacy.png";
 
@@ -58,6 +65,34 @@ const blank = {
   expiryDateUtc: "",
   lowStockThreshold: 5,
 };
+
+function getUniqueCatalogMedicines(items = []) {
+  const seen = new Set();
+
+  return items.filter((medicine) => {
+    const identity = [
+      medicine.name,
+      medicine.scientificName,
+      medicine.manufacturer,
+      medicine.dosageForm,
+      medicine.capacity,
+      medicine.barcode,
+    ]
+      .map((value) =>
+        String(value || "")
+          .trim()
+          .toLocaleLowerCase(),
+      )
+      .join("|");
+
+    if (seen.has(identity)) {
+      return false;
+    }
+
+    seen.add(identity);
+    return true;
+  });
+}
 
 function StockPredictionDialog({ item, onClose }) {
   const { t, i18n } = useTranslation();
@@ -252,6 +287,7 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
     initialMedicine?.barcode || "",
   );
   const [catalogPage, setCatalogPage] = useState(1);
+  const [showArabicCatalog, setShowArabicCatalog] = useState(false);
 
   const catalog = useQuery({
     queryKey: pharmacyKeys.catalog({ catalogSearch, catalogPage }),
@@ -263,6 +299,8 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
       }),
     enabled: !item,
   });
+
+  const catalogItems = getUniqueCatalogMedicines(catalog.data?.items);
 
   const change = (key) => (event) =>
     setForm((old) => ({
@@ -325,9 +363,32 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
         >
           {!item && (
             <div>
-              <label>
-                <span className="form-label">{t("البحث في دليل الأدوية")}</span>
+              <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <span className="form-label">
+                    {t("البحث في دليل الأدوية")}
+                  </span>
+                  <p className="mt-1 text-xs text-[#829499]">
+                    {t("الاسم الإنجليزي أساسي، ويمكنك إظهار المقابل العربي.")}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowArabicCatalog((value) => !value)}
+                  className={`inline-flex min-h-10 items-center gap-2 rounded-xl border px-3 text-xs font-black transition ${
+                    showArabicCatalog
+                      ? "border-[#216474] bg-[#174b57] text-white"
+                      : "border-[#cfe0e3] bg-white text-[#216474] hover:bg-[#eef7f6]"
+                  }`}
+                >
+                  <Languages size={16} />
+                  {showArabicCatalog
+                    ? t("إخفاء الاسم العربي")
+                    : t("إظهار الاسم العربي")}
+                </button>
+              </div>
 
+              <label>
                 <div className="field-control">
                   <span
                     className={`field-icon-shell ${
@@ -351,7 +412,7 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
               </label>
 
               <div className="mt-4 grid gap-2 sm:grid-cols-2">
-                {(catalog.data?.items || []).map((medicine) => (
+                {catalogItems.map((medicine) => (
                   <button
                     type="button"
                     key={medicine.id}
@@ -391,9 +452,13 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
                       </strong>
 
                       <span className="block truncate text-xs text-[#829499]">
-                        {medicine.scientificName ||
-                          medicine.manufacturer ||
-                          t("دواء مسجل")}
+                        {[
+                          showArabicCatalog ? medicine.arabicName : null,
+                          medicine.scientificName,
+                          medicine.manufacturer,
+                        ]
+                          .filter(Boolean)
+                          .join(" · ") || t("دواء مسجل")}
                       </span>
                     </span>
                   </button>
@@ -421,7 +486,7 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
 
               {!catalog.isLoading &&
                 !catalog.isError &&
-                !(catalog.data?.items || []).length && (
+                !catalogItems.length && (
                   <p className="mt-4 rounded-xl bg-[#f7faf9] p-4 text-center text-sm text-[#71858a]">
                     {t("لم يتم العثور على دواء مطابق في الدليل المعتمد.")}
                   </p>
@@ -937,6 +1002,8 @@ export function PharmacyInventoryPage() {
   const [editor, setEditor] = useState(null);
   const [showBarcodeLookup, setShowBarcodeLookup] = useState(false);
   const [showExcelImport, setShowExcelImport] = useState(false);
+  const [showManualAdd, setShowManualAdd] = useState(false);
+  const [showArabicNames, setShowArabicNames] = useState(false);
   const [predictionItem, setPredictionItem] = useState(null);
   const [notice, setNotice] = useState(null);
 
@@ -1013,70 +1080,128 @@ export function PharmacyInventoryPage() {
       setNotice({ ok: false, text: getApiErrorMessage(error) }),
   });
 
+  const manualAdd = useMutation({
+    mutationFn: addManualInventoryMedicine,
+    onSuccess: async () => {
+      setShowManualAdd(false);
+      setNotice({
+        ok: true,
+        text: t("تم إنشاء الدواء وإضافته إلى المخزون بنجاح."),
+      });
+      await invalidate();
+    },
+    onError: (error) =>
+      setNotice({ ok: false, text: getApiErrorMessage(error) }),
+  });
+
+  const inventoryItems = inventory.data || [];
+  const overview = {
+    total: inventoryItems.length,
+    inStock: inventoryItems.filter((item) => item.stockStatus === "InStock")
+      .length,
+    lowStock: inventoryItems.filter((item) => item.stockStatus === "LowStock")
+      .length,
+    outOfStock: inventoryItems.filter(
+      (item) => item.stockStatus === "OutOfStock",
+    ).length,
+    expired: inventoryItems.filter((item) => item.stockStatus === "Expired")
+      .length,
+  };
+
   return (
     <div dir={direction} lang={currentLanguage} className="space-y-0">
-      {/* Hero */}
-      <section className="relative isolate mb-5 min-h-[190px] overflow-hidden rounded-[14px] text-white shadow-[0_18px_45px_rgba(23,75,87,.12)] sm:min-h-[205px] lg:min-h-[220px]">
+      {/* Header */}
+      <section className="relative isolate mb-5 overflow-hidden rounded-[1.75rem] bg-[#174b57] text-white shadow-[0_22px_55px_rgba(23,75,87,.16)]">
         <img
           src={PHARMACY_HERO_IMAGE}
           alt=""
           aria-hidden="true"
-          className={`absolute inset-0 h-full w-full object-cover object-[center_38%] ${
+          className={`absolute inset-0 h-full w-full object-cover object-[center_38%] opacity-20 mix-blend-luminosity ${
             isArabic ? "scale-x-[-1]" : ""
           }`}
         />
+        <div className="absolute inset-0 bg-[linear-gradient(110deg,rgba(16,80,90,.98)_0%,rgba(23,75,87,.94)_52%,rgba(33,100,116,.76)_100%)]" />
+        <div className="noise absolute inset-0 opacity-25" />
 
-        <div
-          className="absolute inset-0"
-          style={{
-            background: isArabic
-              ? "linear-gradient(270deg, #10505A 0%, rgba(16,80,90,.90) 38%, rgba(33,100,116,.48) 70%, rgba(33,100,116,.08) 100%)"
-              : "linear-gradient(90deg, #10505A 0%, rgba(16,80,90,.90) 38%, rgba(33,100,116,.48) 70%, rgba(33,100,116,.08) 100%)",
-          }}
-        />
-
-        <div className="relative z-10 mt-7 flex min-h-[190px] flex-col justify-between gap-5 px-6 py-6 sm:min-h-[205px] md:flex-row md:items-center lg:min-h-[220px] lg:px-8">
-          <div className={`min-w-0 ${isArabic ? "text-right" : "text-left"}`}>
-            <div className="flex items-center gap-3">
-              <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-white/[.10] text-[#E6F3F6] backdrop-blur-sm">
-                <PackagePlus size={20} strokeWidth={1.8} />
+        <div className="relative z-10 p-5 sm:p-7 lg:p-8">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+            <div
+              className={`flex min-w-0 items-start gap-3 ${isArabic ? "text-right" : "text-left"}`}
+            >
+              <span className="grid size-12 shrink-0 place-items-center rounded-2xl border border-white/10 bg-white/10 text-[#f5cb72] backdrop-blur-sm">
+                <PackagePlus size={23} strokeWidth={1.8} />
               </span>
-
               <div>
-                <h1 className="text-[24px] font-black text-white sm:text-[28px]">
-                  {t("إدارة المخزون")}
+                <p className="text-xs font-black text-[#8bd0cb]">
+                  {t("مساحة الصيدلية")}
+                </p>
+                <h1 className="mt-1 text-2xl font-black text-white sm:text-[30px]">
+                  {t("مخزون الأدوية")}
                 </h1>
-
-                <p className="mt-1 max-w-2xl text-xs leading-6 text-[#D6D6D6] sm:text-sm">
+                <p className="mt-2 max-w-2xl text-xs leading-6 text-white/65 sm:text-sm">
                   {t(
-                    "أضف الأدوية من الدليل المعتمد وحدث الكميات والأسعار وتواريخ الانتهاء من مكان واحد.",
+                    "راجع التوفر والأسعار والانتهاء، وأضف الأصناف بالطريقة الأنسب لعمل الصيدلية.",
                   )}
                 </p>
               </div>
             </div>
+
+            <div className="flex flex-wrap gap-2 lg:justify-end">
+              <button
+                type="button"
+                onClick={() => setShowArabicNames((value) => !value)}
+                className={`inline-flex min-h-11 items-center gap-2 rounded-xl border px-4 text-xs font-black transition ${
+                  showArabicNames
+                    ? "border-[#f5cb72]/35 bg-[#f5cb72] text-[#17363e]"
+                    : "border-white/20 bg-white/10 text-white hover:bg-white/15"
+                }`}
+              >
+                <Languages size={17} />
+                {showArabicNames ? t("العربية ظاهرة") : t("إظهار العربية")}
+              </button>
+              <button
+                type="button"
+                onClick={() => inventory.refetch()}
+                disabled={inventory.isFetching}
+                className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 text-xs font-black text-white transition hover:bg-white/15 disabled:opacity-60"
+              >
+                <RefreshCw
+                  size={17}
+                  className={inventory.isFetching ? "animate-spin" : ""}
+                />
+                {t("تحديث")}
+              </button>
+            </div>
           </div>
 
-          <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-3 md:w-auto">
+          <div className="mt-7 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
             <button
-              className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl border border-white/30 bg-white/10 px-4 text-sm font-black text-white backdrop-blur-sm transition hover:bg-white/20 sm:min-h-[58px] sm:gap-3 sm:px-5 sm:text-[15px]"
+              className="inline-flex min-h-[54px] w-full items-center justify-center gap-2 rounded-2xl bg-white px-4 text-sm font-black text-[#174b57] shadow-[0_12px_30px_rgba(7,31,37,.16)] transition hover:-translate-y-0.5 hover:bg-[#f8fbfb]"
+              onClick={() => setEditor({})}
+            >
+              <Plus size={20} strokeWidth={2.3} />
+              {t("إضافة من دليل الأدوية")}
+            </button>
+            <button
+              className="inline-flex min-h-[54px] w-full items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/[.08] px-4 text-sm font-black text-white backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white/15"
               onClick={() => setShowBarcodeLookup(true)}
             >
-              <ScanBarcode size={21} />
+              <ScanBarcode size={19} />
               {t("إضافة بالباركود")}
             </button>
             <button
-              className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl border border-white/30 bg-white/10 px-4 text-sm font-black text-white backdrop-blur-sm transition hover:bg-white/20 sm:min-h-[58px] sm:gap-3 sm:px-5 sm:text-[15px]"
-              onClick={() => setShowExcelImport(true)}
+              className="inline-flex min-h-[54px] w-full items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/[.08] px-4 text-sm font-black text-white backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white/15"
+              onClick={() => setShowManualAdd(true)}
             >
-              <FileSpreadsheet size={20} />
-              {t("استيراد Excel")}
+              <FilePlus2 size={19} />
+              {t("إضافة دواء يدويًا")}
             </button>
             <button
-              className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white px-4 text-sm font-black text-[#216474] shadow-[0_12px_30px_rgba(7,31,37,.12)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#F8FBFB] sm:min-h-[58px] sm:gap-3 sm:px-6 sm:text-[15px]"
-              onClick={() => setEditor({})}
+              className="inline-flex min-h-[54px] w-full items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/[.08] px-4 text-sm font-black text-white backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white/15"
+              onClick={() => setShowExcelImport(true)}
             >
-              <Plus size={21} strokeWidth={2.3} />
-              {t("إضافة دواء")}
+              <FileSpreadsheet size={19} />
+              {t("استيراد ملف Excel")}
             </button>
           </div>
         </div>
@@ -1094,103 +1219,156 @@ export function PharmacyInventoryPage() {
         </div>
       )}
 
+      <section className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-5">
+        <InventoryOverviewCard
+          icon={PackagePlus}
+          label={t("إجمالي الأصناف")}
+          value={overview.total}
+          tone="teal"
+          language={currentLanguage}
+        />
+        <InventoryOverviewCard
+          icon={PackageCheck}
+          label={t("متوفر")}
+          value={overview.inStock}
+          tone="green"
+          language={currentLanguage}
+        />
+        <InventoryOverviewCard
+          icon={AlertTriangle}
+          label={t("مخزون منخفض")}
+          value={overview.lowStock}
+          tone="gold"
+          language={currentLanguage}
+        />
+        <InventoryOverviewCard
+          icon={PackageX}
+          label={t("نافد")}
+          value={overview.outOfStock}
+          tone="rose"
+          language={currentLanguage}
+        />
+        <InventoryOverviewCard
+          icon={CalendarX2}
+          label={t("منتهي الصلاحية")}
+          value={overview.expired}
+          tone="slate"
+          language={currentLanguage}
+        />
+      </section>
+
       {/* Filters */}
-      <section className="mb-5 grid gap-3 rounded-[1.25rem] border border-[#DCE8EA] bg-white p-4 shadow-[0_8px_24px_rgba(23,75,87,.035)] lg:grid-cols-[minmax(260px,1fr)_180px_180px_auto]">
-        <div className="relative">
-          <Search
-            size={18}
-            className={`pointer-events-none absolute top-1/2 z-10 -translate-y-1/2 text-[#829499] ${
-              isArabic ? "right-5" : "left-5"
-            }`}
-          />
+      <section className="mb-5 rounded-[1.35rem] border border-[#dce8ea] bg-white p-4 shadow-[0_10px_30px_rgba(23,75,87,.04)] sm:p-5">
+        <div className="grid gap-3 lg:grid-cols-[minmax(280px,1fr)_210px_auto]">
+          <div className="relative">
+            <Search
+              size={18}
+              className={`pointer-events-none absolute top-1/2 z-10 -translate-y-1/2 text-[#216474] ${
+                isArabic ? "right-4" : "left-4"
+              }`}
+            />
+            <input
+              dir={direction}
+              type="text"
+              className={`h-12 w-full rounded-xl border border-[#dce8ea] bg-[#f9fbfb] text-sm font-medium text-[#29464d] placeholder:text-[#9aabad] outline-none transition focus:border-[#216474] focus:bg-white focus:ring-4 focus:ring-[#216474]/8 ${
+                isArabic ? "pr-12 pl-4 text-right" : "pl-12 pr-4 text-left"
+              }`}
+              value={filters.searchTerm}
+              onChange={(event) =>
+                setFilters((old) => ({
+                  ...old,
+                  searchTerm: event.target.value,
+                }))
+              }
+              placeholder={t(
+                "ابحث بالاسم الإنجليزي أو العربي أو العلمي أو الباركود",
+              )}
+            />
+          </div>
 
-          <input
-            dir={direction}
-            type="text"
-            className={`h-11 w-full rounded-xl border border-[#DCE8EA] bg-white text-sm text-[#29464D] placeholder:text-[#A5A5A5] outline-none transition focus:border-[#216474] focus:ring-2 focus:ring-[#216474]/10 ${
-              isArabic ? "pr-14 pl-4 text-right" : "pl-14 pr-4 text-left"
-            }`}
-            value={filters.searchTerm}
-            onChange={(event) =>
-              setFilters((old) => ({
-                ...old,
-                searchTerm: event.target.value,
-              }))
-            }
-            placeholder={t("ابحث هنا باسم الدواء...")}
-          />
-        </div>
+          <div className="relative">
+            <select
+              dir={direction}
+              className={`h-12 w-full appearance-none rounded-xl border border-[#dce8ea] bg-[#f9fbfb] text-sm font-bold text-[#60777d] outline-none transition focus:border-[#216474] focus:bg-white ${
+                isArabic ? "pr-4 pl-10 text-right" : "pl-4 pr-10 text-left"
+              }`}
+              value={filters.expiringWithinDays}
+              onChange={(event) =>
+                setFilters((old) => ({
+                  ...old,
+                  expiringWithinDays: event.target.value,
+                }))
+              }
+            >
+              <option value="">{t("كل تواريخ الانتهاء")}</option>
+              <option value="30">{t("ينتهي خلال 30 يومًا")}</option>
+              <option value="90">{t("ينتهي خلال 3 أشهر")}</option>
+              <option value="180">{t("ينتهي خلال 6 أشهر")}</option>
+            </select>
+            <ChevronDown
+              size={16}
+              className={`pointer-events-none absolute top-1/2 -translate-y-1/2 text-[#829499] ${isArabic ? "left-3" : "right-3"}`}
+            />
+          </div>
 
-        <div className="relative">
-          <select
-            dir={direction}
-            className={`h-11 w-full appearance-none rounded-xl border border-[#DCE8EA] bg-white text-sm text-[#60777D] outline-none transition focus:border-[#216474] focus:ring-2 focus:ring-[#216474]/10 ${
-              isArabic ? "pr-4 pl-10 text-right" : "pl-4 pr-10 text-left"
-            }`}
-            value={filters.stockStatus}
-            onChange={(event) =>
-              setFilters((old) => ({
-                ...old,
-                stockStatus: event.target.value,
-              }))
+          <button
+            type="button"
+            onClick={() =>
+              setFilters({
+                searchTerm: "",
+                availableOnly: false,
+                stockStatus: "",
+                expiringWithinDays: "",
+              })
             }
+            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-[#dce8ea] bg-white px-4 text-xs font-black text-[#60777d] transition hover:border-[#afc9cd] hover:bg-[#f8fbfb] hover:text-[#216474]"
           >
-            <option value="">{t("كل حالات المخزون")}</option>
-            <option value="InStock">{t("متوفر")}</option>
-            <option value="LowStock">{t("مخزون منخفض")}</option>
-            <option value="OutOfStock">{t("غير متوفر")}</option>
-          </select>
-
-          <ChevronDown
-            size={16}
-            className={`pointer-events-none absolute top-1/2 -translate-y-1/2 text-[#829499] ${
-              isArabic ? "left-3" : "right-3"
-            }`}
-          />
+            <X size={16} />
+            {t("مسح الفلاتر")}
+          </button>
         </div>
 
-        <div className="relative">
-          <select
-            dir={direction}
-            className={`h-11 w-full appearance-none rounded-xl border border-[#DCE8EA] bg-white text-sm text-[#60777D] outline-none transition focus:border-[#216474] focus:ring-2 focus:ring-[#216474]/10 ${
-              isArabic ? "pr-4 pl-10 text-right" : "pl-4 pr-10 text-left"
-            }`}
-            value={filters.expiringWithinDays}
-            onChange={(event) =>
-              setFilters((old) => ({
-                ...old,
-                expiringWithinDays: event.target.value,
-              }))
-            }
-          >
-            <option value="">{t("كل تواريخ الانتهاء")}</option>
-            <option value="30">{t("ينتهي خلال 30 يومًا")}</option>
-            <option value="90">{t("ينتهي خلال 3 أشهر")}</option>
-            <option value="180">{t("ينتهي خلال 6 أشهر")}</option>
-          </select>
+        <div className="mt-4 flex flex-col gap-3 border-t border-[#174b57]/8 pt-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            {[
+              ["", t("الكل")],
+              ["InStock", t("متوفر")],
+              ["LowStock", t("مخزون منخفض")],
+              ["OutOfStock", t("نافد")],
+              ["Expired", t("منتهي الصلاحية")],
+            ].map(([value, label]) => (
+              <button
+                type="button"
+                key={value || "all"}
+                onClick={() =>
+                  setFilters((old) => ({ ...old, stockStatus: value }))
+                }
+                className={`min-h-10 shrink-0 rounded-xl border px-4 text-xs font-black transition ${
+                  filters.stockStatus === value
+                    ? "border-[#174b57] bg-[#174b57] text-white shadow-sm"
+                    : "border-[#dce8ea] bg-white text-[#60777d] hover:bg-[#eef7f6] hover:text-[#216474]"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
 
-          <ChevronDown
-            size={16}
-            className={`pointer-events-none absolute top-1/2 -translate-y-1/2 text-[#829499] ${
-              isArabic ? "left-3" : "right-3"
-            }`}
-          />
+          <label className="flex min-h-10 cursor-pointer items-center justify-between gap-3 rounded-xl bg-[#f5f9f8] px-4 text-xs font-black text-[#47666d] lg:justify-center">
+            <span>{t("إظهار الأصناف المتاحة للطلبات فقط")}</span>
+            <input
+              type="checkbox"
+              className="size-4 accent-[#216474]"
+              checked={filters.availableOnly}
+              onChange={(event) =>
+                setFilters((old) => ({
+                  ...old,
+                  availableOnly: event.target.checked,
+                }))
+              }
+            />
+          </label>
         </div>
-
-        <label className="flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-[#DCE8EA] px-4 text-sm font-bold text-[#60777D]">
-          <input
-            type="checkbox"
-            className="size-4 accent-[#216474]"
-            checked={filters.availableOnly}
-            onChange={(event) =>
-              setFilters((old) => ({
-                ...old,
-                availableOnly: event.target.checked,
-              }))
-            }
-          />
-          {t("المتاح فقط")}
-        </label>
       </section>
 
       {inventory.isLoading ? (
@@ -1224,11 +1402,16 @@ export function PharmacyInventoryPage() {
             return (
               <article
                 key={item.inventoryItemId}
-                className="relative overflow-hidden rounded-[1.35rem] border border-[#DCE8EA] bg-white p-5 shadow-[0_10px_28px_rgba(23,75,87,.04)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_34px_rgba(23,75,87,.07)]"
+                className="group relative overflow-hidden rounded-[1.45rem] border border-[#dce8ea] bg-white p-5 shadow-[0_10px_30px_rgba(23,75,87,.045)] transition hover:-translate-y-0.5 hover:border-[#b8d0d4] hover:shadow-[0_18px_40px_rgba(23,75,87,.09)] sm:p-6"
               >
+                <span
+                  className={`absolute inset-y-0 start-0 w-1.5 ${stockAccent(item.stockStatus)}`}
+                />
                 <div className="flex items-start justify-between gap-3">
-                  <span className="grid size-10 place-items-center rounded-lg bg-[#EAF4F3] text-[#216474]">
-                    <Pill size={21} />
+                  <span
+                    className={`grid size-12 place-items-center rounded-2xl ${stockIconTone(item.stockStatus)}`}
+                  >
+                    <Pill size={22} />
                   </span>
 
                   <span
@@ -1239,22 +1422,46 @@ export function PharmacyInventoryPage() {
                 </div>
 
                 <h3
-                  className={`mt-4 truncate text-lg font-black ${
-                    isArabic ? "text-right" : "text-left"
-                  }`}
+                  className="mt-4 truncate text-lg font-black text-[#29464d]"
+                  dir="ltr"
                 >
                   {item.medicineName}
                 </h3>
+
+                {showArabicNames && item.arabicMedicineName && (
+                  <p
+                    className="mt-1 truncate text-sm font-bold text-[#216474]"
+                    dir="rtl"
+                  >
+                    {item.arabicMedicineName}
+                  </p>
+                )}
 
                 <p
                   className={`mt-1 truncate text-xs text-[#829499] ${
                     isArabic ? "text-right" : "text-left"
                   }`}
+                  dir={
+                    showArabicNames && item.arabicScientificName ? "rtl" : "ltr"
+                  }
                 >
-                  {item.scientificName ||
+                  {(showArabicNames && item.arabicScientificName) ||
+                    item.scientificName ||
                     item.manufacturer ||
                     t("لا توجد تفاصيل إضافية")}
                 </p>
+
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {item.manufacturer && (
+                    <MedicineIdentityChip label={item.manufacturer} />
+                  )}
+                  {item.dosageForm && (
+                    <MedicineIdentityChip label={item.dosageForm} />
+                  )}
+                  {item.capacity && (
+                    <MedicineIdentityChip label={item.capacity} />
+                  )}
+                </div>
 
                 <div className="mt-5 grid grid-cols-2 gap-3">
                   <div
@@ -1313,6 +1520,15 @@ export function PharmacyInventoryPage() {
                     )}
                 </div>
 
+                {item.stockStatus === "Expired" && (
+                  <p className="mt-3 flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-black text-slate-700">
+                    <CalendarX2 size={15} />
+                    {t(
+                      "هذا الصنف منتهي الصلاحية وغير متاح للطلبات حتى تحديث بياناته.",
+                    )}
+                  </p>
+                )}
+
                 {item.requiresPrescription && (
                   <p
                     className={`mt-3 rounded-xl bg-[#FFF7DF] px-3 py-2 text-xs font-bold text-[#DFAE0D] ${
@@ -1324,31 +1540,28 @@ export function PharmacyInventoryPage() {
                 )}
 
                 <div className="mt-5 flex flex-wrap gap-2 border-t border-[#174b57]/8 pt-4">
-                  <MedicineAlternativesButton
-                    medicineName={item.medicineName}
-                    label={t("عرض البدائل")}
-                    className="inline-flex min-h-10 basis-[calc(50%-0.25rem)] items-center justify-center gap-2 rounded-xl border border-violet-100 bg-violet-50 px-3 text-xs font-black text-violet-700 transition hover:-translate-y-0.5 hover:bg-violet-100"
-                  />
+                  {item.stockStatus !== "Expired" && (
+                    <button
+                      className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-[#cfe4e7] bg-[#eef7f6] px-4 text-xs font-black text-[#216474] transition hover:-translate-y-0.5 hover:border-[#a9cdd1] hover:bg-[#e4f1f0]"
+                      onClick={() => setPredictionItem(item)}
+                      aria-label={t("تحليل مخزون {{name}}", {
+                        name: item.medicineName,
+                      })}
+                    >
+                      <BrainCircuit size={16} />
+                      {t("توقع النفاد")}
+                    </button>
+                  )}
                   <button
-                    className="inline-flex min-h-10 basis-[calc(50%-0.25rem)] items-center justify-center gap-2 rounded-xl border border-cyan-100 bg-cyan-50 px-3 text-xs font-black text-cyan-800 transition hover:-translate-y-0.5 hover:bg-cyan-100"
-                    onClick={() => setPredictionItem(item)}
-                    aria-label={t("تحليل مخزون {{name}}", {
-                      name: item.medicineName,
-                    })}
-                  >
-                    <BrainCircuit size={16} />
-                    {t("توقع النفاد")}
-                  </button>
-                  <button
-                    className="btn-secondary flex-1 justify-center"
+                    className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-[#174b57] px-4 text-xs font-black text-white transition hover:-translate-y-0.5 hover:bg-[#123f49]"
                     onClick={() => setEditor(item)}
                   >
                     <Edit3 size={15} />
-                    {t("تعديل")}
+                    {t("تعديل الصنف")}
                   </button>
 
                   <button
-                    className="icon-button grid text-rose-600"
+                    className="grid size-11 shrink-0 place-items-center rounded-xl border border-rose-100 bg-rose-50 text-rose-600 transition hover:bg-rose-100"
                     disabled={remove.isPending}
                     onClick={() => {
                       if (
@@ -1397,6 +1610,14 @@ export function PharmacyInventoryPage() {
           onImport={(items) => importBatch.mutate(items)}
         />
       )}
+
+      {showManualAdd && (
+        <ManualInventoryDialog
+          pending={manualAdd.isPending}
+          onClose={() => setShowManualAdd(false)}
+          onSave={(payload) => manualAdd.mutate(payload)}
+        />
+      )}
       {predictionItem && (
         <StockPredictionDialog
           item={predictionItem}
@@ -1405,4 +1626,54 @@ export function PharmacyInventoryPage() {
       )}
     </div>
   );
+}
+
+function InventoryOverviewCard({ icon: Icon, label, value, tone, language }) {
+  const tones = {
+    teal: "bg-[#eaf4f3] text-[#216474]",
+    green: "bg-emerald-50 text-emerald-700",
+    gold: "bg-[#fff7df] text-[#b58112]",
+    rose: "bg-rose-50 text-rose-700",
+    slate: "bg-slate-100 text-slate-700",
+  };
+
+  return (
+    <article className="flex min-h-[104px] items-center gap-3 rounded-[1.25rem] border border-[#dce8ea] bg-white p-4 shadow-[0_8px_24px_rgba(23,75,87,.035)] sm:p-5">
+      <span
+        className={`grid size-11 shrink-0 place-items-center rounded-2xl ${tones[tone]}`}
+      >
+        <Icon size={20} />
+      </span>
+      <div className="min-w-0">
+        <strong className="block text-xl font-black text-[#29464d] sm:text-2xl">
+          {formatNumber(value, language)}
+        </strong>
+        <span className="mt-1 block truncate text-[11px] font-bold text-[#71858a] sm:text-xs">
+          {label}
+        </span>
+      </div>
+    </article>
+  );
+}
+
+function MedicineIdentityChip({ label }) {
+  return (
+    <span className="max-w-full truncate rounded-lg border border-[#e1ebed] bg-[#f8fbfb] px-2.5 py-1 text-[10px] font-bold text-[#60777d]">
+      {label}
+    </span>
+  );
+}
+
+function stockAccent(status) {
+  if (status === "Expired") return "bg-slate-500";
+  if (status === "OutOfStock") return "bg-rose-500";
+  if (status === "LowStock") return "bg-[#dfae0d]";
+  return "bg-[#216474]";
+}
+
+function stockIconTone(status) {
+  if (status === "Expired") return "bg-slate-100 text-slate-600";
+  if (status === "OutOfStock") return "bg-rose-50 text-rose-600";
+  if (status === "LowStock") return "bg-[#fff7df] text-[#b58112]";
+  return "bg-[#eaf4f3] text-[#216474]";
 }

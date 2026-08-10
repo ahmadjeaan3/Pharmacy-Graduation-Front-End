@@ -4,6 +4,7 @@ import {
   ChevronLeft,
   ChevronRight,
   FlaskConical,
+  FileSpreadsheet,
   PackageOpen,
   Pill,
   Plus,
@@ -20,6 +21,7 @@ import {
 } from "../../../shared/components/AsyncStates";
 import { getMedicines, medicineKeys } from "../api/medicinesApi";
 import { MedicinePageHeader } from "../components/MedicinePageHeader";
+import { MedicineCatalogImportDialog } from "../components/MedicineCatalogImportDialog";
 import {
   formatMedicineCurrency,
   formatMedicineNumber,
@@ -30,6 +32,7 @@ export function MedicineCatalogPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [queryTerm, setQueryTerm] = useState("");
   const [pageNumber, setPageNumber] = useState(1);
+  const [importOpen, setImportOpen] = useState(false);
   useEffect(() => {
     const timer = setTimeout(() => {
       setQueryTerm(searchTerm.trim());
@@ -50,10 +53,16 @@ export function MedicineCatalogPage() {
         title="دليل الأدوية"
         description="إدارة المرجع الأساسي للأدوية الذي تعتمد عليه الصيدليات والطلبات والمبادرات داخل المنصة."
         actions={
-          <Link to="/app/medicines/new" className="btn-primary">
-            <Plus size={17} />
-            إضافة دواء جديد
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <button className="btn-secondary" onClick={() => setImportOpen(true)}>
+              <FileSpreadsheet size={17} />
+              استيراد الدليل السوري
+            </button>
+            <Link to="/app/medicines/new" className="btn-primary">
+              <Plus size={17} />
+              إضافة دواء جديد
+            </Link>
+          </div>
         }
       />
       <section className="surface mb-5 flex flex-col gap-4 p-4 lg:flex-row lg:items-center">
@@ -186,6 +195,10 @@ export function MedicineCatalogPage() {
           الفعلية تُدار بصورة مستقلة من مخزون الصيدلية.
         </p>
       </div>
+      <MedicineCatalogImportDialog
+        open={importOpen}
+        onClose={() => setImportOpen(false)}
+      />
     </div>
   );
 }

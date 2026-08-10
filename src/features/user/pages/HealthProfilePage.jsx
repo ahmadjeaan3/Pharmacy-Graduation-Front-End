@@ -583,8 +583,8 @@ function HealthCard({ card }) {
               <HeartPulse size={28} strokeWidth={2.2} />
             </span>
             <span>
-              <strong>حياة دوائية</strong>
-              <small>MEDICAL LIFE</small>
+              <strong>دوائي</strong>
+              <small>DAWAAI</small>
             </span>
           </div>
           <div className="health-report-document-title">
@@ -710,7 +710,7 @@ function HealthCard({ card }) {
             </button>
           </div>
           <p className="print-only health-report-disclaimer">
-            هذا التقرير يعكس المعلومات التي أدخلها المستخدم في منصة حياة دوائية،
+            هذا التقرير يعكس المعلومات التي أدخلها المستخدم في منصة دوائي،
             ولا يُعد تشخيصًا أو وصفة طبية.
           </p>
         </div>

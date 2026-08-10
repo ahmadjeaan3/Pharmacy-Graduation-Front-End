@@ -73,6 +73,11 @@ export const stockMeta = (status) =>
       label: "غير متوفر",
       className: "bg-rose-50 text-rose-700",
     },
+
+    Expired: {
+      label: "منتهي الصلاحية",
+      className: "bg-slate-100 text-slate-700",
+    },
   })[status] || {
     label: status || "غير محدد",
     className: "bg-slate-100 text-slate-600",

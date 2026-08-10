@@ -481,7 +481,7 @@ export function SupplyChainWorkspacePage() {
           medicineId,
           quantity: line.quantity,
         })),
-        note: "طلب توريد من سوق حياة دوائية",
+        note: "طلب توريد من سوق دوائي",
       }),
     onSuccess: () => {
       setCart({});
@@ -683,7 +683,7 @@ lg:min-h-[250px]"
 
               <div>
                 <p className="text-xs font-bold text-[#E6F3F6]/80">
-                  {t("شبكة حياة دوائية B2B")}
+                  {t("شبكة دوائي للأعمال")}
                 </p>
 
                 <h1 className="mt-1 text-[24px] font-black text-white sm:text-[28px]">

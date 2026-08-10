@@ -60,6 +60,8 @@ export const getInventory = async (params = {}) =>
     .data;
 export const addInventoryMedicine = async (payload) =>
   (await apiClient.post("/pharmacy/me/medicines", payload)).data;
+export const addManualInventoryMedicine = async (payload) =>
+  (await apiClient.post("/pharmacy/me/medicines/manual", payload)).data;
 export const addInventoryBatch = async (items) =>
   (await apiClient.post("/pharmacy/me/medicines/batch", { items })).data;
 export const updateInventoryMedicine = async (id, payload) =>

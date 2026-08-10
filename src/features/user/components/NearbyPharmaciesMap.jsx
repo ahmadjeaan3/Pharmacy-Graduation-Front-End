@@ -114,7 +114,7 @@ export function NearbyPharmaciesMap({
           </MapContainer>
           <div className="pointer-events-none absolute right-4 top-4 z-[500] rounded-xl border border-white/70 bg-white/95 px-3 py-2 text-xs font-bold text-[#29464d] shadow-lg backdrop-blur">
             <span className="me-2 inline-block size-2.5 rounded-full bg-[#216474]" />
-            الخريطة داخل منصة حياة دوائية
+            الخريطة داخل منصة دوائي
           </div>
         </div>
         <MapSidebar pharmacies={pharmacies} route={route} title={title} />

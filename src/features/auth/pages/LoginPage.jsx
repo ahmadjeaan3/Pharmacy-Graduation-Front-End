@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { getApiErrorMessage } from "../../../shared/api/errors";
+import { Brand } from "../../../shared/components/Brand";
 import {
   getLanguageDirection,
   normalizeLanguage,
@@ -22,8 +23,6 @@ import { login } from "../api/authApi";
 import { useAuth } from "../hooks/useAuth";
 
 const LOGIN_BACKGROUND_IMAGE = "/assets/app/auth/login.png";
-
-const LOGIN_LOGO = "/assets/app/brand/logo.png";
 
 export function LoginPage() {
   const { t, i18n } = useTranslation();
@@ -313,10 +312,8 @@ export function LoginPage() {
 
               <h2 className="text-[27px] font-bold leading-[1.6] xl:text-[32px]">
                 {t("مرحبًا بعودتك إلى")}{" "}
-                <span dir="ltr" className="inline-flex">
-                  <span className="text-white">MEDICAL</span>
-
-                  <span className="text-[#F0BC42]">LIFE</span>
+                <span className="inline-flex text-[#F5CB72]">
+                  دوائي
                 </span>
               </h2>
 
@@ -373,18 +370,7 @@ function LoginHeader({ direction, isArabic, t }) {
           dir={isArabic ? "rtl" : "ltr"}
           className="flex min-w-0 items-center gap-4 sm:gap-[34px]"
         >
-          <Link
-            to="/"
-            aria-label={t("العودة إلى الصفحة الرئيسية")}
-            className="flex h-[58px] w-[64px] shrink-0 items-center justify-center"
-          >
-            <img
-              src={LOGIN_LOGO}
-              alt="Medical Life"
-              draggable={false}
-              className="h-[54px] w-[54px] select-none object-contain"
-            />
-          </Link>
+          <Brand responsive />
 
           <span
             aria-hidden="true"

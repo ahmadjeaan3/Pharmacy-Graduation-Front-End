@@ -3,7 +3,7 @@ const rawApiBaseUrl =
 
 export const env = Object.freeze({
   apiBaseUrl: rawApiBaseUrl.replace(/\/+$/, ""),
-  appName: import.meta.env.VITE_APP_NAME || "حياة دوائية",
+  appName: import.meta.env.VITE_APP_NAME || "دوائي",
   isDevelopment: import.meta.env.DEV,
 });
 

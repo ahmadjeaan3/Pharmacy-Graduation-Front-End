@@ -656,7 +656,7 @@ export function OrganizationCampaignsPage() {
               </div>
 
               <div className="flex flex-wrap items-center gap-3">
-                <label className="flex h-10 min-w-[280px] flex-1 items-center gap-2 rounded-lg border border-[#174b57]/10 px-3">
+                <label className="flex h-10 w-full min-w-0 flex-1 items-center gap-2 rounded-lg border border-[#174b57]/10 px-3 sm:min-w-[280px]">
                   <Search size={17} className="text-[#a5a5a5]" />
 
                   <input

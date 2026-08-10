@@ -259,11 +259,18 @@ export function PharmacyDetailsPage() {
                     )}
                   </div>
                   <h4 className="mt-4 font-extrabold text-[#29464d]">
-                    {medicine.medicineName}
+                    {medicine.medicineDisplayName ||
+                      medicine.arabicMedicineName ||
+                      medicine.medicineName}
                   </h4>
+                  {medicine.arabicMedicineName && (
+                    <p className="mt-1 text-[11px] font-bold text-[#216474]" dir="ltr">
+                      {medicine.medicineName}
+                    </p>
+                  )}
                   <p className="mt-1 text-xs text-[#71858a]">
                     {[
-                      medicine.scientificName,
+                      medicine.arabicScientificName || medicine.scientificName,
                       medicine.dosageForm,
                       medicine.capacity,
                     ]
@@ -321,7 +328,9 @@ export function PharmacyDetailsPage() {
                 <option value="">اختر الدواء</option>
                 {availableMedicines.map((medicine) => (
                   <option key={medicine.medicineId} value={medicine.medicineId}>
-                    {medicine.medicineName}
+                    {medicine.medicineDisplayName ||
+                      medicine.arabicMedicineName ||
+                      medicine.medicineName}
                   </option>
                 ))}
               </select>

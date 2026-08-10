@@ -29,6 +29,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 import { getApiErrorMessage } from "../../../shared/api/errors";
+import { Brand } from "../../../shared/components/Brand";
 
 import {
   normalizeLanguage,
@@ -1720,63 +1721,20 @@ function RegisterHeader({ language }) {
           dir={isArabic ? "rtl" : "ltr"}
           className="flex min-w-0 items-center gap-4 sm:gap-[34px]"
         >
-          {isArabic ? (
-            <>
-              {/* العربي: يبقى كما هو */}
-              <Link
-                to="/"
-                aria-label={t("العودة إلى الصفحة الرئيسية")}
-                className="flex h-[58px] w-[64px] shrink-0 items-center justify-center"
-              >
-                <img
-                  src="/assets/app/brand/logo.png"
-                  alt="Medical Life"
-                  className="h-[54px] w-[54px] object-contain"
-                />
-              </Link>
+          <Brand responsive />
 
-              <span
-                aria-hidden="true"
-                className="hidden h-10 w-px shrink-0 bg-[#666666] sm:block"
-              />
+          <span
+            aria-hidden="true"
+            className="hidden h-10 w-px shrink-0 bg-[#666666]/35 sm:block"
+          />
 
-              <Link
-                to="/"
-                dir={textDirection}
-                className="hidden whitespace-nowrap text-base font-normal text-[#666666] transition hover:text-[#216474] sm:block sm:text-lg"
-              >
-                {t("الرئيسية")}
-              </Link>
-            </>
-          ) : (
-            <>
-              {/* الإنكليزي والتركي */}
-              <img
-                src="/assets/app/brand/logo.png"
-                alt="Medical Life"
-                className="h-[54px] w-[54px] object-contain"
-              />
-
-              <span
-                aria-hidden="true"
-                className="hidden h-10 w-px shrink-0 bg-[#666666] sm:block"
-              />
-
-              <Link
-                to="/"
-                aria-label={t("العودة إلى الصفحة الرئيسية")}
-                className="flex h-[58px] w-[64px] shrink-0 items-center justify-center"
-              >
-                <Link
-                  to="/"
-                  dir={textDirection}
-                  className="hidden whitespace-nowrap text-base font-normal text-[#666666] transition hover:text-[#216474] sm:block sm:text-lg"
-                >
-                  {t("الرئيسية")}
-                </Link>
-              </Link>
-            </>
-          )}
+          <Link
+            to="/"
+            dir={textDirection}
+            className="hidden whitespace-nowrap text-base font-normal text-[#666666] transition hover:text-[#216474] sm:block sm:text-lg"
+          >
+            {t("الرئيسية")}
+          </Link>
         </div>
 
         {/* روابط الجهة الثانية */}

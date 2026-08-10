@@ -19,6 +19,7 @@ import {
   DashboardLoadingState as AdminLoadingState,
 } from "../../../shared/components/AsyncStates";
 import { getMedicine, medicineKeys } from "../api/medicinesApi";
+import { MedicineLocalizationEditor } from "../components/MedicineLocalizationEditor";
 import {
   formatMedicineCurrency,
   formatMedicineNumber,
@@ -93,8 +94,14 @@ export function MedicineDetailsPage() {
               </p>
 
               <h1 className="mt-2 truncate text-3xl font-black sm:text-4xl">
-                {medicine.name}
+                {medicine.arabicName || medicine.name}
               </h1>
+
+              {medicine.arabicName && (
+                <p className="mt-1 text-sm font-bold text-white/70" dir="ltr">
+                  {medicine.name}
+                </p>
+              )}
 
               <p className="mt-2 text-sm leading-7 text-white/55">
                 {medicineSubtitle(medicine)}
@@ -185,6 +192,8 @@ export function MedicineDetailsPage() {
           </div>
         </section>
       </div>
+
+      <MedicineLocalizationEditor medicine={medicine} />
 
       {/* Composition and description */}
       <div className="grid gap-6 lg:grid-cols-2">

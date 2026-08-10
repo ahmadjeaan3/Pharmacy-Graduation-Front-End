@@ -30,6 +30,7 @@ import {
 import { PageHeader as UserPageHeader } from "../../../shared/components/PageHeader";
 import { formatDistance, formatPrice } from "../utils/userFormatters";
 import { getApiErrorMessage } from "../../../shared/api/errors";
+import { MedicineAlternativesButton } from "../../intelligence/components/MedicineAlternativesButton";
 
 const NearbyPharmaciesMap = lazy(() =>
   import("../components/NearbyPharmaciesMap").then((module) => ({
@@ -292,6 +293,7 @@ export function MedicineSearchPage() {
             results={results}
             groupedCount={groupedCount}
             onShowRoute={showRoute}
+            searchedName={searchRequest?.query}
           />
           {!routePharmacy && resultsMapContext?.mapMarkers?.length > 0 && (
             <Suspense
@@ -387,7 +389,13 @@ export function MedicineSearchPage() {
   );
 }
 
-function MedicineResults({ mutation, results, groupedCount, onShowRoute }) {
+function MedicineResults({
+  mutation,
+  results,
+  groupedCount,
+  onShowRoute,
+  searchedName,
+}) {
   const { t } = useTranslation();
   if (mutation.isPending)
     return <UserLoadingState label="نبحث في الصيدليات القريبة..." />;
@@ -410,6 +418,15 @@ function MedicineResults({ mutation, results, groupedCount, onShowRoute }) {
       <UserEmptyState
         title="لم نجد نتائج مطابقة"
         description="جرّب الاسم العلمي، وسّع نطاق البحث أو تحقق من كتابة اسم الدواء."
+        action={
+          searchedName ? (
+            <MedicineAlternativesButton
+              medicineName={searchedName}
+              label="البحث عن بدائل دوائية"
+              className="mx-auto mt-5 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#174b57] px-5 text-sm font-black text-white transition hover:-translate-y-0.5 hover:bg-[#123f49]"
+            />
+          ) : null
+        }
       />
     );
   return (
@@ -422,6 +439,11 @@ function MedicineResults({ mutation, results, groupedCount, onShowRoute }) {
             {groupedCount.toLocaleString("ar-SY")} صيدليات
           </p>
         </div>
+        <MedicineAlternativesButton
+          medicineName={results[0].medicineName}
+          label="عرض بدائل للدواء"
+          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#cfe4e7] bg-[#eef7f6] px-4 text-sm font-black text-[#216474] transition hover:-translate-y-0.5 hover:border-[#a9cdd1] hover:bg-[#e4f1f0]"
+        />
       </div>
       <div className="grid gap-4 xl:grid-cols-2">
         {results.map((item) => (
@@ -432,10 +454,22 @@ function MedicineResults({ mutation, results, groupedCount, onShowRoute }) {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h3 className="text-lg font-black text-[#29464d]">
-                  {item.medicineName}
+                  {item.medicineDisplayName ||
+                    item.arabicMedicineName ||
+                    item.medicineName}
                 </h3>
+                {item.arabicMedicineName &&
+                  item.medicineDisplayName !== item.medicineName && (
+                    <p className="mt-1 text-xs font-bold text-[#216474]" dir="ltr">
+                      {item.medicineName}
+                    </p>
+                  )}
                 <p className="mt-1 text-sm text-[#71858a]">
-                  {[item.scientificName, item.dosageForm, item.capacity]
+                  {[
+                    item.arabicScientificName || item.scientificName,
+                    item.dosageForm,
+                    item.capacity,
+                  ]
                     .filter(Boolean)
                     .join(" • ")}
                 </p>

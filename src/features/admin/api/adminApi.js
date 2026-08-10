@@ -3,6 +3,7 @@ import { apiClient } from "../../../shared/api/client";
 export const adminKeys = {
   root: ["admin"],
   dashboard: (days = 7) => ["admin", "dashboard", days],
+  aiServicesHealth: ["admin", "ai-services", "health"],
   pendingPharmacies: ["admin", "pharmacies", "pending"],
   pendingOrganizations: ["admin", "organizations", "pending"],
   pendingWarehouses: ["admin", "warehouses", "pending"],
@@ -45,6 +46,10 @@ export async function updateAdminAccountStatus(userId, payload) {
 
 export async function getAdminDashboard(days = 7) {
   return (await apiClient.get("/admin/dashboard", { params: { days } })).data;
+}
+
+export async function getAdminAiServicesHealth() {
+  return (await apiClient.get("/admin/ai-services/health")).data;
 }
 
 export async function getPendingPharmacies() {

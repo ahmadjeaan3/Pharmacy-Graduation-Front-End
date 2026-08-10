@@ -146,7 +146,7 @@ export function OrganizationDashboardPage() {
       className="flex w-full flex-col gap-6"
     >
       {/* البانر */}
-      <section className="relative h-[271px] w-full overflow-hidden rounded-xl bg-[#10505a] text-white">
+      <section className="relative min-h-[440px] w-full overflow-hidden rounded-2xl bg-[#10505a] text-white sm:min-h-[350px] lg:h-[271px] lg:min-h-0">
         {/* صورة البانر فقط */}
         <div
           aria-hidden="true"
@@ -171,10 +171,10 @@ export function OrganizationDashboardPage() {
         {/* بيانات المنظمة */}
         <div
           dir={direction}
-          className={`absolute top-[48px] z-10 flex w-[540px] flex-col ${
+          className={`relative z-10 flex w-full max-w-[540px] flex-col px-5 pt-7 sm:px-7 lg:absolute lg:top-[48px] lg:px-0 lg:pt-0 ${
             isArabic
-              ? "right-[41px] items-end text-right"
-              : "left-[41px] items-start text-left"
+              ? "items-end text-right lg:right-[41px]"
+              : "items-start text-left lg:left-[41px]"
           }`}
         >
           <div
@@ -215,7 +215,7 @@ export function OrganizationDashboardPage() {
 
           <div
             dir="ltr"
-            className={`mt-6 flex w-full items-center gap-3 ${
+            className={`mt-6 flex w-full flex-col items-stretch gap-3 sm:flex-row sm:items-center ${
               isArabic
                 ? "justify-start flex-row-reverse"
                 : "justify-start flex-row"
@@ -223,7 +223,7 @@ export function OrganizationDashboardPage() {
           >
             <Link
               to="/app/organization/campaigns"
-              className={`flex h-12 min-w-[180px] items-center justify-center gap-2 rounded-lg bg-white px-6 text-base font-medium text-[#216474] transition hover:bg-[#f8f8f8] ${
+              className={`flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-white px-5 text-sm font-bold text-[#216474] transition hover:bg-[#f8f8f8] sm:w-auto sm:min-w-[170px] sm:text-base ${
                 isArabic ? "flex-row-reverse" : "flex-row"
               }`}
             >
@@ -234,7 +234,7 @@ export function OrganizationDashboardPage() {
 
             <Link
               to="/app/organization/offers"
-              className={`flex h-12 min-w-[180px] items-center justify-center gap-2 rounded-lg border border-white bg-transparent px-6 text-base font-medium text-white transition hover:bg-white/10 ${
+              className={`flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-white bg-transparent px-5 text-sm font-bold text-white transition hover:bg-white/10 sm:w-auto sm:min-w-[170px] sm:text-base ${
                 isArabic ? "flex-row-reverse" : "flex-row"
               }`}
             >
@@ -248,10 +248,10 @@ export function OrganizationDashboardPage() {
         {/* بطاقة حالة المنظمة */}
         <div
           dir={direction}
-          className={`absolute top-[48px] z-10 flex h-[119px] w-[249px] flex-col rounded-xl border border-white/15 bg-white/20 px-[18px] py-5 backdrop-blur-[10px] ${
+          className={`relative z-10 mx-5 mt-5 flex min-h-[119px] w-auto flex-col rounded-xl border border-white/15 bg-white/20 px-[18px] py-5 backdrop-blur-[10px] sm:mx-7 sm:max-w-[320px] lg:absolute lg:top-[48px] lg:mx-0 lg:mt-0 lg:w-[249px] ${
             isArabic
-              ? "left-[41px] items-start text-right"
-              : "right-[41px] items-start text-left"
+              ? "items-start text-right lg:left-[41px]"
+              : "items-start text-left lg:right-[41px]"
           }`}
         >
           <div className="flex w-full items-center justify-between text-xs text-[#d6d6d6]">

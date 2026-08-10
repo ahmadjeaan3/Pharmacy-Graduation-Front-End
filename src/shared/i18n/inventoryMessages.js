@@ -1,5 +1,41 @@
 export const inventoryMessages = {
   en: {
+    "مساحة الصيدلية": "Pharmacy workspace",
+    "مخزون الأدوية": "Medicine inventory",
+    "راجع التوفر والأسعار وتواريخ الصلاحية من لوحة واحدة مرتبة.":
+      "Review availability, prices, and expiry dates from one organized workspace.",
+    "إظهار العربية": "Show Arabic",
+    "العربية ظاهرة": "Arabic visible",
+    "تحديث": "Refresh",
+    "إضافة من دليل الأدوية": "Add from medicine catalog",
+    "إضافة دواء يدويًا": "Add medicine manually",
+    "استيراد ملف Excel": "Import Excel file",
+    "إجمالي الأصناف": "Total items",
+    "متوفر": "In stock",
+    "مخزون منخفض": "Low stock",
+    "نافد": "Out of stock",
+    "منتهي الصلاحية": "Expired",
+    "هذا الصنف منتهي الصلاحية وغير متاح للطلبات حتى تحديث بياناته.":
+      "This item has expired and cannot be ordered until its details are updated.",
+    "{{out}} نافد و{{expired}} منتهي الصلاحية":
+      "{{out}} out of stock and {{expired}} expired",
+    "انتهت صلاحية هذا الصنف ويجب عزله عن الطلبات":
+      "This item has expired and must be excluded from orders",
+    "ابحث بالاسم الإنجليزي أو العربي أو العلمي أو الباركود":
+      "Search by English, Arabic, or scientific name, or by barcode",
+    "مسح الفلاتر": "Clear filters",
+    "الكل": "All",
+    "إظهار الأصناف المتوفرة فقط": "Show in-stock items only",
+    "الاسم الإنجليزي أساسي، ويمكن إظهار الاسم العربي عند الحاجة.":
+      "English is the primary name; you can show the Arabic name when needed.",
+    "بدائل دوائية مقترحة": "Suggested medicine alternatives",
+    "لم يتم التعرف على الدواء في الدليل المعتمد. جرّب الاسم التجاري أو العربي الكامل.":
+      "The medicine was not recognized in the approved catalog. Try its full brand or Arabic name.",
+    "بيانات الدواء غير كافية لتقديم بدائل آمنة ومتطابقة.":
+      "The medicine data is insufficient to provide safe, matching alternatives.",
+    "المادة الفعالة مطابقة": "Same active ingredient",
+    "العيار مطابق": "Same strength",
+    "الشكل الدوائي مطابق": "Same dosage form",
     "تحليل المخزون الذكي": "Smart inventory analysis",
     "الكمية الحالية": "Current quantity",
     "المباع إجمالًا": "Total sold",
@@ -61,6 +97,42 @@ export const inventoryMessages = {
     دواء: "medicine",
   },
   tr: {
+    "مساحة الصيدلية": "Eczane çalışma alanı",
+    "مخزون الأدوية": "İlaç envanteri",
+    "راجع التوفر والأسعار وتواريخ الصلاحية من لوحة واحدة مرتبة.":
+      "Stok, fiyat ve son kullanma tarihlerini düzenli bir ekrandan yönetin.",
+    "إظهار العربية": "Arapçayı göster",
+    "العربية ظاهرة": "Arapça görünür",
+    "تحديث": "Yenile",
+    "إضافة من دليل الأدوية": "İlaç kataloğundan ekle",
+    "إضافة دواء يدويًا": "İlacı elle ekle",
+    "استيراد ملف Excel": "Excel dosyası içe aktar",
+    "إجمالي الأصناف": "Toplam ürün",
+    "متوفر": "Stokta",
+    "مخزون منخفض": "Düşük stok",
+    "نافد": "Stokta yok",
+    "منتهي الصلاحية": "Son kullanma tarihi geçmiş",
+    "هذا الصنف منتهي الصلاحية وغير متاح للطلبات حتى تحديث بياناته.":
+      "Bu ürünün son kullanma tarihi geçmiştir; bilgileri güncellenene kadar sipariş edilemez.",
+    "{{out}} نافد و{{expired}} منتهي الصلاحية":
+      "{{out}} stokta yok ve {{expired}} son kullanma tarihi geçmiş",
+    "انتهت صلاحية هذا الصنف ويجب عزله عن الطلبات":
+      "Bu ürünün son kullanma tarihi geçmiştir ve siparişlerden çıkarılmalıdır",
+    "ابحث بالاسم الإنجليزي أو العربي أو العلمي أو الباركود":
+      "İngilizce, Arapça veya bilimsel adla ya da barkodla ara",
+    "مسح الفلاتر": "Filtreleri temizle",
+    "الكل": "Tümü",
+    "إظهار الأصناف المتوفرة فقط": "Yalnızca stoktakileri göster",
+    "الاسم الإنجليزي أساسي، ويمكن إظهار الاسم العربي عند الحاجة.":
+      "İngilizce ad birincildir; gerektiğinde Arapça ad gösterilebilir.",
+    "بدائل دوائية مقترحة": "Önerilen ilaç alternatifleri",
+    "لم يتم التعرف على الدواء في الدليل المعتمد. جرّب الاسم التجاري أو العربي الكامل.":
+      "İlaç onaylı katalogda tanınmadı. Tam ticari veya Arapça adını deneyin.",
+    "بيانات الدواء غير كافية لتقديم بدائل آمنة ومتطابقة.":
+      "Güvenli ve eşleşen alternatifler sunmak için ilaç verileri yetersiz.",
+    "المادة الفعالة مطابقة": "Aynı etken madde",
+    "العيار مطابق": "Aynı doz",
+    "الشكل الدوائي مطابق": "Aynı farmasötik form",
     "تحليل المخزون الذكي": "Akıllı stok analizi",
     "الكمية الحالية": "Mevcut miktar",
     "المباع إجمالًا": "Toplam satılan",

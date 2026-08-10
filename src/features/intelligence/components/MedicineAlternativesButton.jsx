@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { Pill, Sparkles, X } from "lucide-react";
+import { CheckCircle2, FlaskConical, Pill, Sparkles, X } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getApiErrorMessage } from "../../../shared/api/errors";
@@ -23,6 +23,13 @@ export function MedicineAlternativesButton({
     setOpen(true);
     if (!alternatives.data && !alternatives.isPending) alternatives.mutate();
   };
+  const result = alternatives.data;
+  const emptyMessage =
+    result?.status === "medicine_not_found"
+      ? t("لم يتم التعرف على الدواء في الدليل المعتمد. جرّب الاسم التجاري أو العربي الكامل.")
+      : result?.status === "insufficient_data"
+        ? t("بيانات الدواء غير كافية لتقديم بدائل آمنة ومتطابقة.")
+        : t("لم يتم العثور على بدائل موثوقة لهذا الدواء.");
 
   return (
     <>
@@ -44,14 +51,26 @@ export function MedicineAlternativesButton({
           <div
             dir={language === "ar" ? "rtl" : "ltr"}
             lang={language}
-            className="max-h-[88vh] w-full max-w-2xl overflow-auto rounded-[1.75rem] bg-white p-4 shadow-2xl sm:p-6"
+            className="max-h-[88vh] w-full max-w-2xl overflow-auto rounded-[1.75rem] bg-white shadow-2xl"
           >
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-xs font-black text-violet-600">
-                  {t("محرك البدائل الدوائية")}
-                </p>
-                <h3 className="mt-1 text-xl font-black">{medicineName}</h3>
+            <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-[#174b57]/8 bg-white/95 p-5 backdrop-blur sm:p-6">
+              <div className="flex items-center gap-3">
+                <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[#174b57] text-[#f5cb72]">
+                  <Sparkles size={20} />
+                </span>
+                <div>
+                  <p className="text-xs font-black text-[#216474]">
+                    {t("بدائل دوائية مقترحة")}
+                  </p>
+                  <h3 className="mt-1 text-xl font-black text-[#29464d]">
+                    {result?.searchedArabicMedicine || result?.searchedMedicine || medicineName}
+                  </h3>
+                  {result?.searchedArabicMedicine && result?.searchedMedicine && (
+                    <p className="mt-0.5 text-xs font-bold text-[#71858a]" dir="ltr">
+                      {result.searchedMedicine}
+                    </p>
+                  )}
+                </div>
               </div>
               <button
                 className="icon-button grid"
@@ -61,6 +80,7 @@ export function MedicineAlternativesButton({
                 <X size={18} />
               </button>
             </div>
+            <div className="p-5 pt-0 sm:p-6 sm:pt-0">
             {alternatives.isPending ? (
               <div className="grid min-h-48 place-items-center text-sm font-bold text-[#71858a]">
                 {t("جاري تحليل المادة والتركيز والشكل الدوائي...")}
@@ -75,36 +95,73 @@ export function MedicineAlternativesButton({
                   {t("إعادة المحاولة")}
                 </button>
               </div>
-            ) : !alternatives.data?.alternatives?.length ? (
+            ) : !result?.alternatives?.length ? (
               <div className="mt-5 rounded-2xl bg-[#f7faf9] p-8 text-center text-sm text-[#71858a]">
-                {t("لم يتم العثور على بدائل موثوقة لهذا الدواء.")}
+                {emptyMessage}
               </div>
             ) : (
-              <div className="mt-5 space-y-3">
-                {alternatives.data.alternatives.map((item, index) => (
+              <div className="mt-5 space-y-4">
+                <div className="flex flex-wrap gap-2 rounded-2xl border border-[#d9e4e5] bg-[#eef6f5] p-3 text-xs font-bold text-[#47666d]">
+                  <span className="inline-flex items-center gap-1.5">
+                    <FlaskConical size={14} className="text-[#216474]" />
+                    {result.composition}
+                  </span>
+                  {result.strength && <span>• {result.strength}</span>}
+                  {result.dosageForm && <span>• {result.dosageForm}</span>}
+                </div>
+                {result.alternatives.map((item, index) => (
                   <article
                     key={`${item.medicineName}-${index}`}
                     className="rounded-2xl border border-[#174b57]/9 bg-[#fbfdfc] p-4"
                   >
                     <div className="flex items-start gap-3">
-                      <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-violet-50 text-violet-600">
+                      <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#eaf4f3] text-[#216474]">
                         <Pill size={18} />
                       </span>
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center justify-between gap-2">
-                          <strong>{item.medicineName}</strong>
+                          <div>
+                            <strong className="block text-[#142e35]">
+                              {item.arabicMedicineName || item.medicineName}
+                            </strong>
+                            {item.arabicMedicineName && (
+                              <span className="mt-0.5 block text-xs font-bold text-[#71858a]" dir="ltr">
+                                {item.medicineName}
+                              </span>
+                            )}
+                          </div>
                           <span className="rounded-full bg-[#eaf4f3] px-2.5 py-1 text-[11px] font-black text-[#216474]">
-                            {t("تطابق")} {Math.round(item.matchScore)}%
+                            {t("تطابق")} {Math.round(Math.min(1, Math.max(0, item.matchScore || 0)) * 100)}%
                           </span>
                         </div>
                         <p className="mt-2 text-xs leading-6 text-[#71858a]">
-                          {[item.composition, item.form, item.size]
+                          {[
+                            item.composition,
+                            item.strength || item.size,
+                            item.dosageForm || item.form,
+                            item.packageSize,
+                            item.manufacturer,
+                          ]
                             .filter(Boolean)
                             .join(" • ")}
                         </p>
-                        <p className="mt-2 text-xs font-bold text-[#216474]">
-                          {item.reason}
-                        </p>
+                        <div className="mt-3 flex flex-wrap gap-1.5">
+                          {[
+                            [item.activeIngredientMatches, t("المادة الفعالة مطابقة")],
+                            [item.strengthMatches, t("العيار مطابق")],
+                            [item.dosageFormMatches, t("الشكل الدوائي مطابق")],
+                          ]
+                            .filter(([matched]) => matched === true)
+                            .map(([, text]) => (
+                              <span
+                                key={text}
+                                className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-black text-emerald-700"
+                              >
+                                <CheckCircle2 size={12} />
+                                {text}
+                              </span>
+                            ))}
+                        </div>
                       </div>
                     </div>
                   </article>
@@ -116,6 +173,7 @@ export function MedicineAlternativesButton({
                 "هذه اقتراحات مساعدة فقط. لا يتم استبدال الدواء أو تغيير الجرعة إلا بعد مراجعة صيدلي أو طبيب مختص.",
               )}
             </p>
+            </div>
           </div>
         </div>
       )}

@@ -1,5 +1,44 @@
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap");
 @import "tailwindcss";
+
+@font-face {
+  font-family: "Tajawal";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/assets/app/fonts/Tajawal-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Tajawal";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/assets/app/fonts/Tajawal-Medium.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Tajawal";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/assets/app/fonts/Tajawal-Bold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Tajawal";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("/assets/app/fonts/Tajawal-ExtraBold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Tajawal";
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("/assets/app/fonts/Tajawal-Black.ttf") format("truetype");
+}
 
 .dashboard-nav-scroll {
   scrollbar-gutter: stable;
@@ -41,7 +80,12 @@
 }
 
 :root {
-  font-family: "IBM Plex Sans Arabic", system-ui, sans-serif;
+  --dawaai-brand: #174b57;
+  --dawaai-brand-strong: #103c46;
+  --dawaai-accent: #f5cb72;
+  --dawaai-canvas: #f4f8f8;
+  --dawaai-text: #142e35;
+  font-family: "Tajawal", system-ui, sans-serif;
   color: #142e35;
   background: #f7faf9;
   font-synthesis: none;
@@ -58,7 +102,7 @@ input,
 textarea,
 select,
 option {
-  font-family: "IBM Plex Sans Arabic", system-ui, sans-serif;
+  font-family: "Tajawal", system-ui, sans-serif;
 }
 * {
   box-sizing: border-box;
@@ -70,7 +114,34 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background: #f7faf9;
+  background:
+    radial-gradient(circle at 10% -10%, rgb(139 208 203 / 12%), transparent 30rem),
+    #f7faf9;
+}
+
+.dashboard-page-enter {
+  animation: dashboard-page-in 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes dashboard-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .dashboard-page-enter {
+    animation: none;
+  }
 }
 .dashboard-sidebar {
   right: 0;
@@ -360,6 +431,31 @@ button {
   background: #216474;
   transform: translateY(-2px);
   box-shadow: 0 14px 30px rgb(23 75 87 / 22%);
+}
+
+.page-header-actions .btn-primary {
+  background: #f5cb72;
+  color: #17363e;
+  box-shadow: 0 12px 28px rgb(5 32 38 / 20%);
+}
+
+.page-header-actions .btn-primary:hover {
+  background: #ffda8b;
+  box-shadow: 0 16px 32px rgb(5 32 38 / 26%);
+}
+
+.page-header-actions .btn-secondary,
+.page-header-actions .btn-quiet {
+  border-color: rgb(255 255 255 / 18%);
+  background: rgb(255 255 255 / 10%);
+  color: #fff;
+  backdrop-filter: blur(10px);
+}
+
+.page-header-actions .btn-secondary:hover,
+.page-header-actions .btn-quiet:hover {
+  border-color: rgb(255 255 255 / 28%);
+  background: rgb(255 255 255 / 16%);
 }
 .btn-secondary {
   display: inline-flex;

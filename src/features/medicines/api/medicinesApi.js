@@ -24,3 +24,19 @@ export async function getMedicine(id) {
 export async function createMedicine(payload) {
   return (await apiClient.post("/Medicines", payload)).data;
 }
+
+export async function updateMedicineLocalization(id, payload) {
+  return (await apiClient.put(`/Medicines/${id}/localization`, payload)).data;
+}
+
+export async function importSyrianMedicineCatalog(file, dryRun = true) {
+  const form = new FormData();
+  form.append("File", file, file.name);
+
+  return (
+    await apiClient.post("/Medicines/import/syrian-catalog", form, {
+      params: { dryRun },
+      timeout: 120_000,
+    })
+  ).data;
+}

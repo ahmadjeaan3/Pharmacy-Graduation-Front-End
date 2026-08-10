@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { Brand } from "../../../shared/components/Brand";
 import { LanguageSwitcher } from "../../../shared/components/LanguageSwitcher";
 import { apiClient } from "../../../shared/api/client";
 import {
@@ -55,7 +56,6 @@ function CountUpStatistic({ value, loading, locale }) {
 }
 
 const ASSETS = {
-  logo: "/assets/app/brand/logo.png",
   hero: "/assets/app/home/hero.png",
   servicesPhoto: "/assets/app/auth/servicesPhoto.png",
   security: "/assets/app/home/security.png",
@@ -292,19 +292,8 @@ function ImageIcon({ src, alt = "", className = "h-6 w-6" }) {
   return <img src={src} alt={alt} className={`${className} object-contain`} />;
 }
 
-function Logo() {
-  return (
-    <Link
-      to="/"
-      className="flex h-[59.79px] w-[62px] shrink-0 items-center justify-center"
-    >
-      <img
-        src={ASSETS.logo}
-        alt="Medical Life"
-        className="h-[55px] w-[55px] object-contain"
-      />
-    </Link>
-  );
+function Logo({ responsive = false }) {
+  return <Brand responsive={responsive} />;
 }
 
 function SectionHeading({ label, title, text }) {
@@ -450,7 +439,7 @@ export function LandingPage() {
         {
           id: "platform-welcome",
           type: "Announcement",
-          title: t("حياة دوائية"),
+          title: t("دوائي"),
           message: t("دواؤك أقرب مما تتوقع — ابحث، احجز وتوجه إلى الصيدلية بثقة."),
         },
       ];
@@ -904,7 +893,7 @@ export function LandingPage() {
             </a>
           </nav>
 
-          <Logo />
+          <Logo responsive />
         </div>
 
         <span

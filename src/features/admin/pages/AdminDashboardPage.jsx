@@ -24,6 +24,7 @@ import {
 } from "../../../shared/components/AsyncStates";
 import { formatDate, formatRequestStatus } from "../utils/adminFormatters";
 import { useTranslation } from "react-i18next";
+import { AiServicesHealthPanel } from "../components/AiServicesHealthPanel";
 
 export function AdminDashboardPage() {
   const { t, i18n } = useTranslation();
@@ -183,7 +184,7 @@ export function AdminDashboardPage() {
               مركز إدارة المنصة
             </p>
             <h2 className="mt-2 text-3xl font-black">
-              نظرة عامة على حياة دوائية
+              نظرة عامة على دوائي
             </h2>
             <p className="mt-3 max-w-2xl leading-7 text-white/60">
               إحصاءات النشاط والطلبات خلال {activePeriodLabel}، مع عرض حالة
@@ -222,6 +223,8 @@ export function AdminDashboardPage() {
           </div>
         </div>
       </Motion.section>
+
+      <AiServicesHealthPanel />
 
       <section
         className={`grid gap-4 transition sm:grid-cols-2 xl:grid-cols-4 ${

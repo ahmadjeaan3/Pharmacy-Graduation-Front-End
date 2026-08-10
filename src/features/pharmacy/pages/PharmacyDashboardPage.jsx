@@ -107,6 +107,7 @@ export function PharmacyDashboardPage() {
   ];
 
   const alerts = [
+    ...(data.expiredItems || []),
     ...(data.lowStockItems || []),
     ...(data.expiringSoonItems || []),
   ].slice(0, 6);
@@ -258,8 +259,9 @@ export function PharmacyDashboardPage() {
           icon={CalendarClock}
           value={data.expiringSoonCount}
           label={t("قريبة الانتهاء")}
-          hint={t("{{count}} أصناف غير متوفرة", {
-            count: formatNumber(data.outOfStockCount),
+          hint={t("{{out}} نافد و{{expired}} منتهي الصلاحية", {
+            out: formatNumber(data.outOfStockCount),
+            expired: formatNumber(data.expiredCount || 0),
           })}
           tone="danger"
           isArabic={isArabic}
@@ -293,6 +295,7 @@ export function PharmacyDashboardPage() {
             {alerts.length ? (
               alerts.map((item) => {
                 const isExpiring = item.alertType === "ExpiringSoon";
+                const isExpired = item.alertType === "Expired";
 
                 return (
                   <div
@@ -301,7 +304,9 @@ export function PharmacyDashboardPage() {
                   >
                     <span
                       className={`grid size-10 shrink-0 place-items-center rounded-xl ${
-                        isExpiring
+                        isExpired
+                          ? "bg-slate-100 text-slate-700"
+                          : isExpiring
                           ? "bg-[#FFF1F2] text-[#E11D48]"
                           : "bg-[#FFF7DF] text-[#DFAE0D]"
                       }`}
@@ -317,7 +322,9 @@ export function PharmacyDashboardPage() {
                       </p>
 
                       <p className="mt-1 text-xs leading-5 text-[#829499]">
-                        {isExpiring
+                        {isExpired
+                          ? t("انتهت صلاحية هذا الصنف ويجب عزله عن الطلبات")
+                          : isExpiring
                           ? t("متبقي {{count}} يومًا على الانتهاء", {
                               count: formatNumber(item.daysUntilExpiry),
                             })
