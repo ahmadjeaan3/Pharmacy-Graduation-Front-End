@@ -43,7 +43,9 @@ export function MedicineRequestsPage() {
       <UserPageHeader
         eyebrow={t("متابعة واضحة")}
         title={t("حجوزات الأدوية")}
-        description={t("تابع رحلة الدواء من الحجز والتجهيز حتى الاستلام من الصيدلية.")}
+        description={t(
+          "تابع رحلة الدواء من الحجز والتجهيز حتى الاستلام من الصيدلية.",
+        )}
         icon={ClipboardList}
         action={
           <Link

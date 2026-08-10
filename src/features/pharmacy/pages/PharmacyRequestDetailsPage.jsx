@@ -67,7 +67,8 @@ export function PharmacyRequestDetailsPage() {
         client.invalidateQueries({ queryKey: pharmacyKeys.dashboard }),
       ]);
     },
-    onError: (error) => setNotice({ ok: false, text: getApiErrorMessage(error) }),
+    onError: (error) =>
+      setNotice({ ok: false, text: getApiErrorMessage(error) }),
   });
   if (query.isLoading)
     return <PharmacyLoadingState label="جاري فتح الطلب..." />;
@@ -124,7 +125,9 @@ export function PharmacyRequestDetailsPage() {
                   <Pill size={25} />
                 </span>
                 <div>
-                  <h2 className="break-words text-xl font-black sm:text-2xl">{data.medicineName}</h2>
+                  <h2 className="break-words text-xl font-black sm:text-2xl">
+                    {data.medicineName}
+                  </h2>
                   <p className="mt-2 text-sm text-white/55">
                     الكمية المطلوبة: {formatNumber(data.requestedQuantity)}
                   </p>
@@ -146,10 +149,7 @@ export function PharmacyRequestDetailsPage() {
                 label="تاريخ الطلب"
                 value={formatDate(data.createdAtUtc, true, i18n.language)}
               />
-              <Info
-                label="حالة مخزونك"
-                value={t("محجوز لهذا الطلب")}
-              />
+              <Info label="حالة مخزونك" value={t("محجوز لهذا الطلب")} />
             </div>
             {data.note && (
               <div className="mx-6 mb-6 rounded-2xl bg-[#f7faf9] p-4">
@@ -203,7 +203,9 @@ export function PharmacyRequestDetailsPage() {
               <div className="grid gap-3">
                 <div className="rounded-2xl border border-emerald-300 bg-emerald-50 p-4 text-center text-emerald-700">
                   <CheckCircle2 className="mx-auto" />
-                  <strong className="mt-2 block text-sm">{t("الكمية محجوزة من المخزون")}</strong>
+                  <strong className="mt-2 block text-sm">
+                    {t("الكمية محجوزة من المخزون")}
+                  </strong>
                 </div>
               </div>
               <label className="mt-5 block">
@@ -226,7 +228,9 @@ export function PharmacyRequestDetailsPage() {
                 className="btn-primary mt-5 w-full justify-center"
               >
                 <Send size={17} />
-                {response.isPending ? t("جاري التأكيد...") : t("تأكيد الجاهزية للاستلام")}
+                {response.isPending
+                  ? t("جاري التأكيد...")
+                  : t("تأكيد الجاهزية للاستلام")}
               </button>
             </form>
           ) : (
@@ -252,7 +256,9 @@ export function PharmacyRequestDetailsPage() {
                   className="btn-primary mt-5 w-full justify-center"
                 >
                   <CheckCircle2 size={17} />
-                  {pickup.isPending ? t("جاري التأكيد...") : t("تأكيد أن المريض استلم الدواء")}
+                  {pickup.isPending
+                    ? t("جاري التأكيد...")
+                    : t("تأكيد أن المريض استلم الدواء")}
                 </button>
               )}
             </div>

@@ -157,6 +157,23 @@ const resources = {
       التوفر: "Availability",
       "نبض المنصة": "Platform pulse",
       "تحديثات مباشرة": "Live updates",
+      "البحث ضمن صفحات لوحة التحكم": "Search dashboard pages",
+      "فتح الصفحة المطابقة": "Open matching page",
+      "استعادة كلمة المرور": "Recover password",
+      "أدخل بريد حسابك لنرسل رمز إعادة التعيين.":
+        "Enter your account email to receive a reset code.",
+      "أدخل الرمز ثم اختر كلمة مرور قوية وجديدة.":
+        "Enter the code, then choose a strong new password.",
+      "تم تحديث كلمة المرور بنجاح، ويمكنك تسجيل الدخول الآن.":
+        "Your password was updated successfully. You can now sign in.",
+      "العودة إلى تسجيل الدخول": "Back to sign in",
+      "رمز إعادة التعيين": "Reset code",
+      "رمز بيئة التطوير تم تعبئته تلقائيًا. في الإنتاج يصل الرمز عبر خدمة البريد.":
+        "The development code was filled automatically. In production, it is delivered by email.",
+      "كلمة المرور الجديدة": "New password",
+      "تأكيد كلمة المرور": "Confirm password",
+      "إرسال الرمز": "Send code",
+      "حفظ كلمة المرور الجديدة": "Save new password",
       "دواؤك أقرب مما تتوقع — ابحث، احجز وتوجه إلى الصيدلية بثقة.":
         "Your medicine is closer than you think — search, reserve, and visit the pharmacy with confidence.",
     },
@@ -228,6 +245,23 @@ const resources = {
       التوفر: "Mevcudiyet",
       "نبض المنصة": "Platform gündemi",
       "تحديثات مباشرة": "Canlı güncellemeler",
+      "البحث ضمن صفحات لوحة التحكم": "Kontrol paneli sayfalarında ara",
+      "فتح الصفحة المطابقة": "Eşleşen sayfayı aç",
+      "استعادة كلمة المرور": "Şifre kurtarma",
+      "أدخل بريد حسابك لنرسل رمز إعادة التعيين.":
+        "Sıfırlama kodunu göndermemiz için hesap e-postanızı girin.",
+      "أدخل الرمز ثم اختر كلمة مرور قوية وجديدة.":
+        "Kodu girin ve ardından güçlü, yeni bir şifre seçin.",
+      "تم تحديث كلمة المرور بنجاح، ويمكنك تسجيل الدخول الآن.":
+        "Şifreniz başarıyla güncellendi. Artık giriş yapabilirsiniz.",
+      "العودة إلى تسجيل الدخول": "Girişe dön",
+      "رمز إعادة التعيين": "Sıfırlama kodu",
+      "رمز بيئة التطوير تم تعبئته تلقائيًا. في الإنتاج يصل الرمز عبر خدمة البريد.":
+        "Geliştirme kodu otomatik dolduruldu. Üretimde kod e-posta ile gönderilir.",
+      "كلمة المرور الجديدة": "Yeni şifre",
+      "تأكيد كلمة المرور": "Şifreyi doğrula",
+      "إرسال الرمز": "Kodu gönder",
+      "حفظ كلمة المرور الجديدة": "Yeni şifreyi kaydet",
       "دواؤك أقرب مما تتوقع — ابحث، احجز وتوجه إلى الصيدلية بثقة.":
         "İlacınız düşündüğünüzden daha yakın — arayın, ayırtın ve eczaneye güvenle gidin.",
     },

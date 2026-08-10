@@ -41,8 +41,10 @@ export function NotificationBell({ unreadCount = 0, roles = [] }) {
       }),
 
     enabled: open,
-
-    staleTime: 15000,
+    staleTime: 10000,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
   });
 
   const refresh = async () => {

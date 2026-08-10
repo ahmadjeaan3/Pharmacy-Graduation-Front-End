@@ -2,11 +2,19 @@ import { useMutation } from "@tanstack/react-query";
 import { ArrowRight, KeyRound, Mail } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { getApiErrorMessage } from "../../../shared/api/errors";
+import {
+  getLanguageDirection,
+  normalizeLanguage,
+} from "../../../shared/i18n/i18n";
 import { forgotPassword, resetPassword } from "../api/authApi";
 
 export function PasswordRecoveryPage() {
+  const { t, i18n } = useTranslation();
+  const language = normalizeLanguage(i18n.resolvedLanguage || i18n.language);
+  const direction = getLanguageDirection(language);
   const [step, setStep] = useState("request");
   const [form, setForm] = useState({
     email: "",
@@ -37,7 +45,8 @@ export function PasswordRecoveryPage() {
 
   return (
     <main
-      dir="rtl"
+      dir={direction}
+      lang={language}
       className="grid min-h-screen place-items-center bg-[#F5F8F7] px-4 py-10"
     >
       <section className="w-full max-w-lg rounded-3xl border border-[#DCE8EA] bg-white p-6 shadow-[0_24px_70px_rgba(23,75,87,.12)] sm:p-9">
@@ -45,18 +54,22 @@ export function PasswordRecoveryPage() {
           <KeyRound size={27} />
         </span>
         <h1 className="mt-5 text-2xl font-black text-[#174B57]">
-          استعادة كلمة المرور
+          {t("استعادة كلمة المرور")}
         </h1>
         <p className="mt-2 text-sm leading-7 text-[#71858A]">
-          {step === "request" && "أدخل بريد حسابك لنرسل رمز إعادة التعيين."}
-          {step === "reset" && "أدخل الرمز ثم اختر كلمة مرور قوية وجديدة."}
+          {step === "request" && t("أدخل بريد حسابك لنرسل رمز إعادة التعيين.")}
+          {step === "reset" && t("أدخل الرمز ثم اختر كلمة مرور قوية وجديدة.")}
           {step === "done" &&
-            "تم تحديث كلمة المرور بنجاح، ويمكنك تسجيل الدخول الآن."}
+            t("تم تحديث كلمة المرور بنجاح، ويمكنك تسجيل الدخول الآن.")}
         </p>
 
         {step === "done" ? (
           <Link to="/login" className="btn-primary mt-7 w-full justify-center">
-            العودة إلى تسجيل الدخول <ArrowRight size={17} />
+            {t("العودة إلى تسجيل الدخول")}{" "}
+            <ArrowRight
+              size={17}
+              className={direction === "ltr" ? "rotate-180" : ""}
+            />
           </Link>
         ) : (
           <form
@@ -67,7 +80,7 @@ export function PasswordRecoveryPage() {
               else resetMutation.mutate();
             }}
           >
-            <RecoveryField label="البريد الإلكتروني" icon={Mail}>
+            <RecoveryField label={t("البريد الإلكتروني")} icon={Mail}>
               <input
                 type="email"
                 required
@@ -80,7 +93,7 @@ export function PasswordRecoveryPage() {
             </RecoveryField>
             {step === "reset" && (
               <>
-                <RecoveryField label="رمز إعادة التعيين" icon={KeyRound}>
+                <RecoveryField label={t("رمز إعادة التعيين")} icon={KeyRound}>
                   <input
                     required
                     value={form.token}
@@ -90,11 +103,12 @@ export function PasswordRecoveryPage() {
                 </RecoveryField>
                 {developmentToken && (
                   <p className="rounded-xl bg-amber-50 p-3 text-xs text-amber-800">
-                    رمز بيئة التطوير تم تعبئته تلقائيًا. في الإنتاج يصل الرمز
-                    عبر خدمة البريد.
+                    {t(
+                      "رمز بيئة التطوير تم تعبئته تلقائيًا. في الإنتاج يصل الرمز عبر خدمة البريد.",
+                    )}
                   </p>
                 )}
-                <RecoveryField label="كلمة المرور الجديدة" icon={KeyRound}>
+                <RecoveryField label={t("كلمة المرور الجديدة")} icon={KeyRound}>
                   <input
                     type="password"
                     required
@@ -105,7 +119,7 @@ export function PasswordRecoveryPage() {
                     className="w-full bg-transparent outline-none"
                   />
                 </RecoveryField>
-                <RecoveryField label="تأكيد كلمة المرور" icon={KeyRound}>
+                <RecoveryField label={t("تأكيد كلمة المرور")} icon={KeyRound}>
                   <input
                     type="password"
                     required
@@ -132,7 +146,9 @@ export function PasswordRecoveryPage() {
               disabled={requestMutation.isPending || resetMutation.isPending}
               className="btn-primary w-full justify-center disabled:opacity-60"
             >
-              {step === "request" ? "إرسال الرمز" : "حفظ كلمة المرور الجديدة"}
+              {step === "request"
+                ? t("إرسال الرمز")
+                : t("حفظ كلمة المرور الجديدة")}
             </button>
           </form>
         )}
@@ -141,7 +157,7 @@ export function PasswordRecoveryPage() {
             to="/login"
             className="mt-5 block text-center text-sm font-bold text-[#216474]"
           >
-            العودة إلى تسجيل الدخول
+            {t("العودة إلى تسجيل الدخول")}
           </Link>
         )}
       </section>

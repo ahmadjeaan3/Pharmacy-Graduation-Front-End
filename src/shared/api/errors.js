@@ -49,6 +49,14 @@ function translateServerMessage(message) {
     return "كلمة المرور لا تحقق متطلبات الأمان المطلوبة.";
   if (normalized.includes("latitude and longitude"))
     return "يجب إرسال خط العرض وخط الطول معاً.";
+  if (normalized.includes("emergency contact phone number is invalid"))
+    return "رقم هاتف جهة اتصال الطوارئ غير صالح.";
+  if (
+    normalized.includes(
+      "emergency contact name and phone number must be provided together",
+    )
+  )
+    return "يجب إدخال اسم جهة اتصال الطوارئ ورقم هاتفها معًا.";
   if (normalized.includes("organization has no verification documents"))
     return "لا تحتوي المنظمة على مستندات تحقق قابلة للمراجعة.";
   if (normalized.includes("manual review note of at least 10 characters"))

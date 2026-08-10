@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import {
   getPrimaryRole,
@@ -272,6 +272,8 @@ export function DashboardLayout() {
   const { user, signOut } = useAuth();
 
   const location = useLocation();
+  const navigate = useNavigate();
+  const [globalSearch, setGlobalSearch] = useState("");
 
   const currentLanguage = normalizeLanguage(
     i18n.resolvedLanguage || i18n.language || "ar",
@@ -303,6 +305,30 @@ export function DashboardLayout() {
     ...sharedItems.slice(1),
   ];
 
+  const searchableNavigation = navItems
+    .filter((item) => item?.to && item?.label)
+    .map((item) => ({
+      ...item,
+      translatedLabel: String(t(item.label)),
+    }));
+
+  const submitGlobalSearch = (event) => {
+    event.preventDefault();
+    const term = globalSearch.trim().toLocaleLowerCase(currentLanguage);
+    if (!term) return;
+
+    const match = searchableNavigation.find(({ label, translatedLabel }) =>
+      `${label} ${translatedLabel}`
+        .toLocaleLowerCase(currentLanguage)
+        .includes(term),
+    );
+
+    if (match) {
+      navigate(match.to);
+      setGlobalSearch("");
+    }
+  };
+
   const currentPageTitle = getDashboardPageTitle(location.pathname);
 
   const unreadQuery = useQuery({
@@ -310,6 +336,8 @@ export function DashboardLayout() {
     queryFn: getUnreadNotificationCount,
     refetchInterval: 30000,
     refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
+    staleTime: 10000,
   });
 
   const unreadCount = unreadQuery.data?.unreadCount || 0;
@@ -345,9 +373,22 @@ export function DashboardLayout() {
           className="pointer-events-none absolute -end-12 -top-16 size-48 rounded-full bg-cyan-300/30 blur-[120px]"
         />
 
-        <div className="dashboard-nav-scroll relative z-10 min-h-0 flex-1 overflow-y-auto overflow-x-hidden pb-4 pe-1">
-          <div className="flex min-h-[58px] w-full items-center justify-center px-3">
-            <Brand light to="/app" />
+        <div className="relative z-10 min-h-0 flex-1 overflow-y-auto overflow-x-hidden pb-4 no-scrollbar">
+          <div
+            className={`flex items-center ${
+              isArabic
+                ? "mx-auto h-[52px] w-[242px] justify-center"
+                : "h-[68px] w-full justify-start pl-3"
+            }`}
+          >
+            <img
+              src={dashboardLogo}
+              alt="Medical Life"
+              draggable={false}
+              className={`select-none object-contain ${
+                isArabic ? "h-[52px] w-[242px]" : "h-[68px] w-[300px] mr-10"
+              }`}
+            />
           </div>
           <div className="mx-auto mt-2 h-px w-[233px] bg-white/15" />
 
@@ -479,6 +520,23 @@ export function DashboardLayout() {
                 }`}
               />
             </div>
+
+            <label
+              dir="ltr"
+              className="hidden h-11 w-full max-w-[553px] items-center justify-self-center gap-2 rounded-lg border border-[rgba(102,102,102,.16)] bg-white px-3 text-[#a5a5a5] xl:flex"
+            >
+              <input
+                type="search"
+                dir={direction}
+                placeholder={t("ابحث هنا")}
+                aria-label={t("ابحث هنا...")}
+                className={`min-w-0 flex-1 border-0 bg-transparent text-xs text-[#333333] outline-none placeholder:text-[#a5a5a5] ${
+                  isArabic ? "text-right" : "text-left"
+                }`}
+              />
+
+              <Search size={18} strokeWidth={1.6} className="shrink-0" />
+            </label>
 
             <div className="flex items-center justify-end">
               <NotificationBell

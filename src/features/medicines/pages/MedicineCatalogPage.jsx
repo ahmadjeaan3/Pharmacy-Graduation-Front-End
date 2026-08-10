@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { getApiErrorMessage } from "../../../shared/api/errors";
 import {
   DashboardEmptyState as AdminEmptyState,
@@ -29,6 +30,7 @@ import {
 } from "../utils/medicineFormatters";
 
 export function MedicineCatalogPage() {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [queryTerm, setQueryTerm] = useState("");
   const [pageNumber, setPageNumber] = useState(1);
@@ -50,19 +52,15 @@ export function MedicineCatalogPage() {
   return (
     <div>
       <MedicinePageHeader
-        title="دليل الأدوية"
-        description="إدارة المرجع الأساسي للأدوية الذي تعتمد عليه الصيدليات والطلبات والمبادرات داخل المنصة."
+        title={t("دليل الأدوية")}
+        description={t(
+          "إدارة المرجع الأساسي للأدوية الذي تعتمد عليه الصيدليات والطلبات والمبادرات داخل المنصة.",
+        )}
         actions={
-          <div className="flex flex-wrap gap-2">
-            <button className="btn-secondary" onClick={() => setImportOpen(true)}>
-              <FileSpreadsheet size={17} />
-              استيراد الدليل السوري
-            </button>
-            <Link to="/app/medicines/new" className="btn-primary">
-              <Plus size={17} />
-              إضافة دواء جديد
-            </Link>
-          </div>
+          <Link to="/app/medicines/new" className="btn-primary">
+            <Plus size={17} />
+            إضافة دواء جديد
+          </Link>
         }
       />
       <section className="surface mb-5 flex flex-col gap-4 p-4 lg:flex-row lg:items-center">
@@ -75,19 +73,20 @@ export function MedicineCatalogPage() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             maxLength={200}
-            placeholder="ابحث بالاسم التجاري أو العلمي أو الشركة المصنعة"
+            placeholder={t("ابحث بالاسم التجاري أو العلمي أو الشركة المصنعة")}
+            aria-label={t("البحث في دليل الأدوية")}
           />
         </div>
         <div className="flex items-center gap-3 rounded-2xl bg-[#f3f8f7] px-4 py-3 text-sm">
           <PackageOpen size={18} className="text-[#216474]" />
-          <span className="text-[#71858a]">إجمالي الأدوية</span>
+          <span className="text-[#71858a]">{t("إجمالي الأدوية")}</span>
           <strong className="text-[#17363e]">
             {formatMedicineNumber(data?.totalCount)}
           </strong>
         </div>
       </section>
       {query.isLoading ? (
-        <AdminLoadingState label="جاري تحميل دليل الأدوية..." />
+        <AdminLoadingState label={t("جاري تحميل دليل الأدوية...")} />
       ) : query.isError ? (
         <AdminErrorState
           message={getApiErrorMessage(query.error)}
@@ -95,11 +94,13 @@ export function MedicineCatalogPage() {
         />
       ) : !data?.items?.length ? (
         <AdminEmptyState
-          title="لا توجد أدوية مطابقة"
+          title={t("لا توجد أدوية مطابقة")}
           description={
             queryTerm
-              ? "غيّر عبارة البحث أو أضف الدواء إلى الدليل إذا لم يكن مسجلاً."
-              : "ابدأ بإضافة أول دواء إلى الدليل المركزي."
+              ? t(
+                  "غيّر عبارة البحث أو أضف الدواء إلى الدليل إذا لم يكن مسجلاً.",
+                )
+              : t("ابدأ بإضافة أول دواء إلى الدليل المركزي.")
           }
         />
       ) : (

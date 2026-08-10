@@ -1,4 +1,5 @@
 import { ArrowLeft, Check, Clock3 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import {
   getNotificationMeta,
   displayNotificationMessage,
@@ -13,6 +14,7 @@ export function NotificationItem({
   onOpen,
   pending,
 }) {
+  const { i18n } = useTranslation();
   const meta = getNotificationMeta(notification.type);
   const Icon = meta.icon;
   return (
@@ -50,7 +52,10 @@ export function NotificationItem({
         <div className="mt-3 flex flex-wrap items-center gap-3">
           <span className="flex items-center gap-1 text-[11px] text-[#91a1a5]">
             <Clock3 size={12} />
-            {formatNotificationDate(notification.createdAtUtc)}
+            {formatNotificationDate(
+              notification.createdAtUtc,
+              i18n.resolvedLanguage || i18n.language,
+            )}
           </span>
           <span
             className={`rounded-full px-2 py-1 text-[10px] font-bold ${meta.tone}`}
