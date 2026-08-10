@@ -15,10 +15,12 @@ import {
   RotateCcw,
   Save,
   ShieldCheck,
+  Sparkles,
   UserRound,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   getHealthCard,
   getMedicalProfile,
@@ -82,6 +84,18 @@ export function HealthProfilePage() {
         title="الملف الصحي"
         description="احتفظ بالمعلومات التي قد تساعدك في طلب الدواء والتواصل عند الحاجة."
         icon={HeartPulse}
+        action={
+          <div className="flex flex-wrap gap-2">
+            <Link to="/app/search" className="btn-secondary">
+              <Pill size={16} />
+              البحث عن دواء
+            </Link>
+            <Link to="/app/prescriptions" className="btn-secondary">
+              <ClipboardCheck size={16} />
+              الوصفة الذكية
+            </Link>
+          </div>
+        }
       />
       <section className="rounded-[1.5rem] border border-[#174b57]/8 bg-white p-2">
         <div className="grid grid-cols-2 gap-2">
@@ -127,6 +141,13 @@ function MedicalProfileForm({ profile, medical }) {
   const createForm = (data) => ({
     ...emptyForm,
     ...data,
+    allergies: Array.isArray(data?.allergies) ? data.allergies : [],
+    chronicConditions: Array.isArray(data?.chronicConditions)
+      ? data.chronicConditions
+      : [],
+    currentMedications: Array.isArray(data?.currentMedications)
+      ? data.currentMedications
+      : [],
     dateOfBirth: data.dateOfBirth || "",
     emergencyContactName: data.emergencyContactName || "",
     emergencyContactPhoneNumber: data.emergencyContactPhoneNumber || "",
@@ -135,6 +156,15 @@ function MedicalProfileForm({ profile, medical }) {
   const [form, setForm] = useState(() => createForm(medical));
   const [savedForm, setSavedForm] = useState(() => createForm(medical));
   const isDirty = JSON.stringify(form) !== JSON.stringify(savedForm);
+  const validationError = useMemo(() => {
+    const contactName = form.emergencyContactName.trim();
+    const contactPhone = form.emergencyContactPhoneNumber.trim();
+    if ((contactName && !contactPhone) || (!contactName && contactPhone))
+      return "أدخل اسم جهة اتصال الطوارئ ورقم هاتفها معًا، أو اترك الحقلين فارغين.";
+    if (contactPhone && !/^\+?[0-9\s()-]{7,30}$/.test(contactPhone))
+      return "رقم هاتف الطوارئ غير صالح. استخدم أرقامًا ورمز الدولة عند الحاجة.";
+    return "";
+  }, [form.emergencyContactName, form.emergencyContactPhoneNumber]);
   const completedFields = [
     form.dateOfBirth,
     form.bloodType,
@@ -145,6 +175,39 @@ function MedicalProfileForm({ profile, medical }) {
     form.emergencyContactPhoneNumber,
   ].filter(Boolean).length;
   const completion = Math.round((completedFields / 7) * 100);
+  const missingFields = useMemo(
+    () =>
+      [
+        ["date-of-birth", "تاريخ الميلاد", !form.dateOfBirth],
+        ["blood-type", "فصيلة الدم", !form.bloodType],
+        ["allergies", "الحساسيات أو تأكيد عدم وجودها", !form.allergies.length],
+        [
+          "chronic-conditions",
+          "الحالات المزمنة أو تأكيد عدم وجودها",
+          !form.chronicConditions.length,
+        ],
+        [
+          "current-medications",
+          "الأدوية الحالية أو تأكيد عدم استخدامها",
+          !form.currentMedications.length,
+        ],
+        [
+          "emergency-contact",
+          "جهة اتصال الطوارئ",
+          !form.emergencyContactName || !form.emergencyContactPhoneNumber,
+        ],
+      ].filter(([, , missing]) => missing),
+    [form],
+  );
+  useEffect(() => {
+    const warnBeforeLeaving = (event) => {
+      if (!isDirty) return;
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", warnBeforeLeaving);
+    return () => window.removeEventListener("beforeunload", warnBeforeLeaving);
+  }, [isDirty]);
   const mutation = useMutation({
     mutationFn: updateMedicalProfile,
     onSuccess: (data) => {
@@ -158,6 +221,7 @@ function MedicalProfileForm({ profile, medical }) {
   });
   const submit = (event) => {
     event.preventDefault();
+    if (validationError) return;
     mutation.mutate({
       ...form,
       dateOfBirth: form.dateOfBirth || null,
@@ -170,8 +234,12 @@ function MedicalProfileForm({ profile, medical }) {
   };
   return (
     <form onSubmit={submit} className="space-y-5">
-      <ProfileInsights form={form} completion={completion} />
-      <section className="grid gap-5 lg:grid-cols-[.8fr_1.2fr]">
+      <ProfileInsights
+        form={form}
+        completion={completion}
+        missingFields={missingFields}
+      />
+      <section className="grid gap-5 xl:grid-cols-[minmax(300px,.78fr)_minmax(0,1.22fr)]">
         <div className="rounded-[1.4rem] border border-[#174b57]/8 bg-white p-6">
           <div className="flex items-center gap-3">
             <span className="grid size-11 place-items-center rounded-xl bg-[#eaf4f3] text-[#216474]">
@@ -186,7 +254,7 @@ function MedicalProfileForm({ profile, medical }) {
               </p>
             </div>
           </div>
-          <label className="mt-6 block">
+          <label id="date-of-birth" className="mt-6 block scroll-mt-24">
             <span className="form-label">تاريخ الميلاد</span>
             <input
               type="date"
@@ -198,7 +266,7 @@ function MedicalProfileForm({ profile, medical }) {
               className="form-input"
             />
           </label>
-          <label className="mt-4 block">
+          <label id="blood-type" className="mt-4 block scroll-mt-24">
             <span className="form-label">فصيلة الدم</span>
             <select
               value={form.bloodType || ""}
@@ -246,6 +314,7 @@ function MedicalProfileForm({ profile, medical }) {
           </div>
           <div className="mt-6 space-y-5">
             <TagsField
+              id="allergies"
               label="الحساسيات"
               placeholder="مثال: حساسية البنسلين"
               values={form.allergies}
@@ -254,6 +323,7 @@ function MedicalProfileForm({ profile, medical }) {
               onChange={(values) => setForm({ ...form, allergies: values })}
             />
             <TagsField
+              id="chronic-conditions"
               label="الحالات المزمنة"
               placeholder="مثال: السكري"
               values={form.chronicConditions}
@@ -264,6 +334,7 @@ function MedicalProfileForm({ profile, medical }) {
               }
             />
             <TagsField
+              id="current-medications"
               label="الأدوية المستخدمة حالياً"
               placeholder="اكتب اسم الدواء"
               values={form.currentMedications}
@@ -276,7 +347,10 @@ function MedicalProfileForm({ profile, medical }) {
           </div>
         </div>
       </section>
-      <section className="rounded-[1.4rem] border border-[#174b57]/8 bg-white p-6">
+      <section
+        id="emergency-contact"
+        className="scroll-mt-24 rounded-[1.4rem] border border-[#174b57]/8 bg-white p-5 sm:p-6"
+      >
         <div className="flex items-center gap-3">
           <span className="grid size-11 place-items-center rounded-xl bg-amber-50 text-amber-700">
             <Phone size={20} />
@@ -332,6 +406,11 @@ function MedicalProfileForm({ profile, medical }) {
             placeholder="أي معلومات مهمة تريد إظهارها في البطاقة الصحية"
           />
         </label>
+        <div className="mt-4 flex items-start gap-3 rounded-2xl bg-[#f3f8f7] p-4 text-xs leading-6 text-[#60777c]">
+          <ShieldCheck className="mt-0.5 shrink-0 text-[#216474]" size={18} />
+          بياناتك الصحية خاصة بحسابك، وتُستخدم لتجهيز بطاقتك الصحية وتحسين
+          التنبيهات والخدمات التي تطلبها داخل المنصة.
+        </div>
       </section>
       <div className="sticky bottom-4 z-20 flex flex-col gap-3 rounded-2xl border border-[#174b57]/10 bg-white/95 p-3 shadow-[0_16px_45px_rgba(23,75,87,.14)] backdrop-blur sm:flex-row sm:items-center sm:justify-between">
         <div className="min-h-6">
@@ -352,11 +431,19 @@ function MedicalProfileForm({ profile, medical }) {
               {getApiErrorMessage(mutation.error)}
             </p>
           )}
+          {validationError && (
+            <p className="flex items-start gap-2 text-sm font-semibold text-rose-600">
+              <AlertTriangle className="mt-0.5 shrink-0" size={17} />
+              {validationError}
+            </p>
+          )}
         </div>
         <div className="flex w-full gap-2 sm:w-auto">
           <button
             type="button"
-            disabled={!isDirty || mutation.isPending}
+            disabled={
+              !isDirty || mutation.isPending || Boolean(validationError)
+            }
             onClick={() => setForm(savedForm)}
             className="btn-secondary flex-1 justify-center disabled:cursor-not-allowed disabled:opacity-45 sm:flex-none"
           >
@@ -377,29 +464,33 @@ function MedicalProfileForm({ profile, medical }) {
   );
 }
 
-function ProfileInsights({ form, completion }) {
+function ProfileInsights({ form, completion, missingFields }) {
   const hasSafetyData =
     form.allergies.length > 0 ||
     form.chronicConditions.length > 0 ||
     form.currentMedications.length > 0;
   return (
-    <section className="grid gap-4 lg:grid-cols-[1.2fr_.8fr]">
-      <div className="overflow-hidden rounded-[1.5rem] bg-[#174b57] p-6 text-white shadow-[0_18px_45px_rgba(23,75,87,.16)]">
+    <section className="grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(300px,.8fr)]">
+      <div className="relative isolate overflow-hidden rounded-[1.5rem] bg-[#174b57] p-5 text-white shadow-[0_18px_45px_rgba(23,75,87,.16)] sm:p-6">
+        <div className="noise absolute inset-0 -z-10" />
         <div className="flex items-start justify-between gap-5">
           <div>
             <p className="flex items-center gap-2 text-sm font-bold text-[#8bd0cb]">
               <ClipboardCheck size={18} />
               جاهزية الملف الصحي
             </p>
-            <h3 className="mt-2 text-2xl font-black">
-              ملفك مكتمل بنسبة {completion}%
+            <h3 className="mt-2 text-xl font-black sm:text-2xl">
+              ملفك مكتمل بنسبة <b dir="ltr">{completion}%</b>
             </h3>
             <p className="mt-2 max-w-xl text-sm leading-6 text-white/65">
               كل معلومة تضيفها تساعد على إبراز التحذيرات المهمة وتسهّل التصرف
               عند الحاجة.
             </p>
           </div>
-          <span className="grid size-16 shrink-0 place-items-center rounded-full border-[6px] border-[#f5cb72] text-sm font-black text-[#f5cb72]">
+          <span
+            dir="ltr"
+            className="grid size-16 shrink-0 place-items-center rounded-full border-[6px] border-[#f5cb72] text-sm font-black text-[#f5cb72]"
+          >
             {completion}%
           </span>
         </div>
@@ -416,6 +507,30 @@ function ProfileInsights({ form, completion }) {
             style={{ width: `${completion}%` }}
           />
         </div>
+        {missingFields.length > 0 && (
+          <div className="mt-5 border-t border-white/10 pt-4">
+            <p className="flex items-center gap-2 text-xs font-bold text-white/70">
+              <Sparkles size={15} className="text-[#f5cb72]" />
+              أكمل المعلومات التالية لبطاقة صحية أوضح:
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {missingFields.slice(0, 4).map(([id, label]) => (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() =>
+                    document
+                      .getElementById(id)
+                      ?.scrollIntoView({ behavior: "smooth", block: "center" })
+                  }
+                  className="rounded-full border border-white/15 bg-white/[.07] px-3 py-1.5 text-[11px] font-bold text-white/80 transition hover:bg-white/15"
+                >
+                  + {label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
       <div
         className={`rounded-[1.5rem] border p-5 ${
@@ -463,6 +578,7 @@ function ProfileInsights({ form, completion }) {
 }
 
 function TagsField({
+  id,
   label,
   placeholder,
   values,
@@ -483,7 +599,7 @@ function TagsField({
     setInput("");
   };
   return (
-    <div>
+    <div id={id} className="scroll-mt-24">
       <div className="flex items-center justify-between">
         <span className="form-label">{label}</span>
         <span className="text-[11px] text-slate-400">
@@ -626,7 +742,7 @@ function HealthCard({ card }) {
               <CardInfo
                 icon={CalendarDays}
                 label="تاريخ الميلاد"
-                value={card.dateOfBirth || "غير محدد"}
+                value={formatDate(card.dateOfBirth)}
               />
               <CardInfo
                 icon={Phone}
@@ -745,6 +861,7 @@ function CardInfo({ icon: Icon, label, value, accent }) {
   );
 }
 function CardList({ title, values, empty, tone = "primary" }) {
+  const safeValues = Array.isArray(values) ? values : [];
   const tones = {
     danger: "border-rose-100 bg-rose-50/60",
     warning: "border-amber-100 bg-amber-50/60",
@@ -753,9 +870,9 @@ function CardList({ title, values, empty, tone = "primary" }) {
   return (
     <div className={`rounded-2xl border p-4 ${tones[tone]}`}>
       <h3 className="font-extrabold text-[#29464d]">{title}</h3>
-      {values.length ? (
+      {safeValues.length ? (
         <ul className="mt-3 space-y-2">
-          {values.map((value) => (
+          {safeValues.map((value) => (
             <li
               key={value}
               className="rounded-xl bg-white/80 px-3 py-2 text-sm text-[#60777c]"

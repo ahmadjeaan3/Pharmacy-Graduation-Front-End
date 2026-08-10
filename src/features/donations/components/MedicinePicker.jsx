@@ -1,10 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { Check, LoaderCircle, Pill, Search } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { getApiErrorMessage } from "../../../shared/api/errors";
 import { getMedicines, medicineKeys } from "../../medicines/api/medicinesApi";
 
 export function MedicinePicker({ value, onChange }) {
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const [queryTerm, setQueryTerm] = useState("");
   useEffect(() => {
@@ -20,13 +22,14 @@ export function MedicinePicker({ value, onChange }) {
 
   return (
     <div>
-      <span className="form-label">الدواء</span>
+      <span className="form-label">{t("الدواء")}</span>
       <div className="field-control">
         <input
           className="form-input has-field-icon"
           value={search}
           onChange={(event) => setSearch(event.target.value)}
-          placeholder="ابحث باسم الدواء أو الاسم العلمي"
+          placeholder={t("ابحث باسم الدواء أو الاسم العلمي")}
+          aria-label={t("البحث عن دواء")}
           maxLength={200}
         />
         <span className="field-icon-shell">
@@ -65,7 +68,7 @@ export function MedicinePicker({ value, onChange }) {
                   <small className="mt-0.5 block truncate text-[11px] text-[#829499]">
                     {medicine.scientificName ||
                       medicine.manufacturer ||
-                      "دواء مسجل في الدليل"}
+                      t("دواء مسجل في الدليل")}
                   </small>
                 </span>
               </button>

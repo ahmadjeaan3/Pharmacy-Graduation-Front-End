@@ -9,7 +9,14 @@ import {
   normalizeLanguage,
 } from "../../../shared/i18n/i18n";
 
-import { BellRing, Building2, MapPin, Sparkles, UserRound, Warehouse } from "lucide-react";
+import {
+  BellRing,
+  Building2,
+  MapPin,
+  Sparkles,
+  UserRound,
+  Warehouse,
+} from "lucide-react";
 
 function getHomeVisitorId() {
   const storageKey = "hayat-dawaiya-visitor-id";
@@ -296,12 +303,13 @@ function Logo() {
   return (
     <Link
       to="/"
-      className="flex h-[59.79px] w-[62px] shrink-0 items-center justify-center"
+      className="ml-logo-link group flex size-[58px] shrink-0 items-center justify-center rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#DFAE0D]/70 focus-visible:ring-offset-2 sm:size-[62px]"
+      aria-label="Medical Life"
     >
       <img
         src={ASSETS.logo}
         alt="Medical Life"
-        className="h-[55px] w-[55px] object-contain"
+        className="ml-logo-image size-[54px] object-contain sm:size-[57px]"
       />
     </Link>
   );
@@ -451,7 +459,9 @@ export function LandingPage() {
           id: "platform-welcome",
           type: "Announcement",
           title: t("حياة دوائية"),
-          message: t("دواؤك أقرب مما تتوقع — ابحث، احجز وتوجه إلى الصيدلية بثقة."),
+          message: t(
+            "دواؤك أقرب مما تتوقع — ابحث، احجز وتوجه إلى الصيدلية بثقة.",
+          ),
         },
       ];
   const statisticItems = [
@@ -624,19 +634,43 @@ export function LandingPage() {
           }
         }
 
+        @keyframes ml-logo-reveal {
+          0% { transform: rotate(0deg) scale(0.92); opacity: 0; }
+          55% { transform: rotate(210deg) scale(1.05); opacity: 1; }
+          100% { transform: rotate(360deg) scale(1); opacity: 1; }
+        }
+
+        @keyframes ml-logo-spin {
+          0% { transform: rotate(0deg) scale(1); }
+          48% { transform: rotate(180deg) scale(1.05); }
+          100% { transform: rotate(360deg) scale(1); }
+        }
+
+        .ml-logo-image {
+          transform-origin: center;
+          animation: ml-logo-reveal 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+          filter: drop-shadow(0 4px 8px rgba(23, 75, 87, 0.08));
+          will-change: transform;
+        }
+
+        .ml-logo-link:hover .ml-logo-image,
+        .ml-logo-link:focus-visible .ml-logo-image {
+          animation: ml-logo-spin 0.78s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
         @keyframes ml-ticker-ltr {
           from { transform: translateX(0); }
-          to { transform: translateX(-50%); }
+          to { transform: translateX(-25%); }
         }
 
         @keyframes ml-ticker-rtl {
           from { transform: translateX(0); }
-          to { transform: translateX(50%); }
+          to { transform: translateX(25%); }
         }
 
         .ml-ticker-track {
           width: max-content;
-          animation: ${isArabic ? "ml-ticker-rtl" : "ml-ticker-ltr"} 34s linear infinite;
+          animation: ${isArabic ? "ml-ticker-rtl" : "ml-ticker-ltr"} 40s linear infinite;
           will-change: transform;
         }
 
@@ -819,6 +853,13 @@ export function LandingPage() {
             animation: none !important;
           }
 
+          .ml-logo-image,
+          .ml-logo-link:hover .ml-logo-image,
+          .ml-logo-link:focus-visible .ml-logo-image {
+            animation: none !important;
+            transform: none !important;
+          }
+
           .ml-ticker-track {
             animation: none !important;
             transform: none !important;
@@ -837,11 +878,11 @@ export function LandingPage() {
       <header className="ml-navbar-enter fixed inset-x-0 top-0 z-[100] h-16 border-b border-[rgba(102,102,102,0.16)] bg-white/95 shadow-[0_5px_24px_rgba(23,75,87,.07)] backdrop-blur-xl sm:h-[72px]">
         <div
           dir="ltr"
-          className="mx-auto flex h-full w-full max-w-[1200px] items-center justify-between gap-2 px-3 sm:px-5 xl:px-0"
+          className="flex h-full w-full items-center justify-between gap-3 px-4 sm:px-6 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:gap-8 lg:px-8 xl:px-12 2xl:px-16"
         >
           <div
             dir={textDirection}
-            className="flex h-10 min-w-0 shrink items-center gap-1.5 sm:shrink-0 sm:gap-3"
+            className="flex h-10 min-w-0 shrink items-center gap-2 sm:shrink-0 sm:gap-3 lg:justify-self-start"
           >
             <LanguageSwitcher />
 
@@ -862,49 +903,49 @@ export function LandingPage() {
 
           <nav
             dir={textDirection}
-            className="ml-desktop-nav hidden h-[32px] min-w-0 items-center gap-7 whitespace-nowrap text-[16px] leading-6 text-[#666666] lg:flex xl:gap-8"
+            className="ml-desktop-nav hidden h-11 min-w-0 items-center gap-1.5 whitespace-nowrap text-[15px] font-semibold leading-6 text-[#52666b] lg:flex xl:gap-3 xl:text-[16px]"
           >
             <a
               href="#home"
-              className="flex h-[32px] shrink-0 flex-col items-center font-medium text-[#216474]"
+              className="group relative flex h-10 shrink-0 items-center justify-center rounded-xl px-3.5 font-extrabold text-[#175666] transition-colors duration-300 hover:bg-[#eef6f5] xl:px-4"
             >
-              <span className="h-[27px] whitespace-nowrap text-[17px] leading-[27px]">
-                {t("الرئيسية")}
-              </span>
+              <span className="whitespace-nowrap">{t("الرئيسية")}</span>
 
-              <span className="w-full border-t-2 border-[#DFAE0D]" />
+              <span className="absolute inset-x-3 bottom-0 h-0.5 rounded-full bg-[#DFAE0D] shadow-[0_1px_4px_rgba(223,174,13,.28)]" />
             </a>
 
             <a
               href="#features"
-              className="transition-colors duration-300 hover:text-[#216474]"
+              className="rounded-xl px-3.5 py-2 font-semibold transition-all duration-300 hover:bg-[#eef6f5] hover:text-[#175666] xl:px-4"
             >
               {t("الخدمات")}
             </a>
 
             <a
               href="#roles"
-              className="transition-colors duration-300 hover:text-[#216474]"
+              className="rounded-xl px-3.5 py-2 font-semibold transition-all duration-300 hover:bg-[#eef6f5] hover:text-[#175666] xl:px-4"
             >
               {t("كيف يعمل")}
             </a>
 
             <a
               href="#testimonials"
-              className="transition-colors duration-300 hover:text-[#216474]"
+              className="rounded-xl px-3.5 py-2 font-semibold transition-all duration-300 hover:bg-[#eef6f5] hover:text-[#175666] xl:px-4"
             >
               {t("المستخدمون")}
             </a>
 
             <a
               href="#footer"
-              className="transition-colors duration-300 hover:text-[#216474]"
+              className="rounded-xl px-3.5 py-2 font-semibold transition-all duration-300 hover:bg-[#eef6f5] hover:text-[#175666] xl:px-4"
             >
               {t("تواصل معنا")}
             </a>
           </nav>
 
-          <Logo />
+          <div className="justify-self-end">
+            <Logo />
+          </div>
         </div>
 
         <span
@@ -920,48 +961,66 @@ export function LandingPage() {
 
       <section
         aria-label={t("إعلانات وتنبيهات المنصة")}
-        className="ml-ticker-shell relative z-40 overflow-hidden border-b border-[#174B57]/10 bg-[#174B57] text-white shadow-[0_8px_24px_rgba(23,75,87,.08)]"
+        className="ml-ticker-shell relative z-40 overflow-hidden border-b border-white/5 bg-[#174B57] text-white shadow-[0_8px_24px_rgba(23,75,87,.08)]"
       >
-        <div className={`pointer-events-none absolute inset-y-0 start-0 z-20 w-8 from-[#174B57] to-transparent sm:w-16 ${isArabic ? "bg-gradient-to-l" : "bg-gradient-to-r"}`} />
-        <div className={`pointer-events-none absolute inset-y-0 end-0 z-20 w-8 from-[#174B57] to-transparent sm:w-16 ${isArabic ? "bg-gradient-to-r" : "bg-gradient-to-l"}`} />
-        <div className="mx-auto flex min-h-[52px] w-full max-w-[1440px] items-stretch sm:min-h-[58px]">
-          <div className="relative z-30 flex shrink-0 items-center gap-2 border-e border-white/10 bg-[#123f49] px-3 sm:px-5">
-            <span className="relative grid size-8 place-items-center rounded-full bg-[#F5CB72]/15 text-[#F5CB72]">
+        <div className="mx-auto flex min-h-[60px] w-full max-w-[1600px] items-stretch sm:min-h-[68px]">
+          <div className="relative z-30 flex shrink-0 items-center gap-2.5 border-e border-white/10 bg-[#123f49] px-3.5 shadow-[0_0_24px_rgba(7,36,43,.22)] sm:gap-3 sm:px-6">
+            <span className="relative grid size-9 place-items-center rounded-xl border border-[#F5CB72]/10 bg-[#F5CB72]/10 text-[#F5CB72] sm:size-10">
               <BellRing size={16} strokeWidth={1.9} />
               <span className="absolute -end-0.5 -top-0.5 size-2 rounded-full bg-emerald-400 ring-2 ring-[#123f49]" />
             </span>
             <div className="hidden sm:block">
-              <strong className="block whitespace-nowrap text-xs font-bold text-white">{t("نبض المنصة")}</strong>
-              <span className="block whitespace-nowrap text-[9px] text-white/45">{t("تحديثات مباشرة")}</span>
+              <strong className="block whitespace-nowrap text-xs font-extrabold leading-5 text-white">
+                {t("نبض المنصة")}
+              </strong>
+              <span className="block whitespace-nowrap text-[10px] leading-4 text-white/50">
+                {t("تحديثات مباشرة")}
+              </span>
             </div>
           </div>
 
-          <div className="min-w-0 flex-1 overflow-hidden" tabIndex={0}>
+          <div className="relative min-w-0 flex-1 overflow-hidden" tabIndex={0}>
+            <div
+              className={`pointer-events-none absolute inset-y-0 start-0 z-20 w-5 from-[#174B57] to-transparent sm:w-10 ${isArabic ? "bg-gradient-to-l" : "bg-gradient-to-r"}`}
+            />
+            <div
+              className={`pointer-events-none absolute inset-y-0 end-0 z-20 w-5 from-[#174B57] to-transparent sm:w-10 ${isArabic ? "bg-gradient-to-r" : "bg-gradient-to-l"}`}
+            />
             <div className="ml-ticker-track flex min-h-full items-center">
-              {Array.from({ length: 4 }).flatMap(() => tickerItems).map((item, index) => {
-                const duty = item.type === "DutyPharmacy";
-                const TickerIcon = duty ? MapPin : Sparkles;
-                return (
-                  <div
-                    key={`${item.id}-${index}`}
-                    className="flex min-w-[300px] max-w-[460px] shrink-0 items-center gap-3 px-5 py-2 sm:min-w-[390px] sm:px-8"
-                  >
-                    <span className={`grid size-8 shrink-0 place-items-center rounded-xl ${duty ? "bg-emerald-400/15 text-emerald-300" : "bg-[#F5CB72]/15 text-[#F5CB72]"}`}>
-                      <TickerIcon size={15} />
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex min-w-0 items-center gap-2">
-                        <strong className="truncate text-xs font-bold text-white sm:text-sm">{item.title}</strong>
-                        {duty && <span className="shrink-0 rounded-full bg-emerald-400/15 px-2 py-0.5 text-[9px] font-bold text-emerald-200">{t("صيدلية مناوبة")}</span>}
+              {Array.from({ length: 4 })
+                .flatMap(() => tickerItems)
+                .map((item, index) => {
+                  const duty = item.type === "DutyPharmacy";
+                  const TickerIcon = duty ? MapPin : Sparkles;
+                  return (
+                    <div
+                      key={`${item.id}-${index}`}
+                      className="flex min-w-[280px] max-w-[420px] shrink-0 items-center gap-3 border-e border-white/[.07] px-4 py-2.5 sm:min-w-[360px] sm:gap-3.5 sm:px-7"
+                    >
+                      <span
+                        className={`grid size-9 shrink-0 place-items-center rounded-xl border border-white/[.06] ${duty ? "bg-emerald-400/15 text-emerald-300" : "bg-[#F5CB72]/15 text-[#F5CB72]"}`}
+                      >
+                        <TickerIcon size={15} />
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex min-w-0 items-center gap-2.5">
+                          <strong className="truncate text-xs font-extrabold leading-5 text-white sm:text-[13px]">
+                            {item.title}
+                          </strong>
+                          {duty && (
+                            <span className="shrink-0 rounded-full bg-emerald-400/15 px-2 py-0.5 text-[9px] font-bold text-emerald-200">
+                              {t("صيدلية مناوبة")}
+                            </span>
+                          )}
+                        </div>
+                        <p className="mt-0.5 truncate text-[10px] leading-4 text-white/60 sm:text-[11px]">
+                          {item.message}
+                          {item.pharmacyName ? ` — ${item.pharmacyName}` : ""}
+                        </p>
                       </div>
-                      <p className="mt-0.5 truncate text-[10px] text-white/60 sm:text-xs">
-                        {item.message}{item.pharmacyName ? ` — ${item.pharmacyName}` : ""}
-                      </p>
                     </div>
-                    <span aria-hidden="true" className="ms-2 size-1.5 shrink-0 rounded-full bg-white/15" />
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
           </div>
         </div>
@@ -971,7 +1030,7 @@ export function LandingPage() {
         {/* Hero */}
         <section
           id="home"
-          className="relative overflow-hidden bg-[#F8FAFC] pb-10 pt-7 sm:pb-[44px] sm:pt-10 lg:pt-[44px]"
+          className="relative scroll-mt-20 overflow-hidden bg-[#F8FAFC] pb-10 pt-7 sm:scroll-mt-24 sm:pb-[44px] sm:pt-10 lg:pt-[44px]"
         >
           <div className="ml-glow-blue pointer-events-none absolute -right-[205px] -top-[145px] h-[496px] w-[448px] rounded-full bg-[rgba(21,142,171,0.18)] blur-[150px]" />
 
@@ -981,7 +1040,9 @@ export function LandingPage() {
             <div
               dir="ltr"
               className={`relative flex w-full flex-col-reverse items-center justify-between gap-8 lg:min-h-[411px] ${
-                isArabic ? "lg:flex-row lg:gap-[36px]" : "lg:flex-row-reverse lg:gap-[60px] xl:gap-[90px]"
+                isArabic
+                  ? "lg:flex-row lg:gap-[36px]"
+                  : "lg:flex-row-reverse lg:gap-[60px] xl:gap-[90px]"
               }`}
             >
               {/* Hero image */}
@@ -1175,7 +1236,10 @@ export function LandingPage() {
             </div>
 
             {/* Features */}
-            <section id="features" className="relative bg-[#F8FAFC] pb-[56px]">
+            <section
+              id="features"
+              className="relative scroll-mt-20 bg-[#F8FAFC] pb-[56px] sm:scroll-mt-24"
+            >
               <div className="mx-auto w-full max-w-[1200px] px-5 xl:px-0">
                 <div
                   dir="ltr"
@@ -1255,7 +1319,10 @@ export function LandingPage() {
         </section>
         {/* Roles */}
         {/* Roles */}
-        <section id="roles" className="bg-[#F8FAFC] pb-[100px] pt-[56px]">
+        <section
+          id="roles"
+          className="scroll-mt-20 bg-[#F8FAFC] pb-[100px] pt-[56px] sm:scroll-mt-24"
+        >
           <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-[44px] px-5 xl:px-0">
             {/* Section heading */}
             <div className="flex min-h-[68px] w-full flex-col items-center gap-5">
@@ -1621,7 +1688,10 @@ export function LandingPage() {
           </div>
         </section>
         {/* Testimonials */}
-        <section id="testimonials" className="bg-[#F8FAFC] py-[84px]">
+        <section
+          id="testimonials"
+          className="scroll-mt-20 bg-[#F8FAFC] py-[84px] sm:scroll-mt-24"
+        >
           <div className="mx-auto flex w-full max-w-[1200px] flex-col items-center gap-[44px] px-5 xl:px-0">
             {/* Heading */}
             <div
@@ -2020,7 +2090,10 @@ export function LandingPage() {
       </main>
 
       {/* Footer */}
-      <footer id="footer" className="border-t border-[#DFE7E9] bg-white">
+      <footer
+        id="footer"
+        className="scroll-mt-20 border-t border-[#DFE7E9] bg-white sm:scroll-mt-24"
+      >
         <div className="mx-auto flex max-w-[1200px] flex-col gap-8 px-5 py-10 lg:flex-row lg:items-center lg:justify-between xl:px-0">
           <div className={`max-w-sm ${isArabic ? "text-right" : "text-left"}`}>
             <div className="justify-start">

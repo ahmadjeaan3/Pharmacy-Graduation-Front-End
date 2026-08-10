@@ -120,6 +120,13 @@ export const notificationTypes = {
     tone: "bg-cyan-50 text-cyan-700",
     dot: "bg-cyan-500",
   },
+  PharmacyLicenseVerificationUpdated: {
+    label: "الترخيص والتحقق",
+    title: "تحديث التحقق من الترخيص",
+    icon: ShieldCheck,
+    tone: "bg-indigo-50 text-indigo-700",
+    dot: "bg-indigo-500",
+  },
   SupplyOrder: {
     label: "سلسلة التوريد",
     title: "تحديث طلب التوريد",
@@ -155,6 +162,27 @@ export const notificationTypes = {
     tone: "bg-rose-50 text-rose-700",
     dot: "bg-rose-500",
   },
+  SupplyInvoice: {
+    label: "الفواتير",
+    title: "تحديث فاتورة التوريد",
+    icon: FileText,
+    tone: "bg-violet-50 text-violet-700",
+    dot: "bg-violet-500",
+  },
+  SupplyPayment: {
+    label: "المدفوعات",
+    title: "تحديث دفعة مالية",
+    icon: FileText,
+    tone: "bg-emerald-50 text-emerald-700",
+    dot: "bg-emerald-500",
+  },
+  RepresentativeSchedule: {
+    label: "إعدادات العمل",
+    title: "تحديث إعدادات المندوب",
+    icon: Truck,
+    tone: "bg-sky-50 text-sky-700",
+    dot: "bg-sky-500",
+  },
 };
 
 export const getNotificationMeta = (type) =>
@@ -166,73 +194,119 @@ export const getNotificationMeta = (type) =>
     dot: "bg-slate-400",
   };
 
-export function formatNotificationDate(value) {
-  if (!value) return "";
-  const date = new Date(value);
-  const seconds = Math.max(0, Math.floor((Date.now() - date.getTime()) / 1000));
-  if (seconds < 60) return "الآن";
-  if (seconds < 3600)
-    return `منذ ${Math.floor(seconds / 60).toLocaleString("ar-SA")} دقيقة`;
-  if (seconds < 86400)
-    return `منذ ${Math.floor(seconds / 3600).toLocaleString("ar-SA")} ساعة`;
-  if (seconds < 604800)
-    return `منذ ${Math.floor(seconds / 86400).toLocaleString("ar-SA")} يوم`;
-  return new Intl.DateTimeFormat("ar-SA", {
+export function parseNotificationUtc(value) {
+  if (!value) return null;
+
+  // SQL datetime2 values can arrive without a timezone suffix. Notification
+  // timestamps are UTC by contract, so keep older API responses accurate too.
+  const text = String(value).trim();
+  const hasTimezone = /(?:z|[+-]\d{2}:?\d{2})$/i.test(text);
+  const date = new Date(hasTimezone ? text : `${text}Z`);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+export function formatNotificationDate(value, language = "ar") {
+  const date = parseNotificationUtc(value);
+  if (!date) return "";
+
+  const normalizedLanguage = String(language).split("-")[0].toLowerCase();
+  const locale =
+    normalizedLanguage === "ar"
+      ? "ar-SY"
+      : normalizedLanguage === "tr"
+        ? "tr-TR"
+        : "en-US";
+  const relativeLocale =
+    normalizedLanguage === "ar" ? "ar" : normalizedLanguage;
+  const elapsedSeconds = Math.max(
+    0,
+    Math.floor((Date.now() - date.getTime()) / 1000),
+  );
+  const relative = new Intl.RelativeTimeFormat(relativeLocale, {
+    numeric: "auto",
+  });
+
+  if (elapsedSeconds < 60) return relative.format(0, "second");
+  if (elapsedSeconds < 3600)
+    return relative.format(-Math.floor(elapsedSeconds / 60), "minute");
+  if (elapsedSeconds < 86400)
+    return relative.format(-Math.floor(elapsedSeconds / 3600), "hour");
+  if (elapsedSeconds < 604800)
+    return relative.format(-Math.floor(elapsedSeconds / 86400), "day");
+
+  return new Intl.DateTimeFormat(locale, {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(date);
 }
 
 export function notificationTarget(notification, roles = []) {
+  const normalizedRoles = roles.map((role) => String(role).toLowerCase());
+  const hasRole = (role) => normalizedRoles.includes(role.toLowerCase());
+
+  if (notification.type === "AccountStatusUpdated") return "/app/settings";
   if (!notification.relatedEntityId) return null;
   if (notification.relatedEntityType === "PrescriptionOrder") {
-    if (roles.includes("Pharmacy")) return "/app/pharmacy/prescriptions";
-    if (roles.includes("User")) return "/app/prescriptions";
+    if (hasRole("Pharmacy")) return "/app/pharmacy/prescriptions";
+    if (hasRole("User")) return "/app/prescriptions";
   }
   if (notification.relatedEntityType === "MedicineRequest") {
-    if (roles.includes("Pharmacy"))
+    if (hasRole("Pharmacy"))
       return `/app/pharmacy/requests/${notification.relatedEntityId}`;
-    if (roles.includes("User"))
-      return `/app/requests/${notification.relatedEntityId}`;
+    if (hasRole("User")) return `/app/requests/${notification.relatedEntityId}`;
   }
   if (
     notification.relatedEntityType === "PharmacyProfile" &&
-    roles.includes("Pharmacy")
+    hasRole("Pharmacy")
   )
     return "/app/pharmacy/profile";
   if (
     notification.relatedEntityType === "OrganizationProfile" &&
-    roles.includes("Organization")
+    hasRole("Organization")
   )
     return "/app/organization/profile";
   if (notification.relatedEntityType === "MedicineDonationOffer") {
-    if (roles.includes("Organization")) return "/app/organization/offers";
-    if (roles.includes("User")) return "/app/donations";
+    if (hasRole("Organization")) return "/app/organization/offers";
+    if (hasRole("User")) return "/app/donations";
   }
   if (notification.relatedEntityType === "MedicineAssistanceRequest") {
-    if (roles.includes("Organization")) return "/app/organization/assistance";
-    if (roles.includes("User")) return "/app/donations";
+    if (hasRole("Organization")) return "/app/organization/assistance";
+    if (hasRole("User")) return "/app/donations";
   }
-  if (
-    ["PharmacySupplyOrder", "DeliveryShipment", "SupplyReturn"].includes(
-      notification.relatedEntityType,
-    )
-  ) {
-    if (
-      roles.some((role) =>
-        ["Pharmacy", "Warehouse", "Representative", "Admin"].includes(role),
-      )
-    )
-      return "/app/supply-chain";
+  if (notification.relatedEntityType === "PharmacySupplyOrder") {
+    if (hasRole("Warehouse")) return "/app/warehouse/orders";
+    if (hasRole("Representative")) return "/app/representative/deliveries";
+    return "/app/supply-chain";
+  }
+  if (notification.relatedEntityType === "DeliveryShipment") {
+    if (hasRole("Representative")) return "/app/representative/deliveries";
+    if (hasRole("Warehouse")) return "/app/warehouse/orders";
+    return "/app/supply-chain";
+  }
+  if (notification.relatedEntityType === "SupplyReturn") {
+    if (hasRole("Warehouse")) return "/app/warehouse/returns";
+    return "/app/supply-chain";
+  }
+  if (notification.relatedEntityType === "SupplyInvoice") {
+    if (hasRole("Warehouse")) return "/app/warehouse/invoices";
+    return "/app/supply-chain";
+  }
+  if (notification.relatedEntityType === "MedicineRecall") {
+    if (hasRole("Warehouse")) return "/app/warehouse/recalls";
+    return "/app/supply-chain";
+  }
+  if (notification.relatedEntityType === "WarehouseRepresentativeProfile") {
+    if (hasRole("Warehouse")) return "/app/warehouse/representatives";
+    if (hasRole("Representative")) return "/app/representative/profile";
   }
   if (
     notification.relatedEntityType === "WarehouseProfile" &&
-    roles.includes("Warehouse")
+    hasRole("Warehouse")
   )
     return "/app/supply-chain";
   if (
     notification.relatedEntityType === "MedicineBatch" &&
-    roles.some((role) => ["Pharmacy", "Warehouse"].includes(role))
+    (hasRole("Pharmacy") || hasRole("Warehouse"))
   )
     return "/app/supply-chain";
   return null;

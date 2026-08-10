@@ -100,7 +100,10 @@ export const requestMeta = (status) =>
       className: "bg-slate-100 text-slate-600",
     },
     Reserved: { label: "محجوز", className: "bg-sky-50 text-sky-700" },
-    ReadyForPickup: { label: "جاهز للاستلام", className: "bg-emerald-50 text-emerald-700" },
+    ReadyForPickup: {
+      label: "جاهز للاستلام",
+      className: "bg-emerald-50 text-emerald-700",
+    },
     Collected: { label: "تم الاستلام", className: "bg-teal-50 text-teal-700" },
     Completed: { label: "تم الاستلام", className: "bg-teal-50 text-teal-700" },
     Expired: { label: "منتهي", className: "bg-slate-100 text-slate-600" },

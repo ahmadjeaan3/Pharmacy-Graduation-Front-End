@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import {
   getPrimaryRole,
@@ -212,6 +212,8 @@ export function DashboardLayout() {
   const { user, signOut } = useAuth();
 
   const location = useLocation();
+  const navigate = useNavigate();
+  const [globalSearch, setGlobalSearch] = useState("");
 
   const currentLanguage = normalizeLanguage(
     i18n.resolvedLanguage || i18n.language || "ar",
@@ -245,6 +247,30 @@ export function DashboardLayout() {
     ...sharedItems.slice(1),
   ];
 
+  const searchableNavigation = navItems
+    .filter((item) => item?.to && item?.label)
+    .map((item) => ({
+      ...item,
+      translatedLabel: String(t(item.label)),
+    }));
+
+  const submitGlobalSearch = (event) => {
+    event.preventDefault();
+    const term = globalSearch.trim().toLocaleLowerCase(currentLanguage);
+    if (!term) return;
+
+    const match = searchableNavigation.find(({ label, translatedLabel }) =>
+      `${label} ${translatedLabel}`
+        .toLocaleLowerCase(currentLanguage)
+        .includes(term),
+    );
+
+    if (match) {
+      navigate(match.to);
+      setGlobalSearch("");
+    }
+  };
+
   const currentPageTitle = getDashboardPageTitle(location.pathname);
 
   const unreadQuery = useQuery({
@@ -252,6 +278,8 @@ export function DashboardLayout() {
     queryFn: getUnreadNotificationCount,
     refetchInterval: 30000,
     refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
+    staleTime: 10000,
   });
 
   const unreadCount = unreadQuery.data?.unreadCount || 0;
@@ -300,7 +328,9 @@ export function DashboardLayout() {
               alt="Medical Life"
               draggable={false}
               className={`select-none object-contain ${
-                isArabic ? "h-[52px] w-[242px]" : "h-[68px] w-[300px] mr-10"
+                isArabic
+                  ? "h-[52px] w-[242px]"
+                  : "h-[58px] w-full max-w-[242px]"
               }`}
             />
           </div>
@@ -435,22 +465,37 @@ export function DashboardLayout() {
               />
             </div>
 
-            <label
+            <form
+              onSubmit={submitGlobalSearch}
               dir="ltr"
               className="hidden h-11 w-full max-w-[553px] items-center justify-self-center gap-2 rounded-lg border border-[rgba(102,102,102,.16)] bg-white px-3 text-[#a5a5a5] xl:flex"
             >
               <input
                 type="search"
                 dir={direction}
+                value={globalSearch}
+                onChange={(event) => setGlobalSearch(event.target.value)}
+                list="dashboard-navigation-search"
                 placeholder={t("ابحث هنا")}
-                aria-label={t("ابحث هنا...")}
+                aria-label={t("ابحث ضمن صفحات لوحة التحكم")}
                 className={`min-w-0 flex-1 border-0 bg-transparent text-xs text-[#333333] outline-none placeholder:text-[#a5a5a5] ${
                   isArabic ? "text-right" : "text-left"
                 }`}
               />
+              <datalist id="dashboard-navigation-search">
+                {searchableNavigation.map((item) => (
+                  <option key={item.to} value={item.translatedLabel} />
+                ))}
+              </datalist>
 
-              <Search size={18} strokeWidth={1.6} className="shrink-0" />
-            </label>
+              <button
+                type="submit"
+                aria-label={t("فتح الصفحة المطابقة")}
+                className="grid size-8 shrink-0 place-items-center rounded-lg transition hover:bg-[#eaf4f3] hover:text-[#216474]"
+              >
+                <Search size={18} strokeWidth={1.6} />
+              </button>
+            </form>
 
             <div className="flex items-center justify-end">
               <NotificationBell

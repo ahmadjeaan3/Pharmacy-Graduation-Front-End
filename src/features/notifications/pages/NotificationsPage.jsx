@@ -21,6 +21,7 @@ import {
   notificationKeys,
 } from "../api/notificationsApi";
 import {
+  formatNotificationDate,
   notificationTarget,
   notificationTypes,
 } from "../utils/notificationFormatters";
@@ -65,15 +66,17 @@ export function NotificationsPage() {
   const summary = useQuery({
     queryKey: notificationKeys.summary,
     queryFn: getNotificationSummary,
-    refetchInterval: 5000,
+    refetchInterval: 30000,
     refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
   });
 
   const list = useQuery({
     queryKey: notificationKeys.list(filters),
     queryFn: () => getMyNotifications(filters),
-    refetchInterval: 5000,
+    refetchInterval: 30000,
     refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
   });
 
   const refresh = async () =>
@@ -555,7 +558,8 @@ function NotificationCard({
         {/* Time and actions */}
         <div className="flex shrink-0 flex-wrap items-center gap-4">
           <span className="whitespace-nowrap text-sm text-[#666666]">
-            {formatRelativeTime(createdAt, currentLanguage, t)}
+            {formatNotificationDate(createdAt, currentLanguage) ||
+              t("منذ وقت قريب")}
           </span>
 
           <div className="flex items-center gap-3">
@@ -756,41 +760,4 @@ function formatNotificationCount(value, currentLanguage = "ar") {
         : "en-US";
 
   return Number(value || 0).toLocaleString(locale);
-}
-
-function formatRelativeTime(value, currentLanguage = "ar", t) {
-  if (!value) {
-    return t("منذ وقت قريب");
-  }
-
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return t("منذ وقت قريب");
-  }
-
-  const diffMs = date.getTime() - Date.now();
-
-  const minutes = Math.round(diffMs / 60_000);
-
-  const locale =
-    currentLanguage === "ar" ? "ar" : currentLanguage === "tr" ? "tr" : "en";
-
-  const formatter = new Intl.RelativeTimeFormat(locale, {
-    numeric: "auto",
-  });
-
-  if (Math.abs(minutes) < 60) {
-    return formatter.format(minutes, "minute");
-  }
-
-  const hours = Math.round(minutes / 60);
-
-  if (Math.abs(hours) < 24) {
-    return formatter.format(hours, "hour");
-  }
-
-  const days = Math.round(hours / 24);
-
-  return formatter.format(days, "day");
 }

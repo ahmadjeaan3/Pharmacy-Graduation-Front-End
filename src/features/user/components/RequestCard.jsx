@@ -33,7 +33,10 @@ export function RequestCard({ request }) {
           <Hash size={14} />
           {request.requestCode}
         </span>
-        <span>{t("الكمية")}: {request.requestedQuantity.toLocaleString(i18n.language)}</span>
+        <span>
+          {t("الكمية")}:{" "}
+          {request.requestedQuantity.toLocaleString(i18n.language)}
+        </span>
         <span className="flex items-center gap-1.5">
           <Clock3 size={14} />
           {formatDate(request.createdAtUtc, true)}
@@ -43,7 +46,8 @@ export function RequestCard({ request }) {
         to={`/app/requests/${request.requestId}`}
         className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-[#216474]"
       >
-        {t("متابعة الطلب")} <ArrowLeft size={15} className="rtl:rotate-0 ltr:rotate-180" />
+        {t("متابعة الطلب")}{" "}
+        <ArrowLeft size={15} className="rtl:rotate-0 ltr:rotate-180" />
       </Link>
     </article>
   );
