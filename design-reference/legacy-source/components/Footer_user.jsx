@@ -7,7 +7,7 @@ export default function Footer() {
           {/* Right Links */}
           <div>
             <h3 className="text-white text-[20px] font-semibold mb-4 ">
-              ميديكال لايف
+              دوائي
             </h3>
 
             <ul className="space-y-2 text-[#D9E7E8] text-[16px] font-medium">
@@ -60,8 +60,8 @@ export default function Footer() {
           <div className="flex flex-col items-center lg:items-end gap-5">
             {/* Logo */}
             <img
-              src="/Icons/logo_white.png"
-              alt="Medical Life"
+              src="/assets/app/brand/dawaai-mark.png"
+              alt="دوائي"
               className="w-[200px] object-contain -ml-10"
             />
 
@@ -91,7 +91,7 @@ export default function Footer() {
         {/* Bottom */}
         <div className=" mt-8 pt-5">
           <p className="text-[#D9E7E8] text-[14px] font-normal text-center">
-            جميع الحقوق محفوظة © ميديكال لايف 2026
+            جميع الحقوق محفوظة © دوائي 2026
           </p>
         </div>
       </div>

@@ -5,7 +5,8 @@ import { autoMessages } from "./autoMessages";
 import { inventoryMessages } from "./inventoryMessages";
 import { landingMessages } from "./landingMessages";
 
-export const STORAGE_KEY = "hayat-dawaiya-language";
+export const STORAGE_KEY = "dawaai-language";
+const LEGACY_STORAGE_KEY = "hayat-dawaiya-language";
 
 export const languages = [
   {
@@ -38,9 +39,14 @@ export function normalizeLanguage(language = "ar") {
 
 function getInitialLanguage() {
   try {
-    const storedLanguage = localStorage.getItem(STORAGE_KEY);
+    const storedLanguage =
+      localStorage.getItem(STORAGE_KEY) ||
+      localStorage.getItem(LEGACY_STORAGE_KEY);
 
     if (storedLanguage) {
+      if (!localStorage.getItem(STORAGE_KEY)) {
+        localStorage.setItem(STORAGE_KEY, storedLanguage);
+      }
       return normalizeLanguage(storedLanguage);
     }
   } catch {

@@ -25,6 +25,7 @@ import {
   getLanguageDirection,
   normalizeLanguage,
 } from "../../../shared/i18n/i18n";
+import { Brand } from "../../../shared/components/Brand";
 import { useAuth } from "../../auth/hooks/useAuth";
 import {
   getUnreadNotificationCount,
@@ -281,10 +282,6 @@ export function DashboardLayout() {
 
   const isArabic = currentLanguage === "ar";
 
-  const dashboardLogo = isArabic
-    ? "/assets/app/brand/dashboard-logo.png"
-    : "/assets/app/brand/dashboard-logo-left.png";
-
   const direction = getLanguageDirection(currentLanguage);
 
   const locale =
@@ -378,22 +375,11 @@ export function DashboardLayout() {
         />
 
         <div className="relative z-10 min-h-0 flex-1 overflow-y-auto overflow-x-hidden pb-4 no-scrollbar">
-          <div
-            className={`flex items-center ${
-              isArabic
-                ? "mx-auto h-[52px] w-[242px] justify-center"
-                : "h-[68px] w-full justify-start pl-3"
-            }`}
-          >
-            <img
-              src={dashboardLogo}
-              alt="Medical Life"
-              draggable={false}
-              className={`select-none object-contain ${
-                isArabic
-                  ? "h-[52px] w-[242px]"
-                  : "h-[58px] w-full max-w-[242px]"
-              }`}
+          <div className="flex min-h-[68px] w-full items-center justify-center px-3">
+            <Brand
+              light
+              to="/app"
+              className="max-w-full justify-center px-3 py-2"
             />
           </div>
           <div className="mx-auto mt-2 h-px w-[233px] bg-white/15" />

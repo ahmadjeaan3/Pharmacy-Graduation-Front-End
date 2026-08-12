@@ -65,7 +65,7 @@ export default function Register() {
             <div className="w-[1px] h-[40px] bg-[#666666]" />
 
             <img
-              src="/assets/images/Login/LOGO (2).png"
+              src="/assets/app/brand/dawaai-mark.png"
               alt=""
               className="w-[62px] h-[60px] object-contain"
             />
@@ -145,7 +145,7 @@ export default function Register() {
               leading-[48px]
             "
             >
-              أهلاً وسهلاً بك في Medical Life
+              أهلاً وسهلاً بك في دوائي
             </h2>
 
             <p
@@ -205,7 +205,7 @@ export default function Register() {
                 text-[#A5A5A5]
               "
               >
-                أنشئ حساباً جديداً للوصول إلى خدمات Medical Life.
+                أنشئ حساباً جديداً للوصول إلى خدمات دوائي.
               </p>
             </div>
 

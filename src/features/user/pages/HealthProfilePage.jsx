@@ -33,6 +33,7 @@ import {
   LoadingState as UserLoadingState,
 } from "../../../shared/components/AsyncStates";
 import { PageHeader as UserPageHeader } from "../../../shared/components/PageHeader";
+import { DAWAAI_MARK } from "../../../shared/components/Brand";
 import { formatDate } from "../utils/userFormatters";
 import { getApiErrorMessage } from "../../../shared/api/errors";
 
@@ -696,7 +697,7 @@ function HealthCard({ card }) {
         <div className="print-only health-report-letterhead">
           <div className="health-report-brand">
             <span className="health-report-logo">
-              <HeartPulse size={28} strokeWidth={2.2} />
+              <img src={DAWAAI_MARK} alt="" draggable={false} />
             </span>
             <span>
               <strong>دوائي</strong>

@@ -62,7 +62,7 @@ export default function CompleteInformation() {
             <div className="w-px h-10 bg-[#666666]" />
 
             <img
-              src="/assets/images/Login/LOGO (2).png"
+              src="/assets/app/brand/dawaai-mark.png"
               alt=""
               className="w-[62px] h-[60px] object-contain"
             />
@@ -149,7 +149,7 @@ export default function CompleteInformation() {
                 leading-[48px]
               "
             >
-              Medical Life أهلاً وسهلاً بك في
+              أهلاً وسهلاً بك في دوائي
             </h2>
 
             <p
@@ -206,7 +206,7 @@ export default function CompleteInformation() {
                   text-[#A5A5A5]
                 "
               >
-                Medical Life. يرجى إدخال المعلومات التالية لتفعيل حساب الصيدلية
+                يرجى إدخال المعلومات التالية لتفعيل حساب الصيدلية في دوائي.
                 في
               </p>
             </div>

@@ -20,13 +20,19 @@ import {
 } from "lucide-react";
 
 function getHomeVisitorId() {
-  const storageKey = "hayat-dawaiya-visitor-id";
+  const storageKey = "dawaai-visitor-id";
+  const legacyStorageKey = "hayat-dawaiya-visitor-id";
   const createVisitorId = () =>
     window.crypto?.randomUUID?.() ??
     `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
   try {
-    const existingId = window.localStorage.getItem(storageKey);
+    const existingId =
+      window.localStorage.getItem(storageKey) ||
+      window.localStorage.getItem(legacyStorageKey);
+    if (existingId && !window.localStorage.getItem(storageKey)) {
+      window.localStorage.setItem(storageKey, existingId);
+    }
     if (existingId) return existingId;
     const visitorId = createVisitorId();
     window.localStorage.setItem(storageKey, visitorId);
@@ -279,7 +285,7 @@ const socialLinks = [
   },
   {
     label: "البريد الإلكتروني",
-    href: "mailto:info@medicallife.com",
+    href: "mailto:info@dawaai.com",
     image: ASSETS.email,
   },
   {

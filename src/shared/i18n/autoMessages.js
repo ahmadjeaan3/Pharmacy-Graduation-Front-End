@@ -142,7 +142,7 @@ export const autoMessages = {
     "قارن المستودعات، أعد تعبئة النواقص وتابع الشحنة حتى الاستلام.":
       "Compare warehouses, replenish shortages, and track shipments until receipt.",
 
-    "شبكة حياة دوائية B2B": "Hayat Pharmaceutical B2B Network",
+    "شبكة دوائي B2B": "Dawaai B2B Network",
     "شحنات جارية": "Active shipments",
     "تم تسليمها": "Delivered",
 
@@ -398,8 +398,7 @@ export const autoMessages = {
 
     دفعة: "Batch",
     "تم التحقق والاستلام": "Verified and received",
-    "طلب توريد من سوق حياة دوائية":
-      "Supply order from Hayat Pharmaceutical marketplace",
+    "طلب توريد من سوق دوائي": "Supply order from Dawaai marketplace",
 
     "تسليم الدواء وتوثيق النتيجة": "Deliver medicine and document the result",
 
@@ -753,7 +752,7 @@ export const autoMessages = {
       "Find your medication, track your orders and keep your important health information in one place.",
     "ابحث في مخزون الصيدلية": "Search the pharmacy's inventory",
     "ابدأ البحث": "Start searching",
-    "ابدأ باستخدام حياة دوائية": "Start using Life Medicinal",
+    "ابدأ باستخدام دوائي": "Start using Dawaai",
     "ابدأ بإضافة أول دواء إلى الدليل المركزي.":
       "Start by adding the first medication to the central directory.",
     "ابدأ بكتابة اسم الدواء": "Start writing the name of the medication",
@@ -1685,7 +1684,7 @@ export const autoMessages = {
     "حالة العبوات": "Condition of packages",
     "حالة العرض": "Display status",
     "حالة المنظمة": "State of the organization",
-    "حالة خدمات حياة دوائية": "Case of life pharmaceutical services",
+    "حالة خدمات دوائي": "Dawaai services status",
     "حالة مخزونك": "The status of your inventory",
     "حالة مزمنة": "Chronic condition",
     "حالة ملف التحقق": "Verification file status",
@@ -1733,7 +1732,7 @@ export const autoMessages = {
     "حملات نشطة": "Active campaigns",
     "حملة جديدة": "New campaign",
     "حملة عاجلة": "Urgent campaign",
-    "حياة دوائية": "Medicinal life",
+    دوائي: "Dawaai",
     "خدمات الصيدليات والأدوية": "Pharmacy and pharmaceutical services",
     "خدمات الصيدلية الرقمية": "Digital pharmacy services",
     "خدمات المنصة": "Platform services",
@@ -2220,8 +2219,8 @@ export const autoMessages = {
     "مسح السجل بالكامل": "Clear the entire history",
     "مسح سجل البحث؟": "Clear search history?",
     مسودة: "Draft",
-    "مشروع حياة دوائية © 2026 — رعاية أقرب، تجربة أذكى.":
-      "Life Pharmaceutical Project © 2026 — Closer care, smarter experience.",
+    "مشروع دوائي © 2026 — رعاية أقرب، تجربة أذكى.":
+      "Dawaai © 2026 — Closer care, smarter experience.",
     "مطابقة الموقع": "Location matching",
     "مطلوب قبل": "Required before",
     معتمدة: "Certified",
@@ -2291,8 +2290,8 @@ export const autoMessages = {
     "نحافظ على بيانات حسابك ونستخدمها فقط لتقديم الخدمات المناسبة لك.":
       "We maintain and use your account data only to provide appropriate services to you.",
     "نحدد الصيدليات الأقرب...": "We identify the nearest pharmacies...",
-    "نحرص على حماية بياناتك واحترام خصوصيتك، لتستخدم خدمات حياة دوائية بثقة ووضوح في كل خطوة.":
-      "We are keen to protect your data and respect your privacy, so that you can use Hayat Pharmaceutical services with confidence and clarity at every step.",
+    "نحرص على حماية بياناتك واحترام خصوصيتك، لتستخدم خدمات دوائي بثقة ووضوح في كل خطوة.":
+      "We protect your data and respect your privacy, so you can use Dawaai confidently at every step.",
     "نسبة اكتمال الملف الصحي": "Percentage of health file completion",
     "نسخة مخصصة للطباعة": "Customized print version",
     "نشاط بحث": "Search activity",
@@ -2301,14 +2300,14 @@ export const autoMessages = {
     نشطة: "Active",
 
     "نظرة عامة": "Overview",
-    "نظرة عامة على حياة دوائية": "Overview of a pharmaceutical life",
+    "نظرة عامة على دوائي": "Dawaai overview",
     "نقطة انطلاق الطريق": "The starting point of the route",
     "نوع الحساب": "Account type",
     "نوع المستند": "Document type",
     "نوع مستند التحقق المحدد غير مدعوم.":
       "The specified verification document type is not supported.",
-    "هذا التقرير يعكس المعلومات التي أدخلها المستخدم في منصة حياة دوائية، ولا يُعد تشخيصًا أو وصفة طبية.":
-      "This report reflects the information entered by the user in the Hayat Pharma platform, and is not a diagnosis or prescription.",
+    "هذا التقرير يعكس المعلومات التي أدخلها المستخدم في منصة دوائي، ولا يُعد تشخيصًا أو وصفة طبية.":
+      "This report reflects information entered by the user in Dawaai and is not a diagnosis or prescription.",
     "هذا الدواء يتطلب وصفة طبية عند الاستلام.":
       "This medication requires a prescription upon receipt.",
     "هوية الدواء": "Identity of the drug",
@@ -2982,7 +2981,7 @@ export const autoMessages = {
       "İlaçlarınızı bulun, siparişlerinizi takip edin ve önemli sağlık bilgilerinizi tek bir yerde saklayın.",
     "ابحث في مخزون الصيدلية": "Eczanenin envanterini arayın",
     "ابدأ البحث": "Aramaya başla",
-    "ابدأ باستخدام حياة دوائية": "Life Medicinal'i kullanmaya başlayın",
+    "ابدأ باستخدام دوائي": "Dawaai'yi kullanmaya başlayın",
     "ابدأ بإضافة أول دواء إلى الدليل المركزي.":
       "İlk ilacı merkezi dizine ekleyerek başlayın.",
     "ابدأ بكتابة اسم الدواء": "İlacın adını yazmaya başlayın",
@@ -3491,7 +3490,7 @@ export const autoMessages = {
     "قارن المستودعات، أعد تعبئة النواقص وتابع الشحنة حتى الاستلام.":
       "Depoları karşılaştırın, eksikleri tamamlayın ve gönderiyi teslimata kadar takip edin.",
 
-    "شبكة حياة دوائية B2B": "Hayat İlaç B2B Ağı",
+    "شبكة دوائي B2B": "Dawaai B2B Ağı",
     "شحنات جارية": "Aktif gönderiler",
     "تم تسليمها": "Teslim edildi",
 
@@ -3893,7 +3892,7 @@ export const autoMessages = {
     دفعة: "Parti",
     "تم التحقق والاستلام": "Doğrulandı ve teslim alındı",
 
-    "طلب توريد من سوق حياة دوائية": "Hayat İlaç pazarından tedarik siparişi",
+    "طلب توريد من سوق دوائي": "Dawaai pazarından tedarik siparişi",
     "بانتظار المراجعة": "İnceleme bekleniyor",
     "بانتظار المستندات": "Belgeler bekleniyor",
     "بانتظار مراجعة الصيدلية والرد على طلبك.":
@@ -4241,7 +4240,7 @@ export const autoMessages = {
     "حالة العبوات": "Paketlerin durumu",
     "حالة العرض": "Durumu görüntüle",
     "حالة المنظمة": "Kuruluşun durumu",
-    "حالة خدمات حياة دوائية": "Hayat boyu farmasötik hizmetler örneği",
+    "حالة خدمات دوائي": "Dawaai hizmet durumu",
     "حالة مخزونك": "Envanterinizin durumu",
     "حالة مزمنة": "Kronik durum",
     "حالة ملف التحقق": "Doğrulama dosyası durumu",
@@ -4325,7 +4324,7 @@ export const autoMessages = {
     "حملات نشطة": "Aktif kampanyalar",
     "حملة جديدة": "Yeni kampanya",
     "حملة عاجلة": "Acil kampanya",
-    "حياة دوائية": "Tıbbi yaşam",
+    دوائي: "Dawaai",
     "خدمات الصيدليات والأدوية": "Eczane ve ilaç hizmetleri",
     "خدمات الصيدلية الرقمية": "Dijital eczane hizmetleri",
     "خدمات المنصة": "Platform hizmetleri",
@@ -4724,8 +4723,8 @@ export const autoMessages = {
     "مسح السجل بالكامل": "Tüm geçmişi temizle",
     "مسح سجل البحث؟": "Arama geçmişi temizlensin mi?",
     مسودة: "Taslak",
-    "مشروع حياة دوائية © 2026 — رعاية أقرب، تجربة أذكى.":
-      "Life Pharmaceutical Project © 2026 — Daha yakın bakım, daha akıllı deneyim.",
+    "مشروع دوائي © 2026 — رعاية أقرب، تجربة أذكى.":
+      "Dawaai © 2026 — Daha yakın bakım, daha akıllı deneyim.",
     "مطابقة الموقع": "Konum eşleştirme",
     "مطلوب قبل": "Daha önce gerekli",
     معتمدة: "Sertifikalı",
@@ -4795,8 +4794,8 @@ export const autoMessages = {
     "نحافظ على بيانات حسابك ونستخدمها فقط لتقديم الخدمات المناسبة لك.":
       "Hesap verilerinizi yalnızca size uygun hizmetleri sağlamak için saklıyor ve kullanıyoruz.",
     "نحدد الصيدليات الأقرب...": "Size en yakın eczaneleri belirliyoruz...",
-    "نحرص على حماية بياناتك واحترام خصوصيتك، لتستخدم خدمات حياة دوائية بثقة ووضوح في كل خطوة.":
-      "Hayat İlaç hizmetlerini her adımda güvenle ve net bir şekilde kullanabilmeniz için verilerinizi korumaya ve gizliliğinize saygı duymaya önem veriyoruz.",
+    "نحرص على حماية بياناتك واحترام خصوصيتك، لتستخدم خدمات دوائي بثقة ووضوح في كل خطوة.":
+      "Dawaai'yi her adımda güvenle kullanabilmeniz için verilerinizi ve gizliliğinizi koruyoruz.",
     "نسبة اكتمال الملف الصحي": "Sağlık dosyasının tamamlanma yüzdesi",
     "نسخة مخصصة للطباعة": "Özelleştirilmiş baskı sürümü",
     "نشاط بحث": "Arama etkinliği",
@@ -4804,14 +4803,14 @@ export const autoMessages = {
     نشط: "Aktif",
     نشطة: "Aktif",
     "نظرة عامة": "Genel Bakış",
-    "نظرة عامة على حياة دوائية": "Farmasötik hayata genel bakış",
+    "نظرة عامة على دوائي": "Dawaai'ye genel bakış",
     "نقطة انطلاق الطريق": "Rotanın başlangıç noktası",
     "نوع الحساب": "Hesap türü",
     "نوع المستند": "Belge türü",
     "نوع مستند التحقق المحدد غير مدعوم.":
       "Belirtilen doğrulama belgesi türü desteklenmiyor.",
-    "هذا التقرير يعكس المعلومات التي أدخلها المستخدم في منصة حياة دوائية، ولا يُعد تشخيصًا أو وصفة طبية.":
-      "Bu rapor, kullanıcının Hayat Pharma platformuna girdiği bilgileri yansıtmakta olup, teşhis veya reçete niteliği taşımamaktadır.",
+    "هذا التقرير يعكس المعلومات التي أدخلها المستخدم في منصة دوائي، ولا يُعد تشخيصًا أو وصفة طبية.":
+      "Bu rapor, kullanıcının Dawaai platformuna girdiği bilgileri yansıtır; teşhis veya reçete değildir.",
     "هذا الدواء يتطلب وصفة طبية عند الاستلام.":
       "Bu ilaç alındıktan sonra reçete gerektirir.",
     "هوية الدواء": "İlacın kimliği",

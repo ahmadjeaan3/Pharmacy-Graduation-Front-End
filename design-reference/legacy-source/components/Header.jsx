@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import Logo from "../../public/assets/images/images_header/LOGO.png";
+const Logo = "/assets/app/brand/dawaai-mark.png";
 
 export default function Header() {
   const navigate = useNavigate();

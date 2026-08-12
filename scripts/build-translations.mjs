@@ -35,7 +35,7 @@ function collect(source) {
     let index = 0;
     const pattern = normalize(match[1]).replace(
       /\$\{[^}]+\}/g,
-      () => `__HAYAT_VALUE_${index++}__`,
+      () => `__DAWAAI_VALUE_${index++}__`,
     );
     if (
       index > 0 &&
@@ -60,7 +60,7 @@ function visit(directory) {
 }
 
 async function translateBatch(values, language) {
-  const separator = "\n__HAYAT_TRANSLATION_SEPARATOR__\n";
+  const separator = "\n__DAWAAI_TRANSLATION_SEPARATOR__\n";
   const url = new URL("https://translate.googleapis.com/translate_a/single");
   url.searchParams.set("client", "gtx");
   url.searchParams.set("sl", "ar");
@@ -74,7 +74,7 @@ async function translateBatch(values, language) {
   const payload = await response.json();
   const translated = payload[0].map((part) => part[0]).join("");
   const parts = translated
-    .split(/__HAYAT_TRANSLATION_SEPARATOR__/)
+    .split(/__DAWAAI_TRANSLATION_SEPARATOR__/)
     .map(normalize);
   if (parts.length !== values.length)
     throw new Error(`Unexpected count: ${parts.length}/${values.length}`);
