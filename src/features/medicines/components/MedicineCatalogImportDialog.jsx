@@ -10,10 +10,7 @@ import {
 import { useEffect, useState } from "react";
 
 import { getApiErrorMessage } from "../../../shared/api/errors";
-import {
-  importSyrianMedicineCatalog,
-  medicineKeys,
-} from "../api/medicinesApi";
+import { importSyrianMedicineCatalog, medicineKeys } from "../api/medicinesApi";
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024;
 
@@ -100,15 +97,23 @@ export function MedicineCatalogImportDialog({ open, onClose }) {
               <FileSpreadsheet size={23} />
             </span>
             <div>
-              <h2 id="catalog-import-title" className="text-xl font-black text-[#17363e]">
+              <h2
+                id="catalog-import-title"
+                className="text-xl font-black text-[#17363e]"
+              >
                 استيراد دليل الأدوية السورية
               </h2>
               <p className="mt-1 text-xs leading-5 text-[#71858a]">
-                افحص الملف أولًا، ثم أكّد إضافة الأسماء العربية وأسماء البحث إلى الدليل.
+                افحص الملف أولًا، ثم أكّد إضافة الأسماء العربية وأسماء البحث إلى
+                الدليل.
               </p>
             </div>
           </div>
-          <button className="icon-button grid" onClick={onClose} aria-label="إغلاق">
+          <button
+            className="icon-button grid"
+            onClick={onClose}
+            aria-label="إغلاق"
+          >
             <X size={19} />
           </button>
         </header>
@@ -135,17 +140,24 @@ export function MedicineCatalogImportDialog({ open, onClose }) {
           {(validationError || importer.isError) && (
             <div className="flex items-start gap-3 rounded-2xl border border-rose-100 bg-rose-50 p-4 text-sm font-bold text-rose-700">
               <AlertTriangle size={19} className="mt-0.5 shrink-0" />
-              <span>{validationError || getApiErrorMessage(importer.error)}</span>
+              <span>
+                {validationError || getApiErrorMessage(importer.error)}
+              </span>
             </div>
           )}
 
           {result && (
             <section className="rounded-[1.4rem] border border-[#dce8ea] bg-white p-4 sm:p-5">
               <div className="flex items-start gap-3">
-                <CheckCircle2 className="mt-0.5 shrink-0 text-emerald-600" size={21} />
+                <CheckCircle2
+                  className="mt-0.5 shrink-0 text-emerald-600"
+                  size={21}
+                />
                 <div>
                   <h3 className="font-black text-[#17363e]">
-                    {completed ? "اكتمل تحديث دليل الأدوية" : "اكتمل فحص الملف بنجاح"}
+                    {completed
+                      ? "اكتمل تحديث دليل الأدوية"
+                      : "اكتمل فحص الملف بنجاح"}
                   </h3>
                   <p className="mt-1 text-xs leading-6 text-[#71858a]">
                     {result.alreadyImported
@@ -163,7 +175,9 @@ export function MedicineCatalogImportDialog({ open, onClose }) {
                     <strong className="block text-lg font-black text-[#174b57]">
                       {Number(result[key] || 0).toLocaleString("ar-SY")}
                     </strong>
-                    <span className="mt-1 block text-[10px] leading-4 text-[#71858a]">{label}</span>
+                    <span className="mt-1 block text-[10px] leading-4 text-[#71858a]">
+                      {label}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -184,7 +198,11 @@ export function MedicineCatalogImportDialog({ open, onClose }) {
           )}
 
           <div className="flex flex-col-reverse gap-2 border-t border-[#174b57]/8 pt-5 sm:flex-row sm:justify-end">
-            <button className="btn-secondary" onClick={onClose} disabled={importer.isPending}>
+            <button
+              className="btn-secondary"
+              onClick={onClose}
+              disabled={importer.isPending}
+            >
               {completed ? "إغلاق" : "إلغاء"}
             </button>
             {!completed && (
@@ -202,7 +220,11 @@ export function MedicineCatalogImportDialog({ open, onClose }) {
               </button>
             )}
             {result?.dryRun && (
-              <button className="btn-primary" disabled={importer.isPending} onClick={() => run(false)}>
+              <button
+                className="btn-primary"
+                disabled={importer.isPending}
+                onClick={() => run(false)}
+              >
                 {importer.isPending ? (
                   <LoaderCircle size={17} className="animate-spin" />
                 ) : (

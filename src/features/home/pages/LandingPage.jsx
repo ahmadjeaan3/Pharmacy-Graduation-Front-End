@@ -69,7 +69,6 @@ const ASSETS = {
   cta: "/assets/app/home/cta.png",
 
   sparkle: "/assets/app/home/icons/Sparkle.png",
-  arrowWhite: "/assets/app/home/icons/Diagonal Right Up Arrow.png",
   arrowTeal: "/assets/app/home/icons/chevron-down.svg",
   verified: "/assets/app/home/icons/verified.png",
   quickSearch: "/assets/app/home/icons/Clock-orange.png",
@@ -84,15 +83,10 @@ const ASSETS = {
   organization: "/assets/app/home/icons/organization.png",
   admin: "/assets/app/home/icons/admin.png",
 
-  medicineSearch: "/assets/app/home/icons/medicine-search.png",
-  choosePharmacy: "/assets/app/home/icons/choose-pharmacy.png",
-  donation: "/assets/app/home/icons/donation.png",
-
   lock: "/assets/app/home/icons/lock.png",
   shield: "/assets/app/home/icons/shield.png",
   transparency: "/assets/app/home/icons/transparency.png",
 
-  star: "/assets/app/home/icons/star.png",
   quote: "/assets/app/home/icons/quote.png",
 
   whatsapp: "/assets/app/social/whatsapp.png",

@@ -6,6 +6,7 @@ import {
   LogOut,
   Menu,
   Route,
+  Search,
   Settings,
   ShieldCheck,
   UserRound,
@@ -24,7 +25,6 @@ import {
   getLanguageDirection,
   normalizeLanguage,
 } from "../../../shared/i18n/i18n";
-import { Brand } from "../../../shared/components/Brand";
 import { useAuth } from "../../auth/hooks/useAuth";
 import {
   getUnreadNotificationCount,
@@ -281,6 +281,10 @@ export function DashboardLayout() {
 
   const isArabic = currentLanguage === "ar";
 
+  const dashboardLogo = isArabic
+    ? "/assets/app/brand/dashboard-logo.png"
+    : "/assets/app/brand/dashboard-logo-left.png";
+
   const direction = getLanguageDirection(currentLanguage);
 
   const locale =
@@ -386,7 +390,9 @@ export function DashboardLayout() {
               alt="Medical Life"
               draggable={false}
               className={`select-none object-contain ${
-                isArabic ? "h-[52px] w-[242px]" : "h-[68px] w-[300px] mr-10"
+                isArabic
+                  ? "h-[52px] w-[242px]"
+                  : "h-[58px] w-full max-w-[242px]"
               }`}
             />
           </div>
@@ -473,17 +479,14 @@ export function DashboardLayout() {
           </nav>
         </div>
 
-        <div className="relative z-20 mx-auto mt-3 w-[251px] shrink-0 border-t border-white/10 bg-[#174b57] pt-3">
-          <button
-            type="button"
-            onClick={signOut}
-            className="flex min-h-[54px] w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-[#ef4444] transition hover:bg-rose-400/10"
-          >
-            <LogOut size={18} strokeWidth={1.8} />
-
-            <span>{t("تسجيل الخروج")}</span>
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={signOut}
+          className="relative z-20 mx-5 mt-3 flex min-h-[50px] shrink-0 items-center gap-3 rounded-xl border border-white/10 px-3.5 py-3 text-sm font-semibold text-white/60 transition hover:border-rose-300/20 hover:bg-rose-400/10 hover:text-rose-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-200/60"
+        >
+          <LogOut size={18} strokeWidth={1.8} />
+          <span>{t("تسجيل الخروج")}</span>
+        </button>
       </aside>
 
       {open && (
@@ -501,7 +504,7 @@ export function DashboardLayout() {
         }`}
       >
         <header className="sticky top-0 z-30 h-[78px] w-full border-b border-[#174b57]/[.08] bg-white/90 shadow-[0_8px_30px_rgba(23,75,87,.035)] backdrop-blur-xl supports-[backdrop-filter]:bg-white/82">
-          <div className="grid h-full w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 ps-16 sm:px-6 sm:ps-16 lg:ps-8 xl:px-10">
+          <div className="grid h-full w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 ps-16 sm:px-6 sm:ps-16 lg:ps-8 xl:grid-cols-[minmax(180px,1fr)_minmax(260px,553px)_auto] xl:gap-6 xl:px-10">
             <div
               dir={direction}
               className={`flex flex-col justify-center justify-self-start ${
@@ -521,22 +524,37 @@ export function DashboardLayout() {
               />
             </div>
 
-            <label
+            <form
+              onSubmit={submitGlobalSearch}
               dir="ltr"
               className="hidden h-11 w-full max-w-[553px] items-center justify-self-center gap-2 rounded-lg border border-[rgba(102,102,102,.16)] bg-white px-3 text-[#a5a5a5] xl:flex"
             >
               <input
                 type="search"
                 dir={direction}
+                list="dashboard-navigation-search"
                 placeholder={t("ابحث هنا")}
                 aria-label={t("ابحث هنا...")}
+                value={globalSearch}
+                onChange={(event) => setGlobalSearch(event.target.value)}
                 className={`min-w-0 flex-1 border-0 bg-transparent text-xs text-[#333333] outline-none placeholder:text-[#a5a5a5] ${
                   isArabic ? "text-right" : "text-left"
                 }`}
               />
+              <datalist id="dashboard-navigation-search">
+                {searchableNavigation.map((item) => (
+                  <option key={item.to} value={item.translatedLabel} />
+                ))}
+              </datalist>
 
-              <Search size={18} strokeWidth={1.6} className="shrink-0" />
-            </label>
+              <button
+                type="submit"
+                aria-label={t("بحث")}
+                className="grid size-7 shrink-0 place-items-center rounded-md transition hover:bg-[#eef6f5] hover:text-[#216474]"
+              >
+                <Search size={18} strokeWidth={1.6} />
+              </button>
+            </form>
 
             <div className="flex items-center justify-end">
               <NotificationBell

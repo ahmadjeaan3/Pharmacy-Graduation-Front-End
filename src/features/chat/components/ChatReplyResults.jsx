@@ -11,25 +11,34 @@ import {
   Star,
 } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { formatDistance, formatPrice } from "../../../shared/utils/formatters";
 import { intentLabel } from "../utils/chatFormatters";
 
 export function ChatReplyResults({ reply, onPrompt }) {
+  const { t } = useTranslation();
   if (!reply) return null;
+  const hasRetrievedContext =
+    reply.aiRetrievalConfidence && reply.aiRetrievalConfidence !== "none";
   return (
     <div className="ms-12 max-w-3xl space-y-3">
       <span className="inline-flex rounded-full bg-violet-50 px-3 py-1 text-[10px] font-black text-violet-700">
-        {intentLabel[reply.detectedIntent] || "مساعدة"}
+        {t(intentLabel[reply.detectedIntent] || "مساعدة")}
       </span>
       {reply.aiEngine && (
         <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold text-[#71858a]">
           <span className="rounded-full border border-emerald-100 bg-emerald-50 px-2.5 py-1 text-emerald-700">
-            مساعد صيدلاني ذكي
+            {t("مساعد صيدلاني ذكي")}
           </span>
-          {reply.aiRetrievalConfidence && (
+          {hasRetrievedContext ? (
             <span className="rounded-full border border-[#174b57]/10 bg-white px-2.5 py-1">
-              موثوقية الاسترجاع: {reply.aiRetrievalConfidence}
+              {t("موثوقية المصادر")}:{" "}
+              {t(confidenceLabel[reply.aiRetrievalConfidence])}
+            </span>
+          ) : (
+            <span className="rounded-full border border-sky-100 bg-sky-50 px-2.5 py-1 text-sky-700">
+              {t("إجابة طبية عامة")}
             </span>
           )}
         </div>
@@ -37,17 +46,14 @@ export function ChatReplyResults({ reply, onPrompt }) {
       {reply.requiresPharmacist && (
         <div className="flex items-start gap-2 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-xs font-bold leading-6 text-amber-900">
           <ShieldAlert className="mt-0.5 shrink-0" size={17} />
-          <span>
-            هذه المعلومات للتثقيف ولا تغني عن مراجعة الطبيب أو الصيدلي، خصوصًا
-            قبل بدء الدواء أو إيقافه.
-          </span>
+          <span>{t("تنبيه المساعد الطبي")}</span>
         </div>
       )}
       {reply.aiSources?.length > 0 && (
         <div className="rounded-2xl border border-[#174b57]/8 bg-white p-3">
           <div className="mb-2 flex items-center gap-2 text-xs font-black text-[#29464d]">
             <BookOpenText size={16} className="text-violet-700" />
-            <span>المراجع المستخدمة في الإجابة</span>
+            <span>{t("المراجع المستخدمة في الإجابة")}</span>
           </div>
           <div className="grid gap-2 sm:grid-cols-2">
             {reply.aiSources.slice(0, 4).map((source, index) => (
@@ -55,6 +61,7 @@ export function ChatReplyResults({ reply, onPrompt }) {
                 key={`${source.sourceId}-${source.sourceUrl || source.medicineName}-${index}`}
                 source={source}
                 index={index}
+                t={t}
               />
             ))}
           </div>
@@ -120,10 +127,10 @@ export function ChatReplyResults({ reply, onPrompt }) {
           </span>
           <div>
             <strong className="block text-sm text-[#29464d]">
-              فتح ملفي الصحي
+              {t("فتح ملفي الصحي")}
             </strong>
             <small className="text-[#829499]">
-              مراجعة وتحديث المعلومات الصحية
+              {t("مراجعة وتحديث المعلومات الصحية")}
             </small>
           </div>
           <ArrowLeft className="ms-auto text-violet-700" size={16} />
@@ -144,7 +151,13 @@ export function ChatReplyResults({ reply, onPrompt }) {
   );
 }
 
-function SourceCard({ source, index }) {
+const confidenceLabel = {
+  low: "محدودة",
+  medium: "متوسطة",
+  high: "مرتفعة",
+};
+
+function SourceCard({ source, index, t }) {
   const [showOriginal, setShowOriginal] = useState(false);
   const clinical = source.documentType === "clinical";
   const title = clinical
@@ -157,15 +170,15 @@ function SourceCard({ source, index }) {
     <article className="rounded-xl border border-transparent bg-[#f7faf9] p-3 text-start transition hover:border-violet-200">
       <div className="flex items-start justify-between gap-2">
         <strong className="line-clamp-2 text-xs leading-5 text-[#29464d]">
-          {title || `مصدر ${index + 1}`}
+          {title || t("مصدر {{number}}", { number: index + 1 })}
         </strong>
         {source.sourceUrl && (
           <a
             href={source.sourceUrl}
             target="_blank"
             rel="noreferrer"
-            title="فتح المصدر الرسمي"
-            aria-label="فتح المصدر الرسمي في صفحة جديدة"
+            title={t("فتح المصدر الرسمي")}
+            aria-label={t("فتح المصدر الرسمي في صفحة جديدة")}
             className="grid size-7 shrink-0 place-items-center rounded-lg text-violet-700 hover:bg-violet-50"
           >
             <ExternalLink size={13} />
@@ -183,7 +196,11 @@ function SourceCard({ source, index }) {
             aria-expanded={showOriginal}
             className="flex w-full items-center justify-between gap-2 text-[10px] font-black text-violet-700"
           >
-            <span>{showOriginal ? "إخفاء النص الأصلي" : "عرض النص الأصلي من المصدر"}</span>
+            <span>
+              {showOriginal
+                ? t("إخفاء النص الأصلي")
+                : t("عرض النص الأصلي من المصدر")}
+            </span>
             <ChevronDown
               size={13}
               className={`transition-transform ${showOriginal ? "rotate-180" : ""}`}
@@ -192,7 +209,7 @@ function SourceCard({ source, index }) {
           {showOriginal && (
             <div className="mt-2 rounded-lg border border-[#174b57]/8 bg-white p-2.5">
               <p className="mb-1 text-[9px] font-bold text-[#829499]">
-                النص التالي باللغة الأصلية للمحافظة على دقة المرجع الطبي:
+                {t("تنبيه النص الأصلي")}
               </p>
               <p
                 dir="ltr"
@@ -207,7 +224,9 @@ function SourceCard({ source, index }) {
       )}
       <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[9px] font-bold text-[#829499]">
         {source.source && (
-          <span className="rounded-full bg-white px-2 py-0.5">{source.source}</span>
+          <span className="rounded-full bg-white px-2 py-0.5">
+            {source.source}
+          </span>
         )}
         {source.updatedAt && <span>{source.updatedAt}</span>}
       </div>
@@ -216,6 +235,7 @@ function SourceCard({ source, index }) {
 }
 
 function ActionButton({ action, onPrompt }) {
+  const { t } = useTranslation();
   if (action.actionType === "ViewPharmacyDetails" && action.relatedEntityId)
     return (
       <Link
@@ -223,7 +243,7 @@ function ActionButton({ action, onPrompt }) {
         className="btn-quiet min-h-9 px-3 py-1.5 text-xs"
       >
         <PackageCheck size={14} />
-        {action.label}
+        {t(action.label)}
       </Link>
     );
   if (action.actionType === "OpenGoogleMaps" && action.url)
@@ -235,14 +255,14 @@ function ActionButton({ action, onPrompt }) {
         className="btn-quiet min-h-9 px-3 py-1.5 text-xs"
       >
         <ExternalLink size={14} />
-        {action.label}
+        {t(action.label)}
       </a>
     );
   if (action.actionType === "UpdateMedicalProfile")
     return (
       <Link to="/app/health" className="btn-quiet min-h-9 px-3 py-1.5 text-xs">
         <HeartPulse size={14} />
-        {action.label}
+        {t(action.label)}
       </Link>
     );
   const prompt = {
@@ -257,7 +277,7 @@ function ActionButton({ action, onPrompt }) {
       onClick={() => onPrompt(prompt)}
       className="btn-quiet min-h-9 px-3 py-1.5 text-xs"
     >
-      {action.label}
+      {t(action.label)}
     </button>
   );
 }

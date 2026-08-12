@@ -264,7 +264,10 @@ export function PharmacyDetailsPage() {
                       medicine.medicineName}
                   </h4>
                   {medicine.arabicMedicineName && (
-                    <p className="mt-1 text-[11px] font-bold text-[#216474]" dir="ltr">
+                    <p
+                      className="mt-1 text-[11px] font-bold text-[#216474]"
+                      dir="ltr"
+                    >
                       {medicine.medicineName}
                     </p>
                   )}

@@ -460,7 +460,10 @@ function MedicineResults({
                 </h3>
                 {item.arabicMedicineName &&
                   item.medicineDisplayName !== item.medicineName && (
-                    <p className="mt-1 text-xs font-bold text-[#216474]" dir="ltr">
+                    <p
+                      className="mt-1 text-xs font-bold text-[#216474]"
+                      dir="ltr"
+                    >
                       {item.medicineName}
                     </p>
                   )}
