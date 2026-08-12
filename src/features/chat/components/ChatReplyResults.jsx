@@ -1,6 +1,7 @@
 import {
   ArrowLeft,
   BookOpenText,
+  ChevronDown,
   ExternalLink,
   HeartPulse,
   MapPin,
@@ -9,6 +10,7 @@ import {
   ShieldAlert,
   Star,
 } from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { formatDistance, formatPrice } from "../../../shared/utils/formatters";
 import { intentLabel } from "../utils/chatFormatters";
@@ -45,30 +47,15 @@ export function ChatReplyResults({ reply, onPrompt }) {
         <div className="rounded-2xl border border-[#174b57]/8 bg-white p-3">
           <div className="mb-2 flex items-center gap-2 text-xs font-black text-[#29464d]">
             <BookOpenText size={16} className="text-violet-700" />
-            <span>المصادر الدوائية المستخدمة</span>
+            <span>المراجع المستخدمة في الإجابة</span>
           </div>
           <div className="grid gap-2 sm:grid-cols-2">
             {reply.aiSources.slice(0, 4).map((source, index) => (
-              <div
-                key={`${source.sourceId}-${source.medicineName}-${index}`}
-                className="rounded-xl bg-[#f7faf9] p-2.5 text-start"
-              >
-                <strong className="block truncate text-xs text-[#29464d]">
-                  {source.medicineName ||
-                    source.activeIngredient ||
-                    `مصدر ${index + 1}`}
-                </strong>
-                <p className="mt-1 line-clamp-2 text-[10px] leading-5 text-[#71858a]">
-                  {[source.activeIngredient, source.strength, source.form]
-                    .filter(Boolean)
-                    .join(" • ")}
-                </p>
-                {source.manufacturer && (
-                  <small className="mt-1 block truncate text-[10px] text-[#93a3a7]">
-                    {source.manufacturer}
-                  </small>
-                )}
-              </div>
+              <SourceCard
+                key={`${source.sourceId}-${source.sourceUrl || source.medicineName}-${index}`}
+                source={source}
+                index={index}
+              />
             ))}
           </div>
         </div>
@@ -154,6 +141,77 @@ export function ChatReplyResults({ reply, onPrompt }) {
         </div>
       )}
     </div>
+  );
+}
+
+function SourceCard({ source, index }) {
+  const [showOriginal, setShowOriginal] = useState(false);
+  const clinical = source.documentType === "clinical";
+  const title = clinical
+    ? source.title || source.activeIngredient
+    : source.medicineName || source.arabicName || source.activeIngredient;
+  const details = clinical
+    ? [source.section, source.activeIngredient]
+    : [source.activeIngredient, source.strength, source.form];
+  return (
+    <article className="rounded-xl border border-transparent bg-[#f7faf9] p-3 text-start transition hover:border-violet-200">
+      <div className="flex items-start justify-between gap-2">
+        <strong className="line-clamp-2 text-xs leading-5 text-[#29464d]">
+          {title || `مصدر ${index + 1}`}
+        </strong>
+        {source.sourceUrl && (
+          <a
+            href={source.sourceUrl}
+            target="_blank"
+            rel="noreferrer"
+            title="فتح المصدر الرسمي"
+            aria-label="فتح المصدر الرسمي في صفحة جديدة"
+            className="grid size-7 shrink-0 place-items-center rounded-lg text-violet-700 hover:bg-violet-50"
+          >
+            <ExternalLink size={13} />
+          </a>
+        )}
+      </div>
+      <p className="mt-1 line-clamp-2 text-[10px] leading-5 text-[#71858a]">
+        {details.filter(Boolean).join(" • ")}
+      </p>
+      {clinical && source.content && (
+        <div className="mt-2 border-t border-[#174b57]/8 pt-2">
+          <button
+            type="button"
+            onClick={() => setShowOriginal((value) => !value)}
+            aria-expanded={showOriginal}
+            className="flex w-full items-center justify-between gap-2 text-[10px] font-black text-violet-700"
+          >
+            <span>{showOriginal ? "إخفاء النص الأصلي" : "عرض النص الأصلي من المصدر"}</span>
+            <ChevronDown
+              size={13}
+              className={`transition-transform ${showOriginal ? "rotate-180" : ""}`}
+            />
+          </button>
+          {showOriginal && (
+            <div className="mt-2 rounded-lg border border-[#174b57]/8 bg-white p-2.5">
+              <p className="mb-1 text-[9px] font-bold text-[#829499]">
+                النص التالي باللغة الأصلية للمحافظة على دقة المرجع الطبي:
+              </p>
+              <p
+                dir="ltr"
+                lang="en"
+                className="max-h-32 overflow-y-auto text-left text-[10px] leading-5 text-[#5f7479]"
+              >
+                {source.content}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+      <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[9px] font-bold text-[#829499]">
+        {source.source && (
+          <span className="rounded-full bg-white px-2 py-0.5">{source.source}</span>
+        )}
+        {source.updatedAt && <span>{source.updatedAt}</span>}
+      </div>
+    </article>
   );
 }
 
