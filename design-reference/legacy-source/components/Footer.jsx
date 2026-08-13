@@ -9,8 +9,8 @@ export default function FooterCTA() {
           {/* Logo */}
           <div className="flex-shrink-0">
             <img
-              src="/assets/app/brand/dawaai-mark.png"
-              alt="دوائي"
+              src="/assets/images/FooterCTA/LOGO.png"
+              alt="Medicallife"
               className="w-[65px] h-[63px] object-contain"
             />
           </div>
@@ -18,7 +18,7 @@ export default function FooterCTA() {
           {/* Content */}
           <div className="flex-1 flex flex-col items-center mr-20">
             <h2 className="text-[28px] font-semibold text-white">
-              ابدأ رحلتك الآن مع دوائي
+              ابدأ رحلتك الآن مع Medicallife
             </h2>
 
             <p className="mt-3 text-[16px] leading-7 text-[#EEEEEE] text-center max-w-[620px]">
@@ -72,7 +72,7 @@ export default function FooterCTA() {
 
         {/* Copyright */}
         <p className="mt-5 text-center text-[15px] text-white/60 ml-30">
-          © 2026 دوائي
+          © 2026 medicallife.com
         </p>
       </div>
     </footer>

@@ -312,7 +312,9 @@ export function LoginPage() {
 
               <h2 className="text-[27px] font-bold leading-[1.6] xl:text-[32px]">
                 {t("مرحبًا بعودتك إلى")}{" "}
-                <span className="inline-flex text-[#F5CB72]">دوائي</span>
+                <span className="inline-flex text-[#F5CB72]">
+                  دوائي
+                </span>
               </h2>
 
               <p className="mt-5 max-w-[560px] text-[14px] leading-8 text-white/70">

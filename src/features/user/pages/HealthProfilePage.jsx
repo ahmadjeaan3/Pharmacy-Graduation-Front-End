@@ -33,7 +33,6 @@ import {
   LoadingState as UserLoadingState,
 } from "../../../shared/components/AsyncStates";
 import { PageHeader as UserPageHeader } from "../../../shared/components/PageHeader";
-import { DAWAAI_MARK } from "../../../shared/components/Brand";
 import { formatDate } from "../utils/userFormatters";
 import { getApiErrorMessage } from "../../../shared/api/errors";
 
@@ -697,7 +696,7 @@ function HealthCard({ card }) {
         <div className="print-only health-report-letterhead">
           <div className="health-report-brand">
             <span className="health-report-logo">
-              <img src={DAWAAI_MARK} alt="" draggable={false} />
+              <HeartPulse size={28} strokeWidth={2.2} />
             </span>
             <span>
               <strong>دوائي</strong>
@@ -827,8 +826,8 @@ function HealthCard({ card }) {
             </button>
           </div>
           <p className="print-only health-report-disclaimer">
-            هذا التقرير يعكس المعلومات التي أدخلها المستخدم في منصة دوائي، ولا
-            يُعد تشخيصًا أو وصفة طبية.
+            هذا التقرير يعكس المعلومات التي أدخلها المستخدم في منصة دوائي،
+            ولا يُعد تشخيصًا أو وصفة طبية.
           </p>
         </div>
       </section>

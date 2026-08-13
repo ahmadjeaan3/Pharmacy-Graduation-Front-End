@@ -307,8 +307,8 @@ export function PharmacyDashboardPage() {
                         isExpired
                           ? "bg-slate-100 text-slate-700"
                           : isExpiring
-                            ? "bg-[#FFF1F2] text-[#E11D48]"
-                            : "bg-[#FFF7DF] text-[#DFAE0D]"
+                          ? "bg-[#FFF1F2] text-[#E11D48]"
+                          : "bg-[#FFF7DF] text-[#DFAE0D]"
                       }`}
                     >
                       <AlertTriangle size={18} />
@@ -325,18 +325,16 @@ export function PharmacyDashboardPage() {
                         {isExpired
                           ? t("انتهت صلاحية هذا الصنف ويجب عزله عن الطلبات")
                           : isExpiring
-                            ? t("متبقي {{count}} يومًا على الانتهاء", {
-                                count: formatNumber(item.daysUntilExpiry),
-                              })
-                            : t(
-                                "الكمية الحالية {{quantity}} والحد الأدنى {{threshold}}",
-                                {
-                                  quantity: formatNumber(item.quantity),
-                                  threshold: formatNumber(
-                                    item.lowStockThreshold,
-                                  ),
-                                },
-                              )}
+                          ? t("متبقي {{count}} يومًا على الانتهاء", {
+                              count: formatNumber(item.daysUntilExpiry),
+                            })
+                          : t(
+                              "الكمية الحالية {{quantity}} والحد الأدنى {{threshold}}",
+                              {
+                                quantity: formatNumber(item.quantity),
+                                threshold: formatNumber(item.lowStockThreshold),
+                              },
+                            )}
                       </p>
                     </div>
                   </div>

@@ -22,7 +22,7 @@ export default function Sidebar({ collapsed, setCollapsed, menuItems }) {
           />
         </button>
         <img
-          src="/assets/app/brand/dawaai-mark.png"
+          src="/Icons/logo_white.png"
           alt=""
           className={`transition-all duration-300 ${
             collapsed ? "w-[0px]" : "w-[180px]"

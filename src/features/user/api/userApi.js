@@ -6,6 +6,7 @@ export const userKeys = {
   medicalProfile: ["user", "medical-profile"],
   healthCard: ["user", "health-card"],
   dashboard: (params = {}) => ["user", "dashboard", params],
+  popularMedicines: (take = 5) => ["user", "popular-medicines", take],
   locationContext: (params = {}) => ["user", "location-context", params],
   nearestPharmacyRoute: (params = {}) => [
     "user",
@@ -34,15 +35,19 @@ const compactParams = (params) =>
 export async function getUserProfile() {
   return (await apiClient.get("/Users/me")).data;
 }
+
 export async function getMedicalProfile() {
   return (await apiClient.get("/Users/me/medical-profile")).data;
 }
+
 export async function updateMedicalProfile(payload) {
   return (await apiClient.put("/Users/me/medical-profile", payload)).data;
 }
+
 export async function getHealthCard() {
   return (await apiClient.get("/Users/me/health-card")).data;
 }
+
 export async function getUserDashboard(params = {}) {
   return (
     await apiClient.get("/Users/me/dashboard", {
@@ -50,9 +55,19 @@ export async function getUserDashboard(params = {}) {
     })
   ).data;
 }
+
+export async function getPopularMedicines(take = 5) {
+  return (
+    await apiClient.get("/Users/me/popular-medicines", {
+      params: { take },
+    })
+  ).data;
+}
+
 export async function updateUserLocation(payload) {
   return (await apiClient.put("/Users/me/location", payload)).data;
 }
+
 export async function getLocationContext(params = {}) {
   return (
     await apiClient.get("/Users/me/location-context", {
@@ -60,6 +75,7 @@ export async function getLocationContext(params = {}) {
     })
   ).data;
 }
+
 export async function getNearestPharmacyRoute(params = {}) {
   return (
     await apiClient.get("/Users/me/nearest-pharmacy-route", {
@@ -67,9 +83,11 @@ export async function getNearestPharmacyRoute(params = {}) {
     })
   ).data;
 }
+
 export async function searchMedicines(payload) {
   return (await apiClient.post("/Users/me/search-medicines", payload)).data;
 }
+
 export async function getNearestPharmacies(params = {}) {
   return (
     await apiClient.get("/Users/me/nearest-pharmacies", {
@@ -77,6 +95,7 @@ export async function getNearestPharmacies(params = {}) {
     })
   ).data;
 }
+
 export async function getPharmacyDetails(pharmacyId, params = {}) {
   return (
     await apiClient.get(`/Users/me/pharmacies/${pharmacyId}`, {
@@ -84,6 +103,7 @@ export async function getPharmacyDetails(pharmacyId, params = {}) {
     })
   ).data;
 }
+
 export async function createMedicineRequest(pharmacyId, payload) {
   return (
     await apiClient.post(
@@ -92,6 +112,7 @@ export async function createMedicineRequest(pharmacyId, payload) {
     )
   ).data;
 }
+
 export async function getMedicineRequests(params = {}) {
   return (
     await apiClient.get("/Users/me/medicine-requests", {
@@ -99,26 +120,35 @@ export async function getMedicineRequests(params = {}) {
     })
   ).data;
 }
+
 export async function getMedicineRequest(requestId) {
   return (await apiClient.get(`/Users/me/medicine-requests/${requestId}`)).data;
 }
+
 export async function cancelMedicineRequest(requestId) {
   return (
     await apiClient.post(`/Users/me/medicine-requests/${requestId}/cancel`)
   ).data;
 }
+
 export async function ratePharmacy(pharmacyId, payload) {
   return (
     await apiClient.post(`/Users/me/pharmacies/${pharmacyId}/rating`, payload)
   ).data;
 }
+
 export async function getSearchHistory(take = 20) {
-  return (await apiClient.get("/Users/me/search-history", { params: { take } }))
-    .data;
+  return (
+    await apiClient.get("/Users/me/search-history", {
+      params: { take },
+    })
+  ).data;
 }
+
 export async function deleteSearchHistoryItem(historyId) {
   return apiClient.delete(`/Users/me/search-history/${historyId}`);
 }
+
 export async function clearSearchHistory() {
   return apiClient.delete("/Users/me/search-history");
 }

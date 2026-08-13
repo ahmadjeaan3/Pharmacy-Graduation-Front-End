@@ -79,7 +79,7 @@ export default function Login() {
             />
 
             <img
-              src="/assets/app/brand/dawaai-mark.png"
+              src="/assets/images/Login/LOGO (2).png"
               alt=""
               className="
               w-[62px]
@@ -157,7 +157,7 @@ export default function Login() {
               leading-[48px]
               "
             >
-              أهلاً وسهلاً بك في دوائي
+              أهلاً وسهلاً بك في Medical Life
             </h2>
 
             <p

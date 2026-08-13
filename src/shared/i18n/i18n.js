@@ -5,8 +5,7 @@ import { autoMessages } from "./autoMessages";
 import { inventoryMessages } from "./inventoryMessages";
 import { landingMessages } from "./landingMessages";
 
-export const STORAGE_KEY = "dawaai-language";
-const LEGACY_STORAGE_KEY = "hayat-dawaiya-language";
+export const STORAGE_KEY = "hayat-dawaiya-language";
 
 export const languages = [
   {
@@ -39,14 +38,9 @@ export function normalizeLanguage(language = "ar") {
 
 function getInitialLanguage() {
   try {
-    const storedLanguage =
-      localStorage.getItem(STORAGE_KEY) ||
-      localStorage.getItem(LEGACY_STORAGE_KEY);
+    const storedLanguage = localStorage.getItem(STORAGE_KEY);
 
     if (storedLanguage) {
-      if (!localStorage.getItem(STORAGE_KEY)) {
-        localStorage.setItem(STORAGE_KEY, storedLanguage);
-      }
       return normalizeLanguage(storedLanguage);
     }
   } catch {
@@ -182,22 +176,6 @@ const resources = {
       "حفظ كلمة المرور الجديدة": "Save new password",
       "دواؤك أقرب مما تتوقع — ابحث، احجز وتوجه إلى الصيدلية بثقة.":
         "Your medicine is closer than you think — search, reserve, and visit the pharmacy with confidence.",
-      "موثوقية المصادر": "Source confidence",
-      محدودة: "Limited",
-      متوسطة: "Moderate",
-      مرتفعة: "High",
-      "إجابة طبية عامة": "General medical answer",
-      "المراجع المستخدمة في الإجابة": "Sources used in this answer",
-      "مصدر {{number}}": "Source {{number}}",
-      "فتح المصدر الرسمي": "Open official source",
-      "فتح المصدر الرسمي في صفحة جديدة":
-        "Open the official source in a new tab",
-      "إخفاء النص الأصلي": "Hide original text",
-      "عرض النص الأصلي من المصدر": "Show original source text",
-      "تنبيه المساعد الطبي":
-        "This information is educational and does not replace a diagnosis or advice from a doctor or pharmacist. Seek urgent care for severe or emergency symptoms.",
-      "تنبيه النص الأصلي":
-        "Original source text is shown in its published language to preserve accuracy.",
     },
   },
 
@@ -286,21 +264,6 @@ const resources = {
       "حفظ كلمة المرور الجديدة": "Yeni şifreyi kaydet",
       "دواؤك أقرب مما تتوقع — ابحث، احجز وتوجه إلى الصيدلية بثقة.":
         "İlacınız düşündüğünüzden daha yakın — arayın, ayırtın ve eczaneye güvenle gidin.",
-      "موثوقية المصادر": "Kaynak güvenilirliği",
-      محدودة: "Sınırlı",
-      متوسطة: "Orta",
-      مرتفعة: "Yüksek",
-      "إجابة طبية عامة": "Genel tıbbi yanıt",
-      "المراجع المستخدمة في الإجابة": "Yanıtta kullanılan kaynaklar",
-      "مصدر {{number}}": "Kaynak {{number}}",
-      "فتح المصدر الرسمي": "Resmî kaynağı aç",
-      "فتح المصدر الرسمي في صفحة جديدة": "Resmî kaynağı yeni sekmede aç",
-      "إخفاء النص الأصلي": "Özgün metni gizle",
-      "عرض النص الأصلي من المصدر": "Kaynağın özgün metnini göster",
-      "تنبيه المساعد الطبي":
-        "Bu bilgiler eğitim amaçlıdır; doktor veya eczacı tanısı ve önerisinin yerini tutmaz. Şiddetli ya da acil belirtilerde derhal tıbbi yardım alın.",
-      "تنبيه النص الأصلي":
-        "Doğruluğu korumak için özgün kaynak metni yayımlandığı dilde gösterilir.",
     },
   },
 };
