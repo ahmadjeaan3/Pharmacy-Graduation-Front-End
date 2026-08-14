@@ -2098,26 +2098,35 @@ export function LandingPage() {
             </p>
           </div>
 
-          <div
-            dir="ltr"
-            className={`flex items-center gap-3 ${
-              isArabic ? "flex-row-reverse" : "flex-row"
-            }`}
-          >
-            {socialLinks.map(({ label, href, image }) => (
-              <a
-                key={label}
-                href={href}
-                aria-label={t(label)}
-                className="grid h-15 w-15 place-items-center rounded-full border border-[#D9E5E7] bg-white transition hover:bg-[#EDF7F8]"
-              >
-                <ImageIcon
-                  src={image}
-                  alt={t(label)}
-                  className="h-[22px] w-[22px]"
-                />
-              </a>
-            ))}
+          <div className="flex flex-col items-center gap-4 lg:items-end">
+            <Link
+              to="/privacy"
+              className="text-sm font-bold text-[#60777c] underline decoration-[#f5cb72] decoration-2 underline-offset-4 transition hover:text-[#216474]"
+            >
+              {t("سياسة الخصوصية")}
+            </Link>
+
+            <div
+              dir="ltr"
+              className={`flex items-center gap-3 ${
+                isArabic ? "flex-row-reverse" : "flex-row"
+              }`}
+            >
+              {socialLinks.map(({ label, href, image }) => (
+                <a
+                  key={label}
+                  href={href}
+                  aria-label={t(label)}
+                  className="grid h-15 w-15 place-items-center rounded-full border border-[#D9E5E7] bg-white transition hover:bg-[#EDF7F8]"
+                >
+                  <ImageIcon
+                    src={image}
+                    alt={t(label)}
+                    className="h-[22px] w-[22px]"
+                  />
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       </footer>
