@@ -751,58 +751,6 @@ export function PharmacyDetailsPage() {
           </div>
 
           {availableMedicines.length ? (
-<<<<<<< HEAD
-            <div className="grid gap-3 sm:grid-cols-2">
-              {availableMedicines.map((medicine) => (
-                <button
-                  type="button"
-                  key={medicine.medicineId}
-                  onClick={() => {
-                    setRequest({ ...request, medicineId: medicine.medicineId });
-                    document
-                      .getElementById("medicine-request")
-                      ?.scrollIntoView({ behavior: "smooth", block: "center" });
-                  }}
-                  className={`rounded-[1.25rem] border bg-white p-4 text-start transition ${request.medicineId === medicine.medicineId ? "border-[#216474] ring-4 ring-[#216474]/8" : "border-[#174b57]/8 hover:border-[#216474]/25"}`}
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <span className="grid size-10 place-items-center rounded-xl bg-[#eaf4f3] text-[#216474]">
-                      <Pill size={19} />
-                    </span>
-                    {medicine.requiresPrescription && (
-                      <span className="rounded-full bg-amber-50 px-2.5 py-1 text-[10px] font-bold text-amber-700">
-                        يتطلب وصفة
-                      </span>
-                    )}
-                  </div>
-                  <h4 className="mt-4 font-extrabold text-[#29464d]">
-                    {medicine.medicineDisplayName ||
-                      medicine.arabicMedicineName ||
-                      medicine.medicineName}
-                  </h4>
-                  {medicine.arabicMedicineName && (
-                    <p
-                      className="mt-1 text-[11px] font-bold text-[#216474]"
-                      dir="ltr"
-                    >
-                      {medicine.medicineName}
-                    </p>
-                  )}
-                  <p className="mt-1 text-xs text-[#71858a]">
-                    {[
-                      medicine.arabicScientificName || medicine.scientificName,
-                      medicine.dosageForm,
-                      medicine.capacity,
-                    ]
-                      .filter(Boolean)
-                      .join(" • ")}
-                  </p>
-                  <strong className="mt-3 block text-sm text-[#216474]">
-                    {formatPrice(medicine.sellingPrice)}
-                  </strong>
-                </button>
-              ))}
-=======
             <div
               className="
                 grid gap-3
@@ -841,7 +789,6 @@ export function PharmacyDetailsPage() {
                     }}
                   />
                 ))}
->>>>>>> e7107f8 (Update frontend design)
             </div>
           ) : (
             <UserEmptyState
