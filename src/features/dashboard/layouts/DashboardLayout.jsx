@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import {
   Bell,
+  ChevronDown,
   HeartHandshake,
   LayoutDashboard,
   LogOut,
@@ -26,7 +27,12 @@ import {
   normalizeLanguage,
 } from "../../../shared/i18n/i18n";
 import { Brand } from "../../../shared/components/Brand";
+import { ProfileAvatar } from "../../../shared/components/ProfileAvatar";
 import { useAuth } from "../../auth/hooks/useAuth";
+import {
+  accountKeys,
+  getAccountProfile,
+} from "../../settings/api/accountApi";
 import {
   getUnreadNotificationCount,
   notificationKeys,
@@ -272,6 +278,14 @@ export function DashboardLayout() {
 
   const { user, signOut } = useAuth();
 
+  const accountProfileQuery = useQuery({
+    queryKey: accountKeys.profile,
+    queryFn: getAccountProfile,
+    staleTime: 30_000,
+  });
+
+  const accountProfile = accountProfileQuery.data ?? user;
+
   const location = useLocation();
   const navigate = useNavigate();
   const [globalSearch, setGlobalSearch] = useState("");
@@ -343,6 +357,373 @@ export function DashboardLayout() {
 
   const unreadCount = unreadQuery.data?.unreadCount || 0;
 
+  const isUserAccount = primaryRole === "User";
+
+  const userTopNavItems = [
+    {
+      to: "/app",
+      label: "الرئيسية",
+      icon: LayoutDashboard,
+      end: true,
+    },
+    {
+      to: "/app/search",
+      label: "بحث عن دواء",
+      icon: Search,
+    },
+    {
+      to: "/app/chat",
+      label: "المساعد الدوائي",
+      icon: Route,
+    },
+    {
+      to: "/app/requests",
+      label: "طلباتي",
+      icon: Bell,
+    },
+    {
+      to: "/app/donations",
+      label: "التبرعات والمساعدة",
+      icon: HeartHandshake,
+    },
+    {
+      to: "/app/organizations",
+      label: "المنظمات والحملات",
+      icon: Warehouse,
+    },
+  ];
+
+  if (isUserAccount) {
+    const userFirstName =
+      user?.fullName?.trim()?.split(/\s+/)?.[0] || "";
+
+    return (
+      <div
+        dir={direction}
+        lang={currentLanguage}
+        className="min-h-screen w-full bg-[#F8FAFC] text-[#333333]"
+      >
+        {/* =========================
+            USER NAVBAR - FIGMA MATCH
+        ========================== */}
+        <header className="sticky top-0 z-50 h-20 w-full border-b border-[rgba(102,102,102,.16)] bg-white">
+          <div className="mx-auto flex h-full w-full max-w-[1640px] items-center px-4 sm:px-6 lg:px-10 xl:px-[120px]">
+            <div
+              className={`flex h-full w-full items-center justify-between ${
+                isArabic ? "flex-row" : "flex-row-reverse"
+              }`}
+            >
+              {/* Logo */}
+              <NavLink
+                to="/app"
+                aria-label={t("الرئيسية")}
+                className="flex shrink-0 items-center justify-center"
+              >
+                <Brand />
+              </NavLink>
+
+              {/* Main user navigation - text only like Figma */}
+              <nav
+                aria-label={t("القائمة الرئيسية")}
+                className="hidden h-full min-w-0 flex-1 items-center justify-center lg:flex"
+              >
+                <div
+                  className={`flex h-full items-center gap-6 xl:gap-8 ${
+                    isArabic ? "flex-row" : "flex-row-reverse"
+                  }`}
+                >
+                  {userTopNavItems.map(({ to, label, end }) => (
+                    <NavLink
+                      key={to}
+                      to={to}
+                      end={end}
+                      className={({ isActive }) =>
+                        `flex h-full items-center whitespace-nowrap px-1 transition-colors ${
+                          isActive
+                            ? "font-medium text-[#216474]"
+                            : "font-medium text-[#4F4F4F] hover:text-[#216474]"
+                        }`
+                      }
+                    >
+                      {({ isActive }) => (
+                        <span
+                          className={`relative inline-flex items-center ${
+                            isActive ? "text-[18px]" : "text-[16px]"
+                          }`}
+                        >
+                          {t(label)}
+
+                          {isActive ? (
+                            <span className="absolute -bottom-[9px] left-0 right-0 h-[2px] rounded-full bg-[#DFAE0D]" />
+                          ) : null}
+                        </span>
+                      )}
+                    </NavLink>
+                  ))}
+                </div>
+              </nav>
+
+              {/* User profile - like Figma */}
+              <div className="relative hidden shrink-0 lg:block">
+                <button
+  type="button"
+  onClick={() => setOpen((value) => !value)}
+  className={`flex h-14 min-w-[170px] items-center gap-3 rounded-xl px-1 transition hover:bg-[#F8FAFC] ${
+    isArabic ? "flex-row-reverse" : "flex-row"
+  }`}
+>
+  {/* صورة المستخدم */}
+  <ProfileAvatar
+    user={accountProfile}
+    sizeClass="size-11"
+    className="shrink-0 rounded-full bg-[#EAF4F3] text-[#216474]"
+    fallbackIcon
+  />
+
+  {/* الاسم + السهم + ملفي الشخصي */}
+  <span
+    className={`flex min-w-0 flex-1 flex-col ${
+      isArabic
+        ? "items-end text-right"
+        : "items-start text-left"
+    }`}
+  >
+    {/* الاسم والسهم */}
+    <span
+      dir={isArabic ? "rtl" : "ltr"}
+      className="inline-flex items-center gap-2 text-[14px] font-medium text-[#216474] ml-4"
+    >
+      {/* السهم على اليمين في العربية */}
+      {isArabic && (
+        <ChevronDown
+          size={15}
+          strokeWidth={1.7}
+          className={`shrink-0 text-[#333333] transition-transform duration-200 ${
+            open ? "rotate-180" : ""
+          }`}
+        />
+      )}
+
+      <span className="whitespace-nowrap">
+        {t("مرحباً")} {userFirstName}
+      </span>
+
+      {/* السهم على اليسار في الإنجليزية */}
+      {!isArabic && (
+        <ChevronDown
+          size={15}
+          strokeWidth={1.7}
+          className={`shrink-0 text-[#333333] transition-transform duration-200  ${
+            open ? "rotate-180" : ""
+          }`}
+        />
+      )}
+    </span>
+
+    {/* النص أسفل الاسم */}
+    <span className="mt-1 whitespace-nowrap text-[12px] text-[#666666] ml-4">
+      {t("ملفي الشخصي")}
+    </span>
+  </span>
+</button>
+
+                {open ? (
+                  <div
+                    dir={direction}
+                    className={`absolute top-[calc(100%+10px)] z-[60] w-[220px] overflow-hidden rounded-[12px] border border-[#174B57]/10 bg-white shadow-[0_18px_45px_rgba(23,75,87,.14)] ${
+                      isArabic ? "left-0" : "right-0"
+                    }`}
+                  >
+                    <div className="flex flex-col items-center px-4 pb-3 pt-4 text-center">
+                      <ProfileAvatar
+                        user={accountProfile}
+                        sizeClass="size-14"
+                        className="rounded-full bg-[#EAF4F3] text-[#216474]"
+                        fallbackIcon
+                      />
+
+                      <strong className="mt-2 max-w-full truncate text-[13px] font-medium text-[#333333]">
+                        {accountProfile?.fullName || user?.fullName || userFirstName}
+                      </strong>
+                    </div>
+
+                    <div className="mx-3 h-px bg-[#EEF2F3]" />
+
+                    <nav className="px-2 py-2">
+                      <NavLink
+                        to="/app/health"
+                        onClick={() => setOpen(false)}
+                        className="flex min-h-[40px] items-center gap-3 rounded-lg px-3 text-[13px] text-[#5F7479] transition hover:bg-[#F4F8F8] hover:text-[#216474]"
+                      >
+                        <UserRound size={16} strokeWidth={1.7} className="shrink-0" />
+                        <span className="flex-1 text-right">{t("ملفي الصحي")}</span>
+                      </NavLink>
+
+                      <NavLink
+                        to="/app/history"
+                        onClick={() => setOpen(false)}
+                        className="flex min-h-[40px] items-center gap-3 rounded-lg px-3 text-[13px] text-[#5F7479] transition hover:bg-[#F4F8F8] hover:text-[#216474]"
+                      >
+                        <Search size={16} strokeWidth={1.7} className="shrink-0" />
+                        <span className="flex-1 text-right">{t("سجل البحث")}</span>
+                      </NavLink>
+
+                      <NavLink
+                        to="/app/notifications"
+                        onClick={() => setOpen(false)}
+                        className="flex min-h-[40px] items-center gap-3 rounded-lg px-3 text-[13px] text-[#5F7479] transition hover:bg-[#F4F8F8] hover:text-[#216474]"
+                      >
+                        <Bell size={16} strokeWidth={1.7} className="shrink-0" />
+                        <span className="flex-1 text-right">{t("الإشعارات")}</span>
+
+                        {unreadCount > 0 ? (
+                          <span className="grid min-w-5 place-items-center rounded-full bg-rose-500 px-1.5 text-[9px] font-bold leading-5 text-white">
+                            {unreadCount > 99
+                              ? "+99"
+                              : unreadCount.toLocaleString(locale)}
+                          </span>
+                        ) : null}
+                      </NavLink>
+
+                      <NavLink
+                        to="/app/settings"
+                        onClick={() => setOpen(false)}
+                        className="flex min-h-[40px] items-center gap-3 rounded-lg px-3 text-[13px] text-[#5F7479] transition hover:bg-[#F4F8F8] hover:text-[#216474]"
+                      >
+                        <Settings size={16} strokeWidth={1.7} className="shrink-0" />
+                        <span className="flex-1 text-right">{t("الإعدادات")}</span>
+                      </NavLink>
+
+                      <div className="my-1 h-px bg-[#EEF2F3]" />
+
+                      <button
+                        type="button"
+                        onClick={signOut}
+                        className="flex min-h-[40px] w-full items-center gap-3 rounded-lg px-3 text-[13px] font-medium text-rose-600 transition hover:bg-rose-50"
+                      >
+                        <LogOut size={16} strokeWidth={1.8} className="shrink-0" />
+                        <span className="flex-1 text-right">{t("تسجيل الخروج")}</span>
+                      </button>
+                    </nav>
+                  </div>
+                ) : null}
+              </div>
+
+              {/* Mobile menu button */}
+              <button
+                type="button"
+                onClick={() => setOpen((value) => !value)}
+                aria-label={t("فتح القائمة")}
+                className="grid size-11 place-items-center rounded-xl border border-[#174b57]/10 bg-white text-[#174b57] lg:hidden"
+              >
+                {open ? <X size={22} /> : <Menu size={22} />}
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile menu - dropdown from top */}
+          {open ? (
+            <div className="border-t border-[#174B57]/8 bg-white px-4 py-4 shadow-lg lg:hidden">
+              <nav className="mx-auto grid max-w-xl gap-2">
+                {userTopNavItems.map(({ to, label, end }) => (
+                  <NavLink
+                    key={to}
+                    to={to}
+                    end={end}
+                    onClick={() => setOpen(false)}
+                    className={({ isActive }) =>
+                      `flex min-h-11 items-center rounded-xl px-4 py-2.5 text-sm ${
+                        isActive
+                          ? "bg-[#EAF4F3] font-semibold text-[#216474]"
+                          : "text-[#60777C] hover:bg-[#F4F8F8]"
+                      }`
+                    }
+                  >
+                    <span className="flex-1">{t(label)}</span>
+                  </NavLink>
+                ))}
+
+                <NavLink
+                  to="/app/health"
+                  onClick={() => setOpen(false)}
+                  className="flex min-h-11 items-center rounded-xl px-4 py-2.5 text-sm text-[#60777C] hover:bg-[#F4F8F8]"
+                >
+                  {t("ملفي الصحي")}
+                </NavLink>
+
+                <NavLink
+                  to="/app/history"
+                  onClick={() => setOpen(false)}
+                  className="flex min-h-11 items-center rounded-xl px-4 py-2.5 text-sm text-[#60777C] hover:bg-[#F4F8F8]"
+                >
+                  {t("سجل البحث")}
+                </NavLink>
+
+                <NavLink
+                  to="/app/notifications"
+                  onClick={() => setOpen(false)}
+                  className="flex min-h-11 items-center gap-3 rounded-xl px-4 py-2.5 text-sm text-[#60777C] hover:bg-[#F4F8F8]"
+                >
+                  <Bell size={16} strokeWidth={1.7} className="shrink-0" />
+                  <span className="flex-1">{t("الإشعارات")}</span>
+
+                  {unreadCount > 0 ? (
+                    <span className="grid min-w-5 place-items-center rounded-full bg-rose-500 px-1.5 text-[9px] font-bold leading-5 text-white">
+                      {unreadCount > 99
+                        ? "+99"
+                        : unreadCount.toLocaleString(locale)}
+                    </span>
+                  ) : null}
+                </NavLink>
+
+                <NavLink
+                  to="/app/settings"
+                  onClick={() => setOpen(false)}
+                  className="flex min-h-11 items-center rounded-xl px-4 py-2.5 text-sm text-[#60777C] hover:bg-[#F4F8F8]"
+                >
+                  {t("الإعدادات")}
+                </NavLink>
+
+                <button
+                  type="button"
+                  onClick={signOut}
+                  className="flex min-h-11 items-center rounded-xl px-4 py-2.5 text-sm font-medium text-rose-600 hover:bg-rose-50"
+                >
+                  {t("تسجيل الخروج")}
+                </button>
+              </nav>
+            </div>
+          ) : null}
+        </header>
+
+        {/* USER PAGE CONTENT */}
+        <main className="min-h-[calc(100vh-80px)] bg-[radial-gradient(circle_at_90%_0%,rgba(139,208,203,.12),transparent_28rem)]">
+          {location.pathname === "/app" || location.pathname === "/app/" ? (
+            <div
+              key={location.pathname}
+              className="dashboard-page-enter w-full overflow-x-hidden"
+            >
+              <Outlet />
+            </div>
+          ) : (
+            /*
+              باقي صفحات المستخدم تبقى بنفس الحاوية الحالية
+              حتى لا يتغير تصميمها.
+            */
+            <div className="mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-6 lg:px-10 lg:py-8 xl:px-[120px]">
+              <div
+                key={location.pathname}
+                className="dashboard-page-enter w-full"
+              >
+                <Outlet />
+              </div>
+            </div>
+          )}
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div
       dir={direction}
@@ -375,12 +756,26 @@ export function DashboardLayout() {
         />
 
         <div className="relative z-10 min-h-0 flex-1 overflow-y-auto overflow-x-hidden pb-4 no-scrollbar">
-          <div className="flex min-h-[68px] w-full items-center justify-center px-3">
-            <Brand
-              light
+          <div
+            className={`flex items-center ${
+              isArabic
+                ? "mx-auto min-h-[58px] w-[251px] justify-center"
+                : "min-h-[58px] w-full justify-start px-3"
+            }`}
+          >
+            <NavLink
               to="/app"
-              className="max-w-full justify-center px-3 py-2"
-            />
+              aria-label={t("الرئيسية")}
+              className="flex items-center justify-center"
+            >
+              <img
+                src="/assets/app/brand/logo_white.png"
+                alt="Dawaai"
+                draggable={false}
+                className="h-[72px] w-auto select-none object-contain"
+              />
+            </NavLink>
+
           </div>
           <div className="mx-auto mt-2 h-px w-[233px] bg-white/15" />
 
@@ -490,19 +885,34 @@ export function DashboardLayout() {
         }`}
       >
         <header className="sticky top-0 z-30 h-[78px] w-full border-b border-[#174b57]/[.08] bg-white/90 shadow-[0_8px_30px_rgba(23,75,87,.035)] backdrop-blur-xl supports-[backdrop-filter]:bg-white/82">
-          <div className="grid h-full w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 ps-16 sm:px-6 sm:ps-16 lg:ps-8 xl:grid-cols-[minmax(180px,1fr)_minmax(260px,553px)_auto] xl:gap-6 xl:px-10">
+          <div
+            className="
+              grid h-full w-full
+              grid-cols-[1fr_minmax(320px,553px)_1fr]
+              items-center
+              gap-5
+              px-4 ps-16
+              sm:px-6 sm:ps-16
+              lg:ps-8
+              xl:px-10
+            "
+          >
+            {/* Page title */}
+
             <div
               dir={direction}
-              className={`flex flex-col justify-center justify-self-start ${
-                isArabic ? "items-start text-right" : "items-start text-left"
+              className={`flex min-w-0 flex-col justify-center ${
+                isArabic
+                  ? "items-start text-right"
+                  : "items-start text-left"
               }`}
             >
-              <h1 className="max-w-[60vw] truncate whitespace-nowrap text-lg font-medium leading-[33px] text-[#216474] sm:text-[22px] lg:max-w-[240px] xl:max-w-none">
+              <h1 className="max-w-full truncate whitespace-nowrap text-lg font-medium leading-[33px] text-[#216474] sm:text-[22px]">
                 {t(currentPageTitle)}
               </h1>
 
               <span
-                className={`h-0.5 w-[107px] self-start ${
+                className={`h-0.5 w-[107px] ${
                   isArabic
                     ? "bg-[linear-gradient(to_left,#eeb73a,rgba(238,183,58,0))]"
                     : "bg-[linear-gradient(to_right,#eeb73a,rgba(238,183,58,0))]"
@@ -510,20 +920,31 @@ export function DashboardLayout() {
               />
             </div>
 
+            {/* Global search */}
             <form
               onSubmit={submitGlobalSearch}
-              dir="ltr"
-              className="hidden h-11 w-full max-w-[553px] items-center justify-self-center gap-2 rounded-lg border border-[rgba(102,102,102,.16)] bg-white px-3 text-[#a5a5a5] xl:flex"
+              dir={direction}
+              className="
+                hidden h-11 w-full
+                items-center
+                overflow-hidden
+                rounded-lg
+                border border-[rgba(102,102,102,.16)]
+                bg-white
+                shadow-[0_3px_12px_rgba(23,75,87,.035)]
+                xl:flex
+              "
+
             >
               <input
                 type="search"
-                dir={direction}
-                list="dashboard-navigation-search"
-                placeholder={t("ابحث هنا")}
-                aria-label={t("ابحث هنا...")}
                 value={globalSearch}
                 onChange={(event) => setGlobalSearch(event.target.value)}
-                className={`min-w-0 flex-1 border-0 bg-transparent text-xs text-[#333333] outline-none placeholder:text-[#a5a5a5] ${
+                dir={direction}
+                placeholder={t("ابحث هنا...")}
+                aria-label={t("ابحث هنا...")}
+                className={`min-w-0 flex-1 border-0 bg-transparent px-4 text-xs text-[#333333] outline-none placeholder:text-[#A5A5A5] ${
+
                   isArabic ? "text-right" : "text-left"
                 }`}
               />
@@ -536,13 +957,27 @@ export function DashboardLayout() {
               <button
                 type="submit"
                 aria-label={t("بحث")}
-                className="grid size-7 shrink-0 place-items-center rounded-md transition hover:bg-[#eef6f5] hover:text-[#216474]"
+                className="
+                  grid h-full w-12 shrink-0
+                  place-items-center
+                  border-s border-[rgba(102,102,102,.12)]
+                  bg-[#F8FAFC]
+                  text-[#216474]
+                  transition
+                  hover:bg-[#EAF4F3]
+                "
               >
-                <Search size={18} strokeWidth={1.6} />
+                <Search size={18} strokeWidth={1.8} />
+
               </button>
             </form>
 
-            <div className="flex items-center justify-end">
+            {/* Notifications */}
+            <div
+              className={`flex h-full items-center ${
+                isArabic ? "justify-end" : "justify-start"
+              }`}
+            >
               <NotificationBell
                 unreadCount={unreadCount}
                 roles={user?.roles || []}

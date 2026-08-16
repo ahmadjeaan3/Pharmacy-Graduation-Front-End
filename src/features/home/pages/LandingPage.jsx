@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Brand } from "../../../shared/components/Brand";
 import { LanguageSwitcher } from "../../../shared/components/LanguageSwitcher";
@@ -74,6 +74,7 @@ const ASSETS = {
   security: "/assets/app/home/security.png",
   cta: "/assets/app/home/cta.png",
 
+  
   sparkle: "/assets/app/home/icons/Sparkle.png",
   arrowTeal: "/assets/app/home/icons/chevron-down.svg",
   verified: "/assets/app/home/icons/verified.png",
@@ -466,6 +467,8 @@ export function LandingPage() {
         ? "tr-TR"
         : "en-US";
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [activeNav, setActiveNav] = useState("home");
+  const heroSearchInputRef = useRef(null);
 
   useEffect(() => {
     const updateScrollProgress = () => {
@@ -658,7 +661,7 @@ export function LandingPage() {
 
         .ml-ticker-track {
           width: max-content;
-          animation: ${isArabic ? "ml-ticker-rtl" : "ml-ticker-ltr"} 40s linear infinite;
+          animation: ${isArabic ? "ml-ticker-rtl" : "ml-ticker-ltr"} 52s linear infinite;
           will-change: transform;
         }
 
@@ -863,14 +866,14 @@ export function LandingPage() {
       `}</style>
 
       {/* Navbar */}
-      <header className="ml-navbar-enter fixed inset-x-0 top-0 z-[100] h-16 border-b border-[rgba(102,102,102,0.16)] bg-white/95 shadow-[0_5px_24px_rgba(23,75,87,.07)] backdrop-blur-xl sm:h-[72px]">
+      <header className="ml-navbar-enter fixed inset-x-0 top-0 z-[100] h-[104px] border-b border-[rgba(102,102,102,0.12)] bg-white/95 shadow-[0_4px_18px_rgba(23,75,87,.06)] backdrop-blur-xl">
         <div
           dir="ltr"
-          className="flex h-full w-full items-center justify-between gap-3 px-4 sm:px-6 xl:grid xl:grid-cols-[1fr_auto_1fr] xl:gap-5 xl:px-6 2xl:gap-8 2xl:px-16"
+          className="mx-auto flex h-full w-full max-w-[1400px] items-center justify-between gap-3 px-5 pt-[6px] sm:pt-[10px] xl:grid xl:grid-cols-[1fr_auto_1fr] xl:gap-5 xl:px-0 2xl:gap-8"
         >
           <div
             dir={textDirection}
-            className="flex h-10 min-w-0 shrink items-center gap-2 sm:shrink-0 sm:gap-3 xl:justify-self-start"
+            className="flex h-10 min-w-0 items-center justify-start gap-2 justify-self-start sm:gap-3"
           >
             <LanguageSwitcher />
 
@@ -883,7 +886,7 @@ export function LandingPage() {
 
             <Link
               to="/register"
-              className="ml-button hidden h-9 w-auto min-w-[82px] items-center justify-center whitespace-nowrap rounded-lg bg-[#174B57] px-2 text-xs font-medium text-white hover:bg-[#123F49] hover:shadow-md min-[390px]:flex sm:h-10 sm:min-w-[108px] sm:px-3 sm:text-[15px] xl:w-[112px]"
+              className="ml-button hidden h-9 w-auto min-w-[82px] items-center justify-center whitespace-nowrap rounded-lg bg-[#174B57] px-2 text-xs font-medium text-white hover:bg-[#123F49] hover:shadow-md min-[490px]:flex sm:h-10 sm:min-w-[108px] sm:px-3 sm:text-[15px] xl:w-[112px]"
             >
               {t("إنشاء حساب")}
             </Link>
@@ -891,420 +894,976 @@ export function LandingPage() {
 
           <nav
             dir={textDirection}
-            className="ml-desktop-nav hidden h-11 min-w-0 items-center gap-1 whitespace-nowrap text-[15px] font-semibold leading-6 text-[#52666b] xl:flex 2xl:gap-2 2xl:text-[16px]"
+            className="
+            ml-25
+              hidden min-w-0
+              items-center justify-center
+              gap-1
+              whitespace-nowrap
+              text-[14px] font-semibold
+              leading-6 text-[#52666b]
+              xl:flex
+              2xl:gap-2
+              2xl:text-[18px]
+            "
           >
-            <a
-              href="#home"
-              className="group relative flex h-10 shrink-0 items-center justify-center rounded-xl px-3.5 font-extrabold text-[#175666] transition-colors duration-300 hover:bg-[#eef6f5] xl:px-4"
-            >
-              <span className="whitespace-nowrap">{t("الرئيسية")}</span>
+            {[
+              ["home", "الرئيسية"],
+              ["features", "الخدمات"],
+              ["roles", "كيف يعمل"],
+              ["testimonials", "المستخدمون"],
+              ["footer", "تواصل معنا"],
+            ].map(([sectionId, label]) => {
+              const active = activeNav === sectionId;
 
-              <span className="absolute inset-x-3 bottom-0 h-0.5 rounded-full bg-[#DFAE0D] shadow-[0_1px_4px_rgba(223,174,13,.28)]" />
-            </a>
+              return (
+                <a
+                  key={sectionId}
+                  href={`#${sectionId}`}
+                  onClick={() => setActiveNav(sectionId)}
+                  className={`relative flex h-10 shrink-0 items-center justify-center px-3 font-semibold transition-colors duration-300 ${
+                    active
+                      ? "text-[#175666]"
+                      : "text-[#52666b] hover:text-[#175666]"
+                  }`}
+                >
+                  <span className="whitespace-nowrap">{t(label)}</span>
 
-            <a
-              href="#features"
-              className="rounded-xl px-3.5 py-2 font-semibold transition-all duration-300 hover:bg-[#eef6f5] hover:text-[#175666] xl:px-4"
-            >
-              {t("الخدمات")}
-            </a>
-
-            <a
-              href="#roles"
-              className="rounded-xl px-3.5 py-2 font-semibold transition-all duration-300 hover:bg-[#eef6f5] hover:text-[#175666] xl:px-4"
-            >
-              {t("كيف يعمل")}
-            </a>
-
-            <a
-              href="#testimonials"
-              className="rounded-xl px-3.5 py-2 font-semibold transition-all duration-300 hover:bg-[#eef6f5] hover:text-[#175666] xl:px-4"
-            >
-              {t("المستخدمون")}
-            </a>
-
-            <a
-              href="#footer"
-              className="rounded-xl px-3.5 py-2 font-semibold transition-all duration-300 hover:bg-[#eef6f5] hover:text-[#175666] xl:px-4"
-            >
-              {t("تواصل معنا")}
-            </a>
+                  <span
+                    className={`absolute inset-x-3 bottom-0 h-[2px] rounded-full bg-[#DFAE0D] transition-all duration-300 ${
+                      active
+                        ? "scale-x-100 opacity-100"
+                        : "scale-x-0 opacity-0"
+                    }`}
+                  />
+                </a>
+              );
+            })}
           </nav>
 
-          <div className="shrink-0 justify-self-end">
+          <div
+            className="
+              flex h-full shrink-0
+              items-center justify-end
+              justify-self-end
+              pt-[6px]
+            "
+          >
             <Logo responsive />
           </div>
         </div>
 
-        <span
-          aria-hidden="true"
-          className="ml-scroll-progress"
-          style={{
-            width: `${scrollProgress}%`,
-          }}
-        />
+
       </header>
 
-      <div aria-hidden="true" className="h-16 shrink-0 sm:h-[72px]" />
-
-      <section
-        aria-label={t("إعلانات وتنبيهات المنصة")}
-        className="ml-ticker-shell relative z-40 overflow-hidden border-b border-white/5 bg-[#174B57] text-white shadow-[0_8px_24px_rgba(23,75,87,.08)]"
-      >
-        <div className="mx-auto flex min-h-[60px] w-full max-w-[1600px] items-stretch sm:min-h-[68px]">
-          <div className="relative z-30 flex shrink-0 items-center gap-2.5 border-e border-white/10 bg-[#123f49] px-3.5 shadow-[0_0_24px_rgba(7,36,43,.22)] sm:gap-3 sm:px-6">
-            <span className="relative grid size-9 place-items-center rounded-xl border border-[#F5CB72]/10 bg-[#F5CB72]/10 text-[#F5CB72] sm:size-10">
-              <BellRing size={16} strokeWidth={1.9} />
-              <span className="absolute -end-0.5 -top-0.5 size-2 rounded-full bg-emerald-400 ring-2 ring-[#123f49]" />
-            </span>
-            <div className="hidden sm:block">
-              <strong className="block whitespace-nowrap text-xs font-extrabold leading-5 text-white">
-                {t("نبض المنصة")}
-              </strong>
-              <span className="block whitespace-nowrap text-[10px] leading-4 text-white/50">
-                {t("تحديثات مباشرة")}
-              </span>
-            </div>
-          </div>
-
-          <div className="relative min-w-0 flex-1 overflow-hidden" tabIndex={0}>
-            <div
-              className={`pointer-events-none absolute inset-y-0 start-0 z-20 w-5 from-[#174B57] to-transparent sm:w-10 ${isArabic ? "bg-gradient-to-l" : "bg-gradient-to-r"}`}
-            />
-            <div
-              className={`pointer-events-none absolute inset-y-0 end-0 z-20 w-5 from-[#174B57] to-transparent sm:w-10 ${isArabic ? "bg-gradient-to-r" : "bg-gradient-to-l"}`}
-            />
-            <div className="ml-ticker-track flex min-h-full items-center">
-              {Array.from({ length: 4 })
-                .flatMap(() => tickerItems)
-                .map((item, index) => {
-                  const duty = item.type === "DutyPharmacy";
-                  const TickerIcon = duty ? MapPin : Sparkles;
-                  return (
-                    <div
-                      key={`${item.id}-${index}`}
-                      className="flex min-w-[280px] max-w-[420px] shrink-0 items-center gap-3 border-e border-white/[.07] px-4 py-2.5 sm:min-w-[360px] sm:gap-3.5 sm:px-7"
-                    >
-                      <span
-                        className={`grid size-9 shrink-0 place-items-center rounded-xl border border-white/[.06] ${duty ? "bg-emerald-400/15 text-emerald-300" : "bg-[#F5CB72]/15 text-[#F5CB72]"}`}
-                      >
-                        <TickerIcon size={15} />
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex min-w-0 items-center gap-2.5">
-                          <strong className="truncate text-xs font-extrabold leading-5 text-white sm:text-[13px]">
-                            {item.title}
-                          </strong>
-                          {duty && (
-                            <span className="shrink-0 rounded-full bg-emerald-400/15 px-2 py-0.5 text-[9px] font-bold text-emerald-200">
-                              {t("صيدلية مناوبة")}
-                            </span>
-                          )}
-                        </div>
-                        <p className="mt-0.5 truncate text-[10px] leading-4 text-white/60 sm:text-[11px]">
-                          {item.message}
-                          {item.pharmacyName ? ` — ${item.pharmacyName}` : ""}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
-            </div>
-          </div>
-        </div>
-      </section>
+      <div aria-hidden="true" className="h-[84px] shrink-0" />
 
       <main>
         {/* Hero */}
-        <section
-          id="home"
-          className="relative scroll-mt-20 overflow-hidden bg-[#F8FAFC] pb-10 pt-7 sm:scroll-mt-24 sm:pb-[44px] sm:pt-10 lg:pt-[44px]"
+         
+<section
+  id="home"
+  className="relative overflow-hidden bg-[#F8FAFC] pt-[34px] pb-[56px]"
+>
+  {/* ================= BACKGROUND GLOW ================= */}
+  <div
+    className="
+      pointer-events-none
+      absolute
+      -right-[180px]
+      -top-[150px]
+      h-[500px]
+      w-[470px]
+      rounded-full
+      bg-[rgba(21,142,171,0.16)]
+      blur-[150px]
+    "
+  />
+
+  <div
+    className="
+      pointer-events-none
+      absolute
+      -left-[150px]
+      top-[280px]
+      h-[420px]
+      w-[390px]
+      rounded-full
+      bg-[rgba(254,226,82,0.16)]
+      blur-[150px]
+    "
+  />
+
+  <div className="relative mx-auto w-full max-w-[1200px] px-5 xl:px-0">
+
+    {/* ========================================================= */}
+    {/* ========================= HERO ========================== */}
+    {/* ========================================================= */}
+
+    <div
+      dir="ltr"
+      className={`
+        relative
+        flex
+        min-h-[500px]
+        w-full
+        items-center
+        ${
+          isArabic
+            ? "flex-row gap-[45px]"
+            : "flex-row-reverse gap-[75px]"
+        }
+      `}
+    >
+
+      {/* ======================================================= */}
+      {/* ======================= IMAGE ========================= */}
+      {/* ======================================================= */}
+
+      <div
+        className="
+          relative
+          z-10
+          h-[380px]
+          w-full
+          shrink-0
+
+          sm:h-[440px]
+
+          lg:h-[500px]
+          lg:w-[545px]
+
+          xl:h-[500px]
+          xl:w-[545px]
+        "
+      >
+
+        <img
+          src={ASSETS.hero}
+          alt={t("البحث عن الأدوية والصيدليات")}
+          className="
+            absolute
+            left-1/2
+            top-1/2
+
+            h-[450px]
+            w-[480px]
+
+            max-w-none
+
+            -translate-x-1/2
+            -translate-y-1/2
+
+            object-contain
+
+            sm:h-[520px]
+            sm:w-[550px]
+
+            lg:left-[-80px]
+            lg:top-[-55px]
+            lg:h-[640px]
+            lg:w-[680px]
+
+            lg:translate-x-0
+            lg:translate-y-0
+
+            xl:left-[-80px]
+            xl:top-[-55px]
+            xl:h-[640px]
+            xl:w-[680px]
+          "
+        />
+
+        {/* ===================================================== */}
+        {/* ================= REGISTERED PHARMACIES ============ */}
+        {/* ===================================================== */}
+
+        <div
+          dir="ltr"
+          className={`
+            ml-floating-card-one
+
+            absolute
+            top-[35px]
+
+            z-30
+
+            hidden
+            min-h-[74px]
+            w-[238px]
+
+            items-center
+            justify-between
+            gap-3
+
+            rounded-xl
+
+            border
+            border-[#216474]/10
+
+            bg-white
+
+            px-5
+            py-3
+
+            shadow-[0_10px_30px_rgba(33,100,116,0.13)]
+
+            transition-all
+            duration-300
+
+            hover:-translate-y-1
+            hover:shadow-[0_15px_35px_rgba(33,100,116,0.17)]
+
+            lg:flex
+
+            ${
+              isArabic
+                ? `
+                  right-[-55px]
+                  flex-row-reverse
+                `
+                : `
+                  left-[-100px]
+                  flex-row
+                `
+            }
+          `}
         >
-          <div className="ml-glow-blue pointer-events-none absolute -right-[205px] -top-[145px] h-[496px] w-[448px] rounded-full bg-[rgba(21,142,171,0.18)] blur-[150px]" />
+          {/* Icon */}
 
-          <div className="ml-glow-yellow pointer-events-none absolute -left-[125px] top-[255px] h-[418px] w-[375px] rounded-full bg-[rgba(254,226,82,0.20)] blur-[150px]" />
+          <span
+            className="
+              grid
+              h-10
+              w-10
+              shrink-0
+              place-items-center
 
-          <div className="relative mx-auto flex w-full max-w-[1200px] flex-col gap-10 px-5 sm:px-6 lg:min-h-[622px] lg:gap-[44px] xl:px-0">
-            <div
-              dir="ltr"
-              className={`relative flex w-full flex-col-reverse items-center justify-between gap-8 lg:min-h-[411px] ${
+              rounded-full
+
+              bg-[#DDEEEE]
+
+              text-[#174B57]
+            "
+          >
+            <Building2
+              size={22}
+              strokeWidth={2}
+              aria-hidden="true"
+            />
+          </span>
+
+          {/* Text */}
+
+          <div
+            dir={textDirection}
+            className={`
+              flex
+              min-h-[44px]
+              min-w-0
+              flex-1
+              flex-col
+              justify-center
+              gap-1
+
+              ${
                 isArabic
-                  ? "lg:flex-row lg:gap-[36px]"
-                  : "lg:flex-row-reverse lg:gap-[60px] xl:gap-[90px]"
-              }`}
+                  ? "items-end text-right"
+                  : "items-start text-left"
+              }
+            `}
+          >
+            <strong
+              className="
+                w-full
+                text-[15px]
+                font-semibold
+                leading-5
+                text-[#333333]
+              "
             >
-              {/* Hero image */}
-              <div className="relative z-0 h-[260px] w-full max-w-[360px] shrink-0 sm:h-[330px] sm:max-w-[400px] lg:h-[411px] lg:w-[40%] lg:max-w-[445px]">
-                <img
-                  src={ASSETS.hero}
-                  alt={t("البحث عن الأدوية والصيدليات")}
-                  className="ml-hero-image-enter h-full w-full object-contain"
+              {t("صيدليات مسجلة")}
+            </strong>
+
+            <small
+              className="
+                w-full
+                text-[11px]
+                font-normal
+                leading-4
+                text-[#7E8E92]
+              "
+            >
+              {t("بيانات الصيدلية والدواء")}
+            </small>
+          </div>
+        </div>
+
+        {/* ===================================================== */}
+        {/* ===================== QUICK SEARCH ================== */}
+        {/* ===================================================== */}
+
+        <div
+          dir="ltr"
+          className={`
+            ml-floating-card-two
+
+            absolute
+            top-[355px]
+
+            z-30
+
+            hidden
+
+            min-h-[72px]
+            w-[230px]
+
+            items-center
+            justify-between
+            gap-3
+
+            rounded-xl
+
+            border
+            border-[#DFAE0D]/10
+
+            bg-white
+
+            px-5
+            py-3
+
+            shadow-[0_10px_30px_rgba(136,136,136,0.16)]
+
+            transition-all
+            duration-300
+
+            hover:-translate-y-1
+            hover:shadow-[0_15px_35px_rgba(136,136,136,0.20)]
+
+            lg:flex
+
+            ${
+              isArabic
+                ? `
+                  left-[-115px]
+                  flex-row-reverse
+                `
+                : `
+                  right-[-115px]
+                  flex-row
+                `
+            }
+          `}
+        >
+          {/* Icon */}
+
+          <span
+            className="
+              grid
+              h-10
+              w-10
+              shrink-0
+              place-items-center
+
+              rounded-full
+
+              bg-[rgba(251,244,177,0.32)]
+            "
+          >
+            <ImageIcon
+              src={ASSETS.quickSearch}
+              alt=""
+              className="h-5 w-5"
+            />
+          </span>
+
+          {/* Text */}
+
+          <div
+            dir={textDirection}
+            className={`
+              flex
+              min-h-[42px]
+              min-w-0
+              flex-1
+              flex-col
+              justify-center
+              gap-1
+
+              ${
+                isArabic
+                  ? "items-end text-right"
+                  : "items-start text-left"
+              }
+            `}
+          >
+            <strong
+              className="
+                w-full
+                text-[15px]
+                font-medium
+                leading-5
+                text-[#333333]
+              "
+            >
+              {t("بحث سريع")}
+            </strong>
+
+            <small
+              className="
+                w-full
+                text-[11px]
+                font-normal
+                leading-4
+                text-[#A5A5A5]
+              "
+            >
+              {t("وصول إلى أقرب صيدلية")}
+            </small>
+          </div>
+        </div>
+      </div>
+
+      {/* ======================================================= */}
+      {/* ======================= CONTENT ======================= */}
+      {/* ======================================================= */}
+
+      <div
+        className={`
+          ml-hero-copy-enter
+          z-20
+
+          flex
+          min-h-[300px]
+          flex-1
+          flex-col
+          justify-center
+          gap-8
+
+          ${itemsAlignClass}
+          ${textAlignClass}
+        `}
+      >
+
+        <div
+          className={`
+            flex
+            w-full
+            flex-col
+            gap-6
+
+            ${itemsAlignClass}
+          `}
+        >
+
+          {/* =================================================== */}
+          {/* ====================== BADGE ====================== */}
+          {/* =================================================== */}
+
+          <div
+            dir={textDirection}
+            className="
+              inline-flex
+              min-h-[40px]
+              w-fit
+
+              items-center
+              justify-center
+              gap-2
+
+              rounded-full
+
+              bg-white
+
+              px-5
+              py-2
+
+              shadow-[0_4px_18px_rgba(33,100,116,0.06)]
+            "
+          >
+            {isArabic ? (
+              <>
+                <span
+                  className="
+                    text-[15px]
+                    font-normal
+                    leading-6
+                    text-[#444444]
+                  "
+                >
+                  {t("حل ذكي للعثور على الأدوية")}
+                </span>
+
+                <ImageIcon
+                  src={ASSETS.sparkle}
+                  className="h-5 w-5"
+                />
+              </>
+            ) : (
+              <>
+                <ImageIcon
+                  src={ASSETS.sparkle}
+                  className="h-5 w-5"
                 />
 
-                {/* Registered pharmacies card */}
-                <div
-                  dir="ltr"
-                  className={`ml-floating-card-one ml-40 absolute top-[88px] z-20 hidden min-h-[74px] w-[238px] items-center justify-between gap-3 rounded-xl border border-[#216474]/10 bg-white px-5 py-3 shadow-[0_8px_24px_rgba(33,100,116,0.14)] xl:flex ${
-                    isArabic
-                      ? "left-[175px] flex-row-reverse"
-                      : "right-[175px] flex-row"
-                  }`}
+                <span
+                  className="
+                    text-[15px]
+                    font-normal
+                    leading-6
+                    text-[#444444]
+                  "
                 >
-                  {/* Icon */}
-                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#DDEEEE] text-[#174B57] shadow-[0_4px_12px_rgba(33,100,116,0.12)]">
-                    <Building2 size={22} strokeWidth={2} aria-hidden="true" />
-                  </span>
-
-                  {/* Text */}
-                  <div
-                    dir={textDirection}
-                    className={`flex min-h-[44px] min-w-0 flex-1 flex-col justify-center  gap-1 ${
-                      isArabic
-                        ? "items-end text-right"
-                        : "items-start text-left"
-                    }`}
-                  >
-                    <strong className="w-full overflow-hidden text-[15px] font-semibold leading-5 text-[#333333]">
-                      {t("صيدليات مسجلة")}
-                    </strong>
-
-                    <small className="w-full overflow-hidden text-[11px] font-normal leading-4 tracking-[0.01em] text-[#7E8E92]">
-                      {t("بيانات الصيدلية والدواء")}
-                    </small>
-                  </div>
-                </div>
-
-                {/* Quick search card */}
-                <div
-                  dir="ltr"
-                  className={`ml-floating-card-two absolute top-[345px] z-30 hidden min-h-[72px] w-[230px] items-center justify-between gap-3 rounded-xl border border-[#DFAE0D]/10 bg-white px-5 py-3 shadow-[0_8px_24px_rgba(136,136,136,0.18)] xl:flex ${
-                    isArabic
-                      ? "left-[-20px] flex-row-reverse"
-                      : "right-[-20px] flex-row"
-                  }`}
-                >
-                  {/* Icon */}
-                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[rgba(251,244,177,0.32)]">
-                    <ImageIcon
-                      src={ASSETS.quickSearch}
-                      alt=""
-                      className="h-5 w-5"
-                    />
-                  </span>
-
-                  {/* Text */}
-                  <div
-                    dir={textDirection}
-                    className={`flex min-h-[42px] min-w-0 flex-1 flex-col justify-center gap-1 ${
-                      isArabic
-                        ? "items-end text-right"
-                        : "items-start text-left"
-                    }`}
-                  >
-                    <strong className="w-full text-[15px] font-medium leading-5 text-[#333333]">
-                      {t("بحث سريع")}
-                    </strong>
-
-                    <small className="w-full text-[11px] font-normal leading-4 tracking-[0.01em] text-[#A5A5A5]">
-                      {t("وصول إلى أقرب صيدلية")}
-                    </small>
-                  </div>
-                </div>
-              </div>
-
-              {/* Hero content */}
-              <div
-                className={`ml-hero-copy-enter z-10 flex w-full min-w-0 max-w-[646px] flex-col gap-6 sm:gap-8 lg:min-h-[268px] lg:flex-1 ${itemsAlignClass} ${textAlignClass}`}
-              >
-                <div
-                  className={`flex w-full min-w-0 flex-col gap-5 sm:gap-7 ${itemsAlignClass}`}
-                >
-                  <div
-                    className={`flex w-full min-w-0 flex-col gap-4 ${itemsAlignClass}`}
-                  >
-                    <div
-                      dir={textDirection}
-                      className={`inline-flex min-h-10 max-w-full items-center justify-center gap-2 rounded-[34px] bg-white px-4 py-2 sm:min-w-[228px] sm:max-w-[340px] sm:px-5 ${
-                        isArabic ? "flex-row" : "flex-row"
-                      }`}
-                    >
-                      {isArabic ? (
-                        <>
-                          <span
-                            className={`min-w-0 text-[15px] font-normal leading-6 text-[#444444] ${textAlignClass}`}
-                          >
-                            {t("حل ذكي للعثور على الأدوية")}
-                          </span>
-
-                          <ImageIcon src={ASSETS.sparkle} className="h-5 w-5" />
-                        </>
-                      ) : (
-                        <>
-                          <ImageIcon src={ASSETS.sparkle} className="h-5 w-5" />
-
-                          <span
-                            className={`min-w-0 text-[15px] font-normal leading-6 text-[#444444] ${textAlignClass}`}
-                          >
-                            {t("حل ذكي للعثور على الأدوية")}
-                          </span>
-                        </>
-                      )}
-                    </div>
-
-                    <h1
-                      dir={textDirection}
-                      className={`w-full break-words text-[32px] font-medium leading-[1.3] text-[#333333] sm:text-[40px] lg:text-[44px] xl:text-[48px] ${textAlignClass}`}
-                    >
-                      {isTurkish ? (
-                        <>
-                          <span>{t("دواؤك...")}</span>{" "}
-                          <span>{t("مما تتوقع")}</span>{" "}
-                          <span className="text-[#DFAE0D]">{t("أقرب")}</span>
-                        </>
-                      ) : (
-                        <>
-                          <span>{t("دواؤك...")}</span>{" "}
-                          <span className="text-[#DFAE0D]">{t("أقرب")}</span>{" "}
-                          <span>{t("مما تتوقع")}</span>
-                        </>
-                      )}
-                    </h1>
-                  </div>
-
-                  <p
-                    dir={textDirection}
-                    className={`w-full break-words text-[16px] font-normal leading-7 text-[#666666] ${textAlignClass}`}
-                  >
-                    {t(
-                      "نساعدك في العثور على الأدوية المتوفرة في الصيدليات القريبة منك بسرعة ودقة عالية",
-                    )}
-                  </p>
-                </div>
-
-                {/* Hero buttons */}
-                <div
-                  dir={textDirection}
-                  className="grid w-full grid-cols-1 gap-3 min-[420px]:grid-cols-2 sm:flex sm:min-h-[58px] sm:w-auto sm:flex-wrap sm:items-center"
-                >
-                  <a
-                    href="#roles"
-                    dir="ltr"
-                    className={`ml-button inline-flex h-[52px] w-full items-center justify-center gap-2 rounded-lg border border-[#216474] bg-transparent px-4 text-base font-medium text-[#216474] hover:bg-white hover:shadow-[0_12px_28px_rgba(33,100,116,0.12)] sm:h-[58px] sm:w-[180px] sm:text-[20px] ${
-                      isArabic ? "flex-row-reverse" : "flex-row"
-                    }`}
-                  >
-                    <span dir={textDirection}>{t("كيف يعمل")}</span>
-
-                    <ImageIcon
-                      src={ASSETS.arrowTeal}
-                      className={`h-6 w-6 transition-transform duration-300 ${
-                        isArabic ? "" : "rotate-180"
-                      }`}
-                    />
-                  </a>
-
-                  <Link
-                    to="/register"
-                    dir="ltr"
-                    className={`ml-button inline-flex h-[52px] w-full items-center justify-center gap-2 rounded-lg bg-[#174B57] px-4 text-base font-medium text-white hover:bg-[#123F49] hover:shadow-[0_14px_30px_rgba(23,75,87,0.25)] sm:h-[58px] sm:w-[180px] sm:text-[20px] ${
-                      isArabic ? "flex-row-reverse" : "flex-row"
-                    }`}
-                  >
-                    <span dir={textDirection}>{t("ابدأ تجربتك")}</span>
-
-                    <ImageIcon
-                      src={ASSETS.Diagonal}
-                      className={`h-6 w-6 transition-transform duration-300 ${
-                        isArabic ? "" : "rotate-100"
-                      }`}
-                    />
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            {/* Features */}
-            <section
-              id="features"
-              className="relative scroll-mt-20 bg-[#F8FAFC] pb-[56px] sm:scroll-mt-24"
-            >
-              <div className="mx-auto w-full max-w-[1200px] px-5 xl:px-0">
-                <div
-                  dir="ltr"
-                  className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
-                >
-                  {features.map(({ image, title, text }) => (
-                    <article
-                      key={title}
-                      dir={textDirection}
-                      className="ml-card flex min-h-[190px] w-full flex-col items-center justify-center gap-6 rounded-xl border border-[rgba(102,102,102,0.16)] bg-white px-4 py-6"
-                    >
-                      <span className="ml-card-icon grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[#E6F3F6]">
-                        <ImageIcon
-                          src={image}
-                          alt={t(title)}
-                          className="h-6 w-6"
-                        />
-                      </span>
-
-                      <div className="flex min-h-[76px] w-full flex-col items-center justify-center gap-3">
-                        <h3 className="text-center text-[20px] font-medium leading-5 text-[#333333]">
-                          {t(title)}
-                        </h3>
-
-                        <p className="line-clamp-3 min-h-[52px] text-center text-[16px] font-normal leading-[26px] tracking-[0.01em] text-[#A5A5A5]">
-                          {t(text)}
-                        </p>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              </div>
-            </section>
-          </div>
-        </section>
-        <section
-          className="bg-white py-14"
-          aria-labelledby="live-statistics-title"
-        >
-          <div className="mx-auto w-full max-w-[1200px] px-5 xl:px-0">
-            <div className="mb-9 text-center">
-              <h2
-                id="live-statistics-title"
-                className="text-[32px] font-medium text-[#333333]"
-              >
-                {t("أثر المنصة بالأرقام")}
-              </h2>
-              <p className="mt-3 text-[16px] text-[#A5A5A5]">
-                {t("إحصائيات حقيقية ومحدثة من خدمات المنصة")}
-              </p>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-              {statisticItems.map(([label, value]) => (
-                <article
-                  key={label}
-                  className="ml-card rounded-2xl border border-[rgba(102,102,102,0.16)] bg-[#F8FAFC] p-6 text-center"
-                >
-                  <strong className="block text-[32px] font-bold text-[#216474]">
-                    <CountUpStatistic
-                      value={value}
-                      loading={statistics.isLoading}
-                      locale={statisticLocale}
-                    />
-                  </strong>
-                  <span className="mt-2 block text-sm font-medium text-[#666666]">
-                    {t(label)}
-                  </span>
-                </article>
-              ))}
-            </div>
-            {statistics.isError && (
-              <p className="mt-4 text-center text-sm text-rose-600">
-                {t("تعذر تحميل الإحصائيات الآن، أعد المحاولة لاحقًا.")}
-              </p>
+                  {t("حل ذكي للعثور على الأدوية")}
+                </span>
+              </>
             )}
           </div>
-        </section>
+
+          {/* =================================================== */}
+          {/* ====================== TITLE ====================== */}
+          {/* =================================================== */}
+
+          <h1
+            dir={textDirection}
+            className={`
+              max-w-[650px]
+
+              break-words
+
+              text-[42px]
+              font-medium
+              leading-[1.3]
+
+              text-[#333333]
+
+              sm:text-[46px]
+
+              xl:text-[50px]
+
+              ${textAlignClass}
+            `}
+          >
+            {isTurkish ? (
+              <>
+                <span>
+                  {t("دواؤك...")}
+                </span>{" "}
+
+                <span>
+                  {t("مما تتوقع")}
+                </span>{" "}
+
+                <span className="text-[#DFAE0D]">
+                  {t("أقرب")}
+                </span>
+              </>
+            ) : (
+              <>
+                <span>
+                  {t("دواؤك...")}
+                </span>{" "}
+
+                <span className="text-[#DFAE0D]">
+                  {t("أقرب")}
+                </span>{" "}
+
+                <span>
+                  {t("مما تتوقع")}
+                </span>
+              </>
+            )}
+          </h1>
+
+          {/* =================================================== */}
+          {/* ==================== DESCRIPTION ================== */}
+          {/* =================================================== */}
+
+          <p
+            dir={textDirection}
+            className={`
+              max-w-[570px]
+
+              break-words
+
+              text-[16px]
+              font-normal
+              leading-7
+
+              text-[#666666]
+
+              ${textAlignClass}
+            `}
+          >
+            {t(
+              "نساعدك في العثور على الأدوية المتوفرة في الصيدليات القريبة منك بسرعة ودقة عالية",
+            )}
+          </p>
+        </div>
+
+        {/* ===================================================== */}
+        {/* ======================== BUTTONS ==================== */}
+        {/* ===================================================== */}
+
+        <div
+          dir={textDirection}
+          className="
+            flex
+            min-h-[58px]
+            flex-wrap
+            items-center
+            gap-3
+          "
+        >
+
+          {/* ================= SECONDARY ================= */}
+
+          <a
+            href="#features"
+            dir="ltr"
+            className={`
+              ml-button
+
+              inline-flex
+
+              h-[56px]
+              w-[170px]
+
+              items-center
+              justify-center
+              gap-2
+
+              rounded-lg
+
+              border
+              border-[#216474]
+
+              bg-transparent
+
+              text-[17px]
+              font-medium
+              leading-[30px]
+
+              text-[#216474]
+
+              transition-all
+              duration-300
+
+              hover:bg-white
+              hover:shadow-[0_12px_28px_rgba(33,100,116,0.12)]
+
+              ${isArabic ? "flex-row-reverse" : "flex-row"}
+            `}
+          >
+            <span dir={textDirection}>
+              {t("كيف يعمل")}
+            </span>
+
+            <ImageIcon
+              src={ASSETS.arrowTeal}
+              className={`
+                h-5
+                w-5
+
+                transition-transform
+                duration-300
+
+                ${isArabic ? "" : "rotate-180"}
+              `}
+            />
+          </a>
+
+          {/* ================= PRIMARY ================= */}
+
+          <Link
+            to="/register"
+            dir="ltr"
+            className={`
+              ml-button
+
+              inline-flex
+
+              h-[56px]
+              w-[170px]
+
+              items-center
+              justify-center
+              gap-2
+
+              rounded-lg
+
+              bg-[#174B57]
+
+              text-[17px]
+              font-medium
+              leading-[30px]
+
+              text-white
+
+              transition-all
+              duration-300
+
+              hover:bg-[#123F49]
+              hover:shadow-[0_14px_30px_rgba(23,75,87,0.25)]
+
+              ${isArabic ? "flex-row-reverse" : "flex-row"}
+            `}
+          >
+            <span dir={textDirection}>
+              {t("ابدأ تجربتك")}
+            </span>
+
+            <ImageIcon
+              src={ASSETS.Diagonal}
+              className={`
+                h-5
+                w-5
+
+                transition-transform
+                duration-300
+
+                ${isArabic ? "" : "rotate-180"}
+              `}
+            />
+          </Link>
+        </div>
+      </div>
+    </div>
+
+    {/* ========================================================= */}
+    {/* ======================= FEATURES ======================== */}
+
+    {/* ================= FEATURES ================= */}
+    <section
+      id="features"
+      className="relative mt-[28px]"
+    >
+      <div
+        dir="ltr"
+        className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"
+      >
+        {features.map(({ image, title, text }) => (
+          <article
+            key={title}
+            dir={textDirection}
+            className="
+              ml-card
+              flex
+              min-h-[180px]
+              w-full
+              flex-col
+              items-center
+              justify-center
+              gap-5
+              rounded-xl
+              border
+              border-[rgba(102,102,102,0.14)]
+              bg-white
+              px-5
+              py-6
+              shadow-[0_4px_18px_rgba(33,100,116,0.035)]
+              transition-all
+              duration-300
+              hover:-translate-y-1
+              hover:shadow-[0_12px_30px_rgba(33,100,116,0.08)]
+            "
+          >
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#E6F3F6]">
+              <ImageIcon
+                src={image}
+                alt={t(title)}
+                className="h-6 w-6"
+              />
+            </span>
+
+            <div className="flex min-h-[70px] w-full flex-col items-center justify-center gap-2">
+              <h3 className="text-center text-[18px] font-medium leading-6 text-[#333333]">
+                {t(title)}
+              </h3>
+
+              <p className="line-clamp-2 text-center text-[14px] font-normal leading-6 text-[#A5A5A5]">
+                {t(text)}
+              </p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  </div>
+</section>
+{/* ================= PLATFORM IMPACT ================= */}
+<section
+  className="relative overflow-hidden bg-[#F8FAFC] py-[76px] sm:py-[88px]"
+  aria-labelledby="live-statistics-title"
+>
+  {/* Subtle glow */}
+  <div className="pointer-events-none absolute -right-[180px] top-[40px] h-[320px] w-[320px] rounded-full bg-[rgba(21,142,171,0.06)] blur-[100px]" />
+
+  <div className="relative mx-auto flex w-full max-w-[1200px] flex-col items-center gap-[42px] px-5 xl:px-0">
+
+    {/* Section heading */}
+    <div className="flex w-full flex-col items-center gap-4">
+
+      <div
+        dir="ltr"
+        className="flex w-full max-w-[600px] items-center justify-center gap-5"
+      >
+        {/* Left line */}
+        <span className="h-[2px] flex-1 rounded-full bg-gradient-to-r from-transparent to-[#DFAE0D]" />
+
+        <h2
+          id="live-statistics-title"
+          dir={textDirection}
+          className="
+            whitespace-nowrap
+            text-[28px]
+            font-medium
+            leading-tight
+            text-[#333333]
+            sm:text-[32px]
+          "
+        >
+          {t("أثر المنصة بالأرقام")}
+        </h2>
+
+        {/* Right line */}
+        <span className="h-[2px] flex-1 rounded-full bg-gradient-to-l from-transparent to-[#DFAE0D]" />
+      </div>
+
+      <p
+        dir={textDirection}
+        className="
+          max-w-[650px]
+          text-center
+          text-[15px]
+          font-normal
+          leading-7
+          text-[#999999]
+          sm:text-[17px]
+        "
+      >
+        {t("إحصائيات حقيقية ومحدثة من خدمات المنصة")}
+      </p>
+    </div>
+
+    {/* ================= STATISTICS CONTAINER ================= */}
+    <div
+      dir="ltr"
+      className="
+        w-full
+        overflow-hidden
+        rounded-2xl
+        border
+        border-[#E5ECEE]
+        bg-white
+        shadow-[0_10px_35px_rgba(33,100,116,0.06)]
+      "
+    >
+      <div className="grid w-full grid-cols-2 lg:grid-cols-5">
+
+        {statisticItems.map(([label, value], index) => (
+          <article
+            key={label}
+            dir={textDirection}
+            className={`
+              group
+              relative
+              flex
+              min-h-[155px]
+              flex-col
+              items-center
+              justify-center
+              px-5
+              py-7
+              text-center
+              transition-all
+              duration-300
+              hover:bg-[#F8FAFC]
+
+              ${
+                index < statisticItems.length - 1
+                  ? "lg:border-r lg:border-[#E8EEEE]"
+                  : ""
+              }
+
+              ${
+                index === 0 || index === 1
+                  ? "border-b border-[#E8EEEE] lg:border-b-0"
+                  : ""
+              }
+
+              ${
+                index === 2
+                  ? "border-b border-[#E8EEEE] lg:border-b-0"
+                  : ""
+              }
+
+              ${
+                index % 2 === 0
+                  ? "sm:border-r sm:border-[#E8EEEE] lg:border-r"
+                  : ""
+              }
+
+              lg:[&:nth-child(2n)]:border-r-0
+              lg:[&:nth-child(3)]:border-r
+              lg:[&:nth-child(4)]:border-r
+            `}
+          >
+            {/* Number */}
+            <strong
+              className="
+                block
+                text-[30px]
+                font-bold
+                leading-none
+                tracking-[-0.02em]
+                text-[#216474]
+                transition-transform
+                duration-300
+                group-hover:-translate-y-0.5
+                sm:text-[34px]
+              "
+            >
+              <CountUpStatistic
+                value={value}
+                loading={statistics.isLoading}
+                locale={statisticLocale}
+              />
+            </strong>
+
+            {/* Label */}
+            <span
+              className="
+                mt-4
+                text-[14px]
+                font-medium
+                leading-6
+                text-[#666666]
+                sm:text-[15px]
+              "
+            >
+              {t(label)}
+            </span>
+
+            {/* Tiny accent */}
+           
+          </article>
+        ))}
+
+      </div>
+    </div>
+
+    {/* Error */}
+    {statistics.isError && (
+      <p
+        dir={textDirection}
+        className="text-center text-sm text-rose-600"
+      >
+        {t("تعذر تحميل الإحصائيات الآن، أعد المحاولة لاحقًا.")}
+      </p>
+    )}
+  </div>
+</section>
         {/* Roles */}
         {/* Roles */}
         <section
@@ -2070,7 +2629,7 @@ export function LandingPage() {
               <img
                 src={ASSETS.cta}
                 alt={t("استخدام المنصة")}
-                className="pointer-events-none order-2 mx-auto h-[130px] w-[150px] object-contain sm:h-[150px] sm:w-[180px] lg:order-3 lg:h-[175px] lg:w-[180px] xl:h-[205px] xl:w-[220px]"
+                className="pointer-events-none order-2 mx-auto h-[130px] w-[150px]  -translate-y-7 object-contain sm:h-[150px] sm:w-[180px] lg:order-3 lg:h-[200px] lg:w-[200px] xl:h-[205px] xl:w-[220px]"
               />
             </div>
           </div>
@@ -2082,51 +2641,85 @@ export function LandingPage() {
         id="footer"
         className="scroll-mt-20 border-t border-[#DFE7E9] bg-white sm:scroll-mt-24"
       >
-        <div className="mx-auto flex max-w-[1200px] flex-col gap-8 px-5 py-10 lg:flex-row lg:items-center lg:justify-between xl:px-0">
-          <div className={`max-w-sm ${isArabic ? "text-right" : "text-left"}`}>
-            <div className="justify-start">
+        <div
+          dir="ltr"
+          className="
+            mx-auto grid w-full max-w-[1400px]
+            grid-cols-1
+            gap-8
+            px-5 py-10
+            lg:grid-cols-[260px_minmax(0,1fr)_140px]
+            lg:items-center
+            lg:gap-6
+            xl:px-0
+          "
+        >
+          {/* التواصل — نفس عمود أزرار الهيدر */}
+          <div
+            dir="ltr"
+            className="
+              flex items-center
+              justify-start gap-3
+              lg:col-start-1
+              lg:row-start-1
+              lg:justify-self-start
+            "
+          >
+            {socialLinks.map(({ label, href, image }) => (
+              <a
+                key={label}
+                href={href}
+                aria-label={t(label)}
+                className="
+                  grid size-10 shrink-0
+                  place-items-center
+                  rounded-full
+                  border border-[#D9E5E7]
+                  bg-white
+                  transition
+                  hover:border-[#216474]/30
+                  hover:bg-[#EDF7F8]
+                "
+              >
+                <ImageIcon
+                  src={image}
+                  alt={t(label)}
+                  className="h-[24px] w-[24px]"
+                />
+              </a>
+            ))}
+          </div>
+
+          {/* مساحة وسطية تحفظ نفس توزيع الهيدر */}
+          <div
+            aria-hidden="true"
+            className="hidden lg:block lg:col-start-2 lg:row-start-1"
+          />
+
+          {/* اللوغو والوصف — نفس عمود لوغو الهيدر */}
+          <div
+            dir={textDirection}
+            className={`
+              lg:col-start-3
+              lg:row-start-1
+              lg:justify-self-end
+              ${isArabic ? "text-right" : "text-left"}
+            `}
+          >
+            <div className="flex justify-start">
               <Logo />
             </div>
 
             <p
               dir={textDirection}
-              className={`mt-4 text-[14px] leading-7 text-[#8C989C] ${textAlignClass}`}
+              className={`mt-4 w-[260px] max-w-[260px] text-[14px] leading-7 text-[#8C989C] ${
+                isArabic ? "text-right" : "text-left"
+              }`}
             >
               {t(
                 "منصة تساعدك في العثور على أقرب صيدلية وتوفر الأدوية بشكل أسرع وبصورة أكثر موثوقية.",
               )}
             </p>
-          </div>
-
-          <div className="flex flex-col items-center gap-4 lg:items-end">
-            <Link
-              to="/privacy"
-              className="text-sm font-bold text-[#60777c] underline decoration-[#f5cb72] decoration-2 underline-offset-4 transition hover:text-[#216474]"
-            >
-              {t("سياسة الخصوصية")}
-            </Link>
-
-            <div
-              dir="ltr"
-              className={`flex items-center gap-3 ${
-                isArabic ? "flex-row-reverse" : "flex-row"
-              }`}
-            >
-              {socialLinks.map(({ label, href, image }) => (
-                <a
-                  key={label}
-                  href={href}
-                  aria-label={t(label)}
-                  className="grid h-15 w-15 place-items-center rounded-full border border-[#D9E5E7] bg-white transition hover:bg-[#EDF7F8]"
-                >
-                  <ImageIcon
-                    src={image}
-                    alt={t(label)}
-                    className="h-[22px] w-[22px]"
-                  />
-                </a>
-              ))}
-            </div>
           </div>
         </div>
       </footer>

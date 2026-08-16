@@ -34,8 +34,7 @@ import {
   updateAccountProfile,
 } from "../api/accountApi";
 
-const SETTINGS_HERO_IMAGE =
-  "/assets/app/organization/organization-dashboard-hero.png";
+const USER_HERO_IMAGE = "/assets/app/home/hero_search.png";
 
 const PHARMACY_HERO_IMAGE = "/assets/app/pharmacy.png";
 
@@ -135,7 +134,7 @@ export function SettingsPage() {
 
   const settingsHeroImage = isPharmacyAccount
     ? PHARMACY_HERO_IMAGE
-    : SETTINGS_HERO_IMAGE;
+    : USER_HERO_IMAGE;
 
   const queryClient = useQueryClient();
 
@@ -285,27 +284,33 @@ export function SettingsPage() {
     <div
       dir={direction}
       lang={currentLanguage}
-      className="min-h-[calc(100vh-164px)] space-y-5 bg-[#F4F8F8]"
+      className="m-0 min-h-screen w-full bg-[#F7F9FA] p-0 text-[#333333]"
     >
       {/* Hero */}
       <section
         className="
-          relative isolate min-h-[220px] overflow-hidden
-          rounded-[14px] text-white
-          shadow-[0_22px_55px_rgba(23,75,87,.16)]
-          sm:min-h-[230px]
-          lg:min-h-[250px]
+          relative isolate
+          -mt-6 overflow-hidden
+          bg-[#0D7586]
+          text-white
+          sm:-mt-7
+          lg:-mt-8
         "
+        style={{
+          width: "100vw",
+          marginInline: "calc(50% - 50vw)",
+        }}
       >
         <img
           src={settingsHeroImage}
           alt=""
           aria-hidden="true"
           className={`
-            absolute inset-0
+            absolute inset-0 -z-20
             h-full w-full
-            object-cover
-            object-[center_38%]
+            select-none
+            object-cover object-center
+            opacity-80
             ${
               isPharmacyAccount
                 ? isArabic
@@ -320,23 +325,23 @@ export function SettingsPage() {
 
         <div
           aria-hidden="true"
-          className="absolute inset-0"
+          className="absolute inset-0 -z-10"
           style={{
             background: isArabic
-              ? "linear-gradient(270deg,#10505A 0%,rgba(16,80,90,.90) 38%,rgba(33,100,116,.48) 70%,rgba(33,100,116,.08) 100%)"
-              : "linear-gradient(90deg,#10505A 0%,rgba(16,80,90,.90) 38%,rgba(33,100,116,.48) 70%,rgba(33,100,116,.08) 100%)",
+              ? "linear-gradient(270deg,rgba(0,63,76,.48) 0%,rgba(3,110,126,.60) 48%,rgba(0,60,73,.18) 100%)"
+              : "linear-gradient(90deg,rgba(0,63,76,.48) 0%,rgba(3,110,126,.60) 48%,rgba(0,60,73,.18) 100%)",
           }}
         />
 
         <div
           className="
             relative z-10
-            flex min-h-[220px] w-full
+            mx-auto flex min-h-[220px]
+            w-full max-w-[1240px]
             items-center
-            px-8 py-7
-            sm:min-h-[230px]
-            lg:min-h-[250px]
-            lg:px-10
+            px-5 py-9
+            sm:px-7
+            lg:px-8
           "
         >
           <div
@@ -362,7 +367,8 @@ export function SettingsPage() {
       </section>
 
       {/* Main content */}
-      <section className="grid items-start gap-5 xl:grid-cols-[minmax(0,1.25fr)_minmax(280px,.75fr)]">
+      <main className="mx-auto w-full max-w-[1240px] px-5 pb-12 pt-8 sm:px-7 lg:px-8">
+        <section className="grid items-start gap-5 xl:grid-cols-[minmax(0,1.25fr)_minmax(280px,.75fr)]">
         <div className="space-y-5">
           <section className="rounded-xl border border-[rgba(102,102,102,.16)] bg-white p-6">
             <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
@@ -762,7 +768,8 @@ export function SettingsPage() {
             </div>
           </section>
         </aside>
-      </section>
+        </section>
+      </main>
     </div>
   );
 }
