@@ -26,6 +26,8 @@ import {
 } from "../api/adminApi";
 import { formatDate, getVerificationStatus } from "../utils/adminFormatters";
 
+const ADMIN_HERO_IMAGE = "/assets/app/home/background_hero_admin.png";
+
 export function AdminPharmacyReviewPage() {
   const { pharmacyId } = useParams();
   const navigate = useNavigate();
@@ -86,12 +88,22 @@ export function AdminPharmacyReviewPage() {
   const isManualReview = Boolean(license.data);
   const canDecide = Boolean(license.data);
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 sm:space-y-6">
       <Link to="/app/approvals?tab=pharmacies" className="btn-quiet">
         <ArrowRight size={17} />
         العودة إلى طلبات الاعتماد
       </Link>
-      <section className="rounded-[2rem] bg-[#123f49] p-7 text-white">
+      <section className="relative isolate min-h-[230px] overflow-hidden rounded-[16px] bg-[#10505A] p-5 text-white shadow-[0_22px_55px_rgba(23,75,87,.14)] sm:min-h-[250px] sm:p-7 lg:min-h-[271px] lg:p-9">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-20 bg-cover bg-[position:38%_center] bg-no-repeat"
+          style={{ backgroundImage: `url("${ADMIN_HERO_IMAGE}")` }}
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 bg-[linear-gradient(270deg,#10505A_0%,rgba(16,80,90,.88)_36%,rgba(33,100,116,.42)_70%,rgba(33,100,116,.08)_100%)]"
+        />
+
         <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
           <div className="flex items-center gap-4">
             <span className="grid size-16 place-items-center rounded-2xl bg-white/10">
@@ -122,7 +134,7 @@ export function AdminPharmacyReviewPage() {
         </div>
       )}
       <div className="grid gap-6 xl:grid-cols-[1fr_.9fr]">
-        <div className="space-y-6">
+        <div className="space-y-5 sm:space-y-6">
           <Card title="بيانات الصيدلية" icon={Building2}>
             <Info
               icon={Building2}

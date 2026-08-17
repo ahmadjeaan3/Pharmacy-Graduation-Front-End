@@ -33,6 +33,10 @@ const ORGANIZATION_HERO_IMAGE =
 
 const PHARMACY_HERO_IMAGE = "/assets/app/pharmacy.png";
 
+const ADMIN_HERO_IMAGE = "/assets/app/home/background_hero_admin.png";
+
+const WAREHOUSE_HERO_IMAGE = "/assets/app/home/SupplyChainWorkspace.png";
+
 export function NotificationsPage() {
   const { t, i18n } = useTranslation();
 
@@ -65,11 +69,31 @@ export function NotificationsPage() {
     (role) => String(role).toLowerCase() === "user",
   );
 
+  const isOrganizationAccount = userRoles.some(
+    (role) => String(role).toLowerCase() === "organization",
+  );
+
+  const isAdminAccount = userRoles.some((role) =>
+    ["admin", "administrator", "systemadmin", "system-admin"].includes(
+      String(role).toLowerCase(),
+    ),
+  );
+
+  const isWarehouseAccount = userRoles.some((role) =>
+    ["warehouse", "warehouseadmin", "warehouse-admin"].includes(
+      String(role).toLowerCase(),
+    ),
+  );
+
   const notificationsHeroImage = isPharmacyAccount
     ? PHARMACY_HERO_IMAGE
-    : isUserAccount
-      ? USER_HERO_IMAGE
-      : ORGANIZATION_HERO_IMAGE;
+    : isAdminAccount
+      ? ADMIN_HERO_IMAGE
+      : isWarehouseAccount
+        ? WAREHOUSE_HERO_IMAGE
+        : isUserAccount
+          ? USER_HERO_IMAGE
+          : ORGANIZATION_HERO_IMAGE;
 
   const summary = useQuery({
     queryKey: notificationKeys.summary,
@@ -140,20 +164,22 @@ export function NotificationsPage() {
       lang={currentLanguage}
       className="m-0 min-h-screen w-full bg-[#F7F9FA] p-0 text-[#333333]"
     >
+      <div className={isPharmacyAccount || isOrganizationAccount || isAdminAccount || isWarehouseAccount ? "space-y-6" : ""}>
       {/* Hero */}
       <section
-        className="
-          relative isolate
-          -mt-6 overflow-hidden
-          bg-[#0D7586]
-          text-white
-          sm:-mt-7
-          lg:-mt-8
-        "
-        style={{
-          width: "100vw",
-          marginInline: "calc(50% - 50vw)",
-        }}
+        className={
+          isPharmacyAccount || isOrganizationAccount || isAdminAccount || isWarehouseAccount
+            ? "relative isolate min-h-[220px] overflow-hidden rounded-[14px] text-white shadow-[0_22px_55px_rgba(23,75,87,.16)] sm:min-h-[230px] lg:min-h-[250px]"
+            : "relative isolate -mt-6 overflow-hidden bg-[#0D7586] text-white sm:-mt-7 lg:-mt-8"
+        }
+        style={
+          isPharmacyAccount || isOrganizationAccount || isAdminAccount || isWarehouseAccount
+            ? undefined
+            : {
+                width: "100vw",
+                marginInline: "calc(50% - 50vw)",
+              }
+        }
       >
         <img
           src={notificationsHeroImage}
@@ -164,15 +190,26 @@ export function NotificationsPage() {
             h-full w-full
             select-none
             object-cover object-center
-            opacity-80
             ${
               isPharmacyAccount
                 ? isArabic
-                  ? "scale-x-[-1]"
-                  : "scale-x-100"
-                : isArabic
-                  ? "scale-x-100"
-                  : "scale-x-[-1]"
+                  ? "scale-x-[-1] object-[center_42%] opacity-100"
+                  : "scale-x-100 object-[center_42%] opacity-100"
+                : isOrganizationAccount
+                  ? isArabic
+                    ? "scale-x-100 object-[center_50%] opacity-100"
+                    : "scale-x-[-1] object-[center_50%] opacity-100"
+                  : isAdminAccount
+                    ? isArabic
+                      ? "scale-x-100 object-[center_46%] opacity-100"
+                      : "scale-x-[-1] object-[center_46%] opacity-100"
+                    : isWarehouseAccount
+                      ? isArabic
+                        ? "scale-x-100 object-[center_48%] opacity-100"
+                        : "scale-x-[-1] object-[center_48%] opacity-100"
+                      : isArabic
+                        ? "scale-x-100"
+                        : "scale-x-[-1]"
             }
           `}
         />
@@ -181,23 +218,44 @@ export function NotificationsPage() {
           aria-hidden="true"
           className="absolute inset-0 -z-10"
           style={{
-            background: isArabic
-              ? "linear-gradient(270deg,rgba(0,63,76,.48) 0%,rgba(3,110,126,.60) 48%,rgba(0,60,73,.18) 100%)"
-              : "linear-gradient(90deg,rgba(0,63,76,.48) 0%,rgba(3,110,126,.60) 48%,rgba(0,60,73,.18) 100%)",
+            background: isPharmacyAccount
+              ? isArabic
+                ? "linear-gradient(270deg, #10505A 0%, rgba(16,80,90,.88) 34%, rgba(33,100,116,.42) 68%, rgba(33,100,116,.08) 100%)"
+                : "linear-gradient(90deg, #10505A 0%, rgba(16,80,90,.88) 34%, rgba(33,100,116,.42) 68%, rgba(33,100,116,.08) 100%)"
+              : isOrganizationAccount
+                ? isArabic
+                  ? "linear-gradient(270deg, #10505A 0%, rgba(16,80,90,.90) 32%, rgba(33,100,116,.46) 66%, rgba(33,100,116,.10) 100%)"
+                  : "linear-gradient(90deg, #10505A 0%, rgba(16,80,90,.90) 32%, rgba(33,100,116,.46) 66%, rgba(33,100,116,.10) 100%)"
+                : isAdminAccount
+                  ? isArabic
+                    ? "linear-gradient(270deg, #0D4E59 0%, rgba(13,78,89,.92) 34%, rgba(33,100,116,.48) 68%, rgba(33,100,116,.10) 100%)"
+                    : "linear-gradient(90deg, #0D4E59 0%, rgba(13,78,89,.92) 34%, rgba(33,100,116,.48) 68%, rgba(33,100,116,.10) 100%)"
+                  : isWarehouseAccount
+                    ? isArabic
+                      ? "linear-gradient(270deg, #10505A 0%, rgba(16,80,90,.91) 34%, rgba(33,100,116,.46) 68%, rgba(33,100,116,.08) 100%)"
+                      : "linear-gradient(90deg, #10505A 0%, rgba(16,80,90,.91) 34%, rgba(33,100,116,.46) 68%, rgba(33,100,116,.08) 100%)"
+                    : isArabic
+                      ? "linear-gradient(270deg,rgba(0,63,76,.48) 0%,rgba(3,110,126,.60) 48%,rgba(0,60,73,.18) 100%)"
+                      : "linear-gradient(90deg,rgba(0,63,76,.48) 0%,rgba(3,110,126,.60) 48%,rgba(0,60,73,.18) 100%)",
           }}
         />
 
+        {(isPharmacyAccount || isOrganizationAccount || isAdminAccount || isWarehouseAccount) && (
+          <div
+            aria-hidden="true"
+            className={`absolute -top-20 -z-[5] size-64 rounded-full border-[40px] border-white/[.04] ${
+              isArabic ? "-left-14" : "-right-14"
+            }`}
+          />
+        )}
+
         <div
           dir={direction}
-          className="
-            relative z-10
-            mx-auto flex min-h-[220px]
-            w-full max-w-[1240px]
-            items-center gap-6
-            px-5 py-9
-            sm:px-7
-            lg:px-8
-          "
+          className={
+            isPharmacyAccount || isOrganizationAccount || isAdminAccount || isWarehouseAccount
+              ? "relative z-10 flex min-h-[220px] w-full items-center gap-6 px-6 py-7 sm:min-h-[230px] lg:min-h-[250px] lg:px-9"
+              : "relative z-10 mx-auto flex min-h-[220px] w-full max-w-[1240px] items-center gap-6 px-5 py-9 sm:px-7 lg:px-8"
+          }
         >
           <div
             className={`me-auto flex items-center gap-4 ${
@@ -235,29 +293,40 @@ export function NotificationsPage() {
             disabled={!unread || readAll.isPending}
             onClick={() => readAll.mutate()}
             className="
-              inline-flex h-[48px] shrink-0
+              inline-flex h-[50px] shrink-0
               items-center justify-center gap-2
-              rounded-xl
-              border border-white/20
+              rounded-[10px]
+              border border-white
               bg-white
-              px-5
-              text-sm font-bold
-              text-[#174B57]
-              shadow-[0_10px_24px_rgba(7,31,37,.10)]
-              transition
-              hover:bg-[#F8FBFB]
+              px-6
+              text-[13px] font-bold
+              text-[#216474]
+              shadow-[0_10px_26px_rgba(0,0,0,.16)]
+              transition-all duration-200
+              hover:-translate-y-0.5
+              hover:bg-[#F4FAFA]
+              hover:shadow-[0_14px_30px_rgba(0,0,0,.20)]
               disabled:cursor-not-allowed
-              disabled:opacity-50
+              disabled:border-white/70
+              disabled:bg-white/75
+              disabled:text-[#216474]/70
+              disabled:opacity-100
             "
           >
-            <CheckCheck size={17} />
+            <CheckCheck size={18} strokeWidth={2} />
 
             {readAll.isPending ? t("جاري التحديث...") : t("تحديد الكل كمقروء")}
           </button>
         </div>
       </section>
 
-      <main className="mx-auto w-full max-w-[1240px] px-5 pb-12 pt-8 sm:px-7 lg:px-8">
+      <main
+        className={
+          isPharmacyAccount || isOrganizationAccount || isAdminAccount || isWarehouseAccount
+            ? "w-full"
+            : "mx-auto w-full max-w-[1240px] px-5 pb-12 pt-8 sm:px-7 lg:px-8"
+        }
+      >
       {/* Notice */}
       {notice && (
         <div className="rounded-xl border border-[#CFE4E7] bg-[#EAF4F3] px-4 py-3 text-sm font-bold text-[#216474]">
@@ -291,15 +360,15 @@ export function NotificationsPage() {
           icon={CircleCheckBig}
           label={t("تمت قراءتها")}
           value={read}
-          iconBox="bg-[#EAF4F3]"
-          iconColor="text-[#174B57]"
+          iconBox="bg-[#E6F3F6]"
+          iconColor="text-[#216474]"
           currentLanguage={currentLanguage}
           direction={direction}
         />
       </section>
 
       {/* Filters */}
-      <section className="rounded-xl border border-[#DCE8EA] bg-white p-4 shadow-[0_6px_24px_rgba(23,75,87,.03)]">
+      <section className="mt-5 rounded-[10px] border border-[rgba(102,102,102,.14)] bg-white p-4">
         <div className="flex flex-wrap items-center gap-2">
           <FilterButton
             active={!filters.unreadOnly && !filters.type}
@@ -374,7 +443,7 @@ export function NotificationsPage() {
           <button
             type="button"
             onClick={() => list.refetch()}
-            className="mt-4 inline-flex h-10 items-center rounded-lg border border-[#D5E3E5] bg-white px-4 text-sm font-bold text-[#216474] transition hover:bg-[#EAF4F3]"
+            className="mt-4 inline-flex h-10 items-center rounded-[8px] border border-[#D5E3E5] bg-white px-4 text-[12px] font-semibold text-[#216474] transition hover:border-[#216474]/30 hover:bg-[#F4FAFA]"
           >
             {t("إعادة المحاولة")}
           </button>
@@ -417,6 +486,7 @@ export function NotificationsPage() {
         </section>
       )}
       </main>
+      </div>
     </div>
   );
 }
@@ -433,7 +503,7 @@ function SummaryCard({
   return (
     <article
       dir={direction}
-      className="flex min-h-[108px] items-center gap-4 rounded-xl border border-[#DCE8EA] bg-white p-5 shadow-[0_6px_24px_rgba(23,75,87,.035)]"
+      className="flex min-h-[108px] items-center gap-4 rounded-[10px] border border-[rgba(102,102,102,.14)] bg-white p-5"
     >
       <span
         className={`grid size-11 shrink-0 place-items-center rounded-xl ${iconBox} ${iconColor}`}
@@ -466,10 +536,10 @@ function FilterButton({
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex h-10 items-center gap-2 rounded-lg border px-4 text-sm font-bold transition ${
+      className={`inline-flex h-10 items-center gap-2 rounded-[8px] border px-4 text-[12px] font-semibold transition ${
         active
-          ? "border-[#216474] bg-[#216474] text-white"
-          : "border-[#D8E5E7] bg-[#F8FBFB] text-[#60777D] hover:border-[#AFC9CD] hover:bg-[#EAF4F3]"
+          ? "border-[#216474] bg-[#216474] text-white shadow-[0_6px_14px_rgba(33,100,116,.10)]"
+          : "border-[#D8E5E7] bg-white text-[#60777D] hover:border-[#216474]/25 hover:bg-[#F4FAFA] hover:text-[#216474]"
       }`}
     >
       <span>{label}</span>
@@ -533,7 +603,7 @@ function NotificationCard({
   return (
     <article
       dir={direction}
-      className={`relative flex min-h-[88px] w-full items-center overflow-hidden rounded-xl border border-[rgba(102,102,102,.16)] bg-white px-6 py-3 transition ${
+      className={`relative flex min-h-[92px] w-full items-center overflow-hidden rounded-[10px] border border-[rgba(102,102,102,.14)] bg-white px-5 py-4 transition ${
         notification.isRead ? "" : "shadow-[0_5px_16px_rgba(23,75,87,.035)]"
       }`}
     >
@@ -546,7 +616,7 @@ function NotificationCard({
             } ${
               notification.isRead
                 ? "border-[#C8DADD] text-[#216474]"
-                : "border-[#DFAE0D] text-[#DFAE0D]"
+                : "border-[#216474] text-[#216474]"
             }`}
           >
             <Icon size={22} strokeWidth={1.8} />
@@ -559,7 +629,7 @@ function NotificationCard({
               </h2>
 
               {!notification.isRead && (
-                <span className="inline-flex h-6 items-center justify-center rounded-full border border-[#E6F3F6] bg-[#E6F3F6] px-3 text-[11px] font-medium text-[#216474]">
+                <span className="inline-flex h-6 items-center justify-center rounded-full border border-[#D5E7E9] bg-[#E6F3F6] px-3 text-[10.5px] font-semibold text-[#216474]">
                   {t("جديد")}
                 </span>
               )}
@@ -583,7 +653,7 @@ function NotificationCard({
               <button
                 type="button"
                 onClick={onOpen}
-                className="inline-flex h-10 min-w-[128px] items-center justify-center gap-2 rounded-lg border border-[rgba(102,102,102,.16)] bg-white px-4 text-sm font-normal text-[#666666] transition hover:border-[#AFC9CD] hover:bg-[#F8FBFB] hover:text-[#216474]"
+                className="inline-flex h-10 min-w-[128px] items-center justify-center gap-2 rounded-[8px] border border-[#216474] bg-[#216474] px-4 text-[12px] font-medium text-white transition hover:bg-[#174B57]"
               >
                 <Eye size={15} />
 
@@ -596,7 +666,7 @@ function NotificationCard({
                 type="button"
                 onClick={onRead}
                 disabled={pending}
-                className="inline-flex h-10 min-w-[128px] items-center justify-center gap-2 rounded-lg border border-[rgba(102,102,102,.16)] bg-white px-4 text-sm font-normal text-[#666666] transition hover:border-[#DFAE0D]/50 hover:bg-[#FFF9EC] hover:text-[#A87818] disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex h-10 min-w-[128px] items-center justify-center gap-2 rounded-[8px] border border-[#D5E4E6] bg-white px-4 text-[12px] font-medium text-[#216474] transition hover:border-[#216474]/35 hover:bg-[#F4FAFA] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <CheckCheck size={15} />
 

@@ -32,7 +32,6 @@ import {
   ErrorState as UserErrorState,
   LoadingState as UserLoadingState,
 } from "../../../shared/components/AsyncStates";
-import { PageHeader as UserPageHeader } from "../../../shared/components/PageHeader";
 import { DAWAAI_MARK } from "../../../shared/components/Brand";
 import { formatDate } from "../utils/userFormatters";
 import { getApiErrorMessage } from "../../../shared/api/errors";
@@ -50,6 +49,8 @@ const emptyForm = {
 const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
 const HEALTH_HERO_BACKGROUND = "/assets/app/home/hero_search.png";
+
+
 
 export function HealthProfilePage() {
   const [tab, setTab] = useState("profile");
@@ -90,114 +91,192 @@ export function HealthProfilePage() {
 
   return (
     <div dir="rtl" className="m-0 w-full bg-[#F7F9FA] p-0 text-[#333333]">
-      {/* =========================
+      {/* =====================================================
           HERO
-      ========================== */}
+      ====================================================== */}
       <section
-        className="relative isolate -mt-6 overflow-hidden border-b border-[#DDE8EA] bg-white sm:-mt-7 lg:-mt-8"
+        className="
+          relative isolate
+          -mt-6 overflow-hidden
+          bg-[#0D7586]
+          text-white
+          sm:-mt-7
+          lg:-mt-8
+        "
         style={{
           width: "100vw",
           marginInline: "calc(50% - 50vw)",
         }}
       >
-        <div
+        <img
+          src={HEALTH_HERO_BACKGROUND}
+          alt=""
           aria-hidden="true"
-          className="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_15%_20%,rgba(139,208,203,.18),transparent_28rem),radial-gradient(circle_at_85%_0%,rgba(33,100,116,.10),transparent_24rem)]"
+          draggable={false}
+          className="
+            absolute inset-0 -z-20
+            h-full w-full
+            select-none object-cover object-center
+            opacity-80
+          "
         />
 
-        <div className="mx-auto grid min-h-[250px] w-full max-w-[1240px] items-center gap-8 px-5 py-10 sm:px-7 lg:grid-cols-[1fr_auto] lg:px-8">
+        <div
+          aria-hidden="true"
+          className="
+            absolute inset-0 -z-10
+            bg-[linear-gradient(90deg,rgba(0,60,73,.18),rgba(3,110,126,.58),rgba(0,63,76,.44))]
+          "
+        />
+
+        <div
+          className="
+            mx-auto grid min-h-[240px]
+            w-full max-w-[1200px]
+            items-center gap-7
+            px-5 py-8
+            sm:px-7
+            lg:grid-cols-[1fr_auto]
+            lg:px-8
+          "
+        >
           <div className="flex min-w-0 items-center gap-4 text-right">
-            <span className="grid size-14 shrink-0 place-items-center rounded-[14px] border border-[#CFE0E3] bg-[#EEF7F7] text-[#216474] shadow-[0_8px_20px_rgba(33,100,116,.06)]">
-              <HeartPulse size={26} strokeWidth={1.8} />
+            <span
+              className="
+                grid size-12 shrink-0
+                place-items-center
+                rounded-[10px]
+                border border-white/15
+                bg-white/10
+                backdrop-blur-sm
+              "
+            >
+              <HeartPulse size={23} strokeWidth={1.8} />
             </span>
 
             <div className="min-w-0">
-              <span className="text-[11px] font-bold text-[#216474]">
+              <span className="text-[11px] font-medium text-white/75">
                 معلوماتك الصحية
               </span>
 
-              <h1 className="mt-1.5 text-[30px] font-bold leading-tight text-[#29464D] sm:text-[34px]">
+              <h1 className="mt-1.5 text-[27px] font-bold leading-tight sm:text-[30px]">
                 الملف الصحي
               </h1>
 
-              <p className="mt-3 max-w-[650px] text-[13px] leading-7 text-[#71858A]">
+              <p className="mt-2 max-w-[680px] text-[12px] leading-6 text-white/75">
                 نظّم بياناتك الصحية المهمة في مكان واحد لتسهيل الوصول إليها
                 أثناء استخدام خدمات دوائي.
               </p>
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2 lg:justify-end">
+          <div className="grid w-full grid-cols-2 gap-2 sm:grid-cols-4 lg:w-auto lg:min-w-[620px]">
             <Link
               to="/app/search"
-              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-[10px] bg-[#216474] px-4 text-[12px] font-semibold text-white shadow-[0_8px_18px_rgba(33,100,116,.15)] transition hover:-translate-y-0.5 hover:bg-[#1B5967]"
+              className="
+                inline-flex h-[72px] w-full
+                flex-col items-center justify-center gap-2
+                rounded-[9px]
+                border border-white/20
+                bg-white/10
+                px-3
+                text-[12px] font-medium text-white
+                backdrop-blur-sm
+                transition hover:bg-white/20
+              "
             >
-              <Pill size={15} />
-              البحث عن دواء
+              <Pill size={17} />
+              <span>البحث عن دواء</span>
             </Link>
 
             <Link
               to="/app/prescriptions"
-              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-[10px] border border-[#CFE0E3] bg-white px-4 text-[12px] font-semibold text-[#216474] transition hover:bg-[#EEF7F7]"
+              className="
+                inline-flex h-[72px] w-full
+                flex-col items-center justify-center gap-2
+                rounded-[9px]
+                border border-white/20
+                bg-white/10
+                px-3
+                text-[12px] font-medium text-white
+                backdrop-blur-sm
+                transition hover:bg-white/20
+              "
             >
-              <ClipboardCheck size={15} />
-              الوصفة الذكية
+              <ClipboardCheck size={17} />
+              <span>الوصفة الذكية</span>
             </Link>
+
+            <button
+              type="button"
+              onClick={() => setTab("profile")}
+              className={`
+                inline-flex h-[72px] w-full
+                flex-col items-center justify-center gap-2
+                rounded-[9px]
+                border px-3
+                text-[12px] font-medium
+                backdrop-blur-sm
+                transition
+                ${
+                  tab === "profile"
+                    ? "border-white/30 bg-white/20 text-white shadow-[0_8px_20px_rgba(0,0,0,.08)]"
+                    : "border-white/20 bg-white/10 text-white hover:bg-white/20"
+                }
+              `}
+            >
+              <UserRound size={17} />
+              <span>تعديل الملف الصحي</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setTab("card")}
+              className={`
+                inline-flex h-[72px] w-full
+                flex-col items-center justify-center gap-2
+                rounded-[9px]
+                border px-3
+                text-[12px] font-medium
+                backdrop-blur-sm
+                transition
+                ${
+                  tab === "card"
+                    ? "border-white/30 bg-white/20 text-white shadow-[0_8px_20px_rgba(0,0,0,.08)]"
+                    : "border-white/20 bg-white/10 text-white hover:bg-white/20"
+                }
+              `}
+            >
+              <ContactRound size={17} />
+              <span>البطاقة الصحية</span>
+            </button>
           </div>
         </div>
       </section>
 
-      {/* =========================
+      {/* =====================================================
           CONTENT
-      ========================== */}
-      <main className="mx-auto w-full max-w-[1240px] px-5 pb-12 pt-10 sm:px-7 lg:px-8 lg:pt-12">
-        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div className="text-right">
-            <div className="mb-2 flex items-center gap-2">
-              <span className="h-[2px] w-8 rounded-full bg-[#216474]" />
-              <span className="text-[11px] font-bold text-[#216474]">
-                بياناتك الشخصية
-              </span>
-            </div>
-
-            <h2 className="text-[24px] font-bold text-[#29464D]">
+      ====================================================== */}
+      <main
+        className="
+          mx-auto w-full max-w-[1200px]
+          px-4 pb-12 pt-10
+          sm:px-6
+          lg:px-8
+          xl:px-0
+        "
+      >
+        {tab === "profile" ? (
+          <div className="mb-6 text-right">
+            <h2 className="text-[24px] font-medium text-[#333333]">
               إدارة الملف الصحي
             </h2>
 
-            <p className="mt-1.5 max-w-[620px] text-[12px] leading-6 text-[#8A9A9E]">
-              حدّث معلوماتك الصحية أو استعرض البطاقة الصحية المخصصة لك.
+            <p className="mt-2 max-w-[650px] text-[12px] leading-6 text-[#A5A5A5]">
+              حدّث معلوماتك الصحية الأساسية ومعلومات السلامة وجهة اتصال الطوارئ.
             </p>
           </div>
-        </div>
-
-        {/* Tabs */}
-        <div className="mb-7 inline-flex w-full rounded-[12px] border border-[#DDE7E9] bg-white p-1.5 shadow-[0_4px_14px_rgba(23,75,87,.025)] sm:w-auto">
-          <button
-            type="button"
-            onClick={() => setTab("profile")}
-            className={`inline-flex min-h-[42px] flex-1 items-center justify-center gap-2 rounded-[9px] px-5 text-[12px] font-semibold transition sm:flex-none ${
-              tab === "profile"
-                ? "bg-[#216474] text-white shadow-[0_6px_14px_rgba(33,100,116,.12)]"
-                : "text-[#60777C] hover:bg-[#EEF7F7] hover:text-[#216474]"
-            }`}
-          >
-            <UserRound size={16} />
-            تعديل الملف الصحي
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setTab("card")}
-            className={`inline-flex min-h-[42px] flex-1 items-center justify-center gap-2 rounded-[9px] px-5 text-[12px] font-semibold transition sm:flex-none ${
-              tab === "card"
-                ? "bg-[#216474] text-white shadow-[0_6px_14px_rgba(33,100,116,.12)]"
-                : "text-[#60777C] hover:bg-[#EEF7F7] hover:text-[#216474]"
-            }`}
-          >
-            <ContactRound size={16} />
-            البطاقة الصحية
-          </button>
-        </div>
+        ) : null}
 
         {tab === "profile" ? (
           <MedicalProfileForm
@@ -215,6 +294,8 @@ export function HealthProfilePage() {
           <HealthCard card={cardQuery.data} />
         )}
       </main>
+
+
     </div>
   );
 }
@@ -323,7 +404,7 @@ function MedicalProfileForm({ profile, medical }) {
         missingFields={missingFields}
       />
       <section className="grid gap-5 xl:grid-cols-[minmax(300px,.78fr)_minmax(0,1.22fr)]">
-        <div className="rounded-[14px] border border-[#E2E8EA] bg-white p-6 shadow-[0_5px_18px_rgba(23,75,87,.03)]">
+        <div className="rounded-[10px] border border-[rgba(102,102,102,.14)] bg-white p-6">
           <div className="flex items-center gap-3">
             <span className="grid size-11 place-items-center rounded-xl bg-[#eaf4f3] text-[#216474]">
               <UserRound size={20} />
@@ -381,7 +462,7 @@ function MedicalProfileForm({ profile, medical }) {
             </strong>
           </div>
         </div>
-        <div className="rounded-[14px] border border-[#E2E8EA] bg-white p-6 shadow-[0_5px_18px_rgba(23,75,87,.03)]">
+        <div className="rounded-[10px] border border-[rgba(102,102,102,.14)] bg-white p-6">
           <div className="flex items-center gap-3">
             <span className="grid size-11 place-items-center rounded-xl bg-[#EAF4F3] text-[#216474]">
               <HeartPulse size={20} />
@@ -432,7 +513,7 @@ function MedicalProfileForm({ profile, medical }) {
       </section>
       <section
         id="emergency-contact"
-        className="scroll-mt-24 rounded-[14px] border border-[#E2E8EA] bg-white p-5 shadow-[0_5px_18px_rgba(23,75,87,.03)] sm:p-6"
+        className="scroll-mt-24 rounded-[10px] border border-[rgba(102,102,102,.14)] bg-white p-5 sm:p-6"
       >
         <div className="flex items-center gap-3">
           <span className="grid size-11 place-items-center rounded-xl bg-amber-50 text-[#60777C]">
@@ -495,7 +576,7 @@ function MedicalProfileForm({ profile, medical }) {
           التنبيهات والخدمات التي تطلبها داخل المنصة.
         </div>
       </section>
-      <div className="sticky bottom-4 z-20 flex flex-col gap-3 rounded-[14px] border border-[#DDE8EA] bg-white/96 p-3 shadow-[0_12px_30px_rgba(33,100,116,.10)] backdrop-blur sm:flex-row sm:items-center sm:justify-between">
+      <div className="mt-5 flex flex-col gap-3 rounded-[14px] border border-[#DDE8EA] bg-white p-3 shadow-[0_8px_22px_rgba(33,100,116,.07)] sm:flex-row sm:items-center sm:justify-between">
         <div className="min-h-6">
           {isDirty && !mutation.isPending && (
             <p className="flex items-center gap-2 text-sm font-bold text-[#60777C]">
@@ -528,7 +609,18 @@ function MedicalProfileForm({ profile, medical }) {
               !isDirty || mutation.isPending || Boolean(validationError)
             }
             onClick={() => setForm(savedForm)}
-            className="btn-secondary flex-1 justify-center disabled:cursor-not-allowed disabled:opacity-45 sm:flex-none"
+            className="
+              inline-flex h-11 flex-1 items-center justify-center gap-2
+              rounded-[8px]
+              border border-[#216474]
+              bg-white
+              px-5
+              text-[12px] font-medium text-[#216474]
+              transition
+              hover:bg-[#F4FAFA]
+              disabled:cursor-not-allowed disabled:opacity-45
+              sm:flex-none
+            "
           >
             <RotateCcw size={16} />
             استعادة
@@ -536,7 +628,19 @@ function MedicalProfileForm({ profile, medical }) {
           <button
             type="submit"
             disabled={!isDirty || mutation.isPending}
-            className="btn-primary flex-1 justify-center px-7 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
+            className="
+              inline-flex h-11 flex-1 items-center justify-center gap-2
+              rounded-[8px]
+              border border-[#216474]
+              bg-[#216474]
+              px-6
+              text-[12px] font-medium text-white
+              shadow-[0_8px_18px_rgba(33,100,116,.12)]
+              transition
+              hover:bg-[#174B57]
+              disabled:cursor-not-allowed disabled:opacity-50
+              sm:flex-none
+            "
           >
             <Save size={17} />
             {mutation.isPending ? "جاري الحفظ..." : "حفظ التغييرات"}
@@ -555,7 +659,7 @@ function ProfileInsights({ form, completion, missingFields }) {
 
   return (
     <section className="grid gap-4 xl:grid-cols-[minmax(0,1.15fr)_minmax(300px,.85fr)]">
-      <div className="rounded-[16px] border border-[#DDE8EA] bg-white p-5 shadow-[0_8px_24px_rgba(33,100,116,.04)] sm:p-6">
+      <div className="rounded-[10px] border border-[rgba(102,102,102,.14)] bg-white p-5 sm:p-6">
         <div className="flex items-start justify-between gap-5">
           <div className="min-w-0 text-right">
             <div className="flex items-center gap-2">
@@ -626,7 +730,7 @@ function ProfileInsights({ form, completion, missingFields }) {
         )}
       </div>
 
-      <div className="rounded-[16px] border border-[#DDE8EA] bg-[#F8FBFB] p-5 shadow-[0_8px_24px_rgba(33,100,116,.03)]">
+      <div className="rounded-[10px] border border-[rgba(102,102,102,.14)] bg-white p-5">
         <div className="flex items-center gap-3">
           <span className="grid size-11 place-items-center rounded-[10px] bg-white text-[#216474] shadow-[0_4px_12px_rgba(33,100,116,.05)]">
             {hasSafetyData ? (
@@ -777,146 +881,459 @@ function TagsField({
   );
 }
 
+
 function HealthCard({ card }) {
+  const allergies = Array.isArray(card.allergies) ? card.allergies : [];
+  const chronicConditions = Array.isArray(card.chronicConditions)
+    ? card.chronicConditions
+    : [];
+  const currentMedications = Array.isArray(card.currentMedications)
+    ? card.currentMedications
+    : [];
+
   return (
-    <div className="mx-auto max-w-4xl">
+    <div className="mx-auto w-full max-w-[1040px]">
+      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div className="text-right">
+          <span className="text-[11px] font-medium text-[#216474]">
+            بطاقتك الصحية
+          </span>
+          <h2 className="mt-1 text-[22px] font-semibold text-[#333333]">
+            تقرير المعلومات الصحية
+          </h2>
+          <p className="mt-1.5 text-[12px] leading-6 text-[#A5A5A5]">
+            عرض منظم لأهم المعلومات الصحية المسجلة في حسابك.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => window.print()}
+          className="
+            no-print inline-flex h-10 items-center justify-center gap-2
+            rounded-[7px] bg-[#216474] px-4
+            text-[12px] font-medium text-white
+            transition hover:bg-[#174B57]
+          "
+        >
+          <Printer size={15} />
+          طباعة التقرير الصحي
+        </button>
+      </div>
+
+      <style>{`
+        @media print {
+          @page {
+            size: A4 portrait;
+            margin: 8mm;
+          }
+
+          html,
+          body {
+            background: #ffffff !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+
+          body * {
+            visibility: hidden !important;
+          }
+
+          #health-report,
+          #health-report * {
+            visibility: visible !important;
+          }
+
+          #health-report {
+            position: absolute !important;
+            top: 0 !important;
+            right: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 auto !important;
+            border: 0 !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            overflow: visible !important;
+            background: #ffffff !important;
+          }
+
+          #health-report .health-report-letterhead {
+            display: flex !important;
+            flex-direction: row !important;
+            direction: rtl !important;
+            align-items: flex-start !important;
+            justify-content: space-between !important;
+            padding: 0 5mm 3.5mm !important;
+            margin: 0 !important;
+            border-bottom: 1.5px solid #0D7586 !important;
+          }
+
+          #health-report .health-report-letterhead img {
+            order: 0 !important;
+            width: auto !important;
+            height: 12mm !important;
+            max-width: 30mm !important;
+            object-fit: contain !important;
+            background: transparent !important;
+            box-shadow: none !important;
+          }
+
+          #health-report .health-report-letterhead > div {
+            order: 1 !important;
+            text-align: left !important;
+          }
+
+          #health-report .health-report-dark {
+            margin: 4mm 7mm 0 !important;
+            padding: 4.5mm !important;
+            min-height: 31mm !important;
+            border-radius: 3mm !important;
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+          }
+
+          #health-report .health-report-body {
+            padding: 4mm 7mm 0 !important;
+          }
+
+          #health-report .health-report-body > div,
+          #health-report article {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+          }
+
+          #health-report h2,
+          #health-report h3,
+          #health-report h4,
+          #health-report p,
+          #health-report span,
+          #health-report strong,
+          #health-report li {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+
+          #health-report .health-report-body {
+            font-size: 92% !important;
+          }
+
+          /* في الطباعة نخفي أيقونة عنوان القسم فقط.
+             أيقونات البطاقة الداكنة وكروت البيانات والمعلومات الطبية تبقى ظاهرة. */
+          #health-report .report-heading-icon {
+            display: none !important;
+          }
+
+          #health-report .report-heading {
+            gap: 0 !important;
+            padding-right: 0 !important;
+            margin-right: 0 !important;
+          }
+
+          #health-report .report-heading > div {
+            margin: 0 !important;
+            padding: 0 !important;
+            text-align: right !important;
+          }
+
+          .no-print {
+            display: none !important;
+          }
+        }
+      `}</style>
+
       <section
         id="health-report"
-        className="health-report overflow-hidden rounded-[18px] border border-[#DDE8EA] bg-white shadow-[0_24px_70px_rgba(23,75,87,.12)]"
+        className="
+          health-report overflow-hidden
+          rounded-[10px]
+          border border-[#DDE7E9]
+          bg-white
+          shadow-[0_16px_42px_rgba(33,100,116,.07)]
+        "
       >
-        <div className="print-only health-report-letterhead">
-          <div className="health-report-brand">
-            <span className="health-report-logo">
-              <img src={DAWAAI_MARK} alt="" draggable={false} />
+        {/* رأس التقرير للطباعة - نفس تصميم الصورة */}
+        <div
+          dir="rtl"
+          className="
+            health-report-letterhead
+            flex items-start justify-between
+            gap-6 border-b-2 border-[#0D7586]
+            px-8 py-6
+          "
+        >
+          <img
+            src={DAWAAI_MARK}
+            alt="دوائي"
+            draggable={false}
+            className="
+              order-1 h-[52px] w-auto shrink-0
+              object-contain
+              bg-transparent
+              p-0
+            "
+          />
+
+          <div className="order-2 text-left">
+            <strong className="block text-[18px] font-bold text-[#0D5D6B]">
+              تقرير المعلومات الصحية
+            </strong>
+            <span className="mt-1 block text-[11px] text-[#8A9A9E]">
+              نسخة مخصصة للطباعة
             </span>
-            <span>
-              <strong>دوائي</strong>
-              <small>DAWAAI</small>
-            </span>
-          </div>
-          <div className="health-report-document-title">
-            <strong>تقرير المعلومات الصحية</strong>
-            <span>نسخة مخصصة للطباعة</span>
           </div>
         </div>
-        <div className="relative isolate border-b border-[#DDE8EA] bg-[#F8FBFB] p-6 text-[#29464D] sm:p-8">
-          <div className="noise absolute inset-0 -z-10" />
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-sm font-bold text-[#216474]">
-                البطاقة الصحية الرقمية
-              </p>
-              <h2 className="mt-2 text-3xl font-black">{card.fullName}</h2>
-              <p className="mt-2 text-sm text-[#71858A]">
-                ملخص موحّد للمعلومات الصحية المهمة
-              </p>
+
+        {/* البطاقة الصحية الداكنة */}
+        <div
+          className="
+            health-report-dark
+            relative isolate
+            mx-8 mt-6 overflow-hidden
+            rounded-[9px]
+            sm:mx-10
+            bg-[#0D7586]
+            px-6 py-5
+            text-white
+          "
+        >
+          <img
+            src={HEALTH_HERO_BACKGROUND}
+            alt=""
+            aria-hidden="true"
+            draggable={false}
+            className="
+              absolute inset-0 -z-20
+              h-full w-full
+              object-cover object-center
+              opacity-55
+            "
+          />
+
+          <div
+            aria-hidden="true"
+            className="
+              absolute inset-0 -z-10
+              bg-[linear-gradient(90deg,rgba(0,58,70,.28),rgba(3,110,126,.65),rgba(0,63,76,.46))]
+            "
+          />
+
+          <div className="flex items-center justify-between gap-6">
+            <div className="flex min-w-0 items-center gap-3">
+              <span
+                className="
+                  grid size-12 shrink-0 place-items-center
+                  rounded-[8px]
+                  border border-white/15
+                  bg-white/10
+                "
+              >
+                <UserRound size={23} strokeWidth={1.7} />
+              </span>
+
+              <div className="min-w-0 text-right">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-[10px] text-white/70">
+                    البطاقة الصحية الرقمية
+                  </span>
+
+                  <span
+                    className="
+                      inline-flex items-center gap-1
+                      rounded-full
+                      bg-[#EAF8EF]
+                      px-2.5 py-1
+                      text-[9.5px] font-medium
+                      text-[#2A8B57]
+                    "
+                  >
+                    <ShieldCheck size={11} />
+                    بيانات صحية
+                  </span>
+                </div>
+
+                <h3 className="mt-2 text-[24px] font-bold leading-none">
+                  {card.fullName}
+                </h3>
+
+                <p className="mt-2 text-[10.5px] text-white/70">
+                  ملخص موحّد للمعلومات الصحية المهمة
+                </p>
+              </div>
             </div>
-            <span className="grid size-14 place-items-center rounded-[14px] border border-white/15 bg-white/10 text-white">
-              <ShieldCheck size={27} />
-            </span>
+
+            <div
+              className="
+                flex min-w-[128px] items-center gap-3
+                rounded-[8px]
+                border border-white/15
+                bg-white/10
+                px-4 py-3
+              "
+            >
+              <span className="grid size-8 place-items-center rounded-[7px] bg-white/10">
+                <Droplets size={17} />
+              </span>
+
+              <div className="text-right">
+                <span className="block text-[9.5px] text-white/65">
+                  فصيلة الدم
+                </span>
+                <strong dir="ltr" className="mt-1 block text-[17px] font-semibold">
+                  {card.bloodType || "—"}
+                </strong>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="p-6 sm:p-8">
-          <div className="health-report-section">
-            <ReportSectionTitle
-              icon={UserRound}
-              title="البيانات الأساسية"
-              subtitle="بيانات تعريفية مرتبطة بالحساب"
+
+        <div className="health-report-body px-8 pb-7 pt-5 sm:px-10">
+          {/* البيانات الأساسية */}
+          <ReportHeading
+            icon={UserRound}
+            title="البيانات الأساسية"
+            subtitle="المعلومات التعريفية المرتبطة بحسابك"
+          />
+
+          <div className="mt-4 grid gap-3 md:grid-cols-3">
+            <ReportInfoCard
+              icon={Droplets}
+              label="فصيلة الدم"
+              value={card.bloodType || "غير محددة"}
+              ltr
             />
-            <div className="mt-4 grid gap-4 sm:grid-cols-3">
-              <CardInfo
-                icon={Droplets}
-                label="فصيلة الدم"
-                value={card.bloodType || "غير محددة"}
-                accent
-              />
-              <CardInfo
-                icon={CalendarDays}
-                label="تاريخ الميلاد"
-                value={formatDate(card.dateOfBirth)}
-              />
-              <CardInfo
-                icon={Phone}
-                label="رقم الهاتف"
-                value={card.phoneNumber || "غير مضاف"}
-              />
-            </div>
+            <ReportInfoCard
+              icon={Phone}
+              label="رقم الهاتف"
+              value={card.phoneNumber || "غير مضاف"}
+              ltr
+            />
+            <ReportInfoCard
+              icon={CalendarDays}
+              label="تاريخ الميلاد"
+              value={formatDate(card.dateOfBirth)}
+            />
           </div>
 
-          <div className="health-report-section mt-7">
-            <ReportSectionTitle
-              icon={Activity}
-              title="الملخص الطبي"
-              subtitle="المعلومات التي يجب الانتباه إليها"
+          <div className="my-6 h-px bg-[#E7EEF0]" />
+
+          {/* الملخص الطبي */}
+          <ReportHeading
+            icon={HeartPulse}
+            title="الملخص الطبي"
+            subtitle="المعلومات التي يجب الانتباه إليها"
+          />
+
+          <div className="mt-4 grid gap-4 md:grid-cols-3">
+            <ReportMedicalCard
+              title="الحساسيات"
+              values={allergies}
+              empty="لا توجد حساسيات مسجلة"
+              variant="danger"
             />
-            <div className="mt-4 grid gap-5 md:grid-cols-3">
-              <CardList
-                title="الحساسيات"
-                values={card.allergies}
-                empty="لا توجد حساسيات مسجلة"
-                tone="danger"
-              />
-              <CardList
-                title="الحالات المزمنة"
-                values={card.chronicConditions}
-                empty="لا توجد حالات مسجلة"
-                tone="warning"
-              />
-              <CardList
-                title="الأدوية الحالية"
-                values={card.currentMedications}
-                empty="لا توجد أدوية مسجلة"
-                tone="primary"
-              />
-            </div>
+
+            <ReportMedicalCard
+              title="الحالات المزمنة"
+              values={chronicConditions}
+              empty="لا توجد حالات مزمنة مسجلة"
+              variant="warning"
+            />
+
+            <ReportMedicalCard
+              title="الأدوية الحالية"
+              values={currentMedications}
+              empty="لا توجد أدوية حالية مسجلة"
+              variant="primary"
+            />
           </div>
 
-          <div className="health-report-section mt-7 rounded-2xl border border-[#DCE8EA] bg-[#FAFCFC] p-5">
-            <ReportSectionTitle
+          {/* الطوارئ */}
+          <div className="mt-6">
+            <ReportHeading
               icon={Phone}
               title="جهة اتصال للطوارئ"
               subtitle="للتواصل السريع عند الحاجة"
             />
-            <div className="mt-3 flex flex-wrap gap-x-8 gap-y-2 text-sm text-[#60777c]">
-              <span>
-                <b className="text-[#29464d]">الاسم: </b>
-                {card.emergencyContactName || "غير مضاف"}
-              </span>
-              {card.emergencyContactPhoneNumber && (
-                <a
-                  href={`tel:${card.emergencyContactPhoneNumber}`}
-                  className="font-bold text-[#216474]"
-                  dir="ltr"
-                >
-                  <b className="text-[#29464d]">الهاتف: </b>
-                  {card.emergencyContactPhoneNumber}
-                </a>
-              )}
+
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+              <ReportEmergencyCard
+                icon={UserRound}
+                label="الاسم"
+                value={card.emergencyContactName || "غير مضاف"}
+              />
+
+              <ReportEmergencyCard
+                icon={Phone}
+                label="الهاتف"
+                value={card.emergencyContactPhoneNumber || "غير مضاف"}
+                ltr
+              />
             </div>
-            {card.emergencyNotes && (
-              <p className="mt-3 border-t border-slate-200 pt-3 text-sm leading-6 text-[#60777c]">
-                {card.emergencyNotes}
-              </p>
-            )}
+
+            {card.emergencyNotes ? (
+              <div
+                className="
+                  mt-3 flex items-start gap-3
+                  rounded-[8px]
+                  border border-[#E2EAEC]
+                  bg-[#FBFCFC]
+                  px-4 py-3
+                "
+              >
+                <ClipboardCheck
+                  size={16}
+                  className="mt-0.5 shrink-0 text-[#216474]"
+                />
+
+                <div className="text-right">
+                  <span className="block text-[10px] text-[#A5A5A5]">
+                    ملاحظات مهمة
+                  </span>
+                  <p className="mt-1 text-[11.5px] leading-5 text-[#60777C]">
+                    {card.emergencyNotes}
+                  </p>
+                </div>
+              </div>
+            ) : null}
           </div>
 
-          <div className="health-report-footer mt-6 flex flex-col gap-3 border-t border-slate-100 pt-5 text-xs text-[#8a9a9e] sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex flex-col gap-1">
-              <span>آخر تحديث: {formatDate(card.lastUpdatedAtUtc, true)}</span>
+          {/* أسفل التقرير */}
+          <div
+            className="
+              mt-6 flex flex-col gap-4
+              border-t border-[#E7EEF0]
+              pt-4
+              sm:flex-row sm:items-center sm:justify-between
+            "
+          >
+            <div className="flex flex-wrap items-center gap-6 text-[10.5px] text-[#8A9A9E]">
+              <span>
+                آخر تحديث: {formatDate(card.lastUpdatedAtUtc, true)}
+              </span>
               <span className="print-only">
                 تاريخ إصدار التقرير: {new Date().toLocaleDateString("ar")}
               </span>
             </div>
+
             <button
               type="button"
               onClick={() => window.print()}
-              className="no-print btn-secondary"
+              className="
+                no-print inline-flex h-9 items-center justify-center gap-2
+                rounded-[7px]
+                bg-[#0D7586]
+                px-4
+                text-[11px] font-medium text-white
+                transition hover:bg-[#0A6574]
+              "
             >
-              <Printer size={16} />
+              <Printer size={14} />
               طباعة التقرير الصحي
             </button>
           </div>
-          <p className="print-only health-report-disclaimer">
+
+          <p className="print-only mt-3 text-[9.5px] leading-5 text-[#8A9A9E]">
             هذا التقرير يعكس المعلومات التي أدخلها المستخدم في منصة دوائي، ولا
             يُعد تشخيصًا أو وصفة طبية.
           </p>
@@ -926,55 +1343,191 @@ function HealthCard({ card }) {
   );
 }
 
-function ReportSectionTitle({ icon: Icon, title, subtitle }) {
+function ReportHeading({ icon: Icon, title, subtitle }) {
   return (
-    <div className="flex items-center gap-3">
-      <span className="grid size-10 place-items-center rounded-xl bg-[#eaf4f3] text-[#216474]">
-        <Icon size={19} />
+    <div className="report-heading flex items-center gap-3 text-right">
+      <span
+        className="
+          report-heading-icon
+          grid size-9 shrink-0 place-items-center
+          rounded-[7px]
+          bg-[#E6F3F6]
+          text-[#216474]
+        "
+      >
+        <Icon size={16} strokeWidth={1.8} />
       </span>
+
       <div>
-        <h3 className="font-extrabold text-[#29464d]">{title}</h3>
-        <p className="text-xs text-[#71858a]">{subtitle}</p>
+        <h3 className="text-[14px] font-semibold text-[#0D5D6B]">
+          {title}
+        </h3>
+        <p className="mt-0.5 text-[10px] text-[#A5A5A5]">
+          {subtitle}
+        </p>
       </div>
     </div>
   );
 }
 
-function CardInfo({ icon: Icon, label, value, accent }) {
+function ReportInfoCard({
+  icon: Icon,
+  label,
+  value,
+  ltr = false,
+}) {
   return (
     <div
-      className={`rounded-2xl p-4 ${accent ? "bg-rose-50" : "bg-[#f8fbfa]"}`}
+      className="
+        flex min-h-[72px] items-center gap-3
+        rounded-[8px]
+        border border-[#E2EAEC]
+        bg-[#FBFCFC]
+        px-4 py-3
+      "
     >
-      <Icon size={19} className={accent ? "text-rose-600" : "text-[#216474]"} />
-      <span className="mt-3 block text-xs text-[#8a9a9e]">{label}</span>
-      <strong className="mt-1 block text-[#29464d]">{value}</strong>
+      <span
+        className="
+          grid size-8 shrink-0 place-items-center
+          rounded-[7px]
+          bg-[#E6F3F6]
+          text-[#216474]
+        "
+      >
+        <Icon size={15} strokeWidth={1.8} />
+      </span>
+
+      <div className="min-w-0 text-right">
+        <span className="block text-[9.5px] text-[#A5A5A5]">
+          {label}
+        </span>
+        <strong
+          dir={ltr ? "ltr" : undefined}
+          className="mt-1 block truncate text-[12px] font-semibold text-[#333333]"
+        >
+          {value || "غير محدد"}
+        </strong>
+      </div>
     </div>
   );
 }
-function CardList({ title, values, empty, tone = "primary" }) {
+
+function ReportMedicalCard({
+  title,
+  values,
+  empty,
+  variant = "primary",
+}) {
   const safeValues = Array.isArray(values) ? values : [];
-  const tones = {
-    danger: "border-rose-100 bg-rose-50/60",
-    warning: "border-amber-100 bg-amber-50/60",
-    primary: "border-[#174b57]/8 bg-[#f8fbfa]",
+
+  const variants = {
+    danger: {
+      box: "border-[#F2DADA] bg-[#FFF7F7]",
+      title: "text-[#D95454]",
+      iconBg: "bg-[#E85B5B]",
+      Icon: AlertTriangle,
+    },
+    warning: {
+      box: "border-[#F4E4C7] bg-[#FFF9EF]",
+      title: "text-[#D79A24]",
+      iconBg: "bg-[#F2BE55]",
+      Icon: HeartPulse,
+    },
+    primary: {
+      box: "border-[#D8E9EA] bg-[#F4FAFA]",
+      title: "text-[#0D7586]",
+      iconBg: "bg-[#1698A5]",
+      Icon: Pill,
+    },
   };
+
+  const style = variants[variant] || variants.primary;
+  const Icon = style.Icon;
+
   return (
-    <div className={`rounded-2xl border p-4 ${tones[tone]}`}>
-      <h3 className="font-extrabold text-[#29464d]">{title}</h3>
+    <article
+      className={`
+        min-h-[132px]
+        rounded-[8px]
+        border p-4
+        ${style.box}
+      `}
+    >
+      <div className="flex items-center gap-2">
+        <span
+          className={`grid size-8 shrink-0 place-items-center rounded-full text-white ${style.iconBg}`}
+        >
+          <Icon size={15} strokeWidth={1.8} />
+        </span>
+
+        <h4 className={`text-[12px] font-semibold ${style.title}`}>
+          {title}
+        </h4>
+      </div>
+
       {safeValues.length ? (
-        <ul className="mt-3 space-y-2">
+        <ul className="mt-3 space-y-1.5 pr-1">
           {safeValues.map((value) => (
             <li
               key={value}
-              className="rounded-xl bg-white/80 px-3 py-2 text-sm text-[#60777c]"
+              className="
+                flex items-start gap-2
+                text-[10.5px] leading-5
+                text-[#333333]
+              "
             >
-              {value}
+              <span className="mt-2 size-1 shrink-0 rounded-full bg-[#60777C]" />
+              <span>{value}</span>
             </li>
           ))}
         </ul>
       ) : (
-        <p className="mt-3 text-sm text-slate-400">{empty}</p>
+        <p className="mt-3 text-[10.5px] leading-5 text-[#A5A5A5]">
+          {empty}
+        </p>
       )}
+    </article>
+  );
+}
+
+function ReportEmergencyCard({
+  icon: Icon,
+  label,
+  value,
+  ltr = false,
+}) {
+  return (
+    <div
+      className="
+        flex items-center gap-3
+        rounded-[8px]
+        border border-[#E2EAEC]
+        bg-[#FBFCFC]
+        px-4 py-3
+      "
+    >
+      <span
+        className="
+          grid size-8 shrink-0 place-items-center
+          rounded-[7px]
+          bg-[#E6F3F6]
+          text-[#216474]
+        "
+      >
+        <Icon size={15} />
+      </span>
+
+      <div className="min-w-0 text-right">
+        <span className="block text-[9.5px] text-[#A5A5A5]">
+          {label}
+        </span>
+        <strong
+          dir={ltr ? "ltr" : undefined}
+          className="mt-1 block text-[12px] font-semibold text-[#333333]"
+        >
+          {value}
+        </strong>
+      </div>
     </div>
   );
 }

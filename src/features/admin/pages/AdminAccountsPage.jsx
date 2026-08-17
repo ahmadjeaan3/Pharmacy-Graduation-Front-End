@@ -49,6 +49,8 @@ const statTones = {
   warning: "bg-[#FFF7DF] text-[#DFAE0D]",
 };
 
+const ADMIN_HERO_IMAGE = "/assets/app/home/background_hero_admin.png";
+
 export function AdminAccountsPage() {
   const { t, i18n } = useTranslation();
 
@@ -105,30 +107,24 @@ export function AdminAccountsPage() {
   });
 
   return (
-    <div dir={direction} lang={currentLanguage} className="space-y-6">
+    <div dir={direction} lang={currentLanguage} className="space-y-5 sm:space-y-6">
       {/* Hero */}
-      <section className="relative isolate overflow-hidden rounded-[1.8rem] bg-[#174B57] px-6 py-8 text-white shadow-[0_22px_55px_rgba(23,75,87,.16)] lg:px-9">
-        <div className="noise absolute inset-0 -z-10" />
-
+      <section className="relative isolate min-h-[230px] overflow-hidden rounded-[16px] bg-[#10505A] px-5 py-7 text-white shadow-[0_22px_55px_rgba(23,75,87,.14)] sm:min-h-[250px] sm:px-7 sm:py-8 lg:min-h-[271px] lg:px-10">
         <div
           aria-hidden="true"
-          className={`absolute -top-24 -z-10 size-72 rounded-full border-[44px] border-white/[.035] ${
-            isArabic ? "-left-12" : "-right-12"
-          }`}
+          className="absolute inset-0 -z-10 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${ADMIN_HERO_IMAGE})` }}
         />
 
         <div
           aria-hidden="true"
-          className={`absolute -bottom-24 -z-10 size-52 rounded-full bg-[#6E969E]/10 blur-2xl ${
-            isArabic ? "right-[42%]" : "left-[42%]"
-          }`}
+          className="absolute inset-0 -z-[9] bg-gradient-to-l from-[#0A4B56]/95 via-[#0B5963]/70 to-[#0B5963]/10"
         />
 
-        <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="relative flex min-h-[175px] flex-col justify-center sm:min-h-[190px] lg:min-h-[207px]">
           <div className={isArabic ? "text-right" : "text-left"}>
             <p className="flex items-center gap-2 text-sm font-bold text-[#8BD0CB]">
               <Sparkles size={16} />
-
               {t("مركز إدارة المنصة")}
             </p>
 
@@ -136,18 +132,17 @@ export function AdminAccountsPage() {
               {t("دليل الحسابات الموحّد")}
             </h2>
 
-            <p className="mt-3 max-w-2xl leading-7 text-white/60">
+            <p className="mt-3 max-w-2xl leading-7 text-white/70">
               {t(
                 "رؤية شاملة لكل حسابات المنصة، بياناتها وحالتها ونشاطها من مساحة إدارية واحدة.",
               )}
             </p>
+
+            <span className="mt-5 inline-flex w-fit items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 text-sm font-bold text-white backdrop-blur-sm">
+              <ShieldCheck size={18} className="text-[#F5CB72]" />
+              {t("وصول إداري محمي")}
+            </span>
           </div>
-
-          <span className="inline-flex w-fit items-center gap-2 rounded-2xl border border-white/10 bg-white/[.08] px-4 py-3 text-sm font-bold backdrop-blur">
-            <ShieldCheck size={18} className="text-[#F5CB72]" />
-
-            {t("وصول إداري محمي")}
-          </span>
         </div>
       </section>
 

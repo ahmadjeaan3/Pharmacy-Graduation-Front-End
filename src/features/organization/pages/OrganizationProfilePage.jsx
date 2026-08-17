@@ -239,10 +239,10 @@ export function OrganizationProfilePage() {
       className="min-h-[calc(100vh-164px)] space-y-5 bg-[#F4F8F8]"
     >
       {/* Hero */}
-      <section className="relative h-[198px] overflow-hidden rounded-xl bg-[#0D5360] text-white">
+      <section className="relative h-[230px] w-full overflow-hidden rounded-[14px] bg-[#10505A] text-white sm:h-[271px] sm:rounded-[16px]">
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-300 ${isArabic ? "" : "scale-x-[-1]"}`}
           style={{
             backgroundImage: `url("${PROFILE_HERO_IMAGE}")`,
           }}
@@ -252,12 +252,12 @@ export function OrganizationProfilePage() {
           aria-hidden="true"
           className={`absolute inset-0 ${
             isArabic
-              ? "bg-[linear-gradient(270deg,rgba(8,78,89,.96)_0%,rgba(8,78,89,.78)_48%,rgba(8,78,89,.22)_100%)]"
-              : "bg-[linear-gradient(90deg,rgba(8,78,89,.96)_0%,rgba(8,78,89,.78)_48%,rgba(8,78,89,.22)_100%)]"
+              ? "bg-[linear-gradient(270deg,#10505A_0%,rgba(33,100,116,.25)_70%,rgba(33,100,116,.05)_100%)]"
+              : "bg-[linear-gradient(90deg,#10505A_0%,rgba(33,100,116,.25)_70%,rgba(33,100,116,.05)_100%)]"
           }`}
         />
 
-        <div className="relative z-10 flex h-full items-center px-8">
+        <div className="relative z-10 flex h-full items-center px-5 sm:px-7 lg:px-[41px]">
           <div
             className={`flex min-w-0 flex-col items-start ${
               isArabic ? "text-right" : "text-left"
@@ -268,7 +268,7 @@ export function OrganizationProfilePage() {
                 <FileText size={21} strokeWidth={1.8} />
               </span>
 
-              <h1 className="text-[28px] font-bold leading-none text-white">
+              <h1 className="text-[22px] font-bold leading-tight text-white sm:text-[28px]">
                 {t("الملف والتحقق")}
               </h1>
             </div>
@@ -303,7 +303,7 @@ export function OrganizationProfilePage() {
             setNotice(null);
             save.mutate(form);
           }}
-          className="rounded-xl border border-[#DCE8EA] bg-white p-6 shadow-[0_8px_30px_rgba(23,75,87,.04)]"
+          className="rounded-xl border border-[#DCE8EA] bg-white p-4 sm:p-6 shadow-[0_8px_30px_rgba(23,75,87,.04)]"
         >
           <div className="flex items-center gap-3 border-b border-[#E7EFF0] pb-5">
             <span className="grid size-10 place-items-center rounded-xl bg-[#E6F3F6] text-[#216474]">
@@ -428,7 +428,7 @@ export function OrganizationProfilePage() {
         </form>
         {/* Verification side */}
         <div className="space-y-5">
-          <section className="rounded-xl border border-[#DCE8EA] bg-white p-5 shadow-[0_8px_30px_rgba(23,75,87,.04)]">
+          <section className="rounded-xl border border-[#DCE8EA] bg-white p-4 sm:p-5 shadow-[0_8px_30px_rgba(23,75,87,.04)]">
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-center gap-3">
                 <span className="grid size-10 place-items-center rounded-xl bg-[#E6F3F6] text-[#216474]">
@@ -495,7 +495,7 @@ export function OrganizationProfilePage() {
 
           <form
             onSubmit={submitDocument}
-            className="rounded-xl border border-[#DCE8EA] bg-white p-5 shadow-[0_8px_30px_rgba(23,75,87,.04)]"
+            className="rounded-xl border border-[#DCE8EA] bg-white p-4 sm:p-5 shadow-[0_8px_30px_rgba(23,75,87,.04)]"
           >
             <div className={isArabic ? "text-right" : "text-left"}>
               <h2 className="font-bold text-[#29464D]">
@@ -574,7 +574,7 @@ export function OrganizationProfilePage() {
         </div>
       </section>
       {/* Documents */}
-      <section className="rounded-xl border border-[#DCE8EA] bg-white p-6 shadow-[0_8px_30px_rgba(23,75,87,.04)]">
+      <section className="rounded-xl border border-[#DCE8EA] bg-white p-4 sm:p-6 shadow-[0_8px_30px_rgba(23,75,87,.04)]">
         <div className={isArabic ? "text-right" : "text-left"}>
           <h2 className="text-lg font-bold text-[#29464D]">
             {t("المستندات المرفوعة")}

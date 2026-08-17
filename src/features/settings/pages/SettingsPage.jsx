@@ -38,6 +38,13 @@ const USER_HERO_IMAGE = "/assets/app/home/hero_search.png";
 
 const PHARMACY_HERO_IMAGE = "/assets/app/pharmacy.png";
 
+const ORGANIZATION_HERO_IMAGE =
+  "/assets/app/organization/organization-dashboard-hero.png";
+
+const ADMIN_HERO_IMAGE = "/assets/app/home/background_hero_admin.png";
+
+const WAREHOUSE_HERO_IMAGE = "/assets/app/home/SupplyChainWorkspace.png";
+
 const emptyPassword = {
   currentPassword: "",
   newPassword: "",
@@ -132,9 +139,35 @@ export function SettingsPage() {
     (roleName) => String(roleName).toLowerCase() === "pharmacy",
   );
 
+  const isUserAccount = userRoles.some(
+    (roleName) => String(roleName).toLowerCase() === "user",
+  );
+
+  const isOrganizationAccount = userRoles.some(
+    (roleName) => String(roleName).toLowerCase() === "organization",
+  );
+
+  const isAdminAccount = userRoles.some((roleName) =>
+    ["admin", "administrator", "systemadmin", "system-admin"].includes(
+      String(roleName).toLowerCase(),
+    ),
+  );
+
+  const isWarehouseAccount = userRoles.some((roleName) =>
+    ["warehouse", "warehouseadmin", "warehouse-admin"].includes(
+      String(roleName).toLowerCase(),
+    ),
+  );
+
   const settingsHeroImage = isPharmacyAccount
     ? PHARMACY_HERO_IMAGE
-    : USER_HERO_IMAGE;
+    : isAdminAccount
+      ? ADMIN_HERO_IMAGE
+      : isWarehouseAccount
+        ? WAREHOUSE_HERO_IMAGE
+        : isOrganizationAccount
+          ? ORGANIZATION_HERO_IMAGE
+          : USER_HERO_IMAGE;
 
   const queryClient = useQueryClient();
 
@@ -286,20 +319,22 @@ export function SettingsPage() {
       lang={currentLanguage}
       className="m-0 min-h-screen w-full bg-[#F7F9FA] p-0 text-[#333333]"
     >
+      <div className={isPharmacyAccount || isOrganizationAccount || isAdminAccount || isWarehouseAccount ? "space-y-6" : ""}>
       {/* Hero */}
       <section
-        className="
-          relative isolate
-          -mt-6 overflow-hidden
-          bg-[#0D7586]
-          text-white
-          sm:-mt-7
-          lg:-mt-8
-        "
-        style={{
-          width: "100vw",
-          marginInline: "calc(50% - 50vw)",
-        }}
+        className={
+          isPharmacyAccount || isOrganizationAccount || isAdminAccount || isWarehouseAccount
+            ? "relative isolate min-h-[220px] overflow-hidden rounded-[14px] text-white shadow-[0_22px_55px_rgba(23,75,87,.16)] sm:min-h-[230px] lg:min-h-[250px]"
+            : "relative isolate -mt-6 overflow-hidden bg-[#0D7586] text-white sm:-mt-7 lg:-mt-8"
+        }
+        style={
+          isPharmacyAccount || isOrganizationAccount || isAdminAccount || isWarehouseAccount
+            ? undefined
+            : {
+                width: "100vw",
+                marginInline: "calc(50% - 50vw)",
+              }
+        }
       >
         <img
           src={settingsHeroImage}
@@ -310,15 +345,26 @@ export function SettingsPage() {
             h-full w-full
             select-none
             object-cover object-center
-            opacity-80
             ${
               isPharmacyAccount
                 ? isArabic
-                  ? "scale-x-[-1]"
-                  : "scale-x-100"
-                : isArabic
-                  ? "scale-x-100"
-                  : "scale-x-[-1]"
+                  ? "scale-x-[-1] object-[center_42%] opacity-100"
+                  : "scale-x-100 object-[center_42%] opacity-100"
+                : isOrganizationAccount
+                  ? isArabic
+                    ? "scale-x-100 object-[center_50%] opacity-100"
+                    : "scale-x-[-1] object-[center_50%] opacity-100"
+                  : isAdminAccount
+                    ? isArabic
+                      ? "scale-x-100 object-[center_46%] opacity-100"
+                      : "scale-x-[-1] object-[center_46%] opacity-100"
+                    : isWarehouseAccount
+                      ? isArabic
+                        ? "scale-x-100 object-[center_48%] opacity-100"
+                        : "scale-x-[-1] object-[center_48%] opacity-100"
+                      : isArabic
+                        ? "scale-x-100"
+                        : "scale-x-[-1]"
             }
           `}
         />
@@ -327,22 +373,43 @@ export function SettingsPage() {
           aria-hidden="true"
           className="absolute inset-0 -z-10"
           style={{
-            background: isArabic
-              ? "linear-gradient(270deg,rgba(0,63,76,.48) 0%,rgba(3,110,126,.60) 48%,rgba(0,60,73,.18) 100%)"
-              : "linear-gradient(90deg,rgba(0,63,76,.48) 0%,rgba(3,110,126,.60) 48%,rgba(0,60,73,.18) 100%)",
+            background: isPharmacyAccount
+              ? isArabic
+                ? "linear-gradient(270deg, #10505A 0%, rgba(16,80,90,.88) 34%, rgba(33,100,116,.42) 68%, rgba(33,100,116,.08) 100%)"
+                : "linear-gradient(90deg, #10505A 0%, rgba(16,80,90,.88) 34%, rgba(33,100,116,.42) 68%, rgba(33,100,116,.08) 100%)"
+              : isOrganizationAccount
+                ? isArabic
+                  ? "linear-gradient(270deg, #10505A 0%, rgba(16,80,90,.90) 32%, rgba(33,100,116,.46) 66%, rgba(33,100,116,.10) 100%)"
+                  : "linear-gradient(90deg, #10505A 0%, rgba(16,80,90,.90) 32%, rgba(33,100,116,.46) 66%, rgba(33,100,116,.10) 100%)"
+                : isAdminAccount
+                  ? isArabic
+                    ? "linear-gradient(270deg, #0D4E59 0%, rgba(13,78,89,.92) 34%, rgba(33,100,116,.48) 68%, rgba(33,100,116,.10) 100%)"
+                    : "linear-gradient(90deg, #0D4E59 0%, rgba(13,78,89,.92) 34%, rgba(33,100,116,.48) 68%, rgba(33,100,116,.10) 100%)"
+                  : isWarehouseAccount
+                    ? isArabic
+                      ? "linear-gradient(270deg, #10505A 0%, rgba(16,80,90,.91) 34%, rgba(33,100,116,.46) 68%, rgba(33,100,116,.08) 100%)"
+                      : "linear-gradient(90deg, #10505A 0%, rgba(16,80,90,.91) 34%, rgba(33,100,116,.46) 68%, rgba(33,100,116,.08) 100%)"
+                    : isArabic
+                      ? "linear-gradient(270deg,rgba(0,63,76,.48) 0%,rgba(3,110,126,.60) 48%,rgba(0,60,73,.18) 100%)"
+                      : "linear-gradient(90deg,rgba(0,63,76,.48) 0%,rgba(3,110,126,.60) 48%,rgba(0,60,73,.18) 100%)",
           }}
         />
 
+        {(isPharmacyAccount || isOrganizationAccount || isAdminAccount || isWarehouseAccount) && (
+          <div
+            aria-hidden="true"
+            className={`absolute -top-20 -z-[5] size-64 rounded-full border-[40px] border-white/[.04] ${
+              isArabic ? "-left-14" : "-right-14"
+            }`}
+          />
+        )}
+
         <div
-          className="
-            relative z-10
-            mx-auto flex min-h-[220px]
-            w-full max-w-[1240px]
-            items-center
-            px-5 py-9
-            sm:px-7
-            lg:px-8
-          "
+          className={
+            isPharmacyAccount || isOrganizationAccount || isAdminAccount || isWarehouseAccount
+              ? "relative z-10 flex min-h-[220px] w-full items-center px-6 py-7 sm:min-h-[230px] lg:min-h-[250px] lg:px-9"
+              : "relative z-10 mx-auto flex min-h-[220px] w-full max-w-[1240px] items-center px-5 py-9 sm:px-7 lg:px-8"
+          }
         >
           <div
             className={`flex items-center gap-4 ${
@@ -367,7 +434,13 @@ export function SettingsPage() {
       </section>
 
       {/* Main content */}
-      <main className="mx-auto w-full max-w-[1240px] px-5 pb-12 pt-8 sm:px-7 lg:px-8">
+      <main
+        className={
+          isPharmacyAccount || isOrganizationAccount || isAdminAccount || isWarehouseAccount
+            ? "w-full"
+            : "mx-auto w-full max-w-[1240px] px-5 pb-12 pt-8 sm:px-7 lg:px-8"
+        }
+      >
         <section className="grid items-start gap-5 xl:grid-cols-[minmax(0,1.25fr)_minmax(280px,.75fr)]">
         <div className="space-y-5">
           <section className="rounded-xl border border-[rgba(102,102,102,.16)] bg-white p-6">
@@ -421,7 +494,7 @@ export function SettingsPage() {
                     type="button"
                     disabled={avatarMutation.isPending}
                     onClick={() => avatarInput.current?.click()}
-                    className="inline-flex h-10 items-center gap-2 rounded-lg bg-[#174B57] px-4 text-sm font-semibold text-white disabled:opacity-60"
+                    className="inline-flex h-10 items-center gap-2 rounded-lg bg-[#216474] px-4 text-sm font-semibold text-white transition hover:bg-[#1B5967] disabled:opacity-60"
                   >
                     <ImagePlus size={16} />
                     {avatarMutation.isPending
@@ -562,7 +635,7 @@ export function SettingsPage() {
             <button
               type="submit"
               disabled={updateProfile.isPending}
-              className="mt-6 inline-flex h-11 items-center gap-2 rounded-lg bg-[#174B57] px-5 text-[14px] font-semibold text-white transition hover:bg-[#123F49] disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-6 inline-flex h-11 items-center gap-2 rounded-lg bg-[#216474] px-5 text-[14px] font-semibold text-white transition hover:bg-[#1B5967] disabled:cursor-not-allowed disabled:opacity-60"
             >
               <Save size={16} />
 
@@ -662,7 +735,7 @@ export function SettingsPage() {
             <button
               type="submit"
               disabled={updatePassword.isPending}
-              className="mt-6 inline-flex h-11 items-center gap-2 rounded-lg bg-[#174B57] px-5 text-[14px] font-semibold text-white transition hover:bg-[#123F49] disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-6 inline-flex h-11 items-center gap-2 rounded-lg bg-[#216474] px-5 text-[14px] font-semibold text-white transition hover:bg-[#1B5967] disabled:cursor-not-allowed disabled:opacity-60"
             >
               <KeyRound size={16} />
 
@@ -770,6 +843,7 @@ export function SettingsPage() {
         </aside>
         </section>
       </main>
+      </div>
     </div>
   );
 }

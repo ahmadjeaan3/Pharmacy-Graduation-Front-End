@@ -71,6 +71,8 @@ const parseList = (value, fallback) => {
   }
 };
 
+const ADMIN_HERO_IMAGE = "/assets/app/home/background_hero_admin.png";
+
 export function AdminAccountDetailsPage() {
   const { t, i18n } = useTranslation();
 
@@ -163,7 +165,7 @@ export function AdminAccountDetailsPage() {
     : t("غير محدد");
 
   return (
-    <div dir={direction} lang={currentLanguage} className="space-y-6">
+    <div dir={direction} lang={currentLanguage} className="space-y-5 sm:space-y-6">
       {/* Back */}
       <div>
         <Link
@@ -177,12 +179,12 @@ export function AdminAccountDetailsPage() {
       </div>
 
       {/* Hero */}
-      <section className="relative isolate overflow-hidden rounded-[1.8rem] bg-[#174B57] px-6 py-7 text-white shadow-[0_22px_55px_rgba(23,75,87,.16)] md:px-8">
+      <section className="relative isolate min-h-[230px] overflow-hidden rounded-[16px] bg-[#10505A] px-5 py-7 text-white shadow-[0_22px_55px_rgba(23,75,87,.14)] sm:min-h-[250px] sm:px-7 lg:min-h-[271px] lg:px-9">
         <div className="noise absolute inset-0 -z-10" />
 
         <div
           aria-hidden="true"
-          className={`absolute -top-24 -z-10 size-72 rounded-full border-[44px] border-white/[.035] ${
+          className={`absolute -top-24 -z-[4] size-72 rounded-full border-[44px] border-white/[.035] ${
             isArabic ? "-left-12" : "-right-12"
           }`}
         />

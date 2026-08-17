@@ -75,6 +75,8 @@ const RepresentativeRouteMap = lazy(() =>
 );
 
 const SUPPLY_HERO_IMAGE = "/assets/app/pharmacy.png";
+const ADMIN_HERO_IMAGE = "/assets/app/home/background_hero_admin.png";
+const WAREHOUSE_HERO_IMAGE = "/assets/app/home/SupplyChainWorkspace.png";
 
 const warehousePathTabs = {
   "/app/warehouse/inventory": "inventory",
@@ -169,7 +171,7 @@ function Stat({
     <button
       type="button"
       onClick={onClick}
-      className="relative min-h-[145px] w-full overflow-hidden rounded-[1.35rem] border border-[#DCE8EA] bg-white p-5 text-start shadow-[0_10px_30px_rgba(23,75,87,.04)] transition hover:-translate-y-0.5 hover:border-[#8BD0CB] hover:shadow-[0_14px_34px_rgba(23,75,87,.10)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#216474]"
+      className="relative min-h-[145px] w-full overflow-hidden rounded-[14px] border border-[#DCE8EA] bg-white p-5 text-start shadow-[0_10px_30px_rgba(23,75,87,.04)] transition hover:-translate-y-0.5 hover:border-[#8BD0CB] hover:shadow-[0_14px_34px_rgba(23,75,87,.10)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#216474]"
     >
       <span
         className={`absolute top-5 grid size-11 place-items-center rounded-xl ${
@@ -218,7 +220,7 @@ function OrderCard({
   const visibleStatus =
     order.shipment?.status === "Arrived" ? "Arrived" : order.status;
   return (
-    <article className="rounded-[1.35rem] border border-[#DCE8EA] bg-white p-5 shadow-[0_10px_28px_rgba(23,75,87,.04)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_34px_rgba(23,75,87,.07)]">
+    <article className="rounded-[14px] border border-[#DCE8EA] bg-white p-5 shadow-[0_10px_28px_rgba(23,75,87,.04)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_34px_rgba(23,75,87,.07)]">
       <div className="flex flex-wrap justify-between gap-3">
         <div>
           <p className="font-mono text-xs font-black text-[#216474]">
@@ -355,6 +357,26 @@ export function SupplyChainWorkspacePage() {
   const location = useLocation();
   const navigate = useNavigate();
   const role = getPrimaryRole(user.roles);
+  const normalizedRoles = (user?.roles || []).map((item) =>
+    String(item).trim().toLowerCase(),
+  );
+  const isAdminAccount =
+    String(role || "").trim().toLowerCase() === "admin" ||
+    normalizedRoles.some((item) =>
+      ["admin", "administrator", "systemadmin", "system-admin"].includes(item),
+    );
+
+  const isWarehouseAccount =
+    String(role || "").trim().toLowerCase() === "warehouse" ||
+    normalizedRoles.some((item) =>
+      ["warehouse", "warehouseadmin", "warehouse-admin"].includes(item),
+    );
+
+  const supplyHeroImage = isAdminAccount
+    ? ADMIN_HERO_IMAGE
+    : isWarehouseAccount
+      ? WAREHOUSE_HERO_IMAGE
+      : SUPPLY_HERO_IMAGE;
   const representativeView = location.pathname.endsWith("/route")
     ? "route"
     : location.pathname.endsWith("/history")
@@ -659,18 +681,44 @@ sm:min-h-[230px]
 lg:min-h-[250px]"
       >
         <img
-          src={SUPPLY_HERO_IMAGE}
+          src={supplyHeroImage}
           alt=""
           aria-hidden="true"
-          className={`absolute inset-0 h-full w-full object-cover object-[center_38%] ${isArabic ? "scale-x-[-1]" : ""}`}
+          className={`absolute inset-0 h-full w-full object-cover ${
+            isAdminAccount
+              ? "object-[center_46%]"
+              : isWarehouseAccount
+                ? "object-[center_48%]"
+                : "object-[center_38%]"
+          } ${
+            isAdminAccount
+              ? isArabic
+                ? "scale-x-100"
+                : "scale-x-[-1]"
+              : isWarehouseAccount
+                ? isArabic
+                  ? "scale-x-100"
+                  : "scale-x-[-1]"
+                : isArabic
+                  ? "scale-x-[-1]"
+                  : "scale-x-100"
+          }`}
         />
 
         <div
           className="absolute inset-0"
           style={{
-            background: isArabic
-              ? "linear-gradient(270deg, #10505A 0%, rgba(16,80,90,.90) 38%, rgba(33,100,116,.48) 70%, rgba(33,100,116,.08) 100%)"
-              : "linear-gradient(90deg, #10505A 0%, rgba(16,80,90,.90) 38%, rgba(33,100,116,.48) 70%, rgba(33,100,116,.08) 100%)",
+            background: isAdminAccount
+              ? isArabic
+                ? "linear-gradient(270deg, #0D4E59 0%, rgba(13,78,89,.92) 34%, rgba(33,100,116,.48) 68%, rgba(33,100,116,.10) 100%)"
+                : "linear-gradient(90deg, #0D4E59 0%, rgba(13,78,89,.92) 34%, rgba(33,100,116,.48) 68%, rgba(33,100,116,.10) 100%)"
+              : isWarehouseAccount
+                ? isArabic
+                  ? "linear-gradient(270deg, #10505A 0%, rgba(16,80,90,.91) 34%, rgba(33,100,116,.46) 68%, rgba(33,100,116,.08) 100%)"
+                  : "linear-gradient(90deg, #10505A 0%, rgba(16,80,90,.91) 34%, rgba(33,100,116,.46) 68%, rgba(33,100,116,.08) 100%)"
+                : isArabic
+                  ? "linear-gradient(270deg, #10505A 0%, rgba(16,80,90,.90) 38%, rgba(33,100,116,.48) 70%, rgba(33,100,116,.08) 100%)"
+                  : "linear-gradient(90deg, #10505A 0%, rgba(16,80,90,.90) 38%, rgba(33,100,116,.48) 70%, rgba(33,100,116,.08) 100%)",
           }}
         />
 
@@ -699,34 +747,34 @@ lg:min-h-[250px]"
 
           <div className="grid w-full gap-3 sm:grid-cols-2 lg:w-auto lg:min-w-[280px]">
             <div
-              className={`relative min-h-[88px] rounded-[12px] border border-[rgba(102,102,102,.16)] bg-[rgba(2,77,82,.56)] p-4 backdrop-blur-[10px] ${isArabic ? "pl-14 text-right" : "pr-14 text-left"}`}
+              className={`relative min-h-[88px] rounded-[12px] border border-white/80 bg-white p-4 text-[#17363E] shadow-[0_10px_28px_rgba(4,45,53,.13)] ${isArabic ? "pl-14 text-right" : "pr-14 text-left"}`}
             >
               <span
-                className={`absolute top-1/2 grid size-9 -translate-y-1/2 place-items-center mt-2 rounded-lg text-[#F5CB72] ${isArabic ? "left-4 ml-2" : "right-4 mr-2"}`}
+                className={`absolute top-1/2 grid size-9 -translate-y-1/2 place-items-center mt-2 rounded-lg bg-[#EAF4F3] text-[#216474] ${isArabic ? "left-4 ml-2" : "right-4 mr-2"}`}
               >
                 <Truck size={22} strokeWidth={1.8} />
               </span>
 
-              <p className="text-xs text-[#D6D6D6]">{t("شحنات جارية")}</p>
+              <p className="text-xs text-[#71858A]">{t("شحنات جارية")}</p>
 
-              <strong className="mt-2 block text-2xl font-black text-[#E6F3F6]">
+              <strong className="mt-2 block text-2xl font-black text-[#17363E]">
                 {orders.data?.filter((x) => x.status === "OutForDelivery")
                   .length || 0}
               </strong>
             </div>
 
             <div
-              className={`relative min-h-[88px] rounded-[12px] border border-[rgba(102,102,102,.16)] bg-[rgba(2,77,82,.56)] p-4 backdrop-blur-[10px] ${isArabic ? "pl-14 text-right" : "pr-14 text-left"}`}
+              className={`relative min-h-[88px] rounded-[12px] border border-white/80 bg-white p-4 text-[#17363E] shadow-[0_10px_28px_rgba(4,45,53,.13)] ${isArabic ? "pl-14 text-right" : "pr-14 text-left"}`}
             >
               <span
-                className={`absolute top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-lg mt-2 text-[#E6F3F6] ${isArabic ? "left-4 ml-2" : "right-4 mr-2"}`}
+                className={`absolute top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-lg mt-2 bg-[#EAF4F3] text-[#216474] ${isArabic ? "left-4 ml-2" : "right-4 mr-2"}`}
               >
                 <CheckCircle2 size={22} strokeWidth={1.8} />
               </span>
 
-              <p className="text-xs text-[#D6D6D6]">{t("تم تسليمها")}</p>
+              <p className="text-xs text-[#71858A]">{t("تم تسليمها")}</p>
 
-              <strong className="mt-2 block text-2xl font-black text-[#E6F3F6]">
+              <strong className="mt-2 block text-2xl font-black text-[#17363E]">
                 {orders.data?.filter((x) => x.status === "Delivered").length ||
                   0}
               </strong>
@@ -807,7 +855,7 @@ lg:min-h-[250px]"
               ).length
             }
             hint={t("ضمن سجل مهامك")}
-            className="bg-emerald-50 text-emerald-700"
+            className="bg-[#EAF4F3] text-[#174B57]"
             isArabic={isArabic}
             currentLanguage={currentLanguage}
             onClick={() => navigate("/app/representative/history")}
@@ -836,7 +884,7 @@ lg:min-h-[250px]"
                 navigate(warehouseTabPaths[x] || "/app/supply-chain");
               }
             }}
-            className={`rounded-xl px-5 py-3 text-sm font-black ${activeTab === x ? "bg-[#174B57] text-white shadow-lg" : "bg-white text-[#60777D]"}`}
+            className={`rounded-xl px-5 py-3 text-sm font-black ${activeTab === x ? "bg-[#216474] text-white shadow-[0_8px_18px_rgba(33,100,116,.14)]" : "border border-[#DCE8EA] bg-white text-[#60777D] hover:bg-[#F4FAFA] hover:text-[#216474]"}`}
           >
             {t(
               {
@@ -1014,7 +1062,7 @@ lg:min-h-[250px]"
                   </p>
                   <MedicineAlternativesButton
                     medicineName={b.medicineName}
-                    className="mt-4 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-[#DCE8EA] bg-violet-50 px-3 text-xs font-black text-violet-700 transition hover:-translate-y-0.5 hover:bg-[#EAF4F3]"
+                    className="mt-4 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-[#DCE8EA] bg-[#EAF4F3] px-3 text-xs font-black text-[#216474] transition hover:-translate-y-0.5 hover:bg-[#EAF4F3]"
                   />
                   <div className="mt-2 grid grid-cols-2 gap-2">
                     <button
@@ -1371,7 +1419,7 @@ function OrderDetailsDialog({
         onMouseDown={(event) => event.stopPropagation()}
         role="dialog"
         aria-modal="true"
-        className="max-h-[94vh] w-full max-w-4xl overflow-auto rounded-[1.8rem] bg-[#F8FBFB] shadow-2xl"
+        className="max-h-[94vh] w-full max-w-4xl overflow-auto rounded-[16px] bg-[#F8FBFB] shadow-2xl"
         dir={direction}
         lang={currentLanguage}
       >
@@ -1416,13 +1464,13 @@ function OrderDetailsDialog({
                     className="relative flex flex-1 flex-col items-center text-center"
                   >
                     <span
-                      className={`relative z-10 grid size-8 place-items-center rounded-full border-4 border-white text-[11px] font-black ${index <= current ? "bg-[#216474] text-white" : "bg-slate-200 text-slate-500"}`}
+                      className={`relative z-10 grid size-8 place-items-center rounded-full border-4 border-white text-[11px] font-black ${index <= current ? "bg-[#216474] text-white" : "bg-[#E6EEF0] text-[#829499]"}`}
                     >
                       {index < current ? <CheckCircle2 size={16} /> : index + 1}
                     </span>
                     {index < steps.length - 1 && (
                       <span
-                        className={`absolute start-1/2 top-3.5 h-1 w-full ${index < current ? "bg-[#5eb3ad]" : "bg-slate-200"}`}
+                        className={`absolute start-1/2 top-3.5 h-1 w-full ${index < current ? "bg-[#5eb3ad]" : "bg-[#E6EEF0]"}`}
                       />
                     )}
                     <span className="relative z-10 mt-2 hidden text-[10px] font-bold text-[#60777D] sm:block">
@@ -1649,7 +1697,7 @@ function OrderDetailsDialog({
                 {!next &&
                   order.shipment &&
                   !["Failed", "Returned"].includes(order.shipment.status) && (
-                    <div className="mt-4 rounded-xl bg-emerald-50 p-3 text-center text-sm font-bold text-[#174B57]">
+                    <div className="mt-4 rounded-xl bg-[#EAF4F3] p-3 text-center text-sm font-bold text-[#174B57]">
                       {order.status === "Delivered"
                         ? "اكتمل تسليم الطلب"
                         : "الطلب مسند وجاهز للمتابعة"}
@@ -1804,7 +1852,7 @@ function MarketplacePanel({
           {warehouses.map((w) => (
             <article
               key={w.id}
-              className="rounded-[1.35rem] border border-[#DCE8EA] bg-white p-5 shadow-[0_10px_28px_rgba(23,75,87,.04)] transition hover:-translate-y-0.5 hover:border-[#AFC9CD] hover:shadow-[0_16px_34px_rgba(23,75,87,.07)]"
+              className="rounded-[14px] border border-[#DCE8EA] bg-white p-5 shadow-[0_10px_28px_rgba(23,75,87,.04)] transition hover:-translate-y-0.5 hover:border-[#AFC9CD] hover:shadow-[0_16px_34px_rgba(23,75,87,.07)]"
             >
               <div className="flex items-start justify-between">
                 <span className="grid size-12 place-items-center rounded-2xl bg-[#EAF4F3] text-[#216474]">
@@ -2682,7 +2730,7 @@ function WarehouseDialog({ mode, batch, onClose, onSaved }) {
   return (
     <div className="fixed inset-0 z-[100] grid place-items-center bg-[#071f25]/65 p-4 backdrop-blur-sm">
       <div
-        className="max-h-[92vh] w-full max-w-2xl overflow-auto rounded-[1.8rem] bg-white shadow-2xl"
+        className="max-h-[92vh] w-full max-w-2xl overflow-auto rounded-[16px] bg-white shadow-2xl"
         dir={direction}
         lang={currentLanguage}
       >
@@ -3052,7 +3100,7 @@ function RepresentativeManagementDialog({
             availabilityNote: form.availabilityNote || null,
           });
         }}
-        className="max-h-[92vh] w-full max-w-2xl overflow-auto rounded-[1.8rem] bg-white shadow-2xl"
+        className="max-h-[92vh] w-full max-w-2xl overflow-auto rounded-[16px] bg-white shadow-2xl"
         dir={direction}
         lang={currentLanguage}
       >
@@ -3120,7 +3168,7 @@ function RepresentativeManagementDialog({
               onClick={() =>
                 setForm({ ...form, isAvailable: !form.isAvailable })
               }
-              className={`rounded-xl border p-3 text-sm font-black ${form.isAvailable ? "border-[#CFE4E7] bg-[#EAF4F3] text-[#216474]" : "border-slate-200 bg-slate-50 text-slate-600"}`}
+              className={`rounded-xl border p-3 text-sm font-black ${form.isAvailable ? "border-[#CFE4E7] bg-[#EAF4F3] text-[#216474]" : "border-[#DCE8EA] bg-[#F8FBFB] text-[#60777D]"}`}
             >
               <UserRoundCheck className="mx-auto mb-1" size={18} />
               {form.isAvailable ? t("متاح للتكليف") : "غير متاح"}
@@ -3225,7 +3273,7 @@ function InvoiceDialog({ invoice, role, busy, error, onClose, onSubmit }) {
   return (
     <div className="fixed inset-0 z-[110] grid place-items-center bg-[#071f25]/65 p-4 backdrop-blur-sm">
       <div
-        className="max-h-[94vh] w-full max-w-3xl overflow-auto rounded-[1.8rem] bg-[#F8FBFB] shadow-2xl"
+        className="max-h-[94vh] w-full max-w-3xl overflow-auto rounded-[16px] bg-[#F8FBFB] shadow-2xl"
         dir={direction}
         lang={currentLanguage}
       >

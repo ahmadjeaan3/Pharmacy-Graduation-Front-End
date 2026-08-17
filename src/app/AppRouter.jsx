@@ -6,6 +6,7 @@ import {
   RoleRoute,
 } from "../features/auth/components/RouteGuards";
 import { AdminApprovalsPage } from "../features/admin/pages/AdminApprovalsPage";
+import { PharmacyMedicinesPage } from "../features/user/pages/PharmacyMedicinesPage";
 import { AdminOrganizationReviewPage } from "../features/admin/pages/AdminOrganizationReviewPage";
 import { AdminHomeTickerPage } from "../features/admin/pages/AdminHomeTickerPage";
 import { AdminAccountsPage } from "../features/admin/pages/AdminAccountsPage";
@@ -293,6 +294,10 @@ export function AppRouter() {
               <Route
                 path="pharmacies/:pharmacyId"
                 element={<PharmacyDetailsPage />}
+              />
+              <Route
+                path="pharmacies/:pharmacyId/medicines"
+                element={<PharmacyMedicinesPage />}
               />
               <Route path="requests" element={<MedicineRequestsPage />} />
               <Route

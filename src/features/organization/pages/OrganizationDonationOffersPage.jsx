@@ -150,10 +150,10 @@ export function OrganizationDonationOffersPage() {
       className="min-h-[calc(100vh-164px)] space-y-5 bg-[#F4F8F8]"
     >
       {/* Hero */}
-      <section className="relative h-[208px] overflow-hidden rounded-xl bg-[#0d5360] text-white">
+      <section className="relative h-[230px] w-full overflow-hidden rounded-[14px] bg-[#10505A] text-white sm:h-[271px] sm:rounded-[16px]">
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-300 ${isArabic ? "" : "scale-x-[-1]"}`}
           style={{
             backgroundImage: `url("${OFFERS_HERO_IMAGE}")`,
           }}
@@ -163,12 +163,12 @@ export function OrganizationDonationOffersPage() {
           aria-hidden="true"
           className={`absolute inset-0 ${
             isArabic
-              ? "bg-[linear-gradient(270deg,rgba(8,78,89,.96)_0%,rgba(8,78,89,.76)_48%,rgba(8,78,89,.22)_100%)]"
-              : "bg-[linear-gradient(90deg,rgba(8,78,89,.96)_0%,rgba(8,78,89,.76)_48%,rgba(8,78,89,.22)_100%)]"
+              ? "bg-[linear-gradient(270deg,#10505A_0%,rgba(33,100,116,.25)_70%,rgba(33,100,116,.05)_100%)]"
+              : "bg-[linear-gradient(90deg,#10505A_0%,rgba(33,100,116,.25)_70%,rgba(33,100,116,.05)_100%)]"
           }`}
         />
 
-        <div className="relative z-10 flex h-full items-center justify-between px-8">
+        <div className="relative z-10 flex h-full items-center justify-between px-8 lg:px-[41px]">
           <div
             className={`flex min-w-0 flex-col items-start ${
               isArabic ? "text-right" : "text-left"
@@ -179,7 +179,7 @@ export function OrganizationDonationOffersPage() {
                 <Gift size={22} strokeWidth={1.8} />
               </span>
 
-              <h1 className="text-[28px] font-bold leading-none text-white">
+              <h1 className="text-[22px] font-bold leading-tight text-white sm:text-[28px]">
                 {t("عروض التبرع الدوائي")}
               </h1>
             </div>
@@ -194,7 +194,7 @@ export function OrganizationDonationOffersPage() {
       </section>
 
       {/* Flow */}
-      <section className="rounded-xl border border-[#D8E6E8] bg-white p-5 shadow-[0_6px_24px_rgba(23,75,87,.035)]">
+      <section className="rounded-xl border border-[#D8E6E8] bg-white p-4 sm:p-5 shadow-[0_6px_24px_rgba(23,75,87,.035)]">
         <div className="flex items-start gap-3">
           <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#E6F3F6] text-[#216474]">
             <ShieldCheck size={19} />
@@ -248,7 +248,7 @@ export function OrganizationDonationOffersPage() {
       )}
 
       {/* Filters */}
-      <section className="rounded-xl bg-white p-5 shadow-[0_6px_24px_rgba(23,75,87,.03)]">
+      <section className="rounded-xl bg-white p-4 sm:p-5 shadow-[0_6px_24px_rgba(23,75,87,.03)]">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
           <div className={isArabic ? "text-right" : "text-left"}>
             <h2 className="text-xl font-bold text-[#333333]">

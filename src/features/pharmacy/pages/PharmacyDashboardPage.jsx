@@ -226,9 +226,7 @@ export function PharmacyDashboardPage() {
           icon={Boxes}
           value={data.inventoryItemsCount}
           label={t("أصناف المخزون")}
-          hint={t("{{count}} صنف متاح للمرضى", {
-            count: formatNumber(data.availableMedicinesCount),
-          })}
+          hint={`${formatNumber(data.availableMedicinesCount)} ${t("صنف متاح للمرضى")}`}
           tone="primary"
           isArabic={isArabic}
         />
@@ -237,9 +235,7 @@ export function PharmacyDashboardPage() {
           icon={PackageCheck}
           value={data.inStockCount}
           label={t("متوفر بالمخزون")}
-          hint={t("{{count}} أصناف منخفضة", {
-            count: formatNumber(data.lowStockCount),
-          })}
+          hint={`${formatNumber(data.lowStockCount)} ${t("أصناف منخفضة")}`}
           tone="success"
           isArabic={isArabic}
         />
@@ -248,9 +244,7 @@ export function PharmacyDashboardPage() {
           icon={ClipboardList}
           value={data.pendingRequestsCount}
           label={t("طلبات تنتظر الرد")}
-          hint={t("{{count}} طلبات نشطة", {
-            count: formatNumber(data.activeRequestsCount),
-          })}
+          hint={`${formatNumber(data.activeRequestsCount)} ${t("طلبات نشطة")}`}
           tone="warning"
           isArabic={isArabic}
         />
@@ -259,10 +253,9 @@ export function PharmacyDashboardPage() {
           icon={CalendarClock}
           value={data.expiringSoonCount}
           label={t("قريبة الانتهاء")}
-          hint={t("{{out}} نافد و{{expired}} منتهي الصلاحية", {
-            out: formatNumber(data.outOfStockCount),
-            expired: formatNumber(data.expiredCount || 0),
-          })}
+          hint={`${formatNumber(data.outOfStockCount)} ${t("نافد")} ${t("و")} ${formatNumber(
+            data.expiredCount || 0,
+          )} ${t("منتهي الصلاحية")}`}
           tone="danger"
           isArabic={isArabic}
         />
@@ -325,18 +318,10 @@ export function PharmacyDashboardPage() {
                         {isExpired
                           ? t("انتهت صلاحية هذا الصنف ويجب عزله عن الطلبات")
                           : isExpiring
-                            ? t("متبقي {{count}} يومًا على الانتهاء", {
-                                count: formatNumber(item.daysUntilExpiry),
-                              })
-                            : t(
-                                "الكمية الحالية {{quantity}} والحد الأدنى {{threshold}}",
-                                {
-                                  quantity: formatNumber(item.quantity),
-                                  threshold: formatNumber(
-                                    item.lowStockThreshold,
-                                  ),
-                                },
-                              )}
+                            ? `${t("متبقي")} ${formatNumber(item.daysUntilExpiry)} ${t("يومًا على الانتهاء")}`
+                            : `${t("الكمية الحالية")} ${formatNumber(item.quantity)} ${t(
+                                "والحد الأدنى",
+                              )} ${formatNumber(item.lowStockThreshold)}`}
                       </p>
                     </div>
                   </div>

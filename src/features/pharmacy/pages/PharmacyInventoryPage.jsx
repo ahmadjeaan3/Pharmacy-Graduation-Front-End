@@ -12,6 +12,7 @@ import {
   Edit3,
   FileSpreadsheet,
   FilePlus2,
+  ImagePlus,
   PackagePlus,
   PackageCheck,
   PackageX,
@@ -28,6 +29,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { getApiErrorMessage } from "../../../shared/api/errors";
+import { apiClient } from "../../../shared/api/client";
 import {
   addInventoryMedicine,
   addInventoryBatch,
@@ -54,9 +56,67 @@ import { ManualInventoryDialog } from "../components/ManualInventoryDialog";
 
 const PHARMACY_HERO_IMAGE = "/assets/app/pharmacy.png";
 
+const MEDICINE_IMAGE_UPLOAD_URL_TEMPLATE =
+  import.meta.env.VITE_MEDICINE_IMAGE_UPLOAD_URL_TEMPLATE || "";
+
+function resolveMedicineImageUploadUrl(medicineId) {
+  if (MEDICINE_IMAGE_UPLOAD_URL_TEMPLATE) {
+    return MEDICINE_IMAGE_UPLOAD_URL_TEMPLATE.replace(
+      "{medicineId}",
+      encodeURIComponent(medicineId),
+    );
+  }
+
+  const apiBaseUrl =
+    import.meta.env.VITE_API_BASE_URL ||
+    "https://localhost:7048/api";
+
+  const apiOrigin = new URL(apiBaseUrl, window.location.origin).origin;
+
+  // المسار الافتراضي. إذا كان Controller عندك يستخدم مسارًا مختلفًا،
+  // ضع المسار الكامل في VITE_MEDICINE_IMAGE_UPLOAD_URL_TEMPLATE.
+  return `${apiOrigin}/api/medicines/${encodeURIComponent(medicineId)}/image`;
+}
+
+async function uploadMedicineImageFile(medicineId, file) {
+  if (!medicineId || !file) return null;
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const response = await apiClient.post(
+      `/medicines/${encodeURIComponent(medicineId)}/image`,
+      formData,
+      {
+        timeout: 60_000,
+      },
+    );
+
+    const data = response.data;
+
+    if (data?.success === false) {
+      throw new Error(data.error || "تعذر حفظ صورة الدواء.");
+    }
+
+    return data;
+  } catch (error) {
+    const message =
+      error?.response?.data?.message ||
+      error?.response?.data?.error ||
+      error?.message ||
+      "تعذر رفع صورة الدواء.";
+
+    throw new Error(message);
+  }
+}
+
+
 const blank = {
   medicineId: "",
   medicineName: "",
+  imageFile: null,
+  imagePreview: "",
   quantity: 1,
   unitPrice: 0,
   isAvailable: true,
@@ -264,6 +324,8 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
       ? {
           medicineId: item.medicineId,
           medicineName: item.medicineName,
+          imageFile: null,
+          imagePreview: item.imageUrl || "",
           quantity: item.quantity,
           unitPrice: item.sellingPrice,
           isAvailable: item.isAvailable,
@@ -278,6 +340,8 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
           medicineId: initialMedicine?.id || "",
           medicineName:
             initialMedicine?.displayName || initialMedicine?.name || "",
+          imageFile: null,
+          imagePreview: initialMedicine?.imageUrl || "",
           unitPrice: initialMedicine?.sellingPrice || 0,
         },
   );
@@ -309,6 +373,34 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
           ? event.target.checked
           : event.target.value,
     }));
+
+  const handleImageChange = (event) => {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      event.target.value = "";
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      event.target.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      setForm((old) => ({
+        ...old,
+        imageFile: file,
+        imagePreview: String(reader.result || ""),
+      }));
+    };
+
+    reader.readAsDataURL(file);
+  };
 
   return (
     <div
@@ -380,7 +472,6 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
                       : "border-[#cfe0e3] bg-white text-[#216474] hover:bg-[#eef7f6]"
                   }`}
                 >
-                  <Languages size={16} />
                   {showArabicCatalog
                     ? t("إخفاء الاسم العربي")
                     : t("إظهار الاسم العربي")}
@@ -420,6 +511,8 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
                         ...old,
                         medicineId: medicine.id,
                         medicineName: medicine.name,
+                        imageFile: null,
+                        imagePreview: medicine.imageUrl || "",
                         unitPrice: medicine.sellingPrice || 0,
                       }))
                     }
@@ -432,16 +525,30 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
                     }`}
                   >
                     <span
-                      className={`grid size-9 shrink-0 place-items-center rounded-xl ${
+                      className={`relative grid size-11 shrink-0 place-items-center overflow-hidden rounded-xl border ${
                         form.medicineId === medicine.id
-                          ? "bg-[#216474] text-white"
-                          : "bg-[#edf5f4] text-[#216474]"
+                          ? "border-[#216474] bg-[#EAF4F3] text-[#216474]"
+                          : "border-[#DCE8EA] bg-[#F8FBFB] text-[#216474]"
                       }`}
                     >
-                      {form.medicineId === medicine.id ? (
-                        <Check size={17} />
-                      ) : (
-                        <Pill size={17} />
+                      <Pill size={18} className="absolute z-0" />
+
+                      {medicine.imageUrl && (
+                        <img
+                          src={medicine.imageUrl}
+                          alt={medicine.name || t("صورة الدواء")}
+                          loading="lazy"
+                          className="relative z-10 h-full w-full bg-white object-contain p-1"
+                          onError={(event) => {
+                            event.currentTarget.style.display = "none";
+                          }}
+                        />
+                      )}
+
+                      {form.medicineId === medicine.id && (
+                        <span className="absolute bottom-0.5 end-0.5 z-20 grid size-4 place-items-center rounded-full bg-[#216474] text-white shadow-sm">
+                          <Check size={10} strokeWidth={3} />
+                        </span>
                       )}
                     </span>
 
@@ -529,10 +636,76 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
             </div>
           )}
 
+          <div className={`${item ? "mt-1" : "mt-7 border-t border-[#174b57]/8 pt-6"}`}>
+            <div className="rounded-2xl border border-[#DCE8EA] bg-[#F8FBFB] p-4 sm:p-5">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                <div className="relative grid size-24 shrink-0 place-items-center overflow-hidden rounded-2xl border border-[#DCE8EA] bg-white text-[#216474] shadow-[0_8px_22px_rgba(23,75,87,.06)]">
+                  <Pill size={30} className="absolute z-0" />
+
+                  {form.imagePreview && (
+                    <img
+                      src={form.imagePreview}
+                      alt={form.medicineName || t("صورة الدواء")}
+                      className="relative z-10 h-full w-full bg-white object-contain p-2"
+                      onError={(event) => {
+                        event.currentTarget.style.display = "none";
+                      }}
+                    />
+                  )}
+                </div>
+
+                <div className={`min-w-0 flex-1 ${isArabic ? "text-right" : "text-left"}`}>
+                  <p className="text-sm font-black text-[#29464D]">
+                    {t("صورة الدواء")}
+                  </p>
+
+                  <p className="mt-1 text-xs leading-6 text-[#829499]">
+                    {form.imagePreview
+                      ? t("يمكنك استبدال الصورة الحالية بصورة أوضح للدواء.")
+                      : t("اختر صورة واضحة لعبوة الدواء بصيغة JPG أو PNG أو WebP.")}
+                  </p>
+
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <label className="inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#216474] px-4 text-xs font-black text-white transition hover:bg-[#174B57]">
+                      <ImagePlus size={16} />
+                      {form.imagePreview ? t("تغيير الصورة") : t("رفع صورة الدواء")}
+
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        className="hidden"
+                        onChange={handleImageChange}
+                      />
+                    </label>
+
+                    {form.imagePreview && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setForm((old) => ({
+                            ...old,
+                            imageFile: null,
+                            imagePreview: "",
+                          }))
+                        }
+                        className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-[#DCE8EA] bg-white px-4 text-xs font-black text-[#60777D] transition hover:bg-[#F4FAFA] hover:text-[#216474]"
+                      >
+                        <Trash2 size={15} />
+                        {t("إزالة الصورة")}
+                      </button>
+                    )}
+                  </div>
+
+                  <p className="mt-2 text-[10px] leading-5 text-[#9AABAD]">
+                    {t("الحد الأقصى 5 ميغابايت.")}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div
-            className={`${
-              item ? "" : "mt-7 border-t border-[#174b57]/8 pt-6"
-            } grid gap-5 md:grid-cols-2`}
+            className="mt-6 grid gap-5 md:grid-cols-2"
           >
             <label>
               <span className="form-label">{t("الكمية")}</span>
@@ -1028,23 +1201,63 @@ export function PharmacyInventoryPage() {
   };
 
   const save = useMutation({
-    mutationFn: (payload) =>
-      editor?.inventoryItemId
-        ? updateInventoryMedicine(editor.inventoryItemId, payload)
-        : addInventoryMedicine(payload),
-    onSuccess: async () => {
+    mutationFn: async (payload) => {
+      const {
+        imageFile,
+        imagePreview,
+        medicineName,
+        ...inventoryPayload
+      } = payload;
+
+      const savedItem = editor?.inventoryItemId
+        ? await updateInventoryMedicine(
+            editor.inventoryItemId,
+            inventoryPayload,
+          )
+        : await addInventoryMedicine(inventoryPayload);
+
+      const medicineId =
+        savedItem?.medicineId ||
+        inventoryPayload.medicineId ||
+        editor?.medicineId;
+
+      let imageResult = null;
+
+      if (imageFile && medicineId) {
+        imageResult = await uploadMedicineImageFile(
+          medicineId,
+          imageFile,
+        );
+      }
+
+      return {
+        savedItem,
+        imageResult,
+        imageUploaded: Boolean(imageFile && imageResult),
+      };
+    },
+    onSuccess: async (result) => {
       setEditor(null);
       setNotice({
         ok: true,
-        text: t("تم تحديث المخزون بنجاح."),
+        text: result?.imageUploaded
+          ? t("تم تحديث المخزون وحفظ صورة الدواء بنجاح.")
+          : t("تم تحديث المخزون بنجاح."),
       });
       await invalidate();
     },
-    onError: (error) =>
+    onError: async (error) => {
       setNotice({
         ok: false,
-        text: getApiErrorMessage(error),
-      }),
+        text:
+          error?.message ||
+          getApiErrorMessage(error),
+      });
+
+      // قد يكون حفظ المخزون نجح قبل فشل رفع الصورة،
+      // لذلك نحدّث البيانات المعروضة دائمًا.
+      await invalidate();
+    },
   });
 
   const remove = useMutation({
@@ -1399,11 +1612,21 @@ export function PharmacyInventoryPage() {
                 className="group relative overflow-hidden rounded-[1.5rem] border border-[#DCE8EA] bg-white p-5 shadow-[0_8px_26px_rgba(23,75,87,.04)] transition duration-300 hover:-translate-y-1 hover:border-[#B9D2D6] hover:shadow-[0_18px_42px_rgba(23,75,87,.09)] sm:p-6"
               >
                 <div className="flex items-start justify-between gap-3">
-                  <span
-                    className="grid size-12 place-items-center rounded-2xl border border-[#DCE8EA] bg-[#F2F8F8] text-[#216474]"
-                  >
-                    <Pill size={22} />
-                  </span>
+                  <div className="relative grid size-16 shrink-0 place-items-center overflow-hidden rounded-2xl border border-[#DCE8EA] bg-[#F2F8F8] text-[#216474] shadow-[0_6px_18px_rgba(23,75,87,.06)]">
+                    <Pill size={24} className="absolute z-0" />
+
+                    {item.imageUrl && (
+                      <img
+                        src={item.imageUrl}
+                        alt={item.medicineName || t("صورة الدواء")}
+                        loading="lazy"
+                        className="relative z-10 h-full w-full bg-white object-contain p-1.5"
+                        onError={(event) => {
+                          event.currentTarget.style.display = "none";
+                        }}
+                      />
+                    )}
+                  </div>
 
                   <span
                     className={`rounded-full px-3 py-1 text-xs font-black ${meta.className}`}

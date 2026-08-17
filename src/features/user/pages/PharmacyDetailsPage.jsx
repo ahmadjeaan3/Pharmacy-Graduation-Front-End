@@ -74,8 +74,16 @@ const FOOTER_SOCIAL_ICONS = {
 function getMedicineImageSource(imageUrl) {
   if (!imageUrl) return null;
 
-  if (/^https?:\/\//i.test(imageUrl)) {
-    return imageUrl;
+  const normalized = String(imageUrl).trim();
+
+  if (!normalized) return null;
+
+  if (
+    /^https?:\/\//i.test(normalized) ||
+    normalized.startsWith("data:") ||
+    normalized.startsWith("blob:")
+  ) {
+    return normalized;
   }
 
   try {
@@ -89,10 +97,10 @@ function getMedicineImageSource(imageUrl) {
     ).origin;
 
     return `${apiOrigin}${
-      imageUrl.startsWith("/") ? "" : "/"
-    }${imageUrl}`;
+      normalized.startsWith("/") ? "" : "/"
+    }${normalized}`;
   } catch {
-    return imageUrl;
+    return normalized;
   }
 }
 
@@ -742,12 +750,13 @@ export function PharmacyDetailsPage() {
               </p>
             </div>
 
-            <button
-              type="button"
-              className="text-[14px] font-medium text-[#216474]"
+            <Link
+              to={`/app/pharmacies/${pharmacyId}/medicines`}
+              className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-[14px] font-medium text-[#216474] transition hover:bg-[#EAF4F3]"
             >
               عرض الكل
-            </button>
+              <ArrowLeft size={16} />
+            </Link>
           </div>
 
           {availableMedicines.length ? (
@@ -1515,19 +1524,23 @@ function MedicineCard({
           bg-[#FBFCFC]
         "
       >
+        <Pill
+          size={42}
+          strokeWidth={1.4}
+          className="absolute text-[#216474]/40"
+        />
+
         {imageUrl ? (
           <img
             src={imageUrl}
             alt={name}
-            className="h-full w-full object-contain"
+            loading="lazy"
+            className="relative z-10 h-full w-full bg-white object-contain p-2"
+            onError={(event) => {
+              event.currentTarget.style.display = "none";
+            }}
           />
-        ) : (
-          <Pill
-            size={42}
-            strokeWidth={1.4}
-            className="text-[#216474]/40"
-          />
-        )}
+        ) : null}
 
         <span
           className="

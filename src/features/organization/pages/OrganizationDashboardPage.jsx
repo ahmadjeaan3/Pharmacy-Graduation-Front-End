@@ -143,14 +143,14 @@ export function OrganizationDashboardPage() {
     <div
       dir={direction}
       lang={currentLanguage}
-      className="flex w-full flex-col gap-6"
+      className="flex w-full flex-col gap-4 sm:gap-5 lg:gap-6"
     >
       {/* البانر */}
-      <section className="relative h-[271px] w-full overflow-hidden rounded-xl bg-[#10505a] text-white">
+      <section className="relative min-h-[300px] w-full overflow-hidden rounded-[16px] bg-[#10505A] text-white sm:min-h-[271px] lg:h-[271px] lg:min-h-0">
         {/* صورة البانر فقط */}
         <div
           aria-hidden="true"
-          className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-300 ${
+          className={`absolute inset-0 bg-cover bg-[position:38%_center] bg-no-repeat transition-transform duration-300 sm:bg-center ${
             isArabic ? "" : "scale-x-[-1]"
           }`}
           style={{
@@ -171,7 +171,7 @@ export function OrganizationDashboardPage() {
         {/* بيانات المنظمة */}
         <div
           dir={direction}
-          className={`absolute top-[48px] z-10 flex w-[540px] flex-col ${
+          className={`relative z-10 flex w-full max-w-[560px] flex-col px-5 pb-5 pt-7 sm:px-7 sm:pt-9 lg:absolute lg:top-[40px] lg:px-0 lg:pb-0 lg:pt-0 ${
             isArabic
               ? "items-end text-right lg:right-[41px]"
               : "items-start text-left lg:left-[41px]"
@@ -223,7 +223,7 @@ export function OrganizationDashboardPage() {
           >
             <Link
               to="/app/organization/campaigns"
-              className={`flex h-12 min-w-[180px] items-center justify-center gap-2 rounded-lg bg-white px-6 text-base font-medium text-[#216474] transition hover:bg-[#f8f8f8] ${
+              className={`flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-white px-6 sm:w-auto sm:min-w-[180px] text-base font-medium text-[#216474] transition hover:bg-[#f8f8f8] ${
                 isArabic ? "flex-row-reverse" : "flex-row"
               }`}
             >
@@ -234,7 +234,7 @@ export function OrganizationDashboardPage() {
 
             <Link
               to="/app/organization/offers"
-              className={`flex h-12 min-w-[180px] items-center justify-center gap-2 rounded-lg border border-white bg-transparent px-6 text-base font-medium text-white transition hover:bg-white/10 ${
+              className={`flex h-12 w-full items-center justify-center gap-2 rounded-lg border border-white bg-transparent px-6 sm:w-auto sm:min-w-[180px] text-base font-medium text-white transition hover:bg-white/10 ${
                 isArabic ? "flex-row-reverse" : "flex-row"
               }`}
             >
@@ -248,7 +248,7 @@ export function OrganizationDashboardPage() {
         {/* بطاقة حالة المنظمة */}
         <div
           dir={direction}
-          className={`absolute top-[48px] z-10 flex h-[119px] w-[249px] flex-col rounded-xl border border-white/15 bg-white/20 px-[18px] py-5 backdrop-blur-[10px] ${
+          className={`relative z-10 mx-5 mb-6 flex min-h-[108px] w-auto max-w-[300px] flex-col rounded-xl border border-white/20 bg-[#0B5664]/58 px-[18px] py-4 shadow-[0_10px_28px_rgba(0,50,60,.14)] backdrop-blur-md sm:mx-7 lg:absolute lg:bottom-[24px] lg:mx-0 lg:mb-0 lg:h-[112px] lg:w-[249px] ${
             isArabic
               ? "items-start text-right lg:left-[41px]"
               : "items-start text-left lg:right-[41px]"
@@ -279,7 +279,7 @@ export function OrganizationDashboardPage() {
       </section>
 
       {/* الإحصائيات */}
-      <section className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="grid w-full grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         {stats.map(
           ({
             key,
@@ -295,7 +295,7 @@ export function OrganizationDashboardPage() {
             <article
               key={key}
               dir={direction}
-              className="flex min-h-[149px] min-w-0 flex-col rounded-lg border border-[rgba(102,102,102,.16)] bg-white px-4 py-5"
+              className="flex min-h-[138px] min-w-0 flex-col rounded-xl border border-[rgba(102,102,102,.14)] bg-white px-3 py-4 sm:min-h-[149px] sm:px-4 sm:py-5"
             >
               {/* الأيقونة والعنوان والقيمة */}
               <div
@@ -316,11 +316,11 @@ export function OrganizationDashboardPage() {
                     isArabic ? "text-right" : "text-left"
                   }`}
                 >
-                  <span className="block truncate text-sm leading-6 text-[#333333]">
+                  <span className="block text-[12px] leading-5 text-[#333333] sm:truncate sm:text-sm sm:leading-6">
                     {label}
                   </span>
 
-                  <strong className="mt-1 block text-2xl font-bold leading-8 text-[#333333]">
+                  <strong className="mt-1 block text-xl font-bold leading-7 text-[#333333] sm:text-2xl sm:leading-8">
                     {Number(value || 0).toLocaleString(locale)}
                   </strong>
                 </div>
@@ -474,7 +474,7 @@ export function OrganizationDashboardPage() {
                 return (
                   <article
                     dir={direction}
-                    className={`group relative min-h-[165px] overflow-hidden rounded-[18px] border border-[#174b57]/[0.08] bg-white p-5 shadow-[0_8px_28px_rgba(23,75,87,0.055)] transition duration-300 hover:-translate-y-1 hover:border-[#216474]/20 hover:shadow-[0_18px_38px_rgba(23,75,87,0.11)] ${
+                    className={`group relative min-h-[165px] overflow-hidden rounded-[18px] border border-[#174b57]/[0.08] bg-white p-4 sm:p-5 shadow-[0_8px_28px_rgba(23,75,87,0.055)] transition duration-300 hover:-translate-y-1 hover:border-[#216474]/20 hover:shadow-[0_18px_38px_rgba(23,75,87,0.11)] ${
                       isArabic ? "text-right" : "text-left"
                     }`}
                   >

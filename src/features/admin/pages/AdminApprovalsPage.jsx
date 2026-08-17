@@ -31,6 +31,8 @@ import {
 } from "../../../shared/components/AsyncStates";
 import { formatDate, getVerificationStatus } from "../utils/adminFormatters";
 
+const ADMIN_HERO_IMAGE = "/assets/app/home/background_hero_admin.png";
+
 export function AdminApprovalsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const requestedTab = searchParams.get("tab");
@@ -98,31 +100,51 @@ export function AdminApprovalsPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <section className="rounded-[1.6rem] border border-[#174b57]/8 bg-white p-6 shadow-[0_12px_35px_rgba(23,75,87,.045)] lg:p-8">
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <p className="text-sm font-bold text-[#216474]">إدارة الحسابات</p>
-            <h2 className="mt-2 text-3xl font-black text-[#17363e]">
-              طلبات الاعتماد
-            </h2>
-            <p className="mt-2 max-w-2xl leading-7 text-[#71858a]">
-              مراجعة بيانات الصيدليات والمنظمات والمستودعات قبل تفعيل خدماتها.
-            </p>
-          </div>
-          <div className="field-control w-full lg:w-80">
-            <input
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              className="form-input has-field-icon"
-              placeholder="بحث بالاسم أو البريد أو الرقم"
-            />
-            <span className="field-icon-shell">
-              <Search size={18} />
-            </span>
+    <div className="space-y-5 sm:space-y-6">
+      <section className="relative isolate overflow-hidden rounded-[16px] border border-[#174b57]/8 bg-white shadow-[0_18px_45px_rgba(23,75,87,.07)]">
+        <div className="relative isolate min-h-[230px] overflow-hidden bg-[#10505A] px-5 py-7 text-white sm:min-h-[250px] sm:px-7 sm:py-8 lg:min-h-[271px] lg:px-10">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-20 bg-cover bg-[position:38%_center] bg-no-repeat"
+          style={{ backgroundImage: `url("${ADMIN_HERO_IMAGE}")` }}
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 bg-[linear-gradient(270deg,#10505A_0%,rgba(16,80,90,.88)_36%,rgba(33,100,116,.42)_70%,rgba(33,100,116,.08)_100%)]"
+        />
+          <div className="flex h-full flex-col justify-center">
+            <div className="w-full max-w-2xl">
+              <p className="text-sm font-bold text-[#8BD0CB]">
+                إدارة الحسابات
+              </p>
+
+              <h2 className="mt-2 text-3xl font-black text-white sm:text-4xl">
+                طلبات الاعتماد
+              </h2>
+
+              <p className="mt-2 max-w-2xl leading-7 text-white/65">
+                مراجعة بيانات الصيدليات والمنظمات والمستودعات قبل تفعيل خدماتها.
+              </p>
+
+              <div className="mt-6 w-full max-w-md">
+                <div className="relative">
+                  <input
+                    value={search}
+                    onChange={(event) => setSearch(event.target.value)}
+                    type="search"
+                    placeholder="بحث بالاسم أو البريد أو الرقم"
+                    className="h-12 w-full rounded-xl border border-white/20 bg-white/10 px-4 pl-12 text-sm font-medium text-white outline-none backdrop-blur-sm transition placeholder:text-white/55 hover:bg-white/15 focus:border-white/40 focus:bg-white/15 focus:ring-2 focus:ring-white/10"
+                  />
+
+                  <span className="pointer-events-none absolute left-4 top-1/2 flex -translate-y-1/2 items-center justify-center text-white/70">
+                    <Search size={18} />
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="mt-7 flex gap-2 border-b border-slate-100">
+        <div className="flex flex-wrap gap-2 border-b border-[#E6EEF0] bg-white px-5 pt-4 sm:px-7 lg:px-8">
           <TabButton
             active={activeTab === "pharmacies"}
             onClick={() => switchTab("pharmacies")}
