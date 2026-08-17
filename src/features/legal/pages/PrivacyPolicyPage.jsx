@@ -32,7 +32,7 @@ const policyContent = {
     intro:
       "توضح هذه السياسة كيف تجمع منصة دوائي بياناتك وتستخدمها وتحميها عند استعمال الموقع وخدماته. صيغت بلغة واضحة لتعرف دائمًا ما الذي يحدث لمعلوماتك.",
     effectiveLabel: "آخر تحديث",
-    effectiveDate: "14 أغسطس 2026",
+    effectiveDate: "18 أغسطس 2026",
     summaryTitle: "الخلاصة",
     summary:
       "نستخدم أقل قدر لازم من البيانات لتقديم الخدمة، ولا نبيع معلوماتك الشخصية أو الصحية، ولا نستخدمها للإعلانات الموجّهة.",
@@ -106,6 +106,15 @@ const policyContent = {
         ],
       },
       {
+        id: "legal-basis",
+        title: "المسوغ النظامي للمعالجة",
+        icon: FileCheck2,
+        paragraphs: [
+          "نعالج بيانات الحساب والطلبات لتنفيذ الخدمة التي طلبتها، ونستخدم المصلحة المشروعة لحماية المنصة والحد من الاحتيال، ونحتفظ بالسجلات التي تفرضها الالتزامات النظامية عند انطباقها.",
+          "نعتمد على موافقتك الصريحة عند معالجة البيانات الصحية الحساسة أو الموقع أو الكاميرا أو الملفات عندما تكون الموافقة مطلوبة. يمكنك سحب الموافقة في أي وقت دون أن يؤثر ذلك في مشروعية المعالجة السابقة، وقد تتوقف الميزة التي تعتمد على تلك البيانات.",
+        ],
+      },
+      {
         id: "sharing",
         title: "متى تُشارك البيانات؟",
         icon: Eye,
@@ -113,6 +122,7 @@ const policyContent = {
           "لا نبيع بياناتك. قد نعرض أو نرسل القدر اللازم منها إلى الصيدلية أو المنظمة أو الجهة المعنية لتنفيذ طلب بدأته أنت، مثل بيانات طلب دواء أو تبرع.",
           "قد نستعين بمزودي الاستضافة والخرائط والأماكن ومعالجة الملفات والخدمات الذكية لتشغيل الميزة المطلوبة. يحصل كل مزود على البيانات اللازمة لخدمته فقط ووفق ضوابطه والتزامات الحماية المعمول بها.",
           "قد نكشف عن بيانات عندما يفرض القانون ذلك، أو لحماية المستخدمين والمنصة من الاحتيال أو الخطر، وبالقدر اللازم فقط.",
+          "إذا تطلب تشغيل خدمة معالجة البيانات خارج بلدك، نقيّم مقدم الخدمة ونستخدم ضمانات تعاقدية وتقنية مناسبة، ونلتزم بمتطلبات نقل البيانات عبر الحدود التي تنطبق على الخدمة.",
         ],
       },
       {
@@ -122,6 +132,7 @@ const policyContent = {
         paragraphs: [
           "يستخدم الموقع تخزين المتصفح لحفظ جلسة الدخول، واللغة المختارة، وبعض التفضيلات الضرورية. لا نستخدم هذه البيانات لبناء ملف إعلاني عنك.",
           "نحتفظ بالبيانات ما دام الحساب فعالًا أو ما دامت مطلوبة لتقديم الخدمة. قد تبقى بعض السجلات لفترة إضافية عند وجود التزام قانوني أو مالي أو أمني، ثم تُحذف أو تُفصل عن هوية صاحبها متى انتفت الحاجة إليها.",
+          "تُراجع فترات الاحتفاظ بحسب نوع السجل والغرض منه وحساسيته. عند انتهاء الغرض، نحذف البيانات حذفًا آمنًا أو نخفي هويتها، ما لم يلزم الاحتفاظ بها لإثبات معاملة أو امتثالًا لالتزام نظامي.",
         ],
       },
       {
@@ -138,13 +149,16 @@ const policyContent = {
         title: "خياراتك وحقوقك",
         icon: SlidersHorizontal,
         bullets: [
+          "معرفة البيانات التي نعالجها والمسوغ والغرض من معالجتها والجهات التي قد نشاركها معها.",
+          "طلب الوصول إلى بياناتك والحصول على نسخة منها بصيغة مقروءة وواضحة حيث ينطبق ذلك.",
           "مراجعة بيانات حسابك وتحديث البيانات القابلة للتعديل.",
           "رفض إذن الموقع أو الكاميرا أو الملفات؛ وقد تتوقف الميزة التي تعتمد على الإذن فقط.",
           "طلب تصحيح بيانات غير دقيقة أو طلب حذف الحساب والبيانات المرتبطة به.",
           "إلغاء الطلبات أو حذف سجل البحث حيث تتيح المنصة ذلك.",
           "الاعتراض أو الاستفسار عن معالجة محددة عبر قناة التواصل الرسمية.",
+          "سحب الموافقة على المعالجة المبنية عليها، وتقديم شكوى إلى الجهة الرقابية المختصة في بلدك.",
         ],
-        note: "قد نطلب التحقق من الهوية قبل تنفيذ طلب يتعلق بالبيانات، وقد نستثني ما يجب الاحتفاظ به نظاميًا أو لحماية الحقوق ومنع الاحتيال.",
+        note: "قد نطلب التحقق من الهوية قبل تنفيذ طلب يتعلق بالبيانات. نرد خلال 30 يومًا من اكتمال الطلب ما لم تتطلب طبيعته أو الأنظمة مدة مختلفة، وقد نستثني ما يجب الاحتفاظ به نظاميًا أو لحماية الحقوق ومنع الاحتيال.",
       },
       {
         id: "children",
@@ -167,7 +181,7 @@ const policyContent = {
         title: "التواصل بشأن الخصوصية",
         icon: Mail,
         paragraphs: [
-          "للاستفسار عن الخصوصية أو تقديم طلب متعلق ببياناتك، استخدم بريد الخصوصية الظاهر أدناه إن كان متاحًا، أو قناة التواصل الرسمية المدرجة ضمن بيانات دوائي عند نشر الخدمة.",
+          "للاستفسار عن الخصوصية أو ممارسة حقوقك أو تقديم شكوى، راسل مسؤول الخصوصية عبر البريد الظاهر أدناه. اذكر نوع الطلب وبيانات التواصل اللازمة للتحقق، ولا ترسل وصفات أو معلومات صحية حساسة بالبريد إلا إذا طُلبت منك عبر قناة آمنة.",
         ],
       },
     ],
@@ -182,7 +196,7 @@ const policyContent = {
     intro:
       "This policy explains how Dawaai collects, uses, and protects your information when you use the website and its services. It is written clearly so you can understand what happens to your data.",
     effectiveLabel: "Last updated",
-    effectiveDate: "August 14, 2026",
+    effectiveDate: "August 18, 2026",
     summaryTitle: "In brief",
     summary:
       "We use only the data needed to provide the service. We do not sell personal or health information, and we do not use it for targeted advertising.",
@@ -256,6 +270,15 @@ const policyContent = {
         ],
       },
       {
+        id: "legal-basis",
+        title: "Legal basis for processing",
+        icon: FileCheck2,
+        paragraphs: [
+          "We process account and request data to provide the service you asked for, use legitimate interests to protect the platform and prevent fraud, and retain records when required by applicable law.",
+          "We rely on explicit consent for sensitive health data, location, camera, or file access where consent is required. You may withdraw consent at any time without affecting prior lawful processing; the dependent feature may then stop working.",
+        ],
+      },
+      {
         id: "sharing",
         title: "When data is shared",
         icon: Eye,
@@ -263,6 +286,7 @@ const policyContent = {
           "We do not sell your data. We may disclose the minimum needed to a pharmacy, organization, or relevant party to fulfill an action you started, such as a medicine or donation request.",
           "We may use hosting, map and place, file-processing, and smart-service providers to operate a requested feature. Each provider receives only the data needed for its service, subject to applicable safeguards.",
           "We may disclose information when required by law or when necessary to protect users and the platform from fraud or harm.",
+          "If a service requires processing outside your country, we assess the provider, apply appropriate contractual and technical safeguards, and follow applicable cross-border transfer requirements.",
         ],
       },
       {
@@ -272,6 +296,7 @@ const policyContent = {
         paragraphs: [
           "The website uses browser storage for the signed-in session, selected language, and essential preferences. We do not use this information to build an advertising profile.",
           "We retain data while the account is active or as needed to provide the service. Some records may be retained longer for legal, financial, or security requirements, then deleted or de-identified when no longer needed.",
+          "Retention is reviewed according to the record type, purpose, and sensitivity. When the purpose ends, data is securely deleted or de-identified unless it must be retained to evidence a transaction or meet a legal obligation.",
         ],
       },
       {
@@ -288,13 +313,16 @@ const policyContent = {
         title: "Your choices and rights",
         icon: SlidersHorizontal,
         bullets: [
+          "Know what data we process, the legal basis and purpose, and the categories of recipients.",
+          "Request access to your data and obtain a readable copy where applicable.",
           "Review your account information and update editable details.",
           "Decline location, camera, or file access; only the dependent feature may stop working.",
           "Request correction of inaccurate data or deletion of your account and associated data.",
           "Cancel requests or clear search history where the platform provides that option.",
           "Ask about or object to specific processing through the official contact channel.",
+          "Withdraw consent for consent-based processing and complain to the competent data-protection authority in your country.",
         ],
-        note: "We may verify identity before completing a data request. Records required by law or needed to protect rights and prevent fraud may be exempt.",
+        note: "We may verify identity before completing a request. We respond within 30 days after a complete request unless its nature or applicable law requires another period. Records required by law or needed to protect rights and prevent fraud may be exempt.",
       },
       {
         id: "children",
@@ -317,7 +345,7 @@ const policyContent = {
         title: "Privacy contact",
         icon: Mail,
         paragraphs: [
-          "For privacy questions or data requests, use the privacy email below when available, or the official contact channel listed in Dawaai's published service information.",
+          "For privacy questions, rights requests, or complaints, contact the privacy lead using the email below. State the request type and the contact details needed for verification; do not email prescriptions or sensitive health details unless requested through a secure channel.",
         ],
       },
     ],
@@ -332,7 +360,7 @@ const policyContent = {
     intro:
       "Bu politika, Dawaai web sitesini ve hizmetlerini kullanırken bilgilerinizin nasıl toplandığını, kullanıldığını ve korunduğunu açıklar.",
     effectiveLabel: "Son güncelleme",
-    effectiveDate: "14 Ağustos 2026",
+    effectiveDate: "18 Ağustos 2026",
     summaryTitle: "Kısaca",
     summary:
       "Yalnızca hizmeti sunmak için gereken verileri kullanırız. Kişisel veya sağlık bilgilerinizi satmayız ve hedefli reklam için kullanmayız.",
@@ -406,6 +434,15 @@ const policyContent = {
         ],
       },
       {
+        id: "legal-basis",
+        title: "İşlemenin hukuki dayanağı",
+        icon: FileCheck2,
+        paragraphs: [
+          "Hesap ve talep verilerini istediğiniz hizmeti sunmak için, platformu koruma ve dolandırıcılığı önleme verilerini meşru menfaat kapsamında, gerekli kayıtları ise uygulanabilir yasal yükümlülükler uyarınca işleriz.",
+          "Gerektiğinde hassas sağlık verileri, konum, kamera ve dosya erişimi için açık rızanıza dayanırız. Önceki hukuka uygun işlemeyi etkilemeden rızanızı her zaman geri çekebilirsiniz; ilgili özellik çalışmayı durdurabilir.",
+        ],
+      },
+      {
         id: "sharing",
         title: "Veriler ne zaman paylaşılır?",
         icon: Eye,
@@ -413,6 +450,7 @@ const policyContent = {
           "Verilerinizi satmayız. Başlattığınız bir ilaç veya bağış talebini tamamlamak için gereken en az bilgi ilgili eczane, kuruluş veya tarafla paylaşılabilir.",
           "İstenen özelliği çalıştırmak için barındırma, harita ve yer, dosya işleme ve akıllı hizmet sağlayıcılarından yararlanabiliriz. Her sağlayıcı yalnızca hizmeti için gerekli veriyi alır.",
           "Yasaların gerektirdiği veya kullanıcıları ve platformu dolandırıcılık ya da zarardan korumak için gerekli durumlarda bilgi açıklayabiliriz.",
+          "Bir hizmet verilerin ülkeniz dışında işlenmesini gerektirirse sağlayıcıyı değerlendirir, uygun sözleşmesel ve teknik güvenceleri uygular ve sınır ötesi aktarım kurallarına uyarız.",
         ],
       },
       {
@@ -422,6 +460,7 @@ const policyContent = {
         paragraphs: [
           "Web sitesi; giriş oturumu, seçilen dil ve temel tercihleri saklamak için tarayıcı depolamasını kullanır. Bu bilgiler reklam profili oluşturmak için kullanılmaz.",
           "Verileri hesap aktif olduğu veya hizmet için gerektiği sürece saklarız. Bazı kayıtlar yasal, mali veya güvenlik nedenleriyle daha uzun tutulabilir; ihtiyaç kalmadığında silinir veya kimlikten ayrılır.",
+          "Saklama süreleri kayıt türü, amaç ve hassasiyete göre gözden geçirilir. Amaç sona erdiğinde, işlem kanıtı veya yasal yükümlülük gerektirmedikçe veriler güvenli biçimde silinir ya da kimlikten arındırılır.",
         ],
       },
       {
@@ -438,13 +477,16 @@ const policyContent = {
         title: "Seçimleriniz ve haklarınız",
         icon: SlidersHorizontal,
         bullets: [
+          "İşlediğimiz verileri, hukuki dayanağı, amacı ve alıcı kategorilerini öğrenmek.",
+          "Verilerinize erişmek ve uygulanabildiği yerde okunabilir bir kopyasını istemek.",
           "Hesap bilgilerinizi incelemek ve düzenlenebilir alanları güncellemek.",
           "Konum, kamera veya dosya iznini reddetmek; yalnızca ilgili özellik çalışmayabilir.",
           "Hatalı verilerin düzeltilmesini veya hesabınızın ve ilişkili verilerin silinmesini istemek.",
           "Platformun izin verdiği yerde talepleri iptal etmek veya arama geçmişini temizlemek.",
           "Resmî iletişim kanalı üzerinden belirli bir işleme itiraz etmek veya bilgi istemek.",
+          "Rızaya dayalı işlemlerde rızayı geri çekmek ve ülkenizdeki yetkili veri koruma makamına şikâyette bulunmak.",
         ],
-        note: "Veri talebini yerine getirmeden önce kimliğinizi doğrulayabiliriz. Yasaların saklanmasını zorunlu kıldığı veya hakları korumak ve dolandırıcılığı önlemek için gereken kayıtlar istisna olabilir.",
+        note: "Talebi yerine getirmeden önce kimliğinizi doğrulayabiliriz. Talep tamamlandıktan sonra, niteliği veya uygulanabilir hukuk farklı bir süre gerektirmedikçe 30 gün içinde yanıt veririz. Yasal olarak saklanması gereken kayıtlar istisna olabilir.",
       },
       {
         id: "children",
@@ -467,7 +509,7 @@ const policyContent = {
         title: "Gizlilik iletişimi",
         icon: Mail,
         paragraphs: [
-          "Gizlilik soruları veya veri talepleri için, mevcutsa aşağıdaki gizlilik e-postasını ya da Dawaai'nin yayımlanmış hizmet bilgilerindeki resmî iletişim kanalını kullanın.",
+          "Gizlilik soruları, hak talepleri veya şikâyetler için aşağıdaki e-posta üzerinden gizlilik sorumlusuna ulaşın. Talep türünü ve doğrulama için gerekli iletişim bilgilerini belirtin; güvenli kanal üzerinden istenmedikçe reçete veya hassas sağlık bilgisi göndermeyin.",
         ],
       },
     ],
@@ -484,7 +526,7 @@ export function PrivacyPolicyPage() {
   const isRtl = content.dir === "rtl";
   const BackIcon = isRtl ? ArrowRight : ArrowLeft;
   const privacyEmail = String(
-    import.meta.env.VITE_PRIVACY_CONTACT_EMAIL || "",
+    import.meta.env.VITE_PRIVACY_CONTACT_EMAIL || "privacy@dvdbe.com",
   ).trim();
 
   useEffect(() => {
