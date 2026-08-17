@@ -13,7 +13,6 @@ import {
   FileSpreadsheet,
   FilePlus2,
   PackagePlus,
-  Languages,
   PackageCheck,
   PackageX,
   Pill,
@@ -1003,7 +1002,7 @@ export function PharmacyInventoryPage() {
   const [showBarcodeLookup, setShowBarcodeLookup] = useState(false);
   const [showExcelImport, setShowExcelImport] = useState(false);
   const [showManualAdd, setShowManualAdd] = useState(false);
-  const [showArabicNames, setShowArabicNames] = useState(false);
+  const showArabicNames = isArabic;
   const [predictionItem, setPredictionItem] = useState(null);
   const [notice, setNotice] = useState(null);
 
@@ -1116,11 +1115,18 @@ export function PharmacyInventoryPage() {
           src={PHARMACY_HERO_IMAGE}
           alt=""
           aria-hidden="true"
-          className={`absolute inset-0 h-full w-full object-cover object-[center_38%] opacity-20 mix-blend-luminosity ${
+          className={`absolute inset-0 h-full w-full object-cover object-[center_42%] ${
             isArabic ? "scale-x-[-1]" : ""
           }`}
         />
-        <div className="absolute inset-0 bg-[linear-gradient(110deg,rgba(16,80,90,.98)_0%,rgba(23,75,87,.94)_52%,rgba(33,100,116,.76)_100%)]" />
+        <div
+          className="absolute inset-0"
+          style={{
+            background: isArabic
+              ? "linear-gradient(270deg, #10505A 0%, rgba(16,80,90,.88) 34%, rgba(33,100,116,.42) 68%, rgba(33,100,116,.08) 100%)"
+              : "linear-gradient(90deg, #10505A 0%, rgba(16,80,90,.88) 34%, rgba(33,100,116,.42) 68%, rgba(33,100,116,.08) 100%)",
+          }}
+        />
         <div className="noise absolute inset-0 opacity-25" />
 
         <div className="relative z-10 p-5 sm:p-7 lg:p-8">
@@ -1128,7 +1134,7 @@ export function PharmacyInventoryPage() {
             <div
               className={`flex min-w-0 items-start gap-3 ${isArabic ? "text-right" : "text-left"}`}
             >
-              <span className="grid size-12 shrink-0 place-items-center rounded-2xl border border-white/10 bg-white/10 text-[#f5cb72] backdrop-blur-sm">
+              <span className="grid size-12 shrink-0 place-items-center rounded-2xl border border-white/10 bg-white/10 text-white backdrop-blur-sm">
                 <PackagePlus size={23} strokeWidth={1.8} />
               </span>
               <div>
@@ -1147,18 +1153,6 @@ export function PharmacyInventoryPage() {
             </div>
 
             <div className="flex flex-wrap gap-2 lg:justify-end">
-              <button
-                type="button"
-                onClick={() => setShowArabicNames((value) => !value)}
-                className={`inline-flex min-h-11 items-center gap-2 rounded-xl border px-4 text-xs font-black transition ${
-                  showArabicNames
-                    ? "border-[#f5cb72]/35 bg-[#f5cb72] text-[#17363e]"
-                    : "border-white/20 bg-white/10 text-white hover:bg-white/15"
-                }`}
-              >
-                <Languages size={17} />
-                {showArabicNames ? t("العربية ظاهرة") : t("إظهار العربية")}
-              </button>
               <button
                 type="button"
                 onClick={() => inventory.refetch()}
@@ -1402,14 +1396,11 @@ export function PharmacyInventoryPage() {
             return (
               <article
                 key={item.inventoryItemId}
-                className="group relative overflow-hidden rounded-[1.45rem] border border-[#dce8ea] bg-white p-5 shadow-[0_10px_30px_rgba(23,75,87,.045)] transition hover:-translate-y-0.5 hover:border-[#b8d0d4] hover:shadow-[0_18px_40px_rgba(23,75,87,.09)] sm:p-6"
+                className="group relative overflow-hidden rounded-[1.5rem] border border-[#DCE8EA] bg-white p-5 shadow-[0_8px_26px_rgba(23,75,87,.04)] transition duration-300 hover:-translate-y-1 hover:border-[#B9D2D6] hover:shadow-[0_18px_42px_rgba(23,75,87,.09)] sm:p-6"
               >
-                <span
-                  className={`absolute inset-y-0 start-0 w-1.5 ${stockAccent(item.stockStatus)}`}
-                />
                 <div className="flex items-start justify-between gap-3">
                   <span
-                    className={`grid size-12 place-items-center rounded-2xl ${stockIconTone(item.stockStatus)}`}
+                    className="grid size-12 place-items-center rounded-2xl border border-[#DCE8EA] bg-[#F2F8F8] text-[#216474]"
                   >
                     <Pill size={22} />
                   </span>
@@ -1465,7 +1456,7 @@ export function PharmacyInventoryPage() {
 
                 <div className="mt-5 grid grid-cols-2 gap-3">
                   <div
-                    className={`rounded-xl border border-[#E6EEF0] bg-[#F8FBFB] p-3 ${
+                    className={`rounded-2xl border border-[#E6EEF0] bg-[#FAFCFC] p-3.5 ${
                       isArabic ? "text-right" : "text-left"
                     }`}
                   >
@@ -1476,7 +1467,7 @@ export function PharmacyInventoryPage() {
                   </div>
 
                   <div
-                    className={`rounded-xl border border-[#E6EEF0] bg-[#F8FBFB] p-3 ${
+                    className={`rounded-2xl border border-[#E6EEF0] bg-[#FAFCFC] p-3.5 ${
                       isArabic ? "text-right" : "text-left"
                     }`}
                   >
@@ -1553,11 +1544,12 @@ export function PharmacyInventoryPage() {
                     </button>
                   )}
                   <button
-                    className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-[#174b57] px-4 text-xs font-black text-white transition hover:-translate-y-0.5 hover:bg-[#123f49]"
+                    className="grid size-11 shrink-0 place-items-center rounded-xl border border-[#CFE4E7] bg-[#EAF4F3] text-[#216474] transition hover:-translate-y-0.5 hover:bg-[#DCEFED]"
                     onClick={() => setEditor(item)}
+                    aria-label={t("تعديل الصنف")}
+                    title={t("تعديل الصنف")}
                   >
-                    <Edit3 size={15} />
-                    {t("تعديل الصنف")}
+                    <Edit3 size={17} />
                   </button>
 
                   <button
@@ -1662,18 +1654,4 @@ function MedicineIdentityChip({ label }) {
       {label}
     </span>
   );
-}
-
-function stockAccent(status) {
-  if (status === "Expired") return "bg-slate-500";
-  if (status === "OutOfStock") return "bg-rose-500";
-  if (status === "LowStock") return "bg-[#dfae0d]";
-  return "bg-[#216474]";
-}
-
-function stockIconTone(status) {
-  if (status === "Expired") return "bg-slate-100 text-slate-600";
-  if (status === "OutOfStock") return "bg-rose-50 text-rose-600";
-  if (status === "LowStock") return "bg-[#fff7df] text-[#b58112]";
-  return "bg-[#eaf4f3] text-[#216474]";
 }

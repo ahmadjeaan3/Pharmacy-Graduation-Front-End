@@ -48,25 +48,34 @@ const emptyForm = {
 };
 const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
+const HEALTH_HERO_BACKGROUND = "/assets/app/home/hero_search.png";
+
 export function HealthProfilePage() {
   const [tab, setTab] = useState("profile");
+
   const profileQuery = useQuery({
     queryKey: userKeys.profile,
     queryFn: getUserProfile,
   });
+
   const medicalQuery = useQuery({
     queryKey: userKeys.medicalProfile,
     queryFn: getMedicalProfile,
   });
+
   const cardQuery = useQuery({
     queryKey: userKeys.healthCard,
     queryFn: getHealthCard,
     enabled: tab === "card",
   });
-  if (profileQuery.isPending || medicalQuery.isPending)
+
+  if (profileQuery.isPending || medicalQuery.isPending) {
     return <UserLoadingState label="جاري تحميل ملفك الصحي..." />;
+  }
+
   if (profileQuery.isError || medicalQuery.isError) {
     const failed = profileQuery.error || medicalQuery.error;
+
     return (
       <UserErrorState
         message={getApiErrorMessage(failed)}
@@ -77,61 +86,134 @@ export function HealthProfilePage() {
       />
     );
   }
+
   return (
-    <div className="space-y-6">
-      <UserPageHeader
-        eyebrow="معلوماتك المهمة"
-        title="الملف الصحي"
-        description="احتفظ بالمعلومات التي قد تساعدك في طلب الدواء والتواصل عند الحاجة."
-        icon={HeartPulse}
-        action={
-          <div className="flex flex-wrap gap-2">
-            <Link to="/app/search" className="btn-secondary">
-              <Pill size={16} />
+    <div dir="rtl" className="m-0 w-full bg-[#F7F9FA] p-0 text-[#333333]">
+      {/* =========================
+          HERO
+      ========================== */}
+      <section
+        className="relative isolate -mt-6 overflow-hidden border-b border-[#DDE8EA] bg-white sm:-mt-7 lg:-mt-8"
+        style={{
+          width: "100vw",
+          marginInline: "calc(50% - 50vw)",
+        }}
+      >
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_15%_20%,rgba(139,208,203,.18),transparent_28rem),radial-gradient(circle_at_85%_0%,rgba(33,100,116,.10),transparent_24rem)]"
+        />
+
+        <div className="mx-auto grid min-h-[250px] w-full max-w-[1240px] items-center gap-8 px-5 py-10 sm:px-7 lg:grid-cols-[1fr_auto] lg:px-8">
+          <div className="flex min-w-0 items-center gap-4 text-right">
+            <span className="grid size-14 shrink-0 place-items-center rounded-[14px] border border-[#CFE0E3] bg-[#EEF7F7] text-[#216474] shadow-[0_8px_20px_rgba(33,100,116,.06)]">
+              <HeartPulse size={26} strokeWidth={1.8} />
+            </span>
+
+            <div className="min-w-0">
+              <span className="text-[11px] font-bold text-[#216474]">
+                معلوماتك الصحية
+              </span>
+
+              <h1 className="mt-1.5 text-[30px] font-bold leading-tight text-[#29464D] sm:text-[34px]">
+                الملف الصحي
+              </h1>
+
+              <p className="mt-3 max-w-[650px] text-[13px] leading-7 text-[#71858A]">
+                نظّم بياناتك الصحية المهمة في مكان واحد لتسهيل الوصول إليها
+                أثناء استخدام خدمات دوائي.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-2 lg:justify-end">
+            <Link
+              to="/app/search"
+              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-[10px] bg-[#216474] px-4 text-[12px] font-semibold text-white shadow-[0_8px_18px_rgba(33,100,116,.15)] transition hover:-translate-y-0.5 hover:bg-[#1B5967]"
+            >
+              <Pill size={15} />
               البحث عن دواء
             </Link>
-            <Link to="/app/prescriptions" className="btn-secondary">
-              <ClipboardCheck size={16} />
+
+            <Link
+              to="/app/prescriptions"
+              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-[10px] border border-[#CFE0E3] bg-white px-4 text-[12px] font-semibold text-[#216474] transition hover:bg-[#EEF7F7]"
+            >
+              <ClipboardCheck size={15} />
               الوصفة الذكية
             </Link>
           </div>
-        }
-      />
-      <section className="rounded-[1.5rem] border border-[#174b57]/8 bg-white p-2">
-        <div className="grid grid-cols-2 gap-2">
+        </div>
+      </section>
+
+      {/* =========================
+          CONTENT
+      ========================== */}
+      <main className="mx-auto w-full max-w-[1240px] px-5 pb-12 pt-10 sm:px-7 lg:px-8 lg:pt-12">
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="text-right">
+            <div className="mb-2 flex items-center gap-2">
+              <span className="h-[2px] w-8 rounded-full bg-[#216474]" />
+              <span className="text-[11px] font-bold text-[#216474]">
+                بياناتك الشخصية
+              </span>
+            </div>
+
+            <h2 className="text-[24px] font-bold text-[#29464D]">
+              إدارة الملف الصحي
+            </h2>
+
+            <p className="mt-1.5 max-w-[620px] text-[12px] leading-6 text-[#8A9A9E]">
+              حدّث معلوماتك الصحية أو استعرض البطاقة الصحية المخصصة لك.
+            </p>
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="mb-7 inline-flex w-full rounded-[12px] border border-[#DDE7E9] bg-white p-1.5 shadow-[0_4px_14px_rgba(23,75,87,.025)] sm:w-auto">
           <button
             type="button"
             onClick={() => setTab("profile")}
-            className={`rounded-xl px-4 py-3 text-sm font-bold transition ${tab === "profile" ? "bg-[#174b57] text-white shadow" : "text-[#60777c] hover:bg-[#f3f7f6]"}`}
+            className={`inline-flex min-h-[42px] flex-1 items-center justify-center gap-2 rounded-[9px] px-5 text-[12px] font-semibold transition sm:flex-none ${
+              tab === "profile"
+                ? "bg-[#216474] text-white shadow-[0_6px_14px_rgba(33,100,116,.12)]"
+                : "text-[#60777C] hover:bg-[#EEF7F7] hover:text-[#216474]"
+            }`}
           >
-            <UserRound size={17} className="me-2 inline" />
+            <UserRound size={16} />
             تعديل الملف الصحي
           </button>
+
           <button
             type="button"
             onClick={() => setTab("card")}
-            className={`rounded-xl px-4 py-3 text-sm font-bold transition ${tab === "card" ? "bg-[#174b57] text-white shadow" : "text-[#60777c] hover:bg-[#f3f7f6]"}`}
+            className={`inline-flex min-h-[42px] flex-1 items-center justify-center gap-2 rounded-[9px] px-5 text-[12px] font-semibold transition sm:flex-none ${
+              tab === "card"
+                ? "bg-[#216474] text-white shadow-[0_6px_14px_rgba(33,100,116,.12)]"
+                : "text-[#60777C] hover:bg-[#EEF7F7] hover:text-[#216474]"
+            }`}
           >
-            <ContactRound size={17} className="me-2 inline" />
+            <ContactRound size={16} />
             البطاقة الصحية
           </button>
         </div>
-      </section>
-      {tab === "profile" ? (
-        <MedicalProfileForm
-          profile={profileQuery.data}
-          medical={medicalQuery.data}
-        />
-      ) : cardQuery.isPending ? (
-        <UserLoadingState label="جاري تجهيز بطاقتك الصحية..." />
-      ) : cardQuery.isError ? (
-        <UserErrorState
-          message={getApiErrorMessage(cardQuery.error)}
-          onRetry={cardQuery.refetch}
-        />
-      ) : (
-        <HealthCard card={cardQuery.data} />
-      )}
+
+        {tab === "profile" ? (
+          <MedicalProfileForm
+            profile={profileQuery.data}
+            medical={medicalQuery.data}
+          />
+        ) : cardQuery.isPending ? (
+          <UserLoadingState label="جاري تجهيز بطاقتك الصحية..." />
+        ) : cardQuery.isError ? (
+          <UserErrorState
+            message={getApiErrorMessage(cardQuery.error)}
+            onRetry={cardQuery.refetch}
+          />
+        ) : (
+          <HealthCard card={cardQuery.data} />
+        )}
+      </main>
     </div>
   );
 }
@@ -240,7 +322,7 @@ function MedicalProfileForm({ profile, medical }) {
         missingFields={missingFields}
       />
       <section className="grid gap-5 xl:grid-cols-[minmax(300px,.78fr)_minmax(0,1.22fr)]">
-        <div className="rounded-[1.4rem] border border-[#174b57]/8 bg-white p-6">
+        <div className="rounded-[14px] border border-[#E2E8EA] bg-white p-6 shadow-[0_5px_18px_rgba(23,75,87,.03)]">
           <div className="flex items-center gap-3">
             <span className="grid size-11 place-items-center rounded-xl bg-[#eaf4f3] text-[#216474]">
               <UserRound size={20} />
@@ -298,9 +380,9 @@ function MedicalProfileForm({ profile, medical }) {
             </strong>
           </div>
         </div>
-        <div className="rounded-[1.4rem] border border-[#174b57]/8 bg-white p-6">
+        <div className="rounded-[14px] border border-[#E2E8EA] bg-white p-6 shadow-[0_5px_18px_rgba(23,75,87,.03)]">
           <div className="flex items-center gap-3">
-            <span className="grid size-11 place-items-center rounded-xl bg-rose-50 text-rose-600">
+            <span className="grid size-11 place-items-center rounded-xl bg-[#EAF4F3] text-[#216474]">
               <HeartPulse size={20} />
             </span>
             <div>
@@ -349,10 +431,10 @@ function MedicalProfileForm({ profile, medical }) {
       </section>
       <section
         id="emergency-contact"
-        className="scroll-mt-24 rounded-[1.4rem] border border-[#174b57]/8 bg-white p-5 sm:p-6"
+        className="scroll-mt-24 rounded-[14px] border border-[#E2E8EA] bg-white p-5 shadow-[0_5px_18px_rgba(23,75,87,.03)] sm:p-6"
       >
         <div className="flex items-center gap-3">
-          <span className="grid size-11 place-items-center rounded-xl bg-amber-50 text-amber-700">
+          <span className="grid size-11 place-items-center rounded-xl bg-amber-50 text-[#60777C]">
             <Phone size={20} />
           </span>
           <div>
@@ -412,10 +494,10 @@ function MedicalProfileForm({ profile, medical }) {
           التنبيهات والخدمات التي تطلبها داخل المنصة.
         </div>
       </section>
-      <div className="sticky bottom-4 z-20 flex flex-col gap-3 rounded-2xl border border-[#174b57]/10 bg-white/95 p-3 shadow-[0_16px_45px_rgba(23,75,87,.14)] backdrop-blur sm:flex-row sm:items-center sm:justify-between">
+      <div className="sticky bottom-4 z-20 flex flex-col gap-3 rounded-[14px] border border-[#DDE8EA] bg-white/96 p-3 shadow-[0_12px_30px_rgba(33,100,116,.10)] backdrop-blur sm:flex-row sm:items-center sm:justify-between">
         <div className="min-h-6">
           {isDirty && !mutation.isPending && (
-            <p className="flex items-center gap-2 text-sm font-bold text-amber-700">
+            <p className="flex items-center gap-2 text-sm font-bold text-[#60777C]">
               <AlertTriangle size={17} />
               لديك تغييرات غير محفوظة
             </p>
@@ -469,33 +551,41 @@ function ProfileInsights({ form, completion, missingFields }) {
     form.allergies.length > 0 ||
     form.chronicConditions.length > 0 ||
     form.currentMedications.length > 0;
+
   return (
-    <section className="grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(300px,.8fr)]">
-      <div className="relative isolate overflow-hidden rounded-[1.5rem] bg-[#174b57] p-5 text-white shadow-[0_18px_45px_rgba(23,75,87,.16)] sm:p-6">
-        <div className="noise absolute inset-0 -z-10" />
+    <section className="grid gap-4 xl:grid-cols-[minmax(0,1.15fr)_minmax(300px,.85fr)]">
+      <div className="rounded-[16px] border border-[#DDE8EA] bg-white p-5 shadow-[0_8px_24px_rgba(33,100,116,.04)] sm:p-6">
         <div className="flex items-start justify-between gap-5">
-          <div>
-            <p className="flex items-center gap-2 text-sm font-bold text-[#8bd0cb]">
-              <ClipboardCheck size={18} />
-              جاهزية الملف الصحي
-            </p>
-            <h3 className="mt-2 text-xl font-black sm:text-2xl">
+          <div className="min-w-0 text-right">
+            <div className="flex items-center gap-2">
+              <span className="grid size-9 place-items-center rounded-[9px] bg-[#EEF7F7] text-[#216474]">
+                <ClipboardCheck size={17} />
+              </span>
+
+              <span className="text-[12px] font-bold text-[#216474]">
+                جاهزية الملف الصحي
+              </span>
+            </div>
+
+            <h3 className="mt-4 text-[20px] font-bold text-[#29464D]">
               ملفك مكتمل بنسبة <b dir="ltr">{completion}%</b>
             </h3>
-            <p className="mt-2 max-w-xl text-sm leading-6 text-white/65">
-              كل معلومة تضيفها تساعد على إبراز التحذيرات المهمة وتسهّل التصرف
-              عند الحاجة.
+
+            <p className="mt-2 max-w-xl text-[12px] leading-6 text-[#71858A]">
+              كل معلومة تضيفها تساعد على جعل بياناتك الصحية أوضح عند الحاجة.
             </p>
           </div>
-          <span
+
+          <div
             dir="ltr"
-            className="grid size-16 shrink-0 place-items-center rounded-full border-[6px] border-[#f5cb72] text-sm font-black text-[#f5cb72]"
+            className="grid size-16 shrink-0 place-items-center rounded-full border-[6px] border-[#CFE4E7] bg-[#F7FBFB] text-sm font-bold text-[#216474]"
           >
             {completion}%
-          </span>
+          </div>
         </div>
+
         <div
-          className="mt-5 h-2 overflow-hidden rounded-full bg-white/10"
+          className="mt-5 h-2 overflow-hidden rounded-full bg-[#EEF2F3]"
           role="progressbar"
           aria-label="نسبة اكتمال الملف الصحي"
           aria-valuenow={completion}
@@ -503,16 +593,18 @@ function ProfileInsights({ form, completion, missingFields }) {
           aria-valuemax="100"
         >
           <div
-            className="h-full rounded-full bg-[#f5cb72] transition-all"
+            className="h-full rounded-full bg-[#216474] transition-all"
             style={{ width: `${completion}%` }}
           />
         </div>
+
         {missingFields.length > 0 && (
-          <div className="mt-5 border-t border-white/10 pt-4">
-            <p className="flex items-center gap-2 text-xs font-bold text-white/70">
-              <Sparkles size={15} className="text-[#f5cb72]" />
-              أكمل المعلومات التالية لبطاقة صحية أوضح:
+          <div className="mt-5 border-t border-[#EEF2F3] pt-4">
+            <p className="flex items-center gap-2 text-[11px] font-semibold text-[#60777C]">
+              <Sparkles size={14} className="text-[#216474]" />
+              أكمل المعلومات التالية لملف أوضح:
             </p>
+
             <div className="mt-3 flex flex-wrap gap-2">
               {missingFields.slice(0, 4).map(([id, label]) => (
                 <button
@@ -523,7 +615,7 @@ function ProfileInsights({ form, completion, missingFields }) {
                       .getElementById(id)
                       ?.scrollIntoView({ behavior: "smooth", block: "center" })
                   }
-                  className="rounded-full border border-white/15 bg-white/[.07] px-3 py-1.5 text-[11px] font-bold text-white/80 transition hover:bg-white/15"
+                  className="rounded-full border border-[#DCE8EA] bg-[#F8FBFB] px-3 py-1.5 text-[11px] font-semibold text-[#60777C] transition hover:border-[#216474]/25 hover:bg-[#EEF7F7] hover:text-[#216474]"
                 >
                   + {label}
                 </button>
@@ -532,43 +624,41 @@ function ProfileInsights({ form, completion, missingFields }) {
           </div>
         )}
       </div>
-      <div
-        className={`rounded-[1.5rem] border p-5 ${
-          hasSafetyData
-            ? "border-emerald-200 bg-emerald-50"
-            : "border-amber-200 bg-amber-50"
-        }`}
-      >
+
+      <div className="rounded-[16px] border border-[#DDE8EA] bg-[#F8FBFB] p-5 shadow-[0_8px_24px_rgba(33,100,116,.03)]">
         <div className="flex items-center gap-3">
-          <span
-            className={`grid size-11 place-items-center rounded-xl bg-white ${
-              hasSafetyData ? "text-emerald-700" : "text-amber-700"
-            }`}
-          >
+          <span className="grid size-11 place-items-center rounded-[10px] bg-white text-[#216474] shadow-[0_4px_12px_rgba(33,100,116,.05)]">
             {hasSafetyData ? (
               <Activity size={21} />
             ) : (
               <AlertTriangle size={21} />
             )}
           </span>
-          <div>
-            <h3 className="font-extrabold text-[#29464d]">ملخص السلامة</h3>
-            <p className="text-xs text-[#60777c]">
+
+          <div className="text-right">
+            <h3 className="font-bold text-[#29464D]">ملخص السلامة</h3>
+            <p className="text-[11px] text-[#71858A]">
               {hasSafetyData
                 ? "لديك معلومات صحية مسجلة"
                 : "لم تسجل معلومات صحية بعد"}
             </p>
           </div>
         </div>
+
         <div className="mt-4 grid grid-cols-3 gap-2 text-center">
           {[
             ["حساسية", form.allergies.length],
             ["حالة مزمنة", form.chronicConditions.length],
             ["دواء حالي", form.currentMedications.length],
           ].map(([label, count]) => (
-            <div key={label} className="rounded-xl bg-white/75 px-2 py-3">
-              <strong className="block text-xl text-[#174b57]">{count}</strong>
-              <span className="text-[11px] text-[#71858a]">{label}</span>
+            <div
+              key={label}
+              className="rounded-[10px] border border-[#E5EDEF] bg-white px-2 py-3"
+            >
+              <strong className="block text-xl font-bold text-[#216474]">
+                {count}
+              </strong>
+              <span className="text-[10px] text-[#8A9A9E]">{label}</span>
             </div>
           ))}
         </div>
@@ -675,7 +765,7 @@ function TagsField({
                 onClick={() =>
                   values.length < limit && onChange([...values, suggestion])
                 }
-                className="rounded-full border border-[#174b57]/10 bg-white px-2.5 py-1 text-[11px] font-bold text-[#60777c] transition hover:border-[#216474]/30 hover:bg-[#eaf4f3] hover:text-[#216474]"
+                className="rounded-full border border-[#DDE8EA] bg-white px-2.5 py-1 text-[11px] font-bold text-[#60777c] transition hover:border-[#216474]/30 hover:bg-[#eaf4f3] hover:text-[#216474]"
               >
                 + {suggestion}
               </button>
@@ -691,7 +781,7 @@ function HealthCard({ card }) {
     <div className="mx-auto max-w-4xl">
       <section
         id="health-report"
-        className="health-report overflow-hidden rounded-[2rem] border border-[#174b57]/10 bg-white shadow-[0_24px_70px_rgba(23,75,87,.12)]"
+        className="health-report overflow-hidden rounded-[18px] border border-[#DDE8EA] bg-white shadow-[0_24px_70px_rgba(23,75,87,.12)]"
       >
         <div className="print-only health-report-letterhead">
           <div className="health-report-brand">
@@ -708,19 +798,19 @@ function HealthCard({ card }) {
             <span>نسخة مخصصة للطباعة</span>
           </div>
         </div>
-        <div className="relative isolate bg-[#174b57] p-6 text-white sm:p-8">
+        <div className="relative isolate border-b border-[#DDE8EA] bg-[#F8FBFB] p-6 text-[#29464D] sm:p-8">
           <div className="noise absolute inset-0 -z-10" />
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-sm font-bold text-[#8bd0cb]">
+              <p className="text-sm font-bold text-[#216474]">
                 البطاقة الصحية الرقمية
               </p>
               <h2 className="mt-2 text-3xl font-black">{card.fullName}</h2>
-              <p className="mt-2 text-sm text-white/55">
+              <p className="mt-2 text-sm text-[#71858A]">
                 ملخص موحّد للمعلومات الصحية المهمة
               </p>
             </div>
-            <span className="grid size-14 place-items-center rounded-2xl bg-[#f5cb72] text-[#173d46]">
+            <span className="grid size-14 place-items-center rounded-[14px] border border-white/15 bg-white/10 text-white">
               <ShieldCheck size={27} />
             </span>
           </div>
@@ -780,7 +870,7 @@ function HealthCard({ card }) {
             </div>
           </div>
 
-          <div className="health-report-section mt-7 rounded-2xl border border-amber-200 bg-amber-50 p-5">
+          <div className="health-report-section mt-7 rounded-2xl border border-[#DCE8EA] bg-[#FAFCFC] p-5">
             <ReportSectionTitle
               icon={Phone}
               title="جهة اتصال للطوارئ"

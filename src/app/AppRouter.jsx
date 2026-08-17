@@ -17,6 +17,7 @@ import { DashboardLayout } from "../features/dashboard/layouts/DashboardLayout";
 import { DashboardIndexPage } from "../features/dashboard/pages/DashboardIndexPage";
 import { LandingPage } from "../features/home/pages/LandingPage";
 import { NotFoundPage } from "../features/home/pages/NotFoundPage";
+import { PrivacyPolicyPage } from "../features/legal/pages/PrivacyPolicyPage";
 import { RegisterPage } from "../features/registration/pages/RegisterPage";
 
 const HealthProfilePage = lazy(() =>
@@ -176,6 +177,7 @@ export function AppRouter() {
     >
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/privacy" element={<PrivacyPolicyPage />} />
         <Route element={<PublicOnlyRoute />}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/forgot-password" element={<PasswordRecoveryPage />} />

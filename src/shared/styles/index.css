@@ -496,6 +496,11 @@ button {
     background: #174b57;
     color: #fff;
   }
+  .health-report-logo img {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+  }
   .health-report-brand strong,
   .health-report-brand small {
     display: block;

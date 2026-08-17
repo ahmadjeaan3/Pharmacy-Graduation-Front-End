@@ -29,6 +29,7 @@ import {
   LoadingState as UserLoadingState,
 } from "../../../shared/components/AsyncStates";
 import { getApiErrorMessage } from "../../../shared/api/errors";
+import { apiClient } from "../../../shared/api/client";
 import { formatDistance } from "../utils/userFormatters";
 
 const USER_HERO_IMAGE = "/assets/app/home/user-hero-pharmacy.png";
@@ -39,6 +40,7 @@ const USER_HERO_BACKGROUND = "/assets/app/home/background_hero_user.png";
 const AI_ASSISTANT_IMAGE = "/assets/app/home/ai-assistant.png";
 const RESULTS_ANALYSIS_IMAGE = "/assets/app/home/results-analysis.png";
 const SMART_PRESCRIPTION_IMAGE = "/assets/app/home/smart-prescription.png";
+const SMART = "/assets/app/home/smart.png";
 const HELP_BANNER_IMAGE = "/assets/app/home/help-assistant.png";
 
 const FOOTER_SOCIAL_ICONS = {
@@ -84,6 +86,61 @@ const NearbyPharmaciesMap = lazy(() =>
     default: module.NearbyPharmaciesMap,
   })),
 );
+
+
+function getMedicineImageSource(imageUrl) {
+  if (!imageUrl) return null;
+
+  if (/^https?:\/\//i.test(imageUrl)) {
+    return imageUrl;
+  }
+
+  try {
+    const baseUrl = apiClient.defaults.baseURL || window.location.origin;
+    const apiOrigin = new URL(baseUrl, window.location.origin).origin;
+
+    return `${apiOrigin}${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
+  } catch {
+    return imageUrl;
+  }
+}
+
+function MedicineImage({ imageUrl, displayName }) {
+  const [imageFailed, setImageFailed] = useState(false);
+
+  const resolvedImageUrl = getMedicineImageSource(imageUrl);
+  const shouldShowImage = Boolean(resolvedImageUrl) && !imageFailed;
+
+  return (
+    <div className="relative mx-3.5 mt-4 flex h-[180px] items-center justify-center overflow-hidden rounded-[14px] border border-[#edf2f2] bg-[linear-gradient(145deg,#fbfdfd_0%,#f1f7f6_100%)]">
+      {shouldShowImage ? (
+        <img
+          src={resolvedImageUrl}
+          alt={displayName}
+          loading="lazy"
+          onError={() => setImageFailed(true)}
+          className="
+            max-h-[154px] max-w-[88%] object-contain
+            drop-shadow-[0_10px_14px_rgba(23,75,87,.10)]
+            transition-transform duration-300
+            group-hover:scale-[1.04]
+          "
+        />
+      ) : (
+        <div className="flex flex-col items-center justify-center text-center">
+          <span className="grid size-[72px] place-items-center rounded-[22px] border border-[#216474]/12 bg-white text-[#216474] shadow-[0_8px_22px_rgba(23,75,87,.07)]">
+            <Pill size={31} strokeWidth={1.55} />
+          </span>
+
+          <span className="mt-3 text-[10px] font-semibold text-[#91a0a3]">
+            صورة الدواء غير متوفرة
+          </span>
+        </div>
+      )}
+
+    </div>
+  );
+}
 
 function UserDashboardPage() {
   const navigate = useNavigate();
@@ -165,8 +222,7 @@ function UserDashboardPage() {
     );
   return (
     <div className="w-full">
-      {/* Hero - مطابق لتصميم Figma */}
-      {/* Hero - Final Figma version */}
+    
       <section
         className="relative isolate overflow-hidden bg-[#08788a] text-white shadow-[0_18px_45px_rgba(23,75,87,.10)]"
         style={{
@@ -450,27 +506,10 @@ function UserDashboardPage() {
                       "
                     >
                       {/* image block */}
-                      <div className="relative mx-3.5 mt-4 flex h-[180px] items-center justify-center overflow-hidden rounded-[14px] bg-[#f8fbfa]">
-                        
-
-                        {medicine.imageUrl ? (
-                          <img
-                            src={medicine.imageUrl}
-                            alt={displayName}
-                            loading="lazy"
-                            className="
-                              max-h-[150px] max-w-[86%] object-contain
-                              drop-shadow-[0_8px_10px_rgba(23,75,87,.08)]
-                              transition-transform duration-300
-                              group-hover:scale-[1.04]
-                            "
-                          />
-                        ) : (
-                          <span className="grid size-[68px] place-items-center rounded-[20px] border border-[#216474]/15 bg-white text-[#216474] shadow-[0_8px_20px_rgba(23,75,87,.06)]">
-                            <Pill size={30} strokeWidth={1.55} />
-                          </span>
-                        )}
-                      </div>
+                      <MedicineImage
+                        imageUrl={medicine.imageUrl}
+                        displayName={displayName}
+                      />
 
                       {/* info */}
                       <div className="px-5 pt-5 text-right">
@@ -585,8 +624,39 @@ function UserDashboardPage() {
       </section>
 
 
+      {/* تثبيت طبقات الخريطة تحت الـ Header أثناء التمرير */}
+      <style>{`
+        .dawaai-map-layer-fix {
+          position: relative;
+          isolation: isolate;
+          z-index: 0;
+        }
+
+        .dawaai-map-layer-fix .leaflet-container {
+          position: relative !important;
+          z-index: 0 !important;
+        }
+
+        .dawaai-map-layer-fix .leaflet-pane,
+        .dawaai-map-layer-fix .leaflet-top,
+        .dawaai-map-layer-fix .leaflet-bottom,
+        .dawaai-map-layer-fix .leaflet-control {
+          z-index: 1 !important;
+        }
+
+        .dawaai-map-layer-fix .leaflet-map-pane,
+        .dawaai-map-layer-fix .leaflet-tile-pane,
+        .dawaai-map-layer-fix .leaflet-overlay-pane,
+        .dawaai-map-layer-fix .leaflet-shadow-pane,
+        .dawaai-map-layer-fix .leaflet-marker-pane,
+        .dawaai-map-layer-fix .leaflet-tooltip-pane,
+        .dawaai-map-layer-fix .leaflet-popup-pane {
+          z-index: auto !important;
+        }
+      `}</style>
+
       {/* أقرب الصيدليات إليك - تصميم مطابق لفكرة Figma */}
-      <section dir="rtl" className="w-full bg-[#f7f9fa] pb-16 lg:pb-20">
+      <section dir="rtl" className="mt-16 w-full bg-[#f7f9fa] pb-16 lg:pb-20">
         <div className="mx-auto w-full max-w-[1660px] px-6 sm:px-8 lg:px-10 xl:px-12">
           {/* Header */}
           <div className="mb-8 text-right">
@@ -601,6 +671,7 @@ function UserDashboardPage() {
           {locationContext?.mapMarkers?.length ? (
             <div
               className="
+                relative isolate z-0
                 overflow-hidden rounded-[22px]
                 border border-[#dde5e7]
                 bg-white
@@ -780,7 +851,8 @@ function UserDashboardPage() {
                 <div
                   dir="rtl"
                   className="
-                    relative min-h-[500px]
+                    dawaai-map-layer-fix
+                    relative isolate z-0 min-h-[500px]
                     lg:col-start-1 lg:row-start-1
                     bg-[#eef3f3]
                     [&>section]:h-full
@@ -843,7 +915,7 @@ function UserDashboardPage() {
       {/* الخدمات الذكية + المساعدة + Footer — Figma */}
       <section
         dir="rtl"
-        className="
+        className="mt-16 
           w-full bg-[#F8FAFC]
           pb-0 pt-0
           font-['IBM_Plex_Sans_Arabic']
@@ -941,7 +1013,8 @@ function UserDashboardPage() {
               relative mt-10 flex min-h-[160px] w-full
               items-center
               rounded-[8px]
-              bg-[#174B57]
+              bg-[#216474]
+              mt-20
               px-10 py-5
             "
           >
@@ -990,7 +1063,7 @@ function UserDashboardPage() {
             {/* الصورة — يمين */}
             <div className="relative z-10 ml-auto flex h-[118px] w-[177px] shrink-0 items-center justify-center ">
               <img
-                src={HELP_BANNER_IMAGE}
+                src={SMART}
                 alt="مساعدة دوائي"
                 className="h-[118px] w-[177px] object-contain"
               />
@@ -1002,7 +1075,7 @@ function UserDashboardPage() {
      <footer
   dir="rtl"
   className="
-    mt-10 mb-0 w-full
+    mt-20 mb-0 w-full
     border-y border-[rgba(102,102,102,0.16)]
     bg-white
   "

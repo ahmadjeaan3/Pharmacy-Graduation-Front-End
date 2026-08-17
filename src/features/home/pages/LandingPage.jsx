@@ -20,13 +20,19 @@ import {
 } from "lucide-react";
 
 function getHomeVisitorId() {
-  const storageKey = "hayat-dawaiya-visitor-id";
+  const storageKey = "dawaai-visitor-id";
+  const legacyStorageKey = "hayat-dawaiya-visitor-id";
   const createVisitorId = () =>
     window.crypto?.randomUUID?.() ??
     `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
   try {
-    const existingId = window.localStorage.getItem(storageKey);
+    const existingId =
+      window.localStorage.getItem(storageKey) ||
+      window.localStorage.getItem(legacyStorageKey);
+    if (existingId && !window.localStorage.getItem(storageKey)) {
+      window.localStorage.setItem(storageKey, existingId);
+    }
     if (existingId) return existingId;
     const visitorId = createVisitorId();
     window.localStorage.setItem(storageKey, visitorId);
@@ -70,7 +76,6 @@ const ASSETS = {
 
   
   sparkle: "/assets/app/home/icons/Sparkle.png",
-  arrowWhite: "/assets/app/home/icons/Diagonal Right Up Arrow.png",
   arrowTeal: "/assets/app/home/icons/chevron-down.svg",
   verified: "/assets/app/home/icons/verified.png",
   quickSearch: "/assets/app/home/icons/Clock-orange.png",
@@ -85,15 +90,10 @@ const ASSETS = {
   organization: "/assets/app/home/icons/organization.png",
   admin: "/assets/app/home/icons/admin.png",
 
-  medicineSearch: "/assets/app/home/icons/medicine-search.png",
-  choosePharmacy: "/assets/app/home/icons/choose-pharmacy.png",
-  donation: "/assets/app/home/icons/donation.png",
-
   lock: "/assets/app/home/icons/lock.png",
   shield: "/assets/app/home/icons/shield.png",
   transparency: "/assets/app/home/icons/transparency.png",
 
-  star: "/assets/app/home/icons/star.png",
   quote: "/assets/app/home/icons/quote.png",
 
   whatsapp: "/assets/app/social/whatsapp.png",
@@ -286,7 +286,7 @@ const socialLinks = [
   },
   {
     label: "البريد الإلكتروني",
-    href: "mailto:info@medicallife.com",
+    href: "mailto:info@dawaai.com",
     image: ASSETS.email,
   },
   {
@@ -960,417 +960,176 @@ export function LandingPage() {
 
       <main>
         {/* Hero */}
-        <section
-          id="home"
-          className="relative min-h-[750px] scroll-mt-20 overflow-hidden bg-[#043746] sm:scroll-mt-24 lg:min-h-[820px] xl:min-h-[820px]"
-        >
-          {/* إضاءة خفيفة من جهة اليمين */}
-          <div
-            aria-hidden="true"
-            className="
-              pointer-events-none
-              absolute
-              -right-[180px]
-              top-[10px]
-              h-[720px]
-              w-[720px]
-              rounded-full
-              bg-[rgba(76,196,216,0.36)]
-              blur-[170px]
-            "
-          />
-
-          <div
-            aria-hidden="true"
-            className="
-              pointer-events-none
-              absolute
-              right-[40px]
-              top-[150px]
-              h-[420px]
-              w-[420px]
-              rounded-full
-              bg-[rgba(141,225,237,0.16)]
-              blur-[125px]
-            "
-          />
-
-          {/* نقطة انتقال لقسم الخدمات */}
-          <span
-            id="features"
-            aria-hidden="true"
-            className="pointer-events-none absolute left-0 top-[520px] scroll-mt-24"
-          />
-        
-      <img
-  src={ASSETS.hero}
-  alt=""
-  aria-hidden="true"
-  draggable={false}
-  className="
-    pointer-events-none
-    absolute
-    bottom-[15px]
-    left-[20px]
-    hidden
-    h-[78%]
-    w-[78%]
-    select-none
-    object-contain
-    object-left-bottom
-    lg:block
-  "
-/>
-
-          {/* Functional input aligned with the search field painted inside the laptop */}
-          <div
-            dir="rtl"
-            className="
-              absolute
-              z-30
-              hidden
-              lg:block
-              left-[19.1%]
-              top-[50.8%]
-              h-[42px]
-              w-[21.8%]
-              xl:top-[50.6%]
-              2xl:top-[50.5%]
-            "
-          >
-            
-
-            <button
-              type="button"
-              aria-label={t("بحث")}
-              onClick={() => {
-                heroSearchInputRef.current?.focus();
-                heroSearchInputRef.current?.select();
-              }}
-              className="
-                absolute
-                inset-y-[-2px]
-                right-[-2px]
-                w-[60px]
-                cursor-pointer
-                rounded-full
-                bg-transparent
-                outline-none
-                transition
-                focus-visible:ring-2
-                focus-visible:ring-[#216474]/45
-                focus-visible:ring-offset-1
-                hover:drop-shadow-[0_0_8px_rgba(33,100,116,.28)]
-              "
-            />
-          </div>
-          {/* Desktop content grid: illustration is already painted into the
-              LEFT half of hero.png, so HTML content is locked to RIGHT half. */}
-          <div
-            dir="ltr"
-            className="
-              relative z-10
-              mx-auto
-              hidden w-full max-w-[1400px]
-              grid-cols-2
-              lg:grid
-              lg:min-h-[510px]
-              xl:min-h-[530px]
-            "
-          >
-            {/* Left side intentionally empty: hero.png owns this area */}
-           <div aria-hidden="true" className="min-w-0" />
-
-{/* Right side content */}
-<div 
-  dir={textDirection} 
-  className={` 
-    flex min-w-0 
-    items-center 
-    px-8 py-10 
-    xl:px-12 
-    2xl:px-14
-    translate-x-9
-    ${isArabic ? "justify-end" : "justify-start"} 
-  `} 
+         
+<section
+  id="home"
+  className="relative overflow-hidden bg-[#F8FAFC] pt-[34px] pb-[56px]"
 >
+  {/* ================= BACKGROUND GLOW ================= */}
   <div
-    dir={isArabic ? "rtl" : "ltr"}
-    className={`
-      ml-hero-copy-enter
-      flex w-full min-w-0
-      max-w-[630px]
-      flex-col
-      gap-6
-      xl:gap-7
-      ${isArabic ? "items-end text-right" : "items-start text-left"}
-    `}
-  >
-    {/* Badge */}
-    <div
-      className={`
-        flex w-full
-        ${isArabic ? "justify-start" : "justify-start"}
-      `}
-    >
-      <div
-        dir={isArabic ? "rtl" : "ltr"}
-        className="
-          inline-flex
-          min-h-10
-          max-w-full
-          items-center
-          mt-30
-       
-          gap-2
-          rounded-full
-          border border-[#216474]/5
-          bg-white/90
-          px-4 py-2
-          shadow-[0_7px_22px_rgba(33,100,116,.06)]
-          backdrop-blur-sm
-          sm:px-5
-        "
-      >
-        {isArabic ? (
-          <>
-            <ImageIcon
-              src={ASSETS.sparkle}
-              className="h-5 w-5 shrink-0"
-            />
+    className="
+      pointer-events-none
+      absolute
+      -right-[180px]
+      -top-[150px]
+      h-[500px]
+      w-[470px]
+      rounded-full
+      bg-[rgba(21,142,171,0.16)]
+      blur-[150px]
+    "
+  />
 
-            <span className="min-w-0 text-right text-[14px] font-normal leading-6 text-[#444444] sm:text-[15px]">
-              {t("حل ذكي للعثور على الأدوية")}
-            </span>
-          </>
-        ) : (
-          <>
-            <ImageIcon
-              src={ASSETS.sparkle}
-              className="h-5 
-              w-5 shrink-0"
-            />
+  <div
+    className="
+      pointer-events-none
+      absolute
+      -left-[150px]
+      top-[280px]
+      h-[420px]
+      w-[390px]
+      rounded-full
+      bg-[rgba(254,226,82,0.16)]
+      blur-[150px]
+    "
+  />
 
-            <span className="min-w-0 text-left text-[14px] font-normal leading-6 text-[#444444] sm:text-[15px]">
-              {t("حل ذكي للعثور على الأدوية")}
-            </span>
-          </>
-        )}
-      </div>
-    </div>
+  <div className="relative mx-auto w-full max-w-[1200px] px-5 xl:px-0">
 
-    {/* Heading */}
-    <h1
-      dir={isArabic ? "rtl" : "ltr"}
-      className={`
-        w-full
-        break-words
-        text-[38px]
-        font-semibold
-        leading-[1.28]
-        text-white
-        xl:text-[46px]
-        2xl:text-[50px]
-        ${isArabic ? "text-right" : "text-left"}
-      `}
-    >
-      {isTurkish ? (
-        <>
-          <span>{t("دواؤك...")}</span>{" "}
-          <span>{t("مما تتوقع")}</span>{" "}
-          <span className="text-[#DFAE0D]">
-            {t("أقرب")}
-          </span>
-        </>
-      ) : (
-        <>
-          <span>{t("دواؤك...")}</span>{" "}
-          <span className="text-[#DFAE0D]">
-            {t("أقرب")}
-          </span>{" "}
-          <span>{t("مما تتوقع")}</span>
-        </>
-      )}
-    </h1>
+    {/* ========================================================= */}
+    {/* ========================= HERO ========================== */}
+    {/* ========================================================= */}
 
-    {/* Description */}
-    <p
-      dir={isArabic ? "rtl" : "ltr"}
-      className={`
-        w-full
-        max-w-[600px]
-        text-[15px]
-        font-normal
-        leading-8
-        text-white/75
-        xl:text-[16px]
-        ${isArabic ? "text-right" : "text-left"}
-      `}
-    >
-      {t(
-        "نساعدك في العثور على الأدوية المتوفرة في الصيدليات القريبة منك بسرعة ودقة عالية",
-      )}
-    </p>
-
-    {/* Buttons */}
-    <div
-      dir={isArabic ? "rtl" : "ltr"}
-      className={`
-        mt-1
-        pr-4
-        flex w-full
-        flex-wrap
-        items-center
-        gap-3
-        ${isArabic ? "justify-start" : "justify-start"}
-      `}
-    >
-      {/* Primary */}
-      <Link
-        to="/register"
-        dir={isArabic ? "rtl" : "ltr"}
-        className="
-          ml-button
-          inline-flex
-          h-[54px]
-          w-[174px]
-          items-center
-          justify-center
-          gap-2
-          rounded-lg
-          bg-[#174B57]
-          px-5
-          text-[17px]
-          font-medium
-          text-white
-          hover:bg-[#123F49]
-          hover:shadow-[0_14px_30px_rgba(23,75,87,0.25)]
-        "
-      >
-        <span>
-          {t("ابدأ تجربتك")}
-        </span>
-
-        <ImageIcon
-          src={ASSETS.Diagonal}
-          className={`
-            h-5 w-5
-            shrink-0
-            transition-transform
-            duration-300
-            ${isArabic ? "" : "rotate-100"}
-          `}
-        />
-      </Link>
-
-      {/* Secondary */}
-      <a
-        href="#roles"
-        dir={isArabic ? "rtl" : "ltr"}
-        className="
-          ml-button
-          inline-flex
-          h-[54px]
-          w-[174px]
-          items-center
-          justify-center
-          gap-2
-          rounded-lg
-          border border-white
-          bg-white
-          px-5
-          text-[17px]
-          font-medium
-          text-[#174B57]
-          shadow-[0_10px_28px_rgba(0,0,0,.08)]
-          hover:bg-[#F8FAFC]
-          hover:shadow-[0_12px_30px_rgba(0,0,0,.10)]
-        "
-      >
-        <span>
-          {t("كيف يعمل")}
-        </span>
-
-        <ImageIcon
-          src={ASSETS.arrowTeal}
-          className={`
-            h-5 w-5
-            shrink-0
-            transition-transform
-            duration-300
-            ${isArabic ? "" : "rotate-180"}
-          `}
-        />
-      </a>
-    </div>
-
-    {/* الكاردات الأربعة تحت الأزرار مباشرة */}
     <div
       dir="ltr"
-      className="
-        mt-3
-        grid
+      className={`
+        relative
+        flex
+        min-h-[500px]
         w-full
-        grid-cols-2
-        gap-3
-      "
+        items-center
+        ${
+          isArabic
+            ? "flex-row gap-[45px]"
+            : "flex-row-reverse gap-[75px]"
+        }
+      `}
     >
-      {features.map(({ image, title, text }) => (
-        <article
-          key={title}
+
+      {/* ======================================================= */}
+      {/* ======================= IMAGE ========================= */}
+      {/* ======================================================= */}
+
+      <div
+        className="
+          relative
+          z-10
+          h-[380px]
+          w-full
+          shrink-0
+
+          sm:h-[440px]
+
+          lg:h-[500px]
+          lg:w-[545px]
+
+          xl:h-[500px]
+          xl:w-[545px]
+        "
+      >
+
+        <img
+          src={ASSETS.hero}
+          alt={t("البحث عن الأدوية والصيدليات")}
           className="
-            flex
-            min-h-[82px]
-            w-full
+            absolute
+            left-1/2
+            top-1/2
+
+            h-[450px]
+            w-[480px]
+
+            max-w-none
+
+            -translate-x-1/2
+            -translate-y-1/2
+
+            object-contain
+
+            sm:h-[520px]
+            sm:w-[550px]
+
+            lg:left-[-80px]
+            lg:top-[-55px]
+            lg:h-[640px]
+            lg:w-[680px]
+
+            lg:translate-x-0
+            lg:translate-y-0
+
+            xl:left-[-80px]
+            xl:top-[-55px]
+            xl:h-[640px]
+            xl:w-[680px]
+          "
+        />
+
+        {/* ===================================================== */}
+        {/* ================= REGISTERED PHARMACIES ============ */}
+        {/* ===================================================== */}
+
+        <div
+          dir="ltr"
+          className={`
+            ml-floating-card-one
+
+            absolute
+            top-[35px]
+
+            z-30
+
+            hidden
+            min-h-[74px]
+            w-[238px]
+
             items-center
             justify-between
             gap-3
-            rounded-xl
-            border border-white/15
-            bg-white/[0.035]
-            px-4
-            py-3
-            backdrop-blur-[2px]
-          "
-        >
-          <div
-            dir={textDirection}
-            className={`
-              flex
-              min-w-0
-              flex-1
-              flex-col
-              justify-center
-              gap-1
-              ${isArabic ? "items-end text-right" : "items-start text-left"}
-            `}
-          >
-            <h3
-              className={`
-                w-full
-                text-[15px]
-                font-medium
-                leading-5
-                text-white
-                ${isArabic ? "text-right" : "text-left"}
-              `}
-            >
-              {t(title)}
-            </h3>
 
-            <p
-              className={`
-                w-full
-                text-[11px]
-                font-normal
-                leading-5
-                text-white/55
-                ${isArabic ? "text-right" : "text-left"}
-              `}
-            >
-              {t(text)}
-            </p>
-          </div>
+            rounded-xl
+
+            border
+            border-[#216474]/10
+
+            bg-white
+
+            px-5
+            py-3
+
+            shadow-[0_10px_30px_rgba(33,100,116,0.13)]
+
+            transition-all
+            duration-300
+
+            hover:-translate-y-1
+            hover:shadow-[0_15px_35px_rgba(33,100,116,0.17)]
+
+            lg:flex
+
+            ${
+              isArabic
+                ? `
+                  right-[-55px]
+                  flex-row-reverse
+                `
+                : `
+                  left-[-100px]
+                  flex-row
+                `
+            }
+          `}
+        >
+          {/* Icon */}
 
           <span
             className="
@@ -1379,212 +1138,732 @@ export function LandingPage() {
               w-10
               shrink-0
               place-items-center
-              rounded-xl
-              bg-white/10
+
+              rounded-full
+
+              bg-[#DDEEEE]
+
+              text-[#174B57]
+            "
+          >
+            <Building2
+              size={22}
+              strokeWidth={2}
+              aria-hidden="true"
+            />
+          </span>
+
+          {/* Text */}
+
+          <div
+            dir={textDirection}
+            className={`
+              flex
+              min-h-[44px]
+              min-w-0
+              flex-1
+              flex-col
+              justify-center
+              gap-1
+
+              ${
+                isArabic
+                  ? "items-end text-right"
+                  : "items-start text-left"
+              }
+            `}
+          >
+            <strong
+              className="
+                w-full
+                text-[15px]
+                font-semibold
+                leading-5
+                text-[#333333]
+              "
+            >
+              {t("صيدليات مسجلة")}
+            </strong>
+
+            <small
+              className="
+                w-full
+                text-[11px]
+                font-normal
+                leading-4
+                text-[#7E8E92]
+              "
+            >
+              {t("بيانات الصيدلية والدواء")}
+            </small>
+          </div>
+        </div>
+
+        {/* ===================================================== */}
+        {/* ===================== QUICK SEARCH ================== */}
+        {/* ===================================================== */}
+
+        <div
+          dir="ltr"
+          className={`
+            ml-floating-card-two
+
+            absolute
+            top-[355px]
+
+            z-30
+
+            hidden
+
+            min-h-[72px]
+            w-[230px]
+
+            items-center
+            justify-between
+            gap-3
+
+            rounded-xl
+
+            border
+            border-[#DFAE0D]/10
+
+            bg-white
+
+            px-5
+            py-3
+
+            shadow-[0_10px_30px_rgba(136,136,136,0.16)]
+
+            transition-all
+            duration-300
+
+            hover:-translate-y-1
+            hover:shadow-[0_15px_35px_rgba(136,136,136,0.20)]
+
+            lg:flex
+
+            ${
+              isArabic
+                ? `
+                  left-[-115px]
+                  flex-row-reverse
+                `
+                : `
+                  right-[-115px]
+                  flex-row
+                `
+            }
+          `}
+        >
+          {/* Icon */}
+
+          <span
+            className="
+              grid
+              h-10
+              w-10
+              shrink-0
+              place-items-center
+
+              rounded-full
+
+              bg-[rgba(251,244,177,0.32)]
             "
           >
             <ImageIcon
-              src={image}
-              alt={t(title)}
-              className="h-5 w-5 brightness-0 invert"
+              src={ASSETS.quickSearch}
+              alt=""
+              className="h-5 w-5"
             />
           </span>
-        </article>
-      ))}
-    </div>
-  </div>
-</div>
-</div>
 
-          {/* Mobile / tablet:
-              show the illustration as a normal full-width image, then text below,
-              instead of trying to force desktop background behavior. */}
-          <div className="relative z-10 lg:hidden mt-10 ">
-            <div className="relative aspect-[3/2] w-full overflow-hidden bg-[#EEF7F9]">
-              <img
-                src={ASSETS.hero}
-                alt={t("البحث عن الأدوية والصيدليات")}
-                draggable={false}
-                className="h-full w-full object-cover object-left"
-              />
-            </div>
+          {/* Text */}
 
-            <div
-              dir={textDirection}
-              className={`
-              
-                mx-auto flex w-full max-w-[700px]
-                flex-col gap-5
-                px-5 py-9 sm:px-8 sm:py-10
-                ${itemsAlignClass}
-                ${textAlignClass}
-              `}
+          <div
+            dir={textDirection}
+            className={`
+              flex
+              min-h-[42px]
+              min-w-0
+              flex-1
+              flex-col
+              justify-center
+              gap-1
+
+              ${
+                isArabic
+                  ? "items-end text-right"
+                  : "items-start text-left"
+              }
+            `}
+          >
+            <strong
+              className="
+                w-full
+                text-[15px]
+                font-medium
+                leading-5
+                text-[#333333]
+              "
             >
-              <div className="inline-flex min-h-10 items-center gap-2 rounded-full bg-white px-4 py-2 shadow-sm  ">
-                <span className="text-[14px] text-[#444444]">
-                  {t("حل ذكي للعثور على الأدوية")}
-                </span>
-                <ImageIcon src={ASSETS.sparkle} className="h-5 w-5" />
-              </div>
+              {t("بحث سريع")}
+            </strong>
 
-              <h1
-                className={`w-full text-[32px] font-semibold leading-[1.35] text-[#333333] sm:text-[38px] ${textAlignClass}`}
-              >
-                <span>{t("دواؤك...")}</span>{" "}
-                <span className="text-[#DFAE0D]">{t("أقرب")}</span>{" "}
-                <span>{t("مما تتوقع")}</span>
-              </h1>
-
-              <p className={`w-full text-[15px] leading-7 text-[#66777B] ${textAlignClass}`}>
-                {t(
-                  "نساعدك في العثور على الأدوية المتوفرة في الصيدليات القريبة منك بسرعة ودقة عالية",
-                )}
-              </p>
-
-              <div className="grid w-full grid-cols-1 gap-3 min-[430px]:grid-cols-2 ">
-                <a
-                  href="#roles"
-                  className="flex h-[52px] items-center justify-center rounded-lg border border-[#216474] bg-white text-[16px] font-medium text-[#216474]"
-                >
-                  {t("كيف يعمل")}
-                </a>
-
-                <Link
-                  to="/register"
-                  className="flex h-[52px] items-center justify-center rounded-lg bg-[#174B57] text-[16px] font-medium text-white"
-                >
-                  {t("ابدأ تجربتك")}
-                </Link>
-              </div>
-
-              <div
-                dir="ltr"
-                className="mt-2 grid w-full grid-cols-1 gap-3 min-[520px]:grid-cols-2"
-              >
-                {features.map(({ image, title, text }) => (
-                  <article
-                    key={title}
-                    className="
-                      flex
-                      min-h-[88px]
-                      w-full
-                      items-center
-                      justify-between
-                      gap-3
-                      rounded-xl
-                      border border-white/15
-                      bg-white/[0.06]
-                      px-4
-                      py-3
-                      backdrop-blur-[2px]
-                    "
-                  >
-                    <div
-                      dir={textDirection}
-                      className={`
-                        flex
-                        min-w-0
-                        flex-1
-                        flex-col
-                        justify-center
-                        gap-1
-                        ${isArabic ? "items-end text-right" : "items-start text-left"}
-                      `}
-                    >
-                      <h3 className="w-full text-[15px] font-medium leading-5 text-white">
-                        {t(title)}
-                      </h3>
-
-                      <p className="w-full text-[11px] leading-5 text-white/55">
-                        {t(text)}
-                      </p>
-                    </div>
-
-                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/10">
-                      <ImageIcon
-                        src={image}
-                        alt={t(title)}
-                        className="h-5 w-5 brightness-0 invert"
-                      />
-                    </span>
-                  </article>
-                ))}
-              </div>
-            </div>
+            <small
+              className="
+                w-full
+                text-[11px]
+                font-normal
+                leading-4
+                text-[#A5A5A5]
+              "
+            >
+              {t("وصول إلى أقرب صيدلية")}
+            </small>
           </div>
-        </section>
+        </div>
+      </div>
 
-        {/* Live statistics */}
-        <section
-          className="bg-[#F8FAFC] py-[72px] sm:py-[84px]"
-          aria-labelledby="live-statistics-title"
+      {/* ======================================================= */}
+      {/* ======================= CONTENT ======================= */}
+      {/* ======================================================= */}
+
+      <div
+        className={`
+          ml-hero-copy-enter
+          z-20
+
+          flex
+          min-h-[300px]
+          flex-1
+          flex-col
+          justify-center
+          gap-8
+
+          ${itemsAlignClass}
+          ${textAlignClass}
+        `}
+      >
+
+        <div
+          className={`
+            flex
+            w-full
+            flex-col
+            gap-6
+
+            ${itemsAlignClass}
+          `}
         >
-          <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-[44px] px-5 xl:px-0">
-            {/* Section heading */}
-            <div className="flex w-full flex-col items-center gap-5">
-              <div
-                dir="ltr"
-                className="flex min-h-[30px] w-full max-w-[560px] items-center justify-center gap-3 sm:gap-8 lg:gap-[58px]"
-              >
-                <span className="h-[3px] min-w-0 flex-1 rounded-lg bg-gradient-to-r from-white to-[#EEB73A]" />
 
-                <h2
-                  id="live-statistics-title"
-                  dir={textDirection}
-                  className="min-w-0 whitespace-nowrap text-center text-2xl font-medium leading-tight text-[#333333] sm:text-[28px] lg:text-[32px]"
-                >
-                  {t("أثر المنصة بالأرقام")}
-                </h2>
+          {/* =================================================== */}
+          {/* ====================== BADGE ====================== */}
+          {/* =================================================== */}
 
-                <span className="h-[3px] min-w-0 flex-1 rounded-lg bg-gradient-to-l from-white to-[#EEB73A]" />
-              </div>
+          <div
+            dir={textDirection}
+            className="
+              inline-flex
+              min-h-[40px]
+              w-fit
 
-              <p className="max-w-[650px] text-center text-sm font-normal leading-7 text-[#A5A5A5] sm:text-base lg:text-[18px] lg:leading-[29px]">
-                {t("إحصائيات حقيقية ومحدثة من خدمات المنصة")}
-              </p>
-            </div>
+              items-center
+              justify-center
+              gap-2
 
-            {/* Statistics cards */}
-            <div className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
-              {statisticItems.map(([label, value], index) => (
-                <article
-                  key={label}
+              rounded-full
+
+              bg-white
+
+              px-5
+              py-2
+
+              shadow-[0_4px_18px_rgba(33,100,116,0.06)]
+            "
+          >
+            {isArabic ? (
+              <>
+                <span
                   className="
-                    ml-card
-                    flex min-h-[176px] w-full
-                    flex-col items-center justify-center
-                    rounded-xl
-                    border border-[rgba(102,102,102,0.16)]
-                    bg-white
-                    px-4 py-6
-                    text-center
+                    text-[15px]
+                    font-normal
+                    leading-6
+                    text-[#444444]
                   "
                 >
-                
+                  {t("حل ذكي للعثور على الأدوية")}
+                </span>
 
-                  <strong className="block text-[32px] font-bold leading-none text-[#216474]">
-                    <CountUpStatistic
-                      value={value}
-                      loading={statistics.isLoading}
-                      locale={statisticLocale}
-                    />
-                  </strong>
+                <ImageIcon
+                  src={ASSETS.sparkle}
+                  className="h-5 w-5"
+                />
+              </>
+            ) : (
+              <>
+                <ImageIcon
+                  src={ASSETS.sparkle}
+                  className="h-5 w-5"
+                />
 
-                  <span className="mt-4 block text-[15px] font-medium leading-6 text-[#666666]">
-                    {t(label)}
-                  </span>
-                </article>
-              ))}
-            </div>
-
-            {statistics.isError && (
-              <p className="text-center text-sm text-rose-600">
-                {t("تعذر تحميل الإحصائيات الآن، أعد المحاولة لاحقًا.")}
-              </p>
+                <span
+                  className="
+                    text-[15px]
+                    font-normal
+                    leading-6
+                    text-[#444444]
+                  "
+                >
+                  {t("حل ذكي للعثور على الأدوية")}
+                </span>
+              </>
             )}
           </div>
-        </section>
 
+          {/* =================================================== */}
+          {/* ====================== TITLE ====================== */}
+          {/* =================================================== */}
+
+          <h1
+            dir={textDirection}
+            className={`
+              max-w-[650px]
+
+              break-words
+
+              text-[42px]
+              font-medium
+              leading-[1.3]
+
+              text-[#333333]
+
+              sm:text-[46px]
+
+              xl:text-[50px]
+
+              ${textAlignClass}
+            `}
+          >
+            {isTurkish ? (
+              <>
+                <span>
+                  {t("دواؤك...")}
+                </span>{" "}
+
+                <span>
+                  {t("مما تتوقع")}
+                </span>{" "}
+
+                <span className="text-[#DFAE0D]">
+                  {t("أقرب")}
+                </span>
+              </>
+            ) : (
+              <>
+                <span>
+                  {t("دواؤك...")}
+                </span>{" "}
+
+                <span className="text-[#DFAE0D]">
+                  {t("أقرب")}
+                </span>{" "}
+
+                <span>
+                  {t("مما تتوقع")}
+                </span>
+              </>
+            )}
+          </h1>
+
+          {/* =================================================== */}
+          {/* ==================== DESCRIPTION ================== */}
+          {/* =================================================== */}
+
+          <p
+            dir={textDirection}
+            className={`
+              max-w-[570px]
+
+              break-words
+
+              text-[16px]
+              font-normal
+              leading-7
+
+              text-[#666666]
+
+              ${textAlignClass}
+            `}
+          >
+            {t(
+              "نساعدك في العثور على الأدوية المتوفرة في الصيدليات القريبة منك بسرعة ودقة عالية",
+            )}
+          </p>
+        </div>
+
+        {/* ===================================================== */}
+        {/* ======================== BUTTONS ==================== */}
+        {/* ===================================================== */}
+
+        <div
+          dir={textDirection}
+          className="
+            flex
+            min-h-[58px]
+            flex-wrap
+            items-center
+            gap-3
+          "
+        >
+
+          {/* ================= SECONDARY ================= */}
+
+          <a
+            href="#features"
+            dir="ltr"
+            className={`
+              ml-button
+
+              inline-flex
+
+              h-[56px]
+              w-[170px]
+
+              items-center
+              justify-center
+              gap-2
+
+              rounded-lg
+
+              border
+              border-[#216474]
+
+              bg-transparent
+
+              text-[17px]
+              font-medium
+              leading-[30px]
+
+              text-[#216474]
+
+              transition-all
+              duration-300
+
+              hover:bg-white
+              hover:shadow-[0_12px_28px_rgba(33,100,116,0.12)]
+
+              ${isArabic ? "flex-row-reverse" : "flex-row"}
+            `}
+          >
+            <span dir={textDirection}>
+              {t("كيف يعمل")}
+            </span>
+
+            <ImageIcon
+              src={ASSETS.arrowTeal}
+              className={`
+                h-5
+                w-5
+
+                transition-transform
+                duration-300
+
+                ${isArabic ? "" : "rotate-180"}
+              `}
+            />
+          </a>
+
+          {/* ================= PRIMARY ================= */}
+
+          <Link
+            to="/register"
+            dir="ltr"
+            className={`
+              ml-button
+
+              inline-flex
+
+              h-[56px]
+              w-[170px]
+
+              items-center
+              justify-center
+              gap-2
+
+              rounded-lg
+
+              bg-[#174B57]
+
+              text-[17px]
+              font-medium
+              leading-[30px]
+
+              text-white
+
+              transition-all
+              duration-300
+
+              hover:bg-[#123F49]
+              hover:shadow-[0_14px_30px_rgba(23,75,87,0.25)]
+
+              ${isArabic ? "flex-row-reverse" : "flex-row"}
+            `}
+          >
+            <span dir={textDirection}>
+              {t("ابدأ تجربتك")}
+            </span>
+
+            <ImageIcon
+              src={ASSETS.Diagonal}
+              className={`
+                h-5
+                w-5
+
+                transition-transform
+                duration-300
+
+                ${isArabic ? "" : "rotate-180"}
+              `}
+            />
+          </Link>
+        </div>
+      </div>
+    </div>
+
+    {/* ========================================================= */}
+    {/* ======================= FEATURES ======================== */}
+
+    {/* ================= FEATURES ================= */}
+    <section
+      id="features"
+      className="relative mt-[28px]"
+    >
+      <div
+        dir="ltr"
+        className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"
+      >
+        {features.map(({ image, title, text }) => (
+          <article
+            key={title}
+            dir={textDirection}
+            className="
+              ml-card
+              flex
+              min-h-[180px]
+              w-full
+              flex-col
+              items-center
+              justify-center
+              gap-5
+              rounded-xl
+              border
+              border-[rgba(102,102,102,0.14)]
+              bg-white
+              px-5
+              py-6
+              shadow-[0_4px_18px_rgba(33,100,116,0.035)]
+              transition-all
+              duration-300
+              hover:-translate-y-1
+              hover:shadow-[0_12px_30px_rgba(33,100,116,0.08)]
+            "
+          >
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#E6F3F6]">
+              <ImageIcon
+                src={image}
+                alt={t(title)}
+                className="h-6 w-6"
+              />
+            </span>
+
+            <div className="flex min-h-[70px] w-full flex-col items-center justify-center gap-2">
+              <h3 className="text-center text-[18px] font-medium leading-6 text-[#333333]">
+                {t(title)}
+              </h3>
+
+              <p className="line-clamp-2 text-center text-[14px] font-normal leading-6 text-[#A5A5A5]">
+                {t(text)}
+              </p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  </div>
+</section>
+{/* ================= PLATFORM IMPACT ================= */}
+<section
+  className="relative overflow-hidden bg-[#F8FAFC] py-[76px] sm:py-[88px]"
+  aria-labelledby="live-statistics-title"
+>
+  {/* Subtle glow */}
+  <div className="pointer-events-none absolute -right-[180px] top-[40px] h-[320px] w-[320px] rounded-full bg-[rgba(21,142,171,0.06)] blur-[100px]" />
+
+  <div className="relative mx-auto flex w-full max-w-[1200px] flex-col items-center gap-[42px] px-5 xl:px-0">
+
+    {/* Section heading */}
+    <div className="flex w-full flex-col items-center gap-4">
+
+      <div
+        dir="ltr"
+        className="flex w-full max-w-[600px] items-center justify-center gap-5"
+      >
+        {/* Left line */}
+        <span className="h-[2px] flex-1 rounded-full bg-gradient-to-r from-transparent to-[#DFAE0D]" />
+
+        <h2
+          id="live-statistics-title"
+          dir={textDirection}
+          className="
+            whitespace-nowrap
+            text-[28px]
+            font-medium
+            leading-tight
+            text-[#333333]
+            sm:text-[32px]
+          "
+        >
+          {t("أثر المنصة بالأرقام")}
+        </h2>
+
+        {/* Right line */}
+        <span className="h-[2px] flex-1 rounded-full bg-gradient-to-l from-transparent to-[#DFAE0D]" />
+      </div>
+
+      <p
+        dir={textDirection}
+        className="
+          max-w-[650px]
+          text-center
+          text-[15px]
+          font-normal
+          leading-7
+          text-[#999999]
+          sm:text-[17px]
+        "
+      >
+        {t("إحصائيات حقيقية ومحدثة من خدمات المنصة")}
+      </p>
+    </div>
+
+    {/* ================= STATISTICS CONTAINER ================= */}
+    <div
+      dir="ltr"
+      className="
+        w-full
+        overflow-hidden
+        rounded-2xl
+        border
+        border-[#E5ECEE]
+        bg-white
+        shadow-[0_10px_35px_rgba(33,100,116,0.06)]
+      "
+    >
+      <div className="grid w-full grid-cols-2 lg:grid-cols-5">
+
+        {statisticItems.map(([label, value], index) => (
+          <article
+            key={label}
+            dir={textDirection}
+            className={`
+              group
+              relative
+              flex
+              min-h-[155px]
+              flex-col
+              items-center
+              justify-center
+              px-5
+              py-7
+              text-center
+              transition-all
+              duration-300
+              hover:bg-[#F8FAFC]
+
+              ${
+                index < statisticItems.length - 1
+                  ? "lg:border-r lg:border-[#E8EEEE]"
+                  : ""
+              }
+
+              ${
+                index === 0 || index === 1
+                  ? "border-b border-[#E8EEEE] lg:border-b-0"
+                  : ""
+              }
+
+              ${
+                index === 2
+                  ? "border-b border-[#E8EEEE] lg:border-b-0"
+                  : ""
+              }
+
+              ${
+                index % 2 === 0
+                  ? "sm:border-r sm:border-[#E8EEEE] lg:border-r"
+                  : ""
+              }
+
+              lg:[&:nth-child(2n)]:border-r-0
+              lg:[&:nth-child(3)]:border-r
+              lg:[&:nth-child(4)]:border-r
+            `}
+          >
+            {/* Number */}
+            <strong
+              className="
+                block
+                text-[30px]
+                font-bold
+                leading-none
+                tracking-[-0.02em]
+                text-[#216474]
+                transition-transform
+                duration-300
+                group-hover:-translate-y-0.5
+                sm:text-[34px]
+              "
+            >
+              <CountUpStatistic
+                value={value}
+                loading={statistics.isLoading}
+                locale={statisticLocale}
+              />
+            </strong>
+
+            {/* Label */}
+            <span
+              className="
+                mt-4
+                text-[14px]
+                font-medium
+                leading-6
+                text-[#666666]
+                sm:text-[15px]
+              "
+            >
+              {t(label)}
+            </span>
+
+            {/* Tiny accent */}
+           
+          </article>
+        ))}
+
+      </div>
+    </div>
+
+    {/* Error */}
+    {statistics.isError && (
+      <p
+        dir={textDirection}
+        className="text-center text-sm text-rose-600"
+      >
+        {t("تعذر تحميل الإحصائيات الآن، أعد المحاولة لاحقًا.")}
+      </p>
+    )}
+  </div>
+</section>
         {/* Roles */}
         {/* Roles */}
         <section
@@ -2350,7 +2629,7 @@ export function LandingPage() {
               <img
                 src={ASSETS.cta}
                 alt={t("استخدام المنصة")}
-                className="pointer-events-none order-2 mx-auto h-[130px] w-[150px] object-contain sm:h-[150px] sm:w-[180px] lg:order-3 lg:h-[175px] lg:w-[180px] xl:h-[205px] xl:w-[220px]"
+                className="pointer-events-none order-2 mx-auto h-[130px] w-[150px]  -translate-y-7 object-contain sm:h-[150px] sm:w-[180px] lg:order-3 lg:h-[200px] lg:w-[200px] xl:h-[205px] xl:w-[220px]"
               />
             </div>
           </div>
@@ -2405,7 +2684,7 @@ export function LandingPage() {
                 <ImageIcon
                   src={image}
                   alt={t(label)}
-                  className="h-[18px] w-[18px]"
+                  className="h-[24px] w-[24px]"
                 />
               </a>
             ))}

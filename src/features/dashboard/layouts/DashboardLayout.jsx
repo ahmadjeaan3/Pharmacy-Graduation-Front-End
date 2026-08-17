@@ -39,7 +39,6 @@ import {
 } from "../../notifications/api/notificationsApi";
 import { NotificationBell } from "../../notifications/components/NotificationBell";
 
-const dashboardLogo = "/assets/app/brand/dawaai-app-icon-192.png";
 const ROLE_DRAWER_VISUALS = {
   User: {
     icon: UserRound,
@@ -418,14 +417,9 @@ export function DashboardLayout() {
               <NavLink
                 to="/app"
                 aria-label={t("الرئيسية")}
-                className="flex h-[60px] w-[62px] shrink-0 items-center justify-center"
+                className="flex shrink-0 items-center justify-center"
               >
-                <img
-                  src={dashboardLogo}
-                  alt="Dawaai"
-                  draggable={false}
-                  className="h-[60px] w-[62px] select-none object-contain"
-                />
+                <Brand />
               </NavLink>
 
               {/* Main user navigation - text only like Figma */}
@@ -575,6 +569,23 @@ export function DashboardLayout() {
                       </NavLink>
 
                       <NavLink
+                        to="/app/notifications"
+                        onClick={() => setOpen(false)}
+                        className="flex min-h-[40px] items-center gap-3 rounded-lg px-3 text-[13px] text-[#5F7479] transition hover:bg-[#F4F8F8] hover:text-[#216474]"
+                      >
+                        <Bell size={16} strokeWidth={1.7} className="shrink-0" />
+                        <span className="flex-1 text-right">{t("الإشعارات")}</span>
+
+                        {unreadCount > 0 ? (
+                          <span className="grid min-w-5 place-items-center rounded-full bg-rose-500 px-1.5 text-[9px] font-bold leading-5 text-white">
+                            {unreadCount > 99
+                              ? "+99"
+                              : unreadCount.toLocaleString(locale)}
+                          </span>
+                        ) : null}
+                      </NavLink>
+
+                      <NavLink
                         to="/app/settings"
                         onClick={() => setOpen(false)}
                         className="flex min-h-[40px] items-center gap-3 rounded-lg px-3 text-[13px] text-[#5F7479] transition hover:bg-[#F4F8F8] hover:text-[#216474]"
@@ -646,6 +657,23 @@ export function DashboardLayout() {
                   className="flex min-h-11 items-center rounded-xl px-4 py-2.5 text-sm text-[#60777C] hover:bg-[#F4F8F8]"
                 >
                   {t("سجل البحث")}
+                </NavLink>
+
+                <NavLink
+                  to="/app/notifications"
+                  onClick={() => setOpen(false)}
+                  className="flex min-h-11 items-center gap-3 rounded-xl px-4 py-2.5 text-sm text-[#60777C] hover:bg-[#F4F8F8]"
+                >
+                  <Bell size={16} strokeWidth={1.7} className="shrink-0" />
+                  <span className="flex-1">{t("الإشعارات")}</span>
+
+                  {unreadCount > 0 ? (
+                    <span className="grid min-w-5 place-items-center rounded-full bg-rose-500 px-1.5 text-[9px] font-bold leading-5 text-white">
+                      {unreadCount > 99
+                        ? "+99"
+                        : unreadCount.toLocaleString(locale)}
+                    </span>
+                  ) : null}
                 </NavLink>
 
                 <NavLink
@@ -731,18 +759,23 @@ export function DashboardLayout() {
           <div
             className={`flex items-center ${
               isArabic
-                ? "mx-auto h-[52px] w-[242px] justify-center"
-                : "h-[68px] w-full justify-start pl-3"
+                ? "mx-auto min-h-[58px] w-[251px] justify-center"
+                : "min-h-[58px] w-full justify-start px-3"
             }`}
           >
-            <img
-              src={dashboardLogo}
-              alt="Medical Life"
-              draggable={false}
-              className={`select-none object-contain ${
-                isArabic ? "h-[52px] w-[242px]" : "h-[68px] w-[300px] mr-10"
-              }`}
-            />
+            <NavLink
+              to="/app"
+              aria-label={t("الرئيسية")}
+              className="flex items-center justify-center"
+            >
+              <img
+                src="/assets/app/brand/logo_white.png"
+                alt="Dawaai"
+                draggable={false}
+                className="h-[72px] w-auto select-none object-contain"
+              />
+            </NavLink>
+
           </div>
           <div className="mx-auto mt-2 h-px w-[233px] bg-white/15" />
 
@@ -827,17 +860,14 @@ export function DashboardLayout() {
           </nav>
         </div>
 
-        <div className="relative z-20 mx-auto mt-3 w-[251px] shrink-0 border-t border-white/10 bg-[#174b57] pt-3">
-          <button
-            type="button"
-            onClick={signOut}
-            className="flex min-h-[54px] w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-[#ef4444] transition hover:bg-rose-400/10"
-          >
-            <LogOut size={18} strokeWidth={1.8} />
-
-            <span>{t("تسجيل الخروج")}</span>
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={signOut}
+          className="relative z-20 mx-5 mt-3 flex min-h-[50px] shrink-0 items-center gap-3 rounded-xl border border-white/10 px-3.5 py-3 text-sm font-semibold text-white/60 transition hover:border-rose-300/20 hover:bg-rose-400/10 hover:text-rose-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-200/60"
+        >
+          <LogOut size={18} strokeWidth={1.8} />
+          <span>{t("تسجيل الخروج")}</span>
+        </button>
       </aside>
 
       {open && (
@@ -855,19 +885,34 @@ export function DashboardLayout() {
         }`}
       >
         <header className="sticky top-0 z-30 h-[78px] w-full border-b border-[#174b57]/[.08] bg-white/90 shadow-[0_8px_30px_rgba(23,75,87,.035)] backdrop-blur-xl supports-[backdrop-filter]:bg-white/82">
-          <div className="grid h-full w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 ps-16 sm:px-6 sm:ps-16 lg:ps-8 xl:px-10">
+          <div
+            className="
+              grid h-full w-full
+              grid-cols-[1fr_minmax(320px,553px)_1fr]
+              items-center
+              gap-5
+              px-4 ps-16
+              sm:px-6 sm:ps-16
+              lg:ps-8
+              xl:px-10
+            "
+          >
+            {/* Page title */}
+
             <div
               dir={direction}
-              className={`flex flex-col justify-center justify-self-start ${
-                isArabic ? "items-start text-right" : "items-start text-left"
+              className={`flex min-w-0 flex-col justify-center ${
+                isArabic
+                  ? "items-start text-right"
+                  : "items-start text-left"
               }`}
             >
-              <h1 className="max-w-[60vw] truncate whitespace-nowrap text-lg font-medium leading-[33px] text-[#216474] sm:text-[22px] lg:max-w-[240px] xl:max-w-none">
+              <h1 className="max-w-full truncate whitespace-nowrap text-lg font-medium leading-[33px] text-[#216474] sm:text-[22px]">
                 {t(currentPageTitle)}
               </h1>
 
               <span
-                className={`h-0.5 w-[107px] self-start ${
+                className={`h-0.5 w-[107px] ${
                   isArabic
                     ? "bg-[linear-gradient(to_left,#eeb73a,rgba(238,183,58,0))]"
                     : "bg-[linear-gradient(to_right,#eeb73a,rgba(238,183,58,0))]"
@@ -875,24 +920,64 @@ export function DashboardLayout() {
               />
             </div>
 
-            <label
-              dir="ltr"
-              className="hidden h-11 w-full max-w-[553px] items-center justify-self-center gap-2 rounded-lg border border-[rgba(102,102,102,.16)] bg-white px-3 text-[#a5a5a5] xl:flex"
+            {/* Global search */}
+            <form
+              onSubmit={submitGlobalSearch}
+              dir={direction}
+              className="
+                hidden h-11 w-full
+                items-center
+                overflow-hidden
+                rounded-lg
+                border border-[rgba(102,102,102,.16)]
+                bg-white
+                shadow-[0_3px_12px_rgba(23,75,87,.035)]
+                xl:flex
+              "
+
             >
               <input
                 type="search"
+                value={globalSearch}
+                onChange={(event) => setGlobalSearch(event.target.value)}
                 dir={direction}
-                placeholder={t("ابحث هنا")}
+                placeholder={t("ابحث هنا...")}
                 aria-label={t("ابحث هنا...")}
-                className={`min-w-0 flex-1 border-0 bg-transparent text-xs text-[#333333] outline-none placeholder:text-[#a5a5a5] ${
+                className={`min-w-0 flex-1 border-0 bg-transparent px-4 text-xs text-[#333333] outline-none placeholder:text-[#A5A5A5] ${
+
                   isArabic ? "text-right" : "text-left"
                 }`}
               />
+              <datalist id="dashboard-navigation-search">
+                {searchableNavigation.map((item) => (
+                  <option key={item.to} value={item.translatedLabel} />
+                ))}
+              </datalist>
 
-              <Search size={18} strokeWidth={1.6} className="shrink-0" />
-            </label>
+              <button
+                type="submit"
+                aria-label={t("بحث")}
+                className="
+                  grid h-full w-12 shrink-0
+                  place-items-center
+                  border-s border-[rgba(102,102,102,.12)]
+                  bg-[#F8FAFC]
+                  text-[#216474]
+                  transition
+                  hover:bg-[#EAF4F3]
+                "
+              >
+                <Search size={18} strokeWidth={1.8} />
 
-            <div className="flex items-center justify-end">
+              </button>
+            </form>
+
+            {/* Notifications */}
+            <div
+              className={`flex h-full items-center ${
+                isArabic ? "justify-end" : "justify-start"
+              }`}
+            >
               <NotificationBell
                 unreadCount={unreadCount}
                 roles={user?.roles || []}

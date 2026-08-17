@@ -26,6 +26,8 @@ import {
   notificationTypes,
 } from "../utils/notificationFormatters";
 
+const USER_HERO_IMAGE = "/assets/app/home/hero_search.png";
+
 const ORGANIZATION_HERO_IMAGE =
   "/assets/app/organization/organization-dashboard-hero.png";
 
@@ -59,9 +61,15 @@ export function NotificationsPage() {
     (role) => String(role).toLowerCase() === "pharmacy",
   );
 
+  const isUserAccount = userRoles.some(
+    (role) => String(role).toLowerCase() === "user",
+  );
+
   const notificationsHeroImage = isPharmacyAccount
     ? PHARMACY_HERO_IMAGE
-    : ORGANIZATION_HERO_IMAGE;
+    : isUserAccount
+      ? USER_HERO_IMAGE
+      : ORGANIZATION_HERO_IMAGE;
 
   const summary = useQuery({
     queryKey: notificationKeys.summary,
@@ -130,27 +138,33 @@ export function NotificationsPage() {
     <div
       dir={direction}
       lang={currentLanguage}
-      className="min-h-[calc(100vh-164px)] space-y-5 bg-[#F4F8F8]"
+      className="m-0 min-h-screen w-full bg-[#F7F9FA] p-0 text-[#333333]"
     >
       {/* Hero */}
       <section
         className="
-          relative isolate min-h-[220px] overflow-hidden
-          rounded-[14px] text-white
-          shadow-[0_22px_55px_rgba(23,75,87,.16)]
-          sm:min-h-[230px]
-          lg:min-h-[250px]
+          relative isolate
+          -mt-6 overflow-hidden
+          bg-[#0D7586]
+          text-white
+          sm:-mt-7
+          lg:-mt-8
         "
+        style={{
+          width: "100vw",
+          marginInline: "calc(50% - 50vw)",
+        }}
       >
         <img
           src={notificationsHeroImage}
           alt=""
           aria-hidden="true"
           className={`
-            absolute inset-0
+            absolute inset-0 -z-20
             h-full w-full
-            object-cover
-            object-[center_38%]
+            select-none
+            object-cover object-center
+            opacity-80
             ${
               isPharmacyAccount
                 ? isArabic
@@ -164,11 +178,12 @@ export function NotificationsPage() {
         />
 
         <div
-          className="absolute inset-0"
+          aria-hidden="true"
+          className="absolute inset-0 -z-10"
           style={{
             background: isArabic
-              ? "linear-gradient(270deg,#10505A 0%,rgba(16,80,90,.90) 38%,rgba(33,100,116,.48) 70%,rgba(33,100,116,.08) 100%)"
-              : "linear-gradient(90deg,#10505A 0%,rgba(16,80,90,.90) 38%,rgba(33,100,116,.48) 70%,rgba(33,100,116,.08) 100%)",
+              ? "linear-gradient(270deg,rgba(0,63,76,.48) 0%,rgba(3,110,126,.60) 48%,rgba(0,60,73,.18) 100%)"
+              : "linear-gradient(90deg,rgba(0,63,76,.48) 0%,rgba(3,110,126,.60) 48%,rgba(0,60,73,.18) 100%)",
           }}
         />
 
@@ -176,13 +191,12 @@ export function NotificationsPage() {
           dir={direction}
           className="
             relative z-10
-            flex min-h-[220px] w-full
-            items-center
-            gap-6
-            px-8 py-7
-            sm:min-h-[230px]
-            lg:min-h-[250px]
-            lg:px-10
+            mx-auto flex min-h-[220px]
+            w-full max-w-[1240px]
+            items-center gap-6
+            px-5 py-9
+            sm:px-7
+            lg:px-8
           "
         >
           <div
@@ -243,6 +257,7 @@ export function NotificationsPage() {
         </div>
       </section>
 
+      <main className="mx-auto w-full max-w-[1240px] px-5 pb-12 pt-8 sm:px-7 lg:px-8">
       {/* Notice */}
       {notice && (
         <div className="rounded-xl border border-[#CFE4E7] bg-[#EAF4F3] px-4 py-3 text-sm font-bold text-[#216474]">
@@ -401,6 +416,7 @@ export function NotificationsPage() {
           })}
         </section>
       )}
+      </main>
     </div>
   );
 }

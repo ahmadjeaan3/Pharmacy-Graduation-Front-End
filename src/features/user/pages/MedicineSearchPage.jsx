@@ -21,6 +21,8 @@ import {
   getLocationContext,
   getNearestPharmacies,
   getNearestPharmacyRoute,
+  getPopularMedicines,
+  getSearchHistory,
   searchMedicines,
   userKeys,
 } from "../api/userApi";
@@ -47,6 +49,27 @@ const FOOTER_SOCIAL_ICONS = {
 
 const popularSearches = ["بانادول", "أوجمنتين", "بيبانتين", "سيفيكسيم"];
 
+function getMedicineImageSource(imageUrl) {
+  if (!imageUrl) return null;
+
+  if (/^https?:\/\//i.test(imageUrl)) {
+    return imageUrl;
+  }
+
+  try {
+    const apiBaseUrl =
+      import.meta.env.VITE_API_BASE_URL ||
+      "https://localhost:7048/api";
+
+    const apiOrigin = new URL(apiBaseUrl, window.location.origin).origin;
+
+    return `${apiOrigin}${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
+  } catch {
+    return imageUrl;
+  }
+}
+
+
 const sortOptions = [
   { value: "BestMatch", label: "الأفضل تطابقاً" },
   { value: "Distance", label: "الأقرب" },
@@ -69,6 +92,82 @@ export function MedicineSearchPage() {
   const [sortBy, setSortBy] = useState("BestMatch");
   const [routePharmacy, setRoutePharmacy] = useState(null);
   const [visibleCount, setVisibleCount] = useState(5);
+  const [visiblePreviousCount, setVisiblePreviousCount] = useState(5);
+
+  const searchHistoryQuery = useQuery({
+    queryKey: userKeys.searchHistory(20),
+    queryFn: () => getSearchHistory(20),
+    staleTime: 30_000,
+  });
+
+  const popularMedicinesQuery = useQuery({
+    queryKey: userKeys.popularMedicines(20),
+    queryFn: () => getPopularMedicines(20),
+    staleTime: 60_000,
+  });
+
+  const previousSearches = useMemo(() => {
+    const history = Array.isArray(searchHistoryQuery.data)
+      ? searchHistoryQuery.data
+      : [];
+
+    const medicines = Array.isArray(popularMedicinesQuery.data)
+      ? popularMedicinesQuery.data
+      : [];
+
+    const normalize = (value) =>
+      String(value || "")
+        .trim()
+        .toLowerCase();
+
+    return history.map((entry, index) => {
+      const term =
+        entry.query ||
+        entry.searchQuery ||
+        entry.term ||
+        entry.searchText ||
+        "";
+
+      const normalizedTerm = normalize(term);
+
+      const medicine =
+        medicines.find((item) => {
+          const names = [
+            item.medicineName,
+            item.arabicMedicineName,
+            item.medicineDisplayName,
+            item.scientificName,
+          ];
+
+          return names.some((name) => {
+            const normalizedName = normalize(name);
+
+            return (
+              normalizedName &&
+              normalizedTerm &&
+              (normalizedName.includes(normalizedTerm) ||
+                normalizedTerm.includes(normalizedName))
+            );
+          });
+        }) || null;
+
+      return {
+        id:
+          entry.id ||
+          entry.searchHistoryId ||
+          `${term}-${index}`,
+        term: term || "بحث سابق",
+        searchedAt:
+          entry.searchedAtUtc ||
+          entry.createdAtUtc ||
+          entry.createdAt ||
+          entry.date ||
+          null,
+        medicine,
+      };
+    });
+  }, [searchHistoryQuery.data, popularMedicinesQuery.data]);
+
 
   const activeView =
     searchParams.get("view") === "pharmacies" ? "pharmacies" : "medicines";
@@ -379,10 +478,165 @@ export function MedicineSearchPage() {
               onRetry={() => searchMutation.reset()}
             />
           ) : !searchMutation.data ? (
-            <UserEmptyState
-              title="ابدأ بكتابة اسم الدواء"
-              description="ستظهر هنا النتائج المتاحة مع الصيدليات والمسافة والتقييم."
-            />
+            <div className="mx-auto w-full max-w-[1120px]">
+              <div className="mb-6 flex items-end justify-between gap-4">
+                <div className="text-right">
+                  <div className="mb-2 flex items-center gap-2">
+                    <span className="h-[2px] w-8 rounded-full bg-[#216474]" />
+                    <span className="text-[11px] font-bold text-[#216474]">
+                      سجل البحث
+                    </span>
+                  </div>
+
+                  <h2 className="text-[22px] font-black text-[#29464D]">
+                    نتائج البحث السابقة
+                  </h2>
+
+                  <p className="mt-1 text-[12px] text-[#8A9A9E]">
+                    يمكنك العودة إلى عمليات البحث الأخيرة بسرعة
+                  </p>
+                </div>
+              </div>
+
+              {searchHistoryQuery.isPending ? (
+                <UserLoadingState label="جاري تحميل عمليات البحث السابقة..." />
+              ) : previousSearches.length ? (
+                <>
+                  <div className="space-y-3">
+                    {previousSearches
+                      .slice(0, visiblePreviousCount)
+                      .map((entry) => {
+                      const medicine = entry.medicine;
+                      const displayName =
+                        medicine?.medicineDisplayName ||
+                        medicine?.arabicMedicineName ||
+                        medicine?.medicineName ||
+                        entry.term;
+
+                      const secondaryName =
+                        medicine?.scientificName ||
+                        medicine?.manufacturer ||
+                        "بحث سابق";
+
+                      const resolvedImageUrl = getMedicineImageSource(
+                        medicine?.imageUrl,
+                      );
+
+                      return (
+                        <button
+                          key={entry.id}
+                          type="button"
+                          onClick={() => runPopularSearch(entry.term)}
+                          className="
+                            group grid min-h-[84px] w-full items-center gap-4
+                            rounded-[9px] border border-[#E2E8EA]
+                            bg-white px-4 py-3 text-right
+                            shadow-[0_3px_12px_rgba(23,75,87,.025)]
+                            transition
+                            hover:border-[#216474]/25
+                            hover:shadow-[0_8px_22px_rgba(23,75,87,.05)]
+                            sm:grid-cols-[70px_minmax(0,1fr)_150px_42px]
+                          "
+                        >
+                          <div className="flex h-[64px] w-[70px] items-center justify-center overflow-hidden rounded-[9px] bg-[#F8FBFA]">
+                            {resolvedImageUrl ? (
+                              <img
+                                src={resolvedImageUrl}
+                                alt={displayName}
+                                className="max-h-[56px] max-w-[62px] object-contain"
+                              />
+                            ) : (
+                              <PackageSearch
+                                size={24}
+                                strokeWidth={1.5}
+                                className="text-[#216474]"
+                              />
+                            )}
+                          </div>
+
+                          <div className="min-w-0">
+                            <h3 className="truncate text-[13px] font-black text-[#29464D]">
+                              {displayName}
+                            </h3>
+
+                            <p
+                              dir={
+                                secondaryName &&
+                                /[A-Za-z]/.test(secondaryName)
+                                  ? "ltr"
+                                  : "rtl"
+                              }
+                              className="mt-1 line-clamp-1 text-[10.5px] text-[#8A9A9E]"
+                            >
+                              {secondaryName}
+                            </p>
+                          </div>
+
+                          <div className="hidden border-r border-[#EDF1F2] pr-4 text-right sm:block">
+                            <span className="block text-[10px] text-[#A0ADB0]">
+                              آخر بحث
+                            </span>
+                            <span className="mt-1 block text-[11px] font-semibold text-[#60777C]">
+                              {entry.searchedAt
+                                ? new Date(entry.searchedAt).toLocaleDateString(
+                                    "ar-SY",
+                                  )
+                                : "مؤخراً"}
+                            </span>
+                          </div>
+
+                          <span className="grid size-9 place-items-center justify-self-end rounded-full text-[#216474] transition group-hover:bg-[#EEF6F6]">
+                            <ChevronDown
+                              size={16}
+                              className="rotate-90"
+                            />
+                          </span>
+                        </button>
+                      );
+                      })}
+                  </div>
+
+                  {visiblePreviousCount < previousSearches.length ? (
+                    <div className="mt-6 flex justify-center">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setVisiblePreviousCount((current) =>
+                            Math.min(current + 5, previousSearches.length),
+                          )
+                        }
+                        className="
+                          inline-flex min-h-[40px] min-w-[160px]
+                          items-center justify-center gap-2
+                          rounded-[8px] border border-[#216474]
+                          bg-white px-5 text-[12px] font-semibold
+                          text-[#216474] transition hover:bg-[#EEF6F6]
+                        "
+                      >
+                        عرض المزيد
+                        <ChevronDown size={15} />
+                      </button>
+                    </div>
+                  ) : null}
+                </>
+              ) : (
+                <div className="rounded-[10px] border border-dashed border-[#D6E2E4] bg-white px-6 py-12 text-center">
+                  <PackageSearch
+                    size={30}
+                    strokeWidth={1.5}
+                    className="mx-auto text-[#216474]"
+                  />
+
+                  <h3 className="mt-4 text-[14px] font-black text-[#29464D]">
+                    لا توجد عمليات بحث سابقة
+                  </h3>
+
+                  <p className="mt-2 text-[11px] text-[#8A9A9E]">
+                    ابحث عن دواء وسيظهر هنا ضمن سجل البحث.
+                  </p>
+                </div>
+              )}
+            </div>
           ) : !results.length ? (
             <UserEmptyState
               title="لم نجد نتائج مطابقة"
