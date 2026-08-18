@@ -33,9 +33,7 @@ const ADMIN_HERO_IMAGE = "/assets/app/home/background_hero_admin.png";
 export function MedicineCatalogPage() {
   const { t, i18n } = useTranslation();
 
-  const currentLanguage = String(
-    i18n.resolvedLanguage || i18n.language || "ar",
-  )
+  const currentLanguage = String(i18n.resolvedLanguage || i18n.language || "ar")
     .split("-")[0]
     .toLowerCase();
 
@@ -162,9 +160,7 @@ export function MedicineCatalogPage() {
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
               maxLength={200}
-              placeholder={t(
-                "ابحث بالاسم التجاري أو العلمي أو الشركة المصنعة",
-              )}
+              placeholder={t("ابحث بالاسم التجاري أو العلمي أو الشركة المصنعة")}
               aria-label={t("البحث في دليل الأدوية")}
               className={`h-12 w-full rounded-xl border border-[#DCE8EA] bg-white text-[14px] text-[#29464D] outline-none transition placeholder:text-[12px] placeholder:text-[#A5A5A5] hover:border-[#AFC9CD] focus:border-[#216474] focus:ring-2 focus:ring-[#216474]/10 ${
                 isArabic ? "pl-4 pr-12 text-right" : "pl-12 pr-4 text-left"
@@ -305,9 +301,7 @@ export function MedicineCatalogPage() {
 
               <button
                 type="button"
-                disabled={
-                  pageNumber >= data.totalPages || query.isFetching
-                }
+                disabled={pageNumber >= data.totalPages || query.isFetching}
                 onClick={() => setPageNumber((page) => page + 1)}
                 className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-[#216474] px-4 text-[12px] font-bold text-white transition hover:bg-[#174B57] disabled:cursor-not-allowed disabled:opacity-45"
               >

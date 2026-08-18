@@ -38,14 +38,11 @@ function getMedicineImageSource(imageUrl) {
 
   try {
     const apiBaseUrl =
-      import.meta.env.VITE_API_BASE_URL ||
-      "https://localhost:7048/api";
+      import.meta.env.VITE_API_BASE_URL || "https://localhost:7048/api";
 
     const apiOrigin = new URL(apiBaseUrl, window.location.origin).origin;
 
-    return `${apiOrigin}${
-      normalized.startsWith("/") ? "" : "/"
-    }${normalized}`;
+    return `${apiOrigin}${normalized.startsWith("/") ? "" : "/"}${normalized}`;
   } catch {
     return normalized;
   }
@@ -104,10 +101,7 @@ export function PharmacyMedicinesPage() {
   const pharmacy = query.data?.pharmacy;
 
   return (
-    <div
-      dir="rtl"
-      className="min-h-screen bg-[#F7F9FA] text-[#333333]"
-    >
+    <div dir="rtl" className="min-h-screen bg-[#F7F9FA] text-[#333333]">
       <style>{`
         .dawaai-full-bleed {
           width: 100vw;
@@ -199,7 +193,6 @@ export function PharmacyMedicinesPage() {
               </p>
             </div>
           </div>
-
         </div>
       </section>
 
@@ -239,9 +232,7 @@ export function PharmacyMedicinesPage() {
           </div>
 
           <div className="mt-3 flex items-center justify-between gap-3 text-xs text-[#829499]">
-            <span>
-              {medicines.length.toLocaleString("ar-SY")} دواء
-            </span>
+            <span>{medicines.length.toLocaleString("ar-SY")} دواء</span>
             {search ? (
               <button
                 type="button"
@@ -358,4 +349,4 @@ function MedicineCard({ medicine, pharmacyId }) {
   );
 }
 
-export default PharmacyMedicinesPage
+export default PharmacyMedicinesPage;

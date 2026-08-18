@@ -64,15 +64,11 @@ export function OrganizationsDirectoryPage() {
       (organizations.data || []).filter(
         (item) =>
           !normalized ||
-          [
-            item.organizationName,
-            item.city,
-            item.area,
-            item.description,
-          ].some((value) =>
-            String(value || "")
-              .toLowerCase()
-              .includes(normalized),
+          [item.organizationName, item.city, item.area, item.description].some(
+            (value) =>
+              String(value || "")
+                .toLowerCase()
+                .includes(normalized),
           ),
       ),
     [organizations.data, normalized],
@@ -300,8 +296,6 @@ export function OrganizationsDirectoryPage() {
           )}
         </section>
       </main>
-
-     
     </div>
   );
 }
@@ -551,9 +545,7 @@ function FooterFeature({ icon: Icon, title, description }) {
           {title}
         </strong>
 
-        <p className="mt-1 text-[10.5px] text-[#A5A5A5]">
-          {description}
-        </p>
+        <p className="mt-1 text-[10.5px] text-[#A5A5A5]">{description}</p>
       </div>
     </div>
   );

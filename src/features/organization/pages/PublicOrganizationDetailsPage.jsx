@@ -28,7 +28,8 @@ import {
 
 import { PublicCampaignCard } from "../components/PublicCampaignCard";
 
-const HERO_BACKGROUND = "/assets/app/organization/organization-dashboard-hero.png";
+const HERO_BACKGROUND =
+  "/assets/app/organization/organization-dashboard-hero.png";
 
 const FOOTER_SOCIAL_ICONS = {
   whatsapp: "/assets/app/social/whatsapp.png",
@@ -63,13 +64,10 @@ export function PublicOrganizationDetailsPage() {
   const data = query.data;
 
   const fullAddress =
-    [data.address, data.area, data.city]
-      .filter(Boolean)
-      .join("، ") || "العنوان غير متوفر";
+    [data.address, data.area, data.city].filter(Boolean).join("، ") ||
+    "العنوان غير متوفر";
 
-  const campaignsCount = Number(
-    data.activeCampaigns?.length || 0,
-  );
+  const campaignsCount = Number(data.activeCampaigns?.length || 0);
 
   return (
     <div
@@ -253,11 +251,7 @@ export function PublicOrganizationDetailsPage() {
             INFO CARDS
         ==================================================== */}
         <section className="grid gap-5 md:grid-cols-3">
-          <InfoCard
-            icon={MapPin}
-            label="العنوان"
-            value={fullAddress}
-          />
+          <InfoCard icon={MapPin} label="العنوان" value={fullAddress} />
 
           <InfoCard
             icon={Phone}
@@ -340,8 +334,6 @@ export function PublicOrganizationDetailsPage() {
           )}
         </section>
       </main>
-
-  
     </div>
   );
 }
@@ -350,12 +342,7 @@ export function PublicOrganizationDetailsPage() {
    COMPONENTS
 ========================================================= */
 
-function InfoCard({
-  icon: Icon,
-  label,
-  value,
-  ltr = false,
-}) {
+function InfoCard({ icon: Icon, label, value, ltr = false }) {
   return (
     <article
       className="
@@ -409,11 +396,7 @@ function InfoCard({
   );
 }
 
-function FooterFeature({
-  icon: Icon,
-  title,
-  description,
-}) {
+function FooterFeature({ icon: Icon, title, description }) {
   return (
     <div className="flex items-center justify-start gap-3 text-right">
       <span

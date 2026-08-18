@@ -103,20 +103,18 @@ export function AdminApprovalsPage() {
     <div className="space-y-5 sm:space-y-6">
       <section className="relative isolate overflow-hidden rounded-[16px] border border-[#174b57]/8 bg-white shadow-[0_18px_45px_rgba(23,75,87,.07)]">
         <div className="relative isolate min-h-[230px] overflow-hidden bg-[#10505A] px-5 py-7 text-white sm:min-h-[250px] sm:px-7 sm:py-8 lg:min-h-[271px] lg:px-10">
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 -z-20 bg-cover bg-[position:38%_center] bg-no-repeat"
-          style={{ backgroundImage: `url("${ADMIN_HERO_IMAGE}")` }}
-        />
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 -z-10 bg-[linear-gradient(270deg,#10505A_0%,rgba(16,80,90,.88)_36%,rgba(33,100,116,.42)_70%,rgba(33,100,116,.08)_100%)]"
-        />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 -z-20 bg-cover bg-[position:38%_center] bg-no-repeat"
+            style={{ backgroundImage: `url("${ADMIN_HERO_IMAGE}")` }}
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 -z-10 bg-[linear-gradient(270deg,#10505A_0%,rgba(16,80,90,.88)_36%,rgba(33,100,116,.42)_70%,rgba(33,100,116,.08)_100%)]"
+          />
           <div className="flex h-full flex-col justify-center">
             <div className="w-full max-w-2xl">
-              <p className="text-sm font-bold text-[#8BD0CB]">
-                إدارة الحسابات
-              </p>
+              <p className="text-sm font-bold text-[#8BD0CB]">إدارة الحسابات</p>
 
               <h2 className="mt-2 text-3xl font-black text-white sm:text-4xl">
                 طلبات الاعتماد

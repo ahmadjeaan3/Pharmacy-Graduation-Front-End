@@ -361,13 +361,17 @@ export function SupplyChainWorkspacePage() {
     String(item).trim().toLowerCase(),
   );
   const isAdminAccount =
-    String(role || "").trim().toLowerCase() === "admin" ||
+    String(role || "")
+      .trim()
+      .toLowerCase() === "admin" ||
     normalizedRoles.some((item) =>
       ["admin", "administrator", "systemadmin", "system-admin"].includes(item),
     );
 
   const isWarehouseAccount =
-    String(role || "").trim().toLowerCase() === "warehouse" ||
+    String(role || "")
+      .trim()
+      .toLowerCase() === "warehouse" ||
     normalizedRoles.some((item) =>
       ["warehouse", "warehouseadmin", "warehouse-admin"].includes(item),
     );

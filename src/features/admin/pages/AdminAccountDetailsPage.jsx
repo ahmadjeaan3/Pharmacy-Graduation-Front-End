@@ -165,7 +165,11 @@ export function AdminAccountDetailsPage() {
     : t("غير محدد");
 
   return (
-    <div dir={direction} lang={currentLanguage} className="space-y-5 sm:space-y-6">
+    <div
+      dir={direction}
+      lang={currentLanguage}
+      className="space-y-5 sm:space-y-6"
+    >
       {/* Back */}
       <div>
         <Link

@@ -8,14 +8,9 @@ import {
 import { Link } from "react-router-dom";
 import { formatOrgDate } from "../utils/organizationFormatters";
 
-export function PublicCampaignCard({
-  campaign,
-  showOrganization = true,
-}) {
+export function PublicCampaignCard({ campaign, showOrganization = true }) {
   const location =
-    [campaign.area, campaign.city]
-      .filter(Boolean)
-      .join("، ") || "غير محدد";
+    [campaign.area, campaign.city].filter(Boolean).join("، ") || "غير محدد";
 
   return (
     <article
@@ -172,22 +167,14 @@ export function PublicCampaignCard({
         >
           {/* الموقع */}
           <span className="flex min-w-0 items-center gap-2">
-            <MapPin
-              size={15}
-              className="shrink-0 text-[#216474]"
-            />
+            <MapPin size={15} className="shrink-0 text-[#216474]" />
 
-            <span className="truncate">
-              {location}
-            </span>
+            <span className="truncate">{location}</span>
           </span>
 
           {/* تاريخ انتهاء الحملة */}
           <span className="flex min-w-0 items-center gap-2">
-            <CalendarDays
-              size={15}
-              className="shrink-0 text-[#216474]"
-            />
+            <CalendarDays size={15} className="shrink-0 text-[#216474]" />
 
             <span className="truncate">
               حتى {formatOrgDate(campaign.endsAtUtc)}

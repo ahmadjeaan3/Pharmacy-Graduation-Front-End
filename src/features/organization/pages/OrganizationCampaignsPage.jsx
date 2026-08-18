@@ -342,8 +342,8 @@ export function OrganizationCampaignsPage() {
               aria-hidden="true"
               className={`absolute inset-0 ${
                 isArabic
-              ? "bg-[linear-gradient(270deg,#10505A_0%,rgba(33,100,116,.25)_70%,rgba(33,100,116,.05)_100%)]"
-              : "bg-[linear-gradient(90deg,#10505A_0%,rgba(33,100,116,.25)_70%,rgba(33,100,116,.05)_100%)]"
+                  ? "bg-[linear-gradient(270deg,#10505A_0%,rgba(33,100,116,.25)_70%,rgba(33,100,116,.05)_100%)]"
+                  : "bg-[linear-gradient(90deg,#10505A_0%,rgba(33,100,116,.25)_70%,rgba(33,100,116,.05)_100%)]"
               }`}
             />
 
@@ -765,21 +765,21 @@ export function OrganizationCampaignsPage() {
           ) : (
             <div className="mt-3">
               <CampaignsTable
-              campaigns={filteredCampaigns}
-              pending={updateStatus.isPending || remove.isPending}
-              onStatus={(campaignId, nextStatus) =>
-                updateStatus.mutate({
-                  campaignId,
-                  nextStatus,
-                })
-              }
-              onEdit={openEditForm}
-              onDelete={handleDelete}
-              fetching={query.isFetching}
-              t={t}
-              direction={direction}
-              isArabic={isArabic}
-            />
+                campaigns={filteredCampaigns}
+                pending={updateStatus.isPending || remove.isPending}
+                onStatus={(campaignId, nextStatus) =>
+                  updateStatus.mutate({
+                    campaignId,
+                    nextStatus,
+                  })
+                }
+                onEdit={openEditForm}
+                onDelete={handleDelete}
+                fetching={query.isFetching}
+                t={t}
+                direction={direction}
+                isArabic={isArabic}
+              />
             </div>
           )}
         </>

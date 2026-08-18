@@ -107,7 +107,11 @@ export function AdminAccountsPage() {
   });
 
   return (
-    <div dir={direction} lang={currentLanguage} className="space-y-5 sm:space-y-6">
+    <div
+      dir={direction}
+      lang={currentLanguage}
+      className="space-y-5 sm:space-y-6"
+    >
       {/* Hero */}
       <section className="relative isolate min-h-[230px] overflow-hidden rounded-[16px] bg-[#10505A] px-5 py-7 text-white shadow-[0_22px_55px_rgba(23,75,87,.14)] sm:min-h-[250px] sm:px-7 sm:py-8 lg:min-h-[271px] lg:px-10">
         <div
