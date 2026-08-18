@@ -123,6 +123,8 @@ const getRuntimeStatus = (item) => {
   };
 };
 
+const ADMIN_HERO_IMAGE = "/assets/app/home/background_hero_admin.png";
+
 export function AdminHomeTickerPage() {
   const client = useQueryClient();
 
@@ -285,16 +287,28 @@ export function AdminHomeTickerPage() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 sm:space-y-6">
       {/* Hero */}
-      <section className="relative isolate overflow-hidden rounded-[1.8rem] bg-[#174B57] px-6 py-8 text-white shadow-[0_22px_55px_rgba(23,75,87,.16)] lg:px-9">
-        <div className="noise absolute inset-0 -z-10" />
+      <section className="relative isolate min-h-[230px] overflow-hidden rounded-[16px] bg-[#10505A] px-5 py-7 text-white shadow-[0_22px_55px_rgba(23,75,87,.14)] sm:min-h-[250px] sm:px-7 sm:py-8 lg:min-h-[271px] lg:px-10">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-20 bg-cover bg-[position:42%_center] bg-no-repeat"
+          style={{
+            backgroundImage: `url("${ADMIN_HERO_IMAGE}")`,
+          }}
+        />
 
-        <div className="absolute -start-20 -top-28 -z-10 size-72 rounded-full border-[48px] border-white/[.035]" />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 bg-[linear-gradient(270deg,#0D4E59_0%,rgba(13,78,89,.92)_34%,rgba(33,100,116,.48)_68%,rgba(33,100,116,.10)_100%)]"
+        />
 
-        <div className="absolute -bottom-24 end-10 -z-10 size-56 rounded-full bg-[#6E969E]/10 blur-2xl" />
+        <div className="noise absolute inset-0 -z-[5] opacity-25" />
 
-        <div className="flex flex-col gap-7 lg:flex-row lg:items-end lg:justify-between">
+        <div className="absolute -start-20 -top-28 -z-[4] size-72 rounded-full border-[48px] border-white/[.03]" />
+        <div className="absolute -bottom-24 end-10 -z-[4] size-56 rounded-full bg-[#8BD0CB]/8 blur-2xl" />
+
+        <div className="relative flex min-h-[175px] flex-col justify-center gap-7 sm:min-h-[190px] lg:min-h-[207px] lg:flex-row lg:items-center lg:justify-between">
           <div>
             <p className="flex items-center gap-2 text-sm font-black text-[#8BD0CB]">
               <Sparkles size={16} />
@@ -305,7 +319,7 @@ export function AdminHomeTickerPage() {
               شريط الإعلانات والمناوبات
             </h1>
 
-            <p className="mt-3 max-w-2xl text-sm leading-7 text-white/60">
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-white/70">
               أنشئ إعلانًا أو انشر صيدلية مناوبة، وحدد وقت ظهوره وترتيبه من لوحة
               واحدة واضحة.
             </p>
@@ -314,7 +328,7 @@ export function AdminHomeTickerPage() {
           <button
             type="button"
             onClick={resetForm}
-            className="inline-flex w-fit items-center gap-2 rounded-xl border border-[#F5CB72] bg-[#F5CB72] px-5 py-3.5 text-sm font-black text-[#173D46] shadow-lg shadow-black/10 transition hover:-translate-y-0.5 hover:bg-[#F8D784]"
+            className="inline-flex h-[50px] w-fit items-center justify-center gap-2 rounded-[10px] border border-white bg-white px-6 text-sm font-black text-[#216474] shadow-[0_10px_26px_rgba(0,0,0,.16)] transition hover:-translate-y-0.5 hover:bg-[#F4FAFA] hover:shadow-[0_14px_30px_rgba(0,0,0,.20)]"
           >
             <Plus size={18} />
             إنشاء عنصر جديد
@@ -360,7 +374,7 @@ export function AdminHomeTickerPage() {
       {/* Editor */}
       <section
         id="ticker-editor"
-        className="scroll-mt-28 overflow-hidden rounded-[1.6rem] border border-[#DCE8EA] bg-white shadow-[0_14px_40px_rgba(23,75,87,.055)]"
+        className="scroll-mt-28 overflow-hidden rounded-[14px] border border-[#DCE8EA] bg-white shadow-[0_14px_40px_rgba(23,75,87,.055)]"
       >
         <div className="grid xl:grid-cols-[minmax(0,1fr)_420px]">
           <form
@@ -573,7 +587,7 @@ export function AdminHomeTickerPage() {
             <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-[#E6EEF0] pt-5">
               <button
                 disabled={save.isPending}
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#174B57] px-5 text-sm font-black text-white transition hover:bg-[#123F49] disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[10px] bg-[#216474] px-5 text-sm font-bold text-white shadow-[0_8px_18px_rgba(33,100,116,.12)] transition hover:bg-[#174B57] disabled:cursor-not-allowed disabled:opacity-60"
                 type="submit"
               >
                 {editingId ? <Save size={18} /> : <Plus size={18} />}
@@ -610,7 +624,7 @@ export function AdminHomeTickerPage() {
               هكذا سيظهر المحتوى للزوار
             </h3>
 
-            <div className="relative mt-7 overflow-hidden rounded-[1.4rem] bg-[#174B57] p-5 text-white shadow-[0_20px_45px_rgba(23,75,87,.18)]">
+            <div className="relative mt-7 overflow-hidden rounded-[14px] bg-[#174B57] p-5 text-white shadow-[0_20px_45px_rgba(23,75,87,.18)]">
               <div className="absolute -end-8 -top-8 size-28 rounded-full border-[18px] border-white/5" />
 
               <div className="relative flex items-start gap-3">
@@ -815,17 +829,13 @@ function TickerCard({ item, onEdit, onToggle, onDelete, busy }) {
   const duty = item.type === "DutyPharmacy";
 
   return (
-    <article className="group relative overflow-hidden rounded-[1.45rem] border border-[#DCE8EA] bg-white p-5 shadow-[0_10px_30px_rgba(23,75,87,.04)] transition hover:-translate-y-0.5 hover:border-[#AFC9CD] hover:shadow-[0_18px_42px_rgba(23,75,87,.08)]">
-      <div
-        className={`absolute inset-y-0 start-0 w-1 ${
-          duty ? "bg-[#F5CB72]" : "bg-[#216474]"
-        }`}
-      />
+    <article className="group relative overflow-hidden rounded-[14px] border border-[#DCE8EA] bg-[#F8FBFB] p-5 shadow-[0_10px_30px_rgba(23,75,87,.04)] transition hover:-translate-y-0.5 hover:border-[#216474]/25 hover:bg-[#F4F9F8] hover:shadow-[0_18px_42px_rgba(23,75,87,.08)]">
+
 
       <div className="flex items-start gap-4">
         <span
           className={`grid size-12 shrink-0 place-items-center rounded-xl ${
-            duty ? "bg-[#FFF7DF] text-[#DFAE0D]" : "bg-[#EAF4F3] text-[#216474]"
+            duty ? "bg-[#F0F6F7] text-[#52727A]" : "bg-[#EAF4F3] text-[#216474]"
           }`}
         >
           {duty ? <Building2 size={21} /> : <BellRing size={21} />}
@@ -833,7 +843,7 @@ function TickerCard({ item, onEdit, onToggle, onDelete, busy }) {
 
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-[#F0F6F7] px-2.5 py-1 text-[10px] font-black text-[#60777D]">
+            <span className="rounded-full border border-[#DCE8EA] bg-[#F8FBFB] px-2.5 py-1 text-[10px] font-black text-[#60777D]">
               {duty ? "صيدلية مناوبة" : "إعلان عام"}
             </span>
 
@@ -898,8 +908,8 @@ function TickerCard({ item, onEdit, onToggle, onDelete, busy }) {
             onClick={onToggle}
             className={`grid size-10 place-items-center rounded-xl border transition disabled:cursor-not-allowed disabled:opacity-50 ${
               item.isActive
-                ? "border-[#F5CB72]/40 bg-[#FFF7DF] text-[#DFAE0D] hover:bg-[#FCEFC5]"
-                : "border-[#CFE4E7] bg-[#EAF4F3] text-[#174B57] hover:bg-[#DCEFED]"
+                ? "border-[#CFE4E7] bg-[#EAF4F3] text-[#216474] hover:bg-[#DCEFED]"
+                : "border-[#DCE8EA] bg-[#F8FBFB] text-[#60777D] hover:bg-[#F0F6F7]"
             }`}
             title={item.isActive ? "إيقاف النشر" : "تفعيل النشر"}
           >

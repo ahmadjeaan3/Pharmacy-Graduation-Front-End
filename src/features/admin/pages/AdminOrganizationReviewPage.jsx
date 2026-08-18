@@ -40,6 +40,8 @@ const reviewOptions = [
   { value: "Rejected", label: "رفض ملف التحقق" },
 ];
 
+const ADMIN_HERO_IMAGE = "/assets/app/home/background_hero_admin.png";
+
 export function AdminOrganizationReviewPage() {
   const { organizationId } = useParams();
   const queryClient = useQueryClient();
@@ -104,7 +106,7 @@ export function AdminOrganizationReviewPage() {
   const hasDocuments = organization.documents.length > 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 sm:space-y-6">
       <div className="flex items-center justify-between gap-4">
         <Link
           to="/app/approvals?tab=organizations"
@@ -118,7 +120,7 @@ export function AdminOrganizationReviewPage() {
           {status.label}
         </span>
       </div>
-      <section className="relative isolate overflow-hidden rounded-[1.7rem] bg-[#174b57] p-6 text-white shadow-[0_22px_55px_rgba(23,75,87,.16)] lg:p-8">
+      <section className="relative isolate min-h-[230px] overflow-hidden rounded-[16px] bg-[#10505A] p-5 text-white shadow-[0_22px_55px_rgba(23,75,87,.14)] sm:min-h-[250px] sm:p-7 lg:min-h-[271px] lg:p-9">
         <div className="noise absolute inset-0 -z-10" />
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">

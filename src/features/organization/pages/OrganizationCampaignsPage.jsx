@@ -324,15 +324,15 @@ export function OrganizationCampaignsPage() {
     <div
       dir={direction}
       lang={isArabic ? "ar" : "en"}
-      className="min-h-[calc(100vh-164px)] space-y-5 rounded-2xl bg-[#F4F8F8] p-0"
+      className="min-h-[calc(100vh-164px)] space-y-8 rounded-2xl bg-[#F4F8F8] p-0"
     >
       {!showForm && (
         <>
           {/* Hero */}
-          <section className="relative h-[208px] overflow-hidden rounded-xl bg-[#0d5360] text-white">
+          <section className="relative h-[230px] w-full overflow-hidden rounded-[14px] bg-[#10505A] text-white sm:h-[271px] sm:rounded-[16px]">
             <div
               aria-hidden="true"
-              className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+              className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-300 ${isArabic ? "" : "scale-x-[-1]"}`}
               style={{
                 backgroundImage: `url("${CAMPAIGNS_HERO_IMAGE}")`,
               }}
@@ -342,14 +342,14 @@ export function OrganizationCampaignsPage() {
               aria-hidden="true"
               className={`absolute inset-0 ${
                 isArabic
-                  ? "bg-[linear-gradient(270deg,rgba(8,78,89,.95)_0%,rgba(8,78,89,.72)_45%,rgba(8,78,89,.18)_100%)]"
-                  : "bg-[linear-gradient(90deg,rgba(8,78,89,.95)_0%,rgba(8,78,89,.72)_45%,rgba(8,78,89,.18)_100%)]"
+              ? "bg-[linear-gradient(270deg,#10505A_0%,rgba(33,100,116,.25)_70%,rgba(33,100,116,.05)_100%)]"
+              : "bg-[linear-gradient(90deg,#10505A_0%,rgba(33,100,116,.25)_70%,rgba(33,100,116,.05)_100%)]"
               }`}
             />
 
             <div
               dir="ltr"
-              className={`relative z-10 flex h-full w-full items-center justify-between px-8 ${
+              className={`relative z-10 flex h-full w-full items-center justify-between px-8 lg:px-[41px] ${
                 isArabic ? "flex-row" : "flex-row-reverse"
               }`}
             >
@@ -362,7 +362,7 @@ export function OrganizationCampaignsPage() {
                     openCreateForm();
                   }
                 }}
-                className="inline-flex h-12 shrink-0 items-center gap-2 rounded-lg bg-white px-5 text-sm font-bold text-[#216474] transition hover:bg-[#f7fbfb]"
+                className="ms-4 sm:ms-6 lg:ms-8 inline-flex h-12 shrink-0 items-center gap-2 rounded-lg bg-white px-5 text-sm font-bold text-[#216474] shadow-sm transition hover:bg-[#f7fbfb]"
               >
                 {showForm && !editingCampaignId ? (
                   <X size={18} />
@@ -393,7 +393,7 @@ export function OrganizationCampaignsPage() {
                 >
                   <h1
                     dir={direction}
-                    className="text-[28px] font-bold leading-none text-white"
+                    className="text-[22px] font-bold leading-tight text-white sm:text-[28px]"
                   >
                     {t("الحملات الدوائية")}
                   </h1>
@@ -643,7 +643,7 @@ export function OrganizationCampaignsPage() {
       {!showForm && (
         <>
           {/* Tools */}
-          <section className="rounded-xl bg-white p-5">
+          <section className="mt-2 rounded-xl bg-white p-5">
             <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
               <div className={isArabic ? "text-right" : "text-left"}>
                 <h2 className="text-xl font-bold text-[#333333]">
@@ -763,7 +763,8 @@ export function OrganizationCampaignsPage() {
               ))}
             </div>
           ) : (
-            <CampaignsTable
+            <div className="mt-3">
+              <CampaignsTable
               campaigns={filteredCampaigns}
               pending={updateStatus.isPending || remove.isPending}
               onStatus={(campaignId, nextStatus) =>
@@ -779,6 +780,7 @@ export function OrganizationCampaignsPage() {
               direction={direction}
               isArabic={isArabic}
             />
+            </div>
           )}
         </>
       )}

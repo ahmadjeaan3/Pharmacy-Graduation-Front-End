@@ -26,6 +26,8 @@ import { formatDate, formatRequestStatus } from "../utils/adminFormatters";
 import { useTranslation } from "react-i18next";
 import { AiServicesHealthPanel } from "../components/AiServicesHealthPanel";
 
+const ADMIN_HERO_IMAGE = "/assets/app/home/background_hero_admin.png";
+
 export function AdminDashboardPage() {
   const { t, i18n } = useTranslation();
 
@@ -170,14 +172,23 @@ export function AdminDashboardPage() {
   const activeUserRate = percentage(data.activeUsers, data.totalUsers);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 sm:space-y-6">
       <Motion.section
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative isolate overflow-hidden rounded-[1.8rem] bg-[#174b57] px-6 py-8 text-white shadow-[0_22px_55px_rgba(23,75,87,.16)] lg:px-9"
+        className="relative isolate min-h-[230px] overflow-hidden rounded-[16px] bg-[#10505A] px-5 py-7 text-white shadow-[0_22px_55px_rgba(23,75,87,.14)] sm:min-h-[250px] sm:px-7 sm:py-8 lg:min-h-[271px] lg:px-10"
       >
-        <div className="noise absolute inset-0 -z-10" />
-        <div className="absolute -left-12 -top-24 -z-10 size-72 rounded-full border-[44px] border-white/[.035]" />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-20 bg-cover bg-[position:38%_center] bg-no-repeat"
+          style={{ backgroundImage: `url("${ADMIN_HERO_IMAGE}")` }}
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 bg-[linear-gradient(270deg,#10505A_0%,rgba(16,80,90,.88)_36%,rgba(33,100,116,.42)_70%,rgba(33,100,116,.08)_100%)]"
+        />
+        <div className="noise absolute inset-0 -z-[5] opacity-30" />
+        <div className="absolute -left-12 -top-24 -z-[4] size-72 rounded-full border-[44px] border-white/[.035]" />
         <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-sm font-bold text-[#8bd0cb]">
@@ -190,13 +201,13 @@ export function AdminDashboardPage() {
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:items-end">
-            <label className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[.09] px-3 py-2 backdrop-blur">
-              <CalendarRange size={17} className="text-[#f5cb72]" />
-              <span className="text-xs font-bold text-white/55">عرض نشاط</span>
+            <label className="flex min-h-[52px] items-center gap-2.5 rounded-xl border border-white/90 bg-white px-4 py-2.5 text-[#17363e] shadow-[0_10px_28px_rgba(4,45,53,.14)]">
+              <CalendarRange size={17} className="text-[#DFAE0D]" />
+              <span className="text-xs font-bold text-[#71858a]">عرض نشاط</span>
               <select
                 value={periodDays}
                 onChange={(event) => setPeriodDays(Number(event.target.value))}
-                className="cursor-pointer bg-transparent py-1 text-sm font-black text-white outline-none [&>option]:text-[#333333]"
+                className="cursor-pointer bg-transparent py-1 text-sm font-black text-[#17363e] outline-none [&>option]:text-[#333333]"
               >
                 <option value={1}>آخر 24 ساعة</option>
                 <option value={7}>آخر 7 أيام</option>
@@ -205,7 +216,7 @@ export function AdminDashboardPage() {
                 <option value={0}>كل الوقت</option>
               </select>
             </label>
-            <div className="rounded-xl border border-white/10 bg-white/[.06] px-4 py-2 text-xs">
+            <div className="min-h-[46px] rounded-xl border border-white/90 bg-white px-4 py-3 text-xs text-[#17363e] shadow-[0_8px_24px_rgba(4,45,53,.12)]">
               {query.isFetching ? (
                 <strong className="inline-flex items-center gap-2 text-[#f5cb72]">
                   <span className="size-2 animate-pulse rounded-full bg-[#f5cb72]" />
@@ -213,7 +224,7 @@ export function AdminDashboardPage() {
                 </strong>
               ) : (
                 <>
-                  <span className="text-white/45">آخر تحديث: </span>
+                  <span className="text-[#71858a]">آخر تحديث: </span>
                   <strong>{formatDate(data.generatedAtUtc, true)}</strong>
                 </>
               )}
@@ -597,7 +608,7 @@ export function AdminDashboardPage() {
                     </td>
                     <td className="border-b border-[#174b57]/7 px-5 py-4">
                       <div className="flex min-w-0 items-center gap-2.5">
-                        <span className="grid size-8 shrink-0 place-items-center rounded-full bg-violet-50 text-xs font-black text-violet-700">
+                        <span className="grid size-8 shrink-0 place-items-center rounded-full bg-[#F0F6F7] text-xs font-black text-[#52727A]">
                           {request.userFullName?.trim()?.[0] || "م"}
                         </span>
                         <span
