@@ -13,6 +13,7 @@ import { AdminAccountsPage } from "../features/admin/pages/AdminAccountsPage";
 import { AdminAccountDetailsPage } from "../features/admin/pages/AdminAccountDetailsPage";
 import { AdminPharmacyReviewPage } from "../features/admin/pages/AdminPharmacyReviewPage";
 import { AdminAuditLogsPage } from "../features/admin/pages/AdminAuditLogsPage";
+import { SosPage } from "../features/sos/pages/SosPage";
 import { LoginPage } from "../features/auth/pages/LoginPage";
 import { PasswordRecoveryPage } from "../features/auth/pages/PasswordRecoveryPage";
 import { DashboardLayout } from "../features/dashboard/layouts/DashboardLayout";
@@ -189,6 +190,13 @@ export function AppRouter() {
           <Route path="/app" element={<DashboardLayout />}>
             <Route index element={<DashboardIndexPage />} />
             <Route path="notifications" element={<NotificationsPage />} />
+            <Route
+              element={
+                <RoleRoute allowedRoles={["User", "Pharmacy", "Admin"]} />
+              }
+            >
+              <Route path="sos" element={<SosPage />} />
+            </Route>
             <Route path="settings" element={<SettingsPage />} />
             <Route
               element={

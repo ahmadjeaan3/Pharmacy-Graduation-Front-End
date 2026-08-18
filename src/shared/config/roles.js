@@ -20,6 +20,7 @@ import {
   RotateCcw,
   Route,
   ShieldCheck,
+  ShieldAlert,
   Truck,
   UserRound,
   Warehouse,
@@ -178,6 +179,11 @@ const roleDefinitions = {
         label: "سجل البحث",
         icon: CalendarClock,
       },
+      {
+        to: "/app/sos",
+        label: "طلب دواء عاجل",
+        icon: ShieldAlert,
+      },
     ],
 
     dashboard: {
@@ -278,6 +284,11 @@ const roleDefinitions = {
     label: "الصيدلية",
 
     navigation: [
+      {
+        to: "/app/sos",
+        label: "طلبات دوائية عاجلة",
+        icon: ShieldAlert,
+      },
       {
         to: "/app/pharmacy/inventory",
         label: "المخزون",
@@ -872,6 +883,11 @@ const roleDefinitions = {
         to: "/app/audit-logs",
         label: "سجل النشاطات",
         icon: Activity,
+      },
+      {
+        to: "/app/sos",
+        label: "الطلبات الدوائية العاجلة",
+        icon: ShieldAlert,
       },
     ],
 

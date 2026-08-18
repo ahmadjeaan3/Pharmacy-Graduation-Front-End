@@ -10,6 +10,7 @@ import {
   Route,
   Search,
   Settings,
+  ShieldAlert,
   ShieldCheck,
   UserRound,
   Warehouse,
@@ -394,6 +395,12 @@ export function DashboardLayout() {
       label: "المنظمات والحملات",
       icon: Warehouse,
     },
+    {
+      to: "/app/sos",
+      label: "طلب عاجل",
+      icon: ShieldAlert,
+      urgent: true,
+    },
   ];
 
   if (isUserAccount) {
@@ -430,32 +437,40 @@ export function DashboardLayout() {
                 className="hidden h-full min-w-0 flex-1 items-center justify-center lg:flex"
               >
                 <div
-                  className={`flex h-full items-center gap-6 xl:gap-8 ${
+                  className={`flex h-full items-center gap-4 xl:gap-6 ${
                     isArabic ? "flex-row" : "flex-row-reverse"
                   }`}
                 >
-                  {userTopNavItems.map(({ to, label, end }) => (
+                  {userTopNavItems.map(({ to, label, end, urgent }) => (
                     <NavLink
                       key={to}
                       to={to}
                       end={end}
                       className={({ isActive }) =>
-                        `flex h-full items-center whitespace-nowrap px-1 transition-colors ${
-                          isActive
-                            ? "font-medium text-[#216474]"
-                            : "font-medium text-[#4F4F4F] hover:text-[#216474]"
+                        `flex items-center whitespace-nowrap transition-colors ${
+                          urgent
+                            ? "h-8 rounded-[5px] bg-gradient-to-l from-rose-800 to-rose-600 px-3.5 font-black text-white shadow-[0_5px_12px_rgba(190,18,60,.22)] hover:from-rose-900 hover:to-rose-700"
+                            : `h-full px-1 ${
+                                isActive
+                                  ? "font-medium text-[#216474]"
+                                  : "font-medium text-[#4F4F4F] hover:text-[#216474]"
+                              }`
                         }`
                       }
                     >
                       {({ isActive }) => (
                         <span
                           className={`relative inline-flex items-center ${
-                            isActive ? "text-[18px]" : "text-[16px]"
+                            urgent
+                              ? "text-[13px] tracking-tight"
+                              : isActive
+                                ? "text-[18px]"
+                                : "text-[16px]"
                           }`}
                         >
                           {t(label)}
 
-                          {isActive ? (
+                          {isActive && !urgent ? (
                             <span className="absolute -bottom-[9px] left-0 right-0 h-[2px] rounded-full bg-[#DFAE0D]" />
                           ) : null}
                         </span>

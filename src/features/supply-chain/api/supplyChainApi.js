@@ -10,11 +10,19 @@ export const supplyKeys = {
   returns: ["supply-chain", "returns"],
   recalls: ["supply-chain", "recalls"],
   suggestions: ["supply-chain", "suggestions"],
+  adminBatches: ["supply-chain", "admin", "batches"],
+  adminRepresentatives: ["supply-chain", "admin", "representatives"],
 };
 export const getSupplyDashboard = async () =>
   (await apiClient.get("/supply-chain/warehouse/dashboard")).data;
 export const getBatches = async () =>
   (await apiClient.get("/supply-chain/warehouse/batches")).data;
+export const getAdminBatches = async (query = "") =>
+  (
+    await apiClient.get("/supply-chain/admin/batches", {
+      params: query ? { query } : {},
+    })
+  ).data;
 export const addBatch = async (payload) =>
   (await apiClient.post("/supply-chain/warehouse/batches", payload)).data;
 export const updateBatch = async (id, payload) =>
@@ -43,6 +51,12 @@ export const assignShipment = async (id, payload) =>
   ).data;
 export const getRepresentatives = async () =>
   (await apiClient.get("/supply-chain/warehouse/representatives")).data;
+export const getAdminRepresentatives = async (query = "") =>
+  (
+    await apiClient.get("/supply-chain/admin/representatives", {
+      params: query ? { query } : {},
+    })
+  ).data;
 export const createRepresentative = async (payload) =>
   (await apiClient.post("/supply-chain/warehouse/representatives", payload))
     .data;

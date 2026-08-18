@@ -48,6 +48,8 @@ import {
   createSupplyReturn,
   createMedicineRecall,
   getBatches,
+  getAdminBatches,
+  getAdminRepresentatives,
   getMarketplace,
   getRepresentatives,
   getRestockSuggestions,
@@ -405,6 +407,7 @@ export function SupplyChainWorkspacePage() {
   const [returnReview, setReturnReview] = useState(null);
   const [selectedWarehouse, setSelectedWarehouse] = useState(null);
   const [catalogSearch, setCatalogSearch] = useState("");
+  const [adminResourceSearch, setAdminResourceSearch] = useState("");
   const [cart, setCart] = useState({});
   const [representativeLocation, setRepresentativeLocation] = useState(null);
   const [representativeLocationError, setRepresentativeLocationError] =
@@ -433,6 +436,18 @@ export function SupplyChainWorkspacePage() {
     queryKey: supplyKeys.representatives,
     queryFn: getRepresentatives,
     enabled: role === "Warehouse" && ["orders", "team"].includes(activeTab),
+    staleTime: 30_000,
+  });
+  const adminBatches = useQuery({
+    queryKey: [...supplyKeys.adminBatches, adminResourceSearch],
+    queryFn: () => getAdminBatches(adminResourceSearch),
+    enabled: role === "Admin" && activeTab === "inventory",
+    staleTime: 30_000,
+  });
+  const adminRepresentatives = useQuery({
+    queryKey: [...supplyKeys.adminRepresentatives, adminResourceSearch],
+    queryFn: () => getAdminRepresentatives(adminResourceSearch),
+    enabled: role === "Admin" && activeTab === "team",
     staleTime: 30_000,
   });
   const invoices = useQuery({
@@ -687,8 +702,24 @@ export function SupplyChainWorkspacePage() {
             ? ["inventory", "team"]
             : role === "Pharmacy"
               ? ["marketplace", "suggestions"]
-              : []),
+              : role === "Admin"
+                ? ["inventory", "team"]
+                : []),
         ];
+  const visibleBatches =
+    role === "Admin"
+      ? (adminBatches.data || []).map((item) => ({
+          ...item.batch,
+          warehouseName: item.warehouseName,
+        }))
+      : batches.data || [];
+  const visibleRepresentatives =
+    role === "Admin"
+      ? (adminRepresentatives.data || []).map((item) => ({
+          ...item.representative,
+          warehouseName: item.warehouseName,
+        }))
+      : reps.data || [];
   const representativeOrders =
     representativeView === "history"
       ? completedRepresentativeOrders
@@ -1034,23 +1065,47 @@ lg:min-h-[250px]"
         )}
         {activeTab === "inventory" && (
           <div className="surface p-5">
-            <div className="mb-5 flex items-center justify-between">
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="text-lg font-black">{t("دفعات الأدوية")}</h2>
+                <h2 className="text-lg font-black">
+                  {t(
+                    role === "Admin"
+                      ? "مخزون جميع المستودعات"
+                      : "دفعات الأدوية",
+                  )}
+                </h2>
                 <p className="mt-1 text-xs text-[#829499]">
-                  الكميات المحجوزة والصلاحية والتسعير بالجملة
+                  {role === "Admin"
+                    ? "عرض رقابي للكميات المحجوزة والصلاحية والتسعير دون صلاحية تعديل"
+                    : "الكميات المحجوزة والصلاحية والتسعير بالجملة"}
                 </p>
               </div>
-              <button
-                onClick={() => setDialog("batch")}
-                className="btn-primary"
-              >
-                <Plus size={17} />
-                إضافة دفعة
-              </button>
+              {role === "Admin" ? (
+                <label className="relative w-full sm:w-80">
+                  <Search
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#829499]"
+                    size={17}
+                  />
+                  <input
+                    className="form-input pr-10"
+                    value={adminResourceSearch}
+                    onChange={(event) =>
+                      setAdminResourceSearch(event.target.value)
+                    }
+                    placeholder="ابحث بالمستودع أو الدواء أو رقم الدفعة"
+                  />
+                </label>
+              ) : (
+                <button
+                  onClick={() => setDialog("batch")}
+                  className="btn-primary"
+                >
+                  <Plus size={17} /> إضافة دفعة
+                </button>
+              )}
             </div>
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-              {batches.data?.map((b) => (
+              {visibleBatches.map((b) => (
                 <article
                   key={b.id}
                   className="rounded-2xl border border-[#174B57]/8 p-4"
@@ -1064,6 +1119,11 @@ lg:min-h-[250px]"
                     <Boxes size={19} />
                   </div>
                   <h3 className="mt-4 font-black">{b.medicineName}</h3>
+                  {role === "Admin" && (
+                    <p className="mt-1 text-xs font-black text-[#216474]">
+                      {b.warehouseName}
+                    </p>
+                  )}
                   <p className="mt-1 font-mono text-xs text-[#829499]">
                     {b.batchNumber}
                   </p>
@@ -1080,30 +1140,34 @@ lg:min-h-[250px]"
                       resolveLocale(currentLanguage),
                     )}
                   </p>
-                  <MedicineAlternativesButton
-                    medicineName={b.medicineName}
-                    className="mt-4 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-[#DCE8EA] bg-[#EAF4F3] px-3 text-xs font-black text-[#216474] transition hover:-translate-y-0.5 hover:bg-[#EAF4F3]"
-                  />
-                  <div className="mt-2 grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      className="btn-secondary justify-center"
-                      onClick={() => setBatchToEdit(b)}
-                    >
-                      <Pencil size={15} /> تعديل
-                    </button>
-                    <button
-                      type="button"
-                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-rose-100 bg-rose-50 px-3 text-xs font-black text-rose-700"
-                      onClick={() => setBatchToRecall(b)}
-                      disabled={!b.isActive}
-                    >
-                      <Megaphone size={15} /> استدعاء
-                    </button>
-                  </div>
+                  {role !== "Admin" && (
+                    <MedicineAlternativesButton
+                      medicineName={b.medicineName}
+                      className="mt-4 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-[#DCE8EA] bg-[#EAF4F3] px-3 text-xs font-black text-[#216474] transition hover:-translate-y-0.5 hover:bg-[#EAF4F3]"
+                    />
+                  )}
+                  {role !== "Admin" && (
+                    <div className="mt-2 grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        className="btn-secondary justify-center"
+                        onClick={() => setBatchToEdit(b)}
+                      >
+                        <Pencil size={15} /> تعديل
+                      </button>
+                      <button
+                        type="button"
+                        className="inline-flex items-center justify-center gap-2 rounded-xl border border-rose-100 bg-rose-50 px-3 text-xs font-black text-rose-700"
+                        onClick={() => setBatchToRecall(b)}
+                        disabled={!b.isActive}
+                      >
+                        <Megaphone size={15} /> استدعاء
+                      </button>
+                    </div>
+                  )}
                 </article>
               ))}
-              {!batches.data?.length && (
+              {!visibleBatches.length && (
                 <div className="col-span-full rounded-2xl bg-[#F8FBFB] p-10 text-center text-sm text-[#71858A]">
                   لا توجد دفعات. أضف أول دفعة لتصبح الأدوية متاحة للصيدليات.
                 </div>
@@ -1113,23 +1177,41 @@ lg:min-h-[250px]"
         )}
         {activeTab === "team" && (
           <div>
-            <div className="mb-4 flex items-center justify-between">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h2 className="text-lg font-black">{t("فريق التوزيع")}</h2>
                 <p className="mt-1 text-xs text-[#829499]">
-                  حساب مستقل وآمن لكل مندوب
+                  {role === "Admin"
+                    ? "عرض رقابي لمندوبي جميع المستودعات وحالة كل مندوب"
+                    : "حساب مستقل وآمن لكل مندوب"}
                 </p>
               </div>
-              <button
-                onClick={() => setDialog("representative")}
-                className="btn-primary"
-              >
-                <Plus size={17} />
-                إضافة مندوب
-              </button>
+              {role === "Admin" ? (
+                <label className="relative w-full sm:w-80">
+                  <Search
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#829499]"
+                    size={17}
+                  />
+                  <input
+                    className="form-input pr-10"
+                    value={adminResourceSearch}
+                    onChange={(event) =>
+                      setAdminResourceSearch(event.target.value)
+                    }
+                    placeholder="ابحث بالمستودع أو المندوب أو الرمز"
+                  />
+                </label>
+              ) : (
+                <button
+                  onClick={() => setDialog("representative")}
+                  className="btn-primary"
+                >
+                  <Plus size={17} /> إضافة مندوب
+                </button>
+              )}
             </div>
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {reps.data?.map((r) => (
+              {visibleRepresentatives.map((r) => (
                 <article key={r.id} className="surface p-5">
                   <div className="flex items-start justify-between">
                     <span className="grid size-12 place-items-center rounded-2xl bg-[#EAF4F3]">
@@ -1154,6 +1236,11 @@ lg:min-h-[250px]"
                     </span>
                   </div>
                   <h3 className="mt-4 font-black">{r.fullName}</h3>
+                  {role === "Admin" && (
+                    <p className="mt-1 text-xs font-black text-[#216474]">
+                      {r.warehouseName}
+                    </p>
+                  )}
                   <p className="mt-1 text-xs text-[#829499]">
                     {r.employeeCode} · {r.vehiclePlateNumber || "دون مركبة"}
                   </p>
@@ -1173,16 +1260,18 @@ lg:min-h-[250px]"
                       ? `${String(r.shiftStart).slice(0, 5)} — ${String(r.shiftEnd).slice(0, 5)}`
                       : t("دوام مفتوح")}
                   </p>
-                  <button
-                    onClick={() => setRepresentativeToEdit(r)}
-                    className="btn-secondary mt-4 w-full justify-center"
-                  >
-                    <Pencil size={16} />
-                    {t("إدارة الحساب والدوام")}
-                  </button>
+                  {role !== "Admin" && (
+                    <button
+                      onClick={() => setRepresentativeToEdit(r)}
+                      className="btn-secondary mt-4 w-full justify-center"
+                    >
+                      <Pencil size={16} />
+                      {t("إدارة الحساب والدوام")}
+                    </button>
+                  )}
                 </article>
               ))}
-              {!reps.data?.length && (
+              {!visibleRepresentatives.length && (
                 <div className="surface col-span-full p-10 text-center text-sm text-[#71858A]">
                   لم تتم إضافة مندوبين بعد.
                 </div>
@@ -3048,7 +3137,8 @@ function InvoicesPanel({ invoices, loading, role, onManage }) {
                 onClick={() => onManage(invoice)}
                 className="btn-secondary"
               >
-                <Eye size={16} /> عرض وإدارة
+                <Eye size={16} />{" "}
+                {role === "Admin" ? "عرض التفاصيل" : "عرض وإدارة"}
               </button>
             </div>
           </article>

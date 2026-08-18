@@ -162,6 +162,16 @@ export const notificationTypes = {
     tone: "bg-rose-50 text-rose-700",
     dot: "bg-rose-500",
   },
+  SosAlert: {
+    label: "طلب دواء عاجل",
+  },
+  UrgentMedicineRequest: {
+    label: "طلب دواء عاجل",
+    title: "بلاغ طوارئ",
+    icon: TriangleAlert,
+    tone: "bg-rose-100 text-rose-800",
+    dot: "bg-rose-600",
+  },
   SupplyInvoice: {
     label: "الفواتير",
     title: "تحديث فاتورة التوريد",
@@ -246,6 +256,11 @@ export function notificationTarget(notification, roles = []) {
 
   if (notification.type === "AccountStatusUpdated") return "/app/settings";
   if (!notification.relatedEntityId) return null;
+  if (
+    notification.relatedEntityType === "UrgentMedicineRequest" ||
+    notification.relatedEntityType === "SosAlert"
+  )
+    return "/app/sos";
   if (notification.relatedEntityType === "PrescriptionOrder") {
     if (hasRole("Pharmacy")) return "/app/pharmacy/prescriptions";
     if (hasRole("User")) return "/app/prescriptions";
