@@ -71,8 +71,6 @@ const parseList = (value, fallback) => {
   }
 };
 
-const ADMIN_HERO_IMAGE = "/assets/app/home/background_hero_admin.png";
-
 export function AdminAccountDetailsPage() {
   const { t, i18n } = useTranslation();
 

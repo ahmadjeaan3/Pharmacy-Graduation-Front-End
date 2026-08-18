@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export const DAWAAI_MARK = "/assets/app/brand/dawaai-icon-foreground.jpeg";
+export const DAWAAI_MARK = "/assets/app/brand/dawaai-logo-color.png";
 
 export function Brand({ to = "/", className = "" }) {
   return (

@@ -40,8 +40,6 @@ const reviewOptions = [
   { value: "Rejected", label: "رفض ملف التحقق" },
 ];
 
-const ADMIN_HERO_IMAGE = "/assets/app/home/background_hero_admin.png";
-
 export function AdminOrganizationReviewPage() {
   const { organizationId } = useParams();
   const queryClient = useQueryClient();

@@ -33,13 +33,6 @@ import { PublicCampaignCard } from "../components/PublicCampaignCard";
 
 const HERO_BACKGROUND = "/assets/app/home/hero_search.png";
 
-const FOOTER_SOCIAL_ICONS = {
-  whatsapp: "/assets/app/social/whatsapp.png",
-  facebook: "/assets/app/social/facebook.png",
-  email: "/assets/app/social/email.png",
-  instagram: "/assets/app/social/instagram.png",
-};
-
 export function OrganizationsDirectoryPage() {
   const [params, setParams] = useSearchParams();
   const [search, setSearch] = useState("");

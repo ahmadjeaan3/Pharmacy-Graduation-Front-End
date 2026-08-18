@@ -35,15 +35,6 @@ export function getStatusMeta(status, type) {
   };
 }
 
-export function formatDonationDate(value) {
-  if (!value) return "غير محدد";
-  return new Intl.DateTimeFormat("ar-SY", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(value));
-}
-
 export function inputDateAfter(days = 0) {
   const date = new Date();
   date.setDate(date.getDate() + days);

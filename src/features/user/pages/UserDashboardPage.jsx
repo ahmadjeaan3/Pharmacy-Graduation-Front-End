@@ -41,7 +41,6 @@ const AI_ASSISTANT_IMAGE = "/assets/app/home/ai-assistant.png";
 const RESULTS_ANALYSIS_IMAGE = "/assets/app/home/results-analysis.png";
 const SMART_PRESCRIPTION_IMAGE = "/assets/app/home/smart-prescription.png";
 const SMART = "/assets/app/home/smart.png";
-const HELP_BANNER_IMAGE = "/assets/app/home/help-assistant.png";
 
 const FOOTER_SOCIAL_ICONS = {
   whatsapp: "/assets/app/social/whatsapp.png",
