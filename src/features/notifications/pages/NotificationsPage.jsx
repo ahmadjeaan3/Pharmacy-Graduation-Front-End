@@ -258,164 +258,169 @@ export function NotificationsPage() {
       </section>
 
       <main className="mx-auto w-full max-w-[1240px] px-5 pb-12 pt-8 sm:px-7 lg:px-8">
-      {/* Notice */}
-      {notice && (
-        <div className="rounded-xl border border-[#CFE4E7] bg-[#EAF4F3] px-4 py-3 text-sm font-bold text-[#216474]">
-          {notice}
-        </div>
-      )}
-
-      {/* Summary */}
-      <section className="grid gap-4 sm:grid-cols-3">
-        <SummaryCard
-          icon={Layers3}
-          label={t("جميع الإشعارات")}
-          value={total}
-          iconBox="bg-[#E6F3F6]"
-          iconColor="text-[#216474]"
-          currentLanguage={currentLanguage}
-          direction={direction}
-        />
-
-        <SummaryCard
-          icon={BellDot}
-          label={t("غير المقروءة")}
-          value={unread}
-          iconBox="bg-[#F0F6F7]"
-          iconColor="text-[#52727A]"
-          currentLanguage={currentLanguage}
-          direction={direction}
-        />
-
-        <SummaryCard
-          icon={CircleCheckBig}
-          label={t("تمت قراءتها")}
-          value={read}
-          iconBox="bg-[#EAF4F3]"
-          iconColor="text-[#174B57]"
-          currentLanguage={currentLanguage}
-          direction={direction}
-        />
-      </section>
-
-      {/* Filters */}
-      <section className="rounded-xl border border-[#DCE8EA] bg-white p-4 shadow-[0_6px_24px_rgba(23,75,87,.03)]">
-        <div className="flex flex-wrap items-center gap-2">
-          <FilterButton
-            active={!filters.unreadOnly && !filters.type}
-            label={t("جميع الإشعارات")}
-            currentLanguage={currentLanguage}
-            onClick={() =>
-              setFilters({
-                unreadOnly: false,
-                type: "",
-                take: 100,
-              })
-            }
-          />
-
-          <FilterButton
-            active={filters.unreadOnly && !filters.type}
-            label={t("غير المقروءة")}
-            count={unread}
-            currentLanguage={currentLanguage}
-            onClick={() =>
-              setFilters({
-                unreadOnly: true,
-                type: "",
-                take: 100,
-              })
-            }
-          />
-
-          {Object.entries(notificationTypes)
-            .filter(
-              ([type]) =>
-                (summary.data?.unreadByType || []).some(
-                  (item) => item.type === type,
-                ) || list.data?.some((item) => item.type === type),
-            )
-            .map(([type, meta]) => (
-              <FilterButton
-                key={type}
-                active={filters.type === type}
-                label={t(meta.label)}
-                count={
-                  (summary.data?.unreadByType || []).find(
-                    (item) => item.type === type,
-                  )?.count
-                }
-                currentLanguage={currentLanguage}
-                onClick={() =>
-                  setFilters({
-                    unreadOnly: false,
-                    type,
-                    take: 100,
-                  })
-                }
-              />
-            ))}
-        </div>
-      </section>
-
-      {/* List */}
-      {list.isLoading ? (
-        <div className="grid min-h-64 place-items-center rounded-xl bg-white text-sm font-bold text-[#829499]">
-          {t("جاري تحميل الإشعارات...")}
-        </div>
-      ) : list.isError ? (
-        <div className="rounded-xl border border-rose-100 bg-white p-8 text-center">
-          <p className="font-bold text-rose-700">{t("تعذر تحميل الإشعارات")}</p>
-
-          <p className="mt-2 text-sm text-[#71858A]">
-            {getApiErrorMessage(list.error)}
-          </p>
-
-          <button
-            type="button"
-            onClick={() => list.refetch()}
-            className="mt-4 inline-flex h-10 items-center rounded-lg border border-[#D5E3E5] bg-white px-4 text-sm font-bold text-[#216474] transition hover:bg-[#EAF4F3]"
-          >
-            {t("إعادة المحاولة")}
-          </button>
-        </div>
-      ) : !list.data?.length ? (
-        <div className="grid min-h-64 place-items-center rounded-xl border border-dashed border-[#CFE0E3] bg-white p-8 text-center">
-          <div>
-            <span className="mx-auto grid size-12 place-items-center rounded-xl bg-[#EAF4F3] text-[#216474]">
-              <Bell size={23} />
-            </span>
-
-            <h2 className="mt-4 font-bold text-[#29464D]">
-              {t("لا توجد إشعارات هنا")}
-            </h2>
-
-            <p className="mt-2 text-sm text-[#829499]">
-              {t("ستظهر التحديثات المهمة فور حدوثها.")}
-            </p>
+        {/* Notice */}
+        {notice && (
+          <div className="rounded-xl border border-[#CFE4E7] bg-[#EAF4F3] px-4 py-3 text-sm font-bold text-[#216474]">
+            {notice}
           </div>
-        </div>
-      ) : (
-        <section className="space-y-3">
-          {list.data.map((notification) => {
-            const target = notificationTarget(notification, user?.roles || []);
+        )}
 
-            return (
-              <NotificationCard
-                key={notification.id}
-                notification={notification}
-                targetAvailable={Boolean(target)}
-                pending={readOne.isPending}
-                onRead={() => readOne.mutate(notification.id)}
-                onOpen={() => openNotification(notification)}
-                t={t}
-                direction={direction}
-                currentLanguage={currentLanguage}
-              />
-            );
-          })}
+        {/* Summary */}
+        <section className="grid gap-4 sm:grid-cols-3">
+          <SummaryCard
+            icon={Layers3}
+            label={t("جميع الإشعارات")}
+            value={total}
+            iconBox="bg-[#E6F3F6]"
+            iconColor="text-[#216474]"
+            currentLanguage={currentLanguage}
+            direction={direction}
+          />
+
+          <SummaryCard
+            icon={BellDot}
+            label={t("غير المقروءة")}
+            value={unread}
+            iconBox="bg-[#F0F6F7]"
+            iconColor="text-[#52727A]"
+            currentLanguage={currentLanguage}
+            direction={direction}
+          />
+
+          <SummaryCard
+            icon={CircleCheckBig}
+            label={t("تمت قراءتها")}
+            value={read}
+            iconBox="bg-[#EAF4F3]"
+            iconColor="text-[#174B57]"
+            currentLanguage={currentLanguage}
+            direction={direction}
+          />
         </section>
-      )}
+
+        {/* Filters */}
+        <section className="rounded-xl border border-[#DCE8EA] bg-white p-4 shadow-[0_6px_24px_rgba(23,75,87,.03)]">
+          <div className="flex flex-wrap items-center gap-2">
+            <FilterButton
+              active={!filters.unreadOnly && !filters.type}
+              label={t("جميع الإشعارات")}
+              currentLanguage={currentLanguage}
+              onClick={() =>
+                setFilters({
+                  unreadOnly: false,
+                  type: "",
+                  take: 100,
+                })
+              }
+            />
+
+            <FilterButton
+              active={filters.unreadOnly && !filters.type}
+              label={t("غير المقروءة")}
+              count={unread}
+              currentLanguage={currentLanguage}
+              onClick={() =>
+                setFilters({
+                  unreadOnly: true,
+                  type: "",
+                  take: 100,
+                })
+              }
+            />
+
+            {Object.entries(notificationTypes)
+              .filter(
+                ([type]) =>
+                  (summary.data?.unreadByType || []).some(
+                    (item) => item.type === type,
+                  ) || list.data?.some((item) => item.type === type),
+              )
+              .map(([type, meta]) => (
+                <FilterButton
+                  key={type}
+                  active={filters.type === type}
+                  label={t(meta.label)}
+                  count={
+                    (summary.data?.unreadByType || []).find(
+                      (item) => item.type === type,
+                    )?.count
+                  }
+                  currentLanguage={currentLanguage}
+                  onClick={() =>
+                    setFilters({
+                      unreadOnly: false,
+                      type,
+                      take: 100,
+                    })
+                  }
+                />
+              ))}
+          </div>
+        </section>
+
+        {/* List */}
+        {list.isLoading ? (
+          <div className="grid min-h-64 place-items-center rounded-xl bg-white text-sm font-bold text-[#829499]">
+            {t("جاري تحميل الإشعارات...")}
+          </div>
+        ) : list.isError ? (
+          <div className="rounded-xl border border-rose-100 bg-white p-8 text-center">
+            <p className="font-bold text-rose-700">
+              {t("تعذر تحميل الإشعارات")}
+            </p>
+
+            <p className="mt-2 text-sm text-[#71858A]">
+              {getApiErrorMessage(list.error)}
+            </p>
+
+            <button
+              type="button"
+              onClick={() => list.refetch()}
+              className="mt-4 inline-flex h-10 items-center rounded-lg border border-[#D5E3E5] bg-white px-4 text-sm font-bold text-[#216474] transition hover:bg-[#EAF4F3]"
+            >
+              {t("إعادة المحاولة")}
+            </button>
+          </div>
+        ) : !list.data?.length ? (
+          <div className="grid min-h-64 place-items-center rounded-xl border border-dashed border-[#CFE0E3] bg-white p-8 text-center">
+            <div>
+              <span className="mx-auto grid size-12 place-items-center rounded-xl bg-[#EAF4F3] text-[#216474]">
+                <Bell size={23} />
+              </span>
+
+              <h2 className="mt-4 font-bold text-[#29464D]">
+                {t("لا توجد إشعارات هنا")}
+              </h2>
+
+              <p className="mt-2 text-sm text-[#829499]">
+                {t("ستظهر التحديثات المهمة فور حدوثها.")}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <section className="space-y-3">
+            {list.data.map((notification) => {
+              const target = notificationTarget(
+                notification,
+                user?.roles || [],
+              );
+
+              return (
+                <NotificationCard
+                  key={notification.id}
+                  notification={notification}
+                  targetAvailable={Boolean(target)}
+                  pending={readOne.isPending}
+                  onRead={() => readOne.mutate(notification.id)}
+                  onOpen={() => openNotification(notification)}
+                  t={t}
+                  direction={direction}
+                  currentLanguage={currentLanguage}
+                />
+              );
+            })}
+          </section>
+        )}
       </main>
     </div>
   );

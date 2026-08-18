@@ -1,5 +1,6 @@
 import {
   Bot,
+  Activity,
   Building2,
   CalendarClock,
   ClipboardList,
@@ -866,6 +867,11 @@ const roleDefinitions = {
         to: "/app/home-ticker",
         label: "شريط الإعلانات",
         icon: Megaphone,
+      },
+      {
+        to: "/app/audit-logs",
+        label: "سجل النشاطات",
+        icon: Activity,
       },
     ],
 

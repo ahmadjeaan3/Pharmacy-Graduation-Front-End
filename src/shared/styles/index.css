@@ -10,7 +10,7 @@
 /* Hide scrollbar but keep scrolling */
 .no-scrollbar {
   -ms-overflow-style: none; /* IE & Edge */
-  scrollbar-width: none;    /* Firefox */
+  scrollbar-width: none; /* Firefox */
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -42,7 +42,7 @@
 }
 
 :root {
- font-family: "IBM Plex Sans Arabic", system-ui, sans-serif;
+  font-family: "IBM Plex Sans Arabic", system-ui, sans-serif;
   color: #142e35;
   background: #f7faf9;
   font-synthesis: none;
@@ -72,6 +72,12 @@ body {
   min-width: 320px;
   min-height: 100vh;
   background: #f7faf9;
+  overflow-x: clip;
+}
+img,
+video,
+canvas {
+  max-width: 100%;
 }
 .dashboard-sidebar {
   right: 0;
@@ -564,13 +570,21 @@ button {
   }
 }
 @keyframes landing-ticker-rtl {
-  from { transform: translateX(0); }
-  to { transform: translateX(50%); }
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(50%);
+  }
 }
 
 @keyframes landing-ticker-ltr {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 .landing-ticker-track {
@@ -588,5 +602,7 @@ button {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .landing-ticker-track { animation: none; }
+  .landing-ticker-track {
+    animation: none;
+  }
 }

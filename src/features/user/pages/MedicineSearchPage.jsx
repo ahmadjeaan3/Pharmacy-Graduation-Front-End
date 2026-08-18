@@ -33,7 +33,7 @@ import {
   ErrorState as UserErrorState,
   LoadingState as UserLoadingState,
 } from "../../../shared/components/AsyncStates";
-import { formatDistance, formatPrice } from "../utils/userFormatters";
+import { formatDistance } from "../utils/userFormatters";
 import { getApiErrorMessage } from "../../../shared/api/errors";
 import { MedicineAlternativesButton } from "../../intelligence/components/MedicineAlternativesButton";
 import { Brand } from "../../../shared/components/Brand";
@@ -58,8 +58,7 @@ function getMedicineImageSource(imageUrl) {
 
   try {
     const apiBaseUrl =
-      import.meta.env.VITE_API_BASE_URL ||
-      "https://localhost:7048/api";
+      import.meta.env.VITE_API_BASE_URL || "https://localhost:7048/api";
 
     const apiOrigin = new URL(apiBaseUrl, window.location.origin).origin;
 
@@ -68,7 +67,6 @@ function getMedicineImageSource(imageUrl) {
     return imageUrl;
   }
 }
-
 
 const sortOptions = [
   { value: "BestMatch", label: "الأفضل تطابقاً" },
@@ -152,10 +150,7 @@ export function MedicineSearchPage() {
         }) || null;
 
       return {
-        id:
-          entry.id ||
-          entry.searchHistoryId ||
-          `${term}-${index}`,
+        id: entry.id || entry.searchHistoryId || `${term}-${index}`,
         term: term || "بحث سابق",
         searchedAt:
           entry.searchedAtUtc ||
@@ -167,7 +162,6 @@ export function MedicineSearchPage() {
       };
     });
   }, [searchHistoryQuery.data, popularMedicinesQuery.data]);
-
 
   const activeView =
     searchParams.get("view") === "pharmacies" ? "pharmacies" : "medicines";
@@ -377,9 +371,6 @@ export function MedicineSearchPage() {
     setSortBy("BestMatch");
   };
 
-  const switchView = (view) =>
-    setSearchParams(view === "pharmacies" ? { view } : query ? { q: query } : {});
-
   return (
     <div
       dir="rtl"
@@ -418,7 +409,8 @@ export function MedicineSearchPage() {
           </h1>
 
           <p className="mt-3 max-w-[650px] text-[13px] leading-7 text-white/75">
-            نوصلك لأقرب الصيدليات التي يتوفر فيها دواؤك بسرعة، مع إمكانية مقارنة النتائج حسب المسافة والتوفر والتقييم.
+            نوصلك لأقرب الصيدليات التي يتوفر فيها دواؤك بسرعة، مع إمكانية مقارنة
+            النتائج حسب المسافة والتوفر والتقييم.
           </p>
 
           <form
@@ -506,28 +498,28 @@ export function MedicineSearchPage() {
                     {previousSearches
                       .slice(0, visiblePreviousCount)
                       .map((entry) => {
-                      const medicine = entry.medicine;
-                      const displayName =
-                        medicine?.medicineDisplayName ||
-                        medicine?.arabicMedicineName ||
-                        medicine?.medicineName ||
-                        entry.term;
+                        const medicine = entry.medicine;
+                        const displayName =
+                          medicine?.medicineDisplayName ||
+                          medicine?.arabicMedicineName ||
+                          medicine?.medicineName ||
+                          entry.term;
 
-                      const secondaryName =
-                        medicine?.scientificName ||
-                        medicine?.manufacturer ||
-                        "بحث سابق";
+                        const secondaryName =
+                          medicine?.scientificName ||
+                          medicine?.manufacturer ||
+                          "بحث سابق";
 
-                      const resolvedImageUrl = getMedicineImageSource(
-                        medicine?.imageUrl,
-                      );
+                        const resolvedImageUrl = getMedicineImageSource(
+                          medicine?.imageUrl,
+                        );
 
-                      return (
-                        <button
-                          key={entry.id}
-                          type="button"
-                          onClick={() => runPopularSearch(entry.term)}
-                          className="
+                        return (
+                          <button
+                            key={entry.id}
+                            type="button"
+                            onClick={() => runPopularSearch(entry.term)}
+                            className="
                             group grid min-h-[84px] w-full items-center gap-4
                             rounded-[9px] border border-[#E2E8EA]
                             bg-white px-4 py-3 text-right
@@ -537,62 +529,59 @@ export function MedicineSearchPage() {
                             hover:shadow-[0_8px_22px_rgba(23,75,87,.05)]
                             sm:grid-cols-[70px_minmax(0,1fr)_150px_42px]
                           "
-                        >
-                          <div className="flex h-[64px] w-[70px] items-center justify-center overflow-hidden rounded-[9px] bg-[#F8FBFA]">
-                            {resolvedImageUrl ? (
-                              <img
-                                src={resolvedImageUrl}
-                                alt={displayName}
-                                className="max-h-[56px] max-w-[62px] object-contain"
-                              />
-                            ) : (
-                              <PackageSearch
-                                size={24}
-                                strokeWidth={1.5}
-                                className="text-[#216474]"
-                              />
-                            )}
-                          </div>
+                          >
+                            <div className="flex h-[64px] w-[70px] items-center justify-center overflow-hidden rounded-[9px] bg-[#F8FBFA]">
+                              {resolvedImageUrl ? (
+                                <img
+                                  src={resolvedImageUrl}
+                                  alt={displayName}
+                                  className="max-h-[56px] max-w-[62px] object-contain"
+                                />
+                              ) : (
+                                <PackageSearch
+                                  size={24}
+                                  strokeWidth={1.5}
+                                  className="text-[#216474]"
+                                />
+                              )}
+                            </div>
 
-                          <div className="min-w-0">
-                            <h3 className="truncate text-[13px] font-black text-[#29464D]">
-                              {displayName}
-                            </h3>
+                            <div className="min-w-0">
+                              <h3 className="truncate text-[13px] font-black text-[#29464D]">
+                                {displayName}
+                              </h3>
 
-                            <p
-                              dir={
-                                secondaryName &&
-                                /[A-Za-z]/.test(secondaryName)
-                                  ? "ltr"
-                                  : "rtl"
-                              }
-                              className="mt-1 line-clamp-1 text-[10.5px] text-[#8A9A9E]"
-                            >
-                              {secondaryName}
-                            </p>
-                          </div>
+                              <p
+                                dir={
+                                  secondaryName &&
+                                  /[A-Za-z]/.test(secondaryName)
+                                    ? "ltr"
+                                    : "rtl"
+                                }
+                                className="mt-1 line-clamp-1 text-[10.5px] text-[#8A9A9E]"
+                              >
+                                {secondaryName}
+                              </p>
+                            </div>
 
-                          <div className="hidden border-r border-[#EDF1F2] pr-4 text-right sm:block">
-                            <span className="block text-[10px] text-[#A0ADB0]">
-                              آخر بحث
+                            <div className="hidden border-r border-[#EDF1F2] pr-4 text-right sm:block">
+                              <span className="block text-[10px] text-[#A0ADB0]">
+                                آخر بحث
+                              </span>
+                              <span className="mt-1 block text-[11px] font-semibold text-[#60777C]">
+                                {entry.searchedAt
+                                  ? new Date(
+                                      entry.searchedAt,
+                                    ).toLocaleDateString("ar-SY")
+                                  : "مؤخراً"}
+                              </span>
+                            </div>
+
+                            <span className="grid size-9 place-items-center justify-self-end rounded-full text-[#216474] transition group-hover:bg-[#EEF6F6]">
+                              <ChevronDown size={16} className="rotate-90" />
                             </span>
-                            <span className="mt-1 block text-[11px] font-semibold text-[#60777C]">
-                              {entry.searchedAt
-                                ? new Date(entry.searchedAt).toLocaleDateString(
-                                    "ar-SY",
-                                  )
-                                : "مؤخراً"}
-                            </span>
-                          </div>
-
-                          <span className="grid size-9 place-items-center justify-self-end rounded-full text-[#216474] transition group-hover:bg-[#EEF6F6]">
-                            <ChevronDown
-                              size={16}
-                              className="rotate-90"
-                            />
-                          </span>
-                        </button>
-                      );
+                          </button>
+                        );
                       })}
                   </div>
 
@@ -665,300 +654,301 @@ export function MedicineSearchPage() {
               </div>
 
               <div className="grid items-start gap-5 xl:grid-cols-[240px_minmax(0,1fr)_330px]">
-              {/* RIGHT: filters */}
-              <aside className="order-1 rounded-[10px] border border-[#E2E8EA] bg-white p-4 xl:sticky xl:top-20">
-                <div className="flex items-center gap-2 border-b border-[#EDF1F2] pb-4">
-                  <Filter size={18} className="text-[#216474]" />
-                  <div>
-                    <h2 className="text-[15px] font-bold text-[#216474]">
-                      فلترة النتائج
-                    </h2>
-                    <p className="mt-1 text-[11px] text-[#8A9A9E]">
-                      خصص النتائج حسب ما يناسبك
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-5 space-y-5">
-                  <FilterSelect
-                    label="نطاق البحث"
-                    value={radius}
-                    onChange={(event) => setRadius(Number(event.target.value))}
-                  >
-                    <option value={1000}>ضمن 1 كم</option>
-                    <option value={3000}>ضمن 3 كم</option>
-                    <option value={5000}>ضمن 5 كم</option>
-                    <option value={10000}>ضمن 10 كم</option>
-                    <option value={25000}>ضمن 25 كم</option>
-                  </FilterSelect>
-
-                  <FilterSelect
-                    label="ترتيب النتائج"
-                    value={sortBy}
-                    onChange={(event) => setSortBy(event.target.value)}
-                  >
-                    {sortOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </FilterSelect>
-
-                  <div className="pt-2">
-                    <button
-                      type="button"
-                      onClick={applyFilters}
-                      className="flex min-h-[44px] w-full items-center justify-center rounded-[8px] bg-[#216474] px-4 text-[13px] font-semibold text-white transition hover:bg-[#174B57]"
-                    >
-                      تطبيق
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={resetFilters}
-                      className="mt-2 flex min-h-[42px] w-full items-center justify-center rounded-[8px] border border-[#216474] bg-white px-4 text-[13px] font-semibold text-[#216474] transition hover:bg-[#EEF6F6]"
-                    >
-                      إعادة تعيين
-                    </button>
-                  </div>
-                </div>
-              </aside>
-
-              {/* CENTER: result list */}
-              <main className="order-2 min-w-0">
-                <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
-                  <div>
-                    <h2 className="text-[22px] font-bold text-[#29464D]">
-                      النتائج
-                    </h2>
-
-                    <p className="mt-1 text-[12px] text-[#8A9A9E]">
-                      {results.length.toLocaleString("ar-SY")} نتيجة لدى{" "}
-                      {groupedCount.toLocaleString("ar-SY")} صيدلية
-                    </p>
-                  </div>
-
-                  <MedicineAlternativesButton
-                    medicineName={results[0]?.medicineName}
-                    label="عرض بدائل للدواء"
-                    className="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-[8px] border border-[#CFE4E7] bg-[#EEF7F6] px-4 text-[12px] font-semibold text-[#216474]"
-                  />
-                </div>
-
-                <div className="space-y-3">
-                  {visibleResults.map((item) => {
-                    const displayName =
-                      item.medicineDisplayName ||
-                      item.arabicMedicineName ||
-                      item.medicineName;
-
-                    const medicineMeta = [
-                      item.arabicScientificName || item.scientificName,
-                      item.dosageForm,
-                      item.capacity,
-                    ]
-                      .filter(Boolean)
-                      .join(" • ");
-
-                    return (
-                      <article
-                        key={`${item.pharmacy.pharmacyId}-${item.medicineId}`}
-                        className="grid min-h-[92px] items-center gap-3 rounded-[8px] border border-[#E2E8EA] bg-white px-3.5 py-3 shadow-[0_3px_12px_rgba(23,75,87,.025)] sm:grid-cols-[64px_minmax(0,1fr)_118px]"
-                      >
-                        <div className="flex h-[62px] w-[64px] items-center justify-center rounded-[9px] bg-[#F8FBFA]">
-                          {item.imageUrl ? (
-                            <img
-                              src={item.imageUrl}
-                              alt={displayName}
-                              className="max-h-[54px] max-w-[58px] object-contain"
-                            />
-                          ) : (
-                            <PackageSearch
-                              size={23}
-                              strokeWidth={1.5}
-                              className="text-[#216474]"
-                            />
-                          )}
-                        </div>
-
-                        <div className="min-w-0 text-right">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <h3 className="truncate text-[13px] font-bold text-[#29464D]">
-                              {displayName}
-                            </h3>
-
-                            <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold text-emerald-700">
-                              متوفر الآن
-                            </span>
-                          </div>
-
-                          <p className="mt-1 line-clamp-1 text-[11px] text-[#8A9A9E]">
-                            {medicineMeta || "دواء مسجل في المنصة"}
-                          </p>
-
-                          <div className="mt-2 flex flex-wrap items-center gap-4 text-[10.5px] text-[#708287]">
-                            <span>
-                              {formatDistance(item.pharmacy.distanceMeters)}
-                            </span>
-
-                            <span className="inline-flex items-center gap-1">
-                              <Star
-                                size={12}
-                                fill="currentColor"
-                                className="text-[#DFAE0D]"
-                              />
-                              {Number(
-                                item.pharmacy.averageRating || 0,
-                              ).toLocaleString("ar-SY", {
-                                maximumFractionDigits: 1,
-                              })}
-                            </span>
-
-                            <span className="font-semibold text-[#216474]">
-                              {item.pharmacy.pharmacyName}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="flex shrink-0 flex-col gap-2">
-                          <Link
-                            to={`/app/pharmacies/${item.pharmacy.pharmacyId}?medicine=${item.medicineId}`}
-                            className="inline-flex min-h-[40px] min-w-[120px] items-center justify-center rounded-[8px] bg-[#216474] px-4 text-[12px] font-semibold text-white transition hover:bg-[#174B57]"
-                          >
-                            عرض الصيدلية
-                          </Link>
-
-                          {item.pharmacy.latitude != null &&
-                            item.pharmacy.longitude != null && (
-                              <button
-                                type="button"
-                                onClick={() => showRoute(item.pharmacy)}
-                                className="inline-flex min-h-[36px] items-center justify-center gap-1.5 rounded-[8px] border border-[#DCE5E7] bg-white px-3 text-[11px] font-medium text-[#216474] transition hover:bg-[#EEF6F6]"
-                              >
-                                <Navigation size={14} />
-                                المسار
-                              </button>
-                            )}
-                        </div>
-                      </article>
-                    );
-                  })}
-                </div>
-
-                {visibleCount < results.length ? (
-                  <div className="mt-7 flex justify-center">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setVisibleCount((current) =>
-                          Math.min(current + 5, results.length),
-                        )
-                      }
-                      className="inline-flex min-h-[42px] min-w-[180px] items-center justify-center gap-2 rounded-[8px] border border-[#216474] bg-white px-5 text-[12px] font-semibold text-[#216474] transition hover:bg-[#EEF6F6]"
-                    >
-                      عرض المزيد
-                      <ChevronDown size={15} />
-                    </button>
-                  </div>
-                ) : null}
-              </main>
-
-              {/* LEFT: nearest pharmacies + map */}
-              <aside className="order-3 min-w-0">
-                <div className="mb-4">
-                  <h2 className="text-[16px] font-bold text-[#29464D]">
-                    أقرب الصيدليات المتوفر فيها
-                  </h2>
-
-                  <p className="mt-1 text-[11px] text-[#8A9A9E]">
-                    مرتبة حسب المسافة من موقعك
-                  </p>
-                </div>
-
-                <div className="space-y-3">
-                  {resultPharmacies.map((pharmacy) => (
-                    <article
-                      key={pharmacy.pharmacyId}
-                      className="rounded-[8px] border border-[#E2E8EA] bg-white px-3.5 py-3"
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <h3 className="truncate text-[13px] font-bold text-[#29464D]">
-                            {pharmacy.pharmacyName}
-                          </h3>
-
-                          <p className="mt-1 truncate text-[10.5px] text-[#8A9A9E]">
-                            {pharmacy.address || "العنوان غير محدد"}
-                          </p>
-
-                          <div className="mt-2 flex items-center gap-3 text-[10px] text-[#708287]">
-                            <span className="inline-flex items-center gap-1">
-                              <MapPin size={11} />
-                              {formatDistance(pharmacy.distanceMeters)}
-                            </span>
-
-                            <span className="inline-flex items-center gap-1">
-                              <Star
-                                size={11}
-                                fill="currentColor"
-                                className="text-[#DFAE0D]"
-                              />
-                              {Number(
-                                pharmacy.averageRating || 0,
-                              ).toLocaleString("ar-SY", {
-                                maximumFractionDigits: 1,
-                              })}
-                            </span>
-                          </div>
-                        </div>
-
-                        <span
-                          className={`shrink-0 rounded-full px-2.5 py-1 text-[9.5px] font-semibold ${
-                            pharmacy.isOpenNow
-                              ? "bg-emerald-50 text-emerald-700"
-                              : "bg-slate-100 text-slate-500"
-                          }`}
-                        >
-                          {pharmacy.statusText ||
-                            (pharmacy.isOpenNow
-                              ? "مفتوحة الآن"
-                              : "مغلقة الآن")}
-                        </span>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-
-                {resultsMapContext?.mapMarkers?.length > 0 ? (
-                  <div className="mt-4 overflow-hidden rounded-[10px] border border-[#E2E8EA] bg-white">
-                    <div className="h-[230px] [&>section]:h-full [&>section]:rounded-none [&>section]:border-0 [&>section]:shadow-none [&>section>div]:!block [&>section>div>aside]:!hidden [&>section>div>div]:!h-full [&>section>div>div]:!min-h-[230px]">
-                      <Suspense
-                        fallback={
-                          <UserLoadingState label="جاري تجهيز الخريطة..." />
-                        }
-                      >
-                        <NearbyPharmaciesMap
-                          locationContext={resultsMapContext}
-                          route={null}
-                          limit={8}
-                          title="الصيدليات المتوفر لديها الدواء"
-                        />
-                      </Suspense>
+                {/* RIGHT: filters */}
+                <aside className="order-1 rounded-[10px] border border-[#E2E8EA] bg-white p-4 xl:sticky xl:top-20">
+                  <div className="flex items-center gap-2 border-b border-[#EDF1F2] pb-4">
+                    <Filter size={18} className="text-[#216474]" />
+                    <div>
+                      <h2 className="text-[15px] font-bold text-[#216474]">
+                        فلترة النتائج
+                      </h2>
+                      <p className="mt-1 text-[11px] text-[#8A9A9E]">
+                        خصص النتائج حسب ما يناسبك
+                      </p>
                     </div>
                   </div>
-                ) : null}
-              </aside>
+
+                  <div className="mt-5 space-y-5">
+                    <FilterSelect
+                      label="نطاق البحث"
+                      value={radius}
+                      onChange={(event) =>
+                        setRadius(Number(event.target.value))
+                      }
+                    >
+                      <option value={1000}>ضمن 1 كم</option>
+                      <option value={3000}>ضمن 3 كم</option>
+                      <option value={5000}>ضمن 5 كم</option>
+                      <option value={10000}>ضمن 10 كم</option>
+                      <option value={25000}>ضمن 25 كم</option>
+                    </FilterSelect>
+
+                    <FilterSelect
+                      label="ترتيب النتائج"
+                      value={sortBy}
+                      onChange={(event) => setSortBy(event.target.value)}
+                    >
+                      {sortOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </FilterSelect>
+
+                    <div className="pt-2">
+                      <button
+                        type="button"
+                        onClick={applyFilters}
+                        className="flex min-h-[44px] w-full items-center justify-center rounded-[8px] bg-[#216474] px-4 text-[13px] font-semibold text-white transition hover:bg-[#174B57]"
+                      >
+                        تطبيق
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={resetFilters}
+                        className="mt-2 flex min-h-[42px] w-full items-center justify-center rounded-[8px] border border-[#216474] bg-white px-4 text-[13px] font-semibold text-[#216474] transition hover:bg-[#EEF6F6]"
+                      >
+                        إعادة تعيين
+                      </button>
+                    </div>
+                  </div>
+                </aside>
+
+                {/* CENTER: result list */}
+                <main className="order-2 min-w-0">
+                  <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
+                    <div>
+                      <h2 className="text-[22px] font-bold text-[#29464D]">
+                        النتائج
+                      </h2>
+
+                      <p className="mt-1 text-[12px] text-[#8A9A9E]">
+                        {results.length.toLocaleString("ar-SY")} نتيجة لدى{" "}
+                        {groupedCount.toLocaleString("ar-SY")} صيدلية
+                      </p>
+                    </div>
+
+                    <MedicineAlternativesButton
+                      medicineName={results[0]?.medicineName}
+                      label="عرض بدائل للدواء"
+                      className="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-[8px] border border-[#CFE4E7] bg-[#EEF7F6] px-4 text-[12px] font-semibold text-[#216474]"
+                    />
+                  </div>
+
+                  <div className="space-y-3">
+                    {visibleResults.map((item) => {
+                      const displayName =
+                        item.medicineDisplayName ||
+                        item.arabicMedicineName ||
+                        item.medicineName;
+
+                      const medicineMeta = [
+                        item.arabicScientificName || item.scientificName,
+                        item.dosageForm,
+                        item.capacity,
+                      ]
+                        .filter(Boolean)
+                        .join(" • ");
+
+                      return (
+                        <article
+                          key={`${item.pharmacy.pharmacyId}-${item.medicineId}`}
+                          className="grid min-h-[92px] items-center gap-3 rounded-[8px] border border-[#E2E8EA] bg-white px-3.5 py-3 shadow-[0_3px_12px_rgba(23,75,87,.025)] sm:grid-cols-[64px_minmax(0,1fr)_118px]"
+                        >
+                          <div className="flex h-[62px] w-[64px] items-center justify-center rounded-[9px] bg-[#F8FBFA]">
+                            {item.imageUrl ? (
+                              <img
+                                src={item.imageUrl}
+                                alt={displayName}
+                                className="max-h-[54px] max-w-[58px] object-contain"
+                              />
+                            ) : (
+                              <PackageSearch
+                                size={23}
+                                strokeWidth={1.5}
+                                className="text-[#216474]"
+                              />
+                            )}
+                          </div>
+
+                          <div className="min-w-0 text-right">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <h3 className="truncate text-[13px] font-bold text-[#29464D]">
+                                {displayName}
+                              </h3>
+
+                              <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold text-emerald-700">
+                                متوفر الآن
+                              </span>
+                            </div>
+
+                            <p className="mt-1 line-clamp-1 text-[11px] text-[#8A9A9E]">
+                              {medicineMeta || "دواء مسجل في المنصة"}
+                            </p>
+
+                            <div className="mt-2 flex flex-wrap items-center gap-4 text-[10.5px] text-[#708287]">
+                              <span>
+                                {formatDistance(item.pharmacy.distanceMeters)}
+                              </span>
+
+                              <span className="inline-flex items-center gap-1">
+                                <Star
+                                  size={12}
+                                  fill="currentColor"
+                                  className="text-[#DFAE0D]"
+                                />
+                                {Number(
+                                  item.pharmacy.averageRating || 0,
+                                ).toLocaleString("ar-SY", {
+                                  maximumFractionDigits: 1,
+                                })}
+                              </span>
+
+                              <span className="font-semibold text-[#216474]">
+                                {item.pharmacy.pharmacyName}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="flex shrink-0 flex-col gap-2">
+                            <Link
+                              to={`/app/pharmacies/${item.pharmacy.pharmacyId}?medicine=${item.medicineId}`}
+                              className="inline-flex min-h-[40px] min-w-[120px] items-center justify-center rounded-[8px] bg-[#216474] px-4 text-[12px] font-semibold text-white transition hover:bg-[#174B57]"
+                            >
+                              عرض الصيدلية
+                            </Link>
+
+                            {item.pharmacy.latitude != null &&
+                              item.pharmacy.longitude != null && (
+                                <button
+                                  type="button"
+                                  onClick={() => showRoute(item.pharmacy)}
+                                  className="inline-flex min-h-[36px] items-center justify-center gap-1.5 rounded-[8px] border border-[#DCE5E7] bg-white px-3 text-[11px] font-medium text-[#216474] transition hover:bg-[#EEF6F6]"
+                                >
+                                  <Navigation size={14} />
+                                  المسار
+                                </button>
+                              )}
+                          </div>
+                        </article>
+                      );
+                    })}
+                  </div>
+
+                  {visibleCount < results.length ? (
+                    <div className="mt-7 flex justify-center">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setVisibleCount((current) =>
+                            Math.min(current + 5, results.length),
+                          )
+                        }
+                        className="inline-flex min-h-[42px] min-w-[180px] items-center justify-center gap-2 rounded-[8px] border border-[#216474] bg-white px-5 text-[12px] font-semibold text-[#216474] transition hover:bg-[#EEF6F6]"
+                      >
+                        عرض المزيد
+                        <ChevronDown size={15} />
+                      </button>
+                    </div>
+                  ) : null}
+                </main>
+
+                {/* LEFT: nearest pharmacies + map */}
+                <aside className="order-3 min-w-0">
+                  <div className="mb-4">
+                    <h2 className="text-[16px] font-bold text-[#29464D]">
+                      أقرب الصيدليات المتوفر فيها
+                    </h2>
+
+                    <p className="mt-1 text-[11px] text-[#8A9A9E]">
+                      مرتبة حسب المسافة من موقعك
+                    </p>
+                  </div>
+
+                  <div className="space-y-3">
+                    {resultPharmacies.map((pharmacy) => (
+                      <article
+                        key={pharmacy.pharmacyId}
+                        className="rounded-[8px] border border-[#E2E8EA] bg-white px-3.5 py-3"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <h3 className="truncate text-[13px] font-bold text-[#29464D]">
+                              {pharmacy.pharmacyName}
+                            </h3>
+
+                            <p className="mt-1 truncate text-[10.5px] text-[#8A9A9E]">
+                              {pharmacy.address || "العنوان غير محدد"}
+                            </p>
+
+                            <div className="mt-2 flex items-center gap-3 text-[10px] text-[#708287]">
+                              <span className="inline-flex items-center gap-1">
+                                <MapPin size={11} />
+                                {formatDistance(pharmacy.distanceMeters)}
+                              </span>
+
+                              <span className="inline-flex items-center gap-1">
+                                <Star
+                                  size={11}
+                                  fill="currentColor"
+                                  className="text-[#DFAE0D]"
+                                />
+                                {Number(
+                                  pharmacy.averageRating || 0,
+                                ).toLocaleString("ar-SY", {
+                                  maximumFractionDigits: 1,
+                                })}
+                              </span>
+                            </div>
+                          </div>
+
+                          <span
+                            className={`shrink-0 rounded-full px-2.5 py-1 text-[9.5px] font-semibold ${
+                              pharmacy.isOpenNow
+                                ? "bg-emerald-50 text-emerald-700"
+                                : "bg-slate-100 text-slate-500"
+                            }`}
+                          >
+                            {pharmacy.statusText ||
+                              (pharmacy.isOpenNow
+                                ? "مفتوحة الآن"
+                                : "مغلقة الآن")}
+                          </span>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+
+                  {resultsMapContext?.mapMarkers?.length > 0 ? (
+                    <div className="mt-4 overflow-hidden rounded-[10px] border border-[#E2E8EA] bg-white">
+                      <div className="h-[230px] [&>section]:h-full [&>section]:rounded-none [&>section]:border-0 [&>section]:shadow-none [&>section>div]:!block [&>section>div>aside]:!hidden [&>section>div>div]:!h-full [&>section>div>div]:!min-h-[230px]">
+                        <Suspense
+                          fallback={
+                            <UserLoadingState label="جاري تجهيز الخريطة..." />
+                          }
+                        >
+                          <NearbyPharmaciesMap
+                            locationContext={resultsMapContext}
+                            route={null}
+                            limit={8}
+                            title="الصيدليات المتوفر لديها الدواء"
+                          />
+                        </Suspense>
+                      </div>
+                    </div>
+                  ) : null}
+                </aside>
               </div>
             </>
           )}
 
           {routePharmacy ? (
-            <section
-              id="selected-pharmacy-route"
-              className="mt-8 scroll-mt-24"
-            >
+            <section id="selected-pharmacy-route" className="mt-8 scroll-mt-24">
               {routeQuery.isPending ? (
-                <UserLoadingState label={t("جاري رسم طريق الوصول إلى الصيدلية...")} />
+                <UserLoadingState
+                  label={t("جاري رسم طريق الوصول إلى الصيدلية...")}
+                />
               ) : null}
 
               {routeQuery.isError ? (
@@ -1015,10 +1005,7 @@ export function MedicineSearchPage() {
             </FilterSelect>
           </div>
 
-          <PharmaciesResults
-            query={pharmaciesQuery}
-            onShowRoute={showRoute}
-          />
+          <PharmaciesResults query={pharmaciesQuery} onShowRoute={showRoute} />
         </section>
       )}
 
@@ -1039,7 +1026,8 @@ export function MedicineSearchPage() {
               <Brand />
 
               <p className="max-w-[300px] text-right text-[12px] font-normal leading-[20px] tracking-[0.01em] text-[#666666]">
-                منصة ذكية تساعدك في العثور على أقرب صيدلية والوصول إلى الخدمات الدوائية بصورة أسرع وأكثر موثوقية.
+                منصة ذكية تساعدك في العثور على أقرب صيدلية والوصول إلى الخدمات
+                الدوائية بصورة أسرع وأكثر موثوقية.
               </p>
             </div>
 

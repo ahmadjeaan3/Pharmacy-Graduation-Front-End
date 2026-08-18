@@ -12,6 +12,7 @@ import {
   Edit3,
   FileSpreadsheet,
   FilePlus2,
+  Languages,
   PackagePlus,
   PackageCheck,
   PackageX,
@@ -249,7 +250,14 @@ function PredictionField({ label, value, onChange, step = "1" }) {
   );
 }
 
-function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
+function InventoryDialog({
+  item,
+  initialMedicine,
+  onClose,
+  onSave,
+  onSaveBatch,
+  pending,
+}) {
   const { t, i18n } = useTranslation();
 
   const currentLanguage = (i18n.resolvedLanguage || i18n.language || "ar")
@@ -287,6 +295,9 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
   );
   const [catalogPage, setCatalogPage] = useState(1);
   const [showArabicCatalog, setShowArabicCatalog] = useState(false);
+  const [selectedMedicines, setSelectedMedicines] = useState(() =>
+    initialMedicine ? [initialMedicine] : [],
+  );
 
   const catalog = useQuery({
     queryKey: pharmacyKeys.catalog({ catalogSearch, catalogPage }),
@@ -347,7 +358,21 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
         <form
           onSubmit={(event) => {
             event.preventDefault();
-
+            if (!item && selectedMedicines.length > 1) {
+              onSaveBatch(
+                selectedMedicines.map((medicine) => ({
+                  medicineId: medicine.id,
+                  medicineName: medicine.displayName || medicine.name,
+                  quantity: 0,
+                  unitPrice: 0,
+                  isAvailable: false,
+                  isPriceVisibleToUsers: false,
+                  expiryDateUtc: null,
+                  lowStockThreshold: 5,
+                })),
+              );
+              return;
+            }
             onSave({
               ...form,
               quantity: Number(form.quantity),
@@ -387,6 +412,23 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
                 </button>
               </div>
 
+              {selectedMedicines.length > 0 && (
+                <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[#cfe0e3] bg-[#f4f9f8] px-4 py-3 text-xs font-bold text-[#47666d]">
+                  <span>
+                    {t("تم اختيار {{count}} دواء", {
+                      count: selectedMedicines.length,
+                    })}
+                  </span>
+                  {selectedMedicines.length > 1 && (
+                    <span className="text-[#b58112]">
+                      {t(
+                        "ستُضاف دون كمية أو سعر، ثم تعدّل بيانات كل دواء من المخزون.",
+                      )}
+                    </span>
+                  )}
+                </div>
+              )}
+
               <label>
                 <div className="field-control">
                   <span
@@ -415,30 +457,50 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
                   <button
                     type="button"
                     key={medicine.id}
-                    onClick={() =>
+                    onClick={() => {
+                      const selected = selectedMedicines.some(
+                        (entry) => entry.id === medicine.id,
+                      );
+                      const next = selected
+                        ? selectedMedicines.filter(
+                            (entry) => entry.id !== medicine.id,
+                          )
+                        : [...selectedMedicines, medicine];
+                      const primary = next[0];
+                      setSelectedMedicines(next);
                       setForm((old) => ({
                         ...old,
-                        medicineId: medicine.id,
-                        medicineName: medicine.name,
-                        unitPrice: medicine.sellingPrice || 0,
-                      }))
-                    }
+                        medicineId: primary?.id || "",
+                        medicineName:
+                          primary?.displayName || primary?.name || "",
+                        unitPrice:
+                          next.length === 1
+                            ? primary?.sellingPrice || 0
+                            : old.unitPrice,
+                      }));
+                    }}
                     className={`flex items-center gap-3 rounded-2xl border p-3 transition ${
                       isArabic ? "text-right" : "text-left"
                     } ${
-                      form.medicineId === medicine.id
+                      selectedMedicines.some(
+                        (entry) => entry.id === medicine.id,
+                      )
                         ? "border-[#216474] bg-[#eef7f6]"
                         : "border-[#174b57]/9 hover:border-[#216474]/35"
                     }`}
                   >
                     <span
                       className={`grid size-9 shrink-0 place-items-center rounded-xl ${
-                        form.medicineId === medicine.id
+                        selectedMedicines.some(
+                          (entry) => entry.id === medicine.id,
+                        )
                           ? "bg-[#216474] text-white"
                           : "bg-[#edf5f4] text-[#216474]"
                       }`}
                     >
-                      {form.medicineId === medicine.id ? (
+                      {selectedMedicines.some(
+                        (entry) => entry.id === medicine.id,
+                      ) ? (
                         <Check size={17} />
                       ) : (
                         <Pill size={17} />
@@ -529,94 +591,106 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
             </div>
           )}
 
-          <div
-            className={`${
-              item ? "" : "mt-7 border-t border-[#174b57]/8 pt-6"
-            } grid gap-5 md:grid-cols-2`}
-          >
-            <label>
-              <span className="form-label">{t("الكمية")}</span>
-              <input
-                type="number"
-                min="0"
-                className="form-input"
-                value={form.quantity}
-                onChange={change("quantity")}
-                required
-              />
-            </label>
-
-            <label>
-              <span className="form-label">{t("سعر البيع")}</span>
-              <input
-                type="number"
-                min="0"
-                step="0.01"
-                className="form-input"
-                value={form.unitPrice}
-                onChange={change("unitPrice")}
-                required
-              />
-            </label>
-
-            <label>
-              <span className="form-label">{t("حد تنبيه انخفاض المخزون")}</span>
-              <input
-                type="number"
-                min="0"
-                className="form-input"
-                value={form.lowStockThreshold}
-                onChange={change("lowStockThreshold")}
-                required
-              />
-            </label>
-
-            <label>
-              <span className="form-label">{t("تاريخ الانتهاء")}</span>
-              <input
-                type="date"
-                className="form-input"
-                value={form.expiryDateUtc}
-                onChange={change("expiryDateUtc")}
-              />
-            </label>
-          </div>
-
-          <label className="mt-5 flex items-center justify-between rounded-2xl bg-[#f7faf9] p-4">
-            <div className={isArabic ? "text-right" : "text-left"}>
-              <p className="text-sm font-extrabold">{t("متاح للطلبات")}</p>
-              <p className="mt-1 text-xs text-[#829499]">
-                {t("يتوقف تلقائيًا عندما تصبح الكمية صفرًا")}
-              </p>
+          {!item && selectedMedicines.length > 1 ? (
+            <div className="mt-7 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm font-bold leading-7 text-amber-900">
+              {t(
+                "ستُحفظ الأدوية المختارة بكمية 0، وسعر 0، ولن تظهر كمتاحة للمستخدمين حتى تعدّل كل دواء وتحدد بياناته.",
+              )}
             </div>
+          ) : (
+            <>
+              <div
+                className={`${
+                  item ? "" : "mt-7 border-t border-[#174b57]/8 pt-6"
+                } grid gap-5 md:grid-cols-2`}
+              >
+                <label>
+                  <span className="form-label">{t("الكمية")}</span>
+                  <input
+                    type="number"
+                    min="0"
+                    className="form-input"
+                    value={form.quantity}
+                    onChange={change("quantity")}
+                    required
+                  />
+                </label>
 
-            <input
-              className="size-5 accent-[#216474]"
-              type="checkbox"
-              checked={form.isAvailable}
-              onChange={change("isAvailable")}
-            />
-          </label>
+                <label>
+                  <span className="form-label">{t("سعر البيع")}</span>
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    className="form-input"
+                    value={form.unitPrice}
+                    onChange={change("unitPrice")}
+                    required
+                  />
+                </label>
 
-          <label className="mt-3 flex items-center justify-between rounded-2xl border border-[#174b57]/8 bg-white p-4">
-            <div className={isArabic ? "text-right" : "text-left"}>
-              <p className="text-sm font-extrabold">
-                {t("إظهار السعر للمستخدمين")}
-              </p>
-              <p className="mt-1 text-xs text-[#829499]">
-                {t(
-                  "عند إخفائه سيظهر للمستخدم أن السعر متاح عند التواصل مع الصيدلية.",
-                )}
-              </p>
-            </div>
+                <label>
+                  <span className="form-label">
+                    {t("حد تنبيه انخفاض المخزون")}
+                  </span>
+                  <input
+                    type="number"
+                    min="0"
+                    className="form-input"
+                    value={form.lowStockThreshold}
+                    onChange={change("lowStockThreshold")}
+                    required
+                  />
+                </label>
 
-            <input
-              className="size-5 accent-[#216474]"
-              type="checkbox"
-              checked={form.isPriceVisibleToUsers}
-              onChange={change("isPriceVisibleToUsers")}
-            />
-          </label>
+                <label>
+                  <span className="form-label">{t("تاريخ الانتهاء")}</span>
+                  <input
+                    type="date"
+                    className="form-input"
+                    value={form.expiryDateUtc}
+                    onChange={change("expiryDateUtc")}
+                  />
+                </label>
+              </div>
+
+              <label className="mt-5 flex items-center justify-between rounded-2xl bg-[#f7faf9] p-4">
+                <div className={isArabic ? "text-right" : "text-left"}>
+                  <p className="text-sm font-extrabold">{t("متاح للطلبات")}</p>
+                  <p className="mt-1 text-xs text-[#829499]">
+                    {t("يتوقف تلقائيًا عندما تصبح الكمية صفرًا")}
+                  </p>
+                </div>
+
+                <input
+                  className="size-5 accent-[#216474]"
+                  type="checkbox"
+                  checked={form.isAvailable}
+                  onChange={change("isAvailable")}
+                />
+              </label>
+
+              <label className="mt-3 flex items-center justify-between rounded-2xl border border-[#174b57]/8 bg-white p-4">
+                <div className={isArabic ? "text-right" : "text-left"}>
+                  <p className="text-sm font-extrabold">
+                    {t("إظهار السعر للمستخدمين")}
+                  </p>
+                  <p className="mt-1 text-xs text-[#829499]">
+                    {t(
+                      "عند إخفائه سيظهر للمستخدم أن السعر متاح عند التواصل مع الصيدلية.",
+                    )}
+                  </p>
+                </div>
+
+                <input
+                  className="size-5 accent-[#216474]"
+                  type="checkbox"
+                  checked={form.isPriceVisibleToUsers}
+                  onChange={change("isPriceVisibleToUsers")}
+                />
+              </label>
+            </>
+          )}
 
           <div
             className={`mt-6 flex gap-2 ${
@@ -636,7 +710,11 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
                 ? t("جاري الحفظ...")
                 : item
                   ? t("حفظ التعديل")
-                  : t("إضافة للمخزون")}
+                  : selectedMedicines.length > 1
+                    ? t("إضافة {{count}} أدوية كمسودات", {
+                        count: selectedMedicines.length,
+                      })
+                    : t("إضافة للمخزون")}
             </button>
           </div>
         </form>
@@ -1047,6 +1125,22 @@ export function PharmacyInventoryPage() {
       }),
   });
 
+  const saveCatalogBatch = useMutation({
+    mutationFn: addInventoryBatch,
+    onSuccess: async (_result, items) => {
+      setEditor(null);
+      setNotice({
+        ok: true,
+        text: t("تمت إضافة {{count}} أدوية للمخزون. عدّل بيانات كل دواء.", {
+          count: items.length,
+        }),
+      });
+      await invalidate();
+    },
+    onError: (error) =>
+      setNotice({ ok: false, text: getApiErrorMessage(error) }),
+  });
+
   const remove = useMutation({
     mutationFn: removeInventoryMedicine,
     onSuccess: async () => {
@@ -1399,9 +1493,7 @@ export function PharmacyInventoryPage() {
                 className="group relative overflow-hidden rounded-[1.5rem] border border-[#DCE8EA] bg-white p-5 shadow-[0_8px_26px_rgba(23,75,87,.04)] transition duration-300 hover:-translate-y-1 hover:border-[#B9D2D6] hover:shadow-[0_18px_42px_rgba(23,75,87,.09)] sm:p-6"
               >
                 <div className="flex items-start justify-between gap-3">
-                  <span
-                    className="grid size-12 place-items-center rounded-2xl border border-[#DCE8EA] bg-[#F2F8F8] text-[#216474]"
-                  >
+                  <span className="grid size-12 place-items-center rounded-2xl border border-[#DCE8EA] bg-[#F2F8F8] text-[#216474]">
                     <Pill size={22} />
                   </span>
 
@@ -1581,9 +1673,10 @@ export function PharmacyInventoryPage() {
         <InventoryDialog
           item={editor.inventoryItemId ? editor : null}
           initialMedicine={editor.initialMedicine}
-          pending={save.isPending}
+          pending={save.isPending || saveCatalogBatch.isPending}
           onClose={() => setEditor(null)}
           onSave={(payload) => save.mutate(payload)}
+          onSaveBatch={(items) => saveCatalogBatch.mutate(items)}
         />
       )}
       {showBarcodeLookup && (

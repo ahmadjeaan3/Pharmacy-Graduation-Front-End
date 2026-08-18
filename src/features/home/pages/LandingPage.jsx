@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Brand } from "../../../shared/components/Brand";
 import { LanguageSwitcher } from "../../../shared/components/LanguageSwitcher";
@@ -74,7 +74,6 @@ const ASSETS = {
   security: "/assets/app/home/security.png",
   cta: "/assets/app/home/cta.png",
 
-  
   sparkle: "/assets/app/home/icons/Sparkle.png",
   arrowTeal: "/assets/app/home/icons/chevron-down.svg",
   verified: "/assets/app/home/icons/verified.png",
@@ -435,24 +434,12 @@ export function LandingPage() {
     staleTime: 5 * 60_000,
   });
   const homeTicker = useQuery({
-    queryKey: ["home-ticker", "published"],
+    queryKey: ["home-ticker"],
     queryFn: async () => (await apiClient.get("/home-ticker")).data,
-    staleTime: 60_000,
-    refetchInterval: 5 * 60_000,
     retry: 1,
+    staleTime: 2 * 60_000,
   });
-  const tickerItems = homeTicker.data?.length
-    ? homeTicker.data
-    : [
-        {
-          id: "platform-welcome",
-          type: "Announcement",
-          title: t("دوائي"),
-          message: t(
-            "دواؤك أقرب مما تتوقع — ابحث، احجز وتوجه إلى الصيدلية بثقة.",
-          ),
-        },
-      ];
+  const tickerItems = Array.isArray(homeTicker.data) ? homeTicker.data : [];
   const statisticItems = [
     ["زوار المنصة", statistics.data?.uniqueVisitors],
     ["مستخدمون نشطون", statistics.data?.activeUsers],
@@ -466,41 +453,7 @@ export function LandingPage() {
       : currentLanguage === "tr"
         ? "tr-TR"
         : "en-US";
-  const [scrollProgress, setScrollProgress] = useState(0);
   const [activeNav, setActiveNav] = useState("home");
-  const heroSearchInputRef = useRef(null);
-
-  useEffect(() => {
-    const updateScrollProgress = () => {
-      const page = document.documentElement;
-
-      const scrollableHeight = page.scrollHeight - page.clientHeight;
-
-      const progress =
-        scrollableHeight > 0
-          ? Math.min(
-              100,
-              Math.max(0, (page.scrollTop / scrollableHeight) * 100),
-            )
-          : 0;
-
-      setScrollProgress(progress);
-    };
-
-    updateScrollProgress();
-
-    window.addEventListener("scroll", updateScrollProgress, {
-      passive: true,
-    });
-
-    window.addEventListener("resize", updateScrollProgress);
-
-    return () => {
-      window.removeEventListener("scroll", updateScrollProgress);
-
-      window.removeEventListener("resize", updateScrollProgress);
-    };
-  }, []);
 
   const cardsPerPage = 3;
 
@@ -655,8 +608,8 @@ export function LandingPage() {
         }
 
         @keyframes ml-ticker-rtl {
-          from { transform: translateX(0); }
-          to { transform: translateX(25%); }
+          from { transform: translateX(-25%); }
+          to { transform: translateX(0); }
         }
 
         .ml-ticker-track {
@@ -931,9 +884,7 @@ export function LandingPage() {
 
                   <span
                     className={`absolute inset-x-3 bottom-0 h-[2px] rounded-full bg-[#DFAE0D] transition-all duration-300 ${
-                      active
-                        ? "scale-x-100 opacity-100"
-                        : "scale-x-0 opacity-0"
+                      active ? "scale-x-100 opacity-100" : "scale-x-0 opacity-0"
                     }`}
                   />
                 </a>
@@ -952,22 +903,77 @@ export function LandingPage() {
             <Logo responsive />
           </div>
         </div>
-
-
       </header>
 
-      <div aria-hidden="true" className="h-[84px] shrink-0" />
+      <div aria-hidden="true" className="h-[104px] shrink-0" />
 
       <main>
+        {tickerItems.length > 0 && (
+          <aside
+            aria-label={t("إعلانات وتنبيهات المنصة")}
+            className="ml-ticker-shell landing-ticker relative z-40 overflow-hidden border-b border-[#216474]/15 bg-[#174B57] text-white shadow-[0_6px_18px_rgba(23,75,87,0.16)]"
+          >
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-gradient-to-r from-[#174B57] to-transparent sm:w-24" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-gradient-to-l from-[#174B57] to-transparent sm:w-24" />
+
+            <div className="ml-ticker-track flex min-h-[46px] items-center py-2">
+              {Array.from({ length: 4 }, (_, copyIndex) =>
+                tickerItems.map((item) => {
+                  const isDutyPharmacy = item.type === "DutyPharmacy";
+
+                  return (
+                    <div
+                      key={`${copyIndex}-${item.id}`}
+                      dir={textDirection}
+                      className="mx-10 inline-flex shrink-0 items-center gap-3 sm:mx-14 lg:mx-16"
+                    >
+                      <span className="grid size-8 shrink-0 place-items-center rounded-full bg-white/12 text-[#F1C94F] ring-1 ring-white/15">
+                        {isDutyPharmacy ? (
+                          <MapPin size={17} aria-hidden="true" />
+                        ) : (
+                          <BellRing size={17} aria-hidden="true" />
+                        )}
+                      </span>
+
+                      <span className="whitespace-nowrap text-sm sm:text-[15px]">
+                        <strong className="font-semibold text-white">
+                          {item.title}
+                        </strong>
+                        {item.message && (
+                          <span className="text-white/80">
+                            {" — "}
+                            {item.message}
+                          </span>
+                        )}
+                        {isDutyPharmacy && item.pharmacyName && (
+                          <span className="font-medium text-[#F7D96E]">
+                            {" · "}
+                            {item.pharmacyName}
+                          </span>
+                        )}
+                      </span>
+
+                      <span
+                        aria-hidden="true"
+                        className="ms-5 size-1.5 rounded-full bg-[#DFAE0D] sm:ms-7"
+                      />
+                    </div>
+                  );
+                }),
+              )}
+            </div>
+          </aside>
+        )}
+
         {/* Hero */}
-         
-<section
-  id="home"
-  className="relative overflow-hidden bg-[#F8FAFC] pt-[34px] pb-[56px]"
->
-  {/* ================= BACKGROUND GLOW ================= */}
-  <div
-    className="
+
+        <section
+          id="home"
+          className="relative overflow-hidden bg-[radial-gradient(circle_at_88%_12%,rgba(33,100,116,0.12)_0%,transparent_34%),radial-gradient(circle_at_8%_88%,rgba(223,174,13,0.10)_0%,transparent_30%),linear-gradient(135deg,#F8FAFC_0%,#FFFFFF_48%,#EEF7F8_100%)] pb-[56px] pt-5 sm:pt-[34px]"
+        >
+          {/* ================= BACKGROUND GLOW ================= */}
+          <div
+            className="
       pointer-events-none
       absolute
       -right-[180px]
@@ -978,10 +984,10 @@ export function LandingPage() {
       bg-[rgba(21,142,171,0.16)]
       blur-[150px]
     "
-  />
+          />
 
-  <div
-    className="
+          <div
+            className="
       pointer-events-none
       absolute
       -left-[150px]
@@ -992,56 +998,49 @@ export function LandingPage() {
       bg-[rgba(254,226,82,0.16)]
       blur-[150px]
     "
-  />
+          />
 
-  <div className="relative mx-auto w-full max-w-[1200px] px-5 xl:px-0">
+          <div className="relative mx-auto w-full max-w-[1200px] px-5 xl:px-0">
+            {/* ========================================================= */}
+            {/* ========================= HERO ========================== */}
+            {/* ========================================================= */}
 
-    {/* ========================================================= */}
-    {/* ========================= HERO ========================== */}
-    {/* ========================================================= */}
-
-    <div
-      dir="ltr"
-      className={`
+            <div
+              dir="ltr"
+              className={`
         relative
         flex
         min-h-[500px]
         w-full
-        items-center
-        ${
-          isArabic
-            ? "flex-row gap-[45px]"
-            : "flex-row-reverse gap-[75px]"
-        }
+        flex-col-reverse
+        items-stretch
+        gap-8
+        xl:items-center
+        ${isArabic ? "xl:flex-row xl:gap-[45px]" : "xl:flex-row-reverse xl:gap-[75px]"}
       `}
-    >
+            >
+              {/* ======================================================= */}
+              {/* ======================= IMAGE ========================= */}
+              {/* ======================================================= */}
 
-      {/* ======================================================= */}
-      {/* ======================= IMAGE ========================= */}
-      {/* ======================================================= */}
-
-      <div
-        className="
+              <div
+                className="
           relative
           z-10
-          h-[380px]
+          h-[320px]
           w-full
           shrink-0
 
-          sm:h-[440px]
-
-          lg:h-[500px]
-          lg:w-[545px]
+          sm:h-[400px]
 
           xl:h-[500px]
           xl:w-[545px]
         "
-      >
-
-        <img
-          src={ASSETS.hero}
-          alt={t("البحث عن الأدوية والصيدليات")}
-          className="
+              >
+                <img
+                  src={ASSETS.hero}
+                  alt={t("البحث عن الأدوية والصيدليات")}
+                  className="
             absolute
             left-1/2
             top-1/2
@@ -1059,32 +1058,26 @@ export function LandingPage() {
             sm:h-[520px]
             sm:w-[550px]
 
-            lg:left-[-80px]
-            lg:top-[-55px]
-            lg:h-[640px]
-            lg:w-[680px]
-
-            lg:translate-x-0
-            lg:translate-y-0
-
             xl:left-[-80px]
             xl:top-[-55px]
             xl:h-[640px]
             xl:w-[680px]
+            xl:translate-x-0
+            xl:translate-y-0
           "
-        />
+                />
 
-        {/* ===================================================== */}
-        {/* ================= REGISTERED PHARMACIES ============ */}
-        {/* ===================================================== */}
+                {/* ===================================================== */}
+                {/* ================= REGISTERED PHARMACIES ============ */}
+                {/* ===================================================== */}
 
-        <div
-          dir="ltr"
-          className={`
+                <div
+                  dir="ltr"
+                  className={`
             ml-floating-card-one
 
             absolute
-            top-[35px]
+            top-[65px]
 
             z-30
 
@@ -1114,12 +1107,12 @@ export function LandingPage() {
             hover:-translate-y-1
             hover:shadow-[0_15px_35px_rgba(33,100,116,0.17)]
 
-            lg:flex
+            xl:flex
 
             ${
               isArabic
                 ? `
-                  right-[-55px]
+                  right-[10px]
                   flex-row-reverse
                 `
                 : `
@@ -1128,11 +1121,11 @@ export function LandingPage() {
                 `
             }
           `}
-        >
-          {/* Icon */}
+                >
+                  {/* Icon */}
 
-          <span
-            className="
+                  <span
+                    className="
               grid
               h-10
               w-10
@@ -1145,19 +1138,15 @@ export function LandingPage() {
 
               text-[#174B57]
             "
-          >
-            <Building2
-              size={22}
-              strokeWidth={2}
-              aria-hidden="true"
-            />
-          </span>
+                  >
+                    <Building2 size={22} strokeWidth={2} aria-hidden="true" />
+                  </span>
 
-          {/* Text */}
+                  {/* Text */}
 
-          <div
-            dir={textDirection}
-            className={`
+                  <div
+                    dir={textDirection}
+                    className={`
               flex
               min-h-[44px]
               min-w-0
@@ -1166,50 +1155,46 @@ export function LandingPage() {
               justify-center
               gap-1
 
-              ${
-                isArabic
-                  ? "items-end text-right"
-                  : "items-start text-left"
-              }
+              ${isArabic ? "items-end text-right" : "items-start text-left"}
             `}
-          >
-            <strong
-              className="
+                  >
+                    <strong
+                      className="
                 w-full
                 text-[15px]
                 font-semibold
                 leading-5
                 text-[#333333]
               "
-            >
-              {t("صيدليات مسجلة")}
-            </strong>
+                    >
+                      {t("صيدليات مسجلة")}
+                    </strong>
 
-            <small
-              className="
+                    <small
+                      className="
                 w-full
                 text-[11px]
                 font-normal
                 leading-4
                 text-[#7E8E92]
               "
-            >
-              {t("بيانات الصيدلية والدواء")}
-            </small>
-          </div>
-        </div>
+                    >
+                      {t("بيانات الصيدلية والدواء")}
+                    </small>
+                  </div>
+                </div>
 
-        {/* ===================================================== */}
-        {/* ===================== QUICK SEARCH ================== */}
-        {/* ===================================================== */}
+                {/* ===================================================== */}
+                {/* ===================== QUICK SEARCH ================== */}
+                {/* ===================================================== */}
 
-        <div
-          dir="ltr"
-          className={`
+                <div
+                  dir="ltr"
+                  className={`
             ml-floating-card-two
 
             absolute
-            top-[355px]
+            top-[335px]
 
             z-30
 
@@ -1240,12 +1225,12 @@ export function LandingPage() {
             hover:-translate-y-1
             hover:shadow-[0_15px_35px_rgba(136,136,136,0.20)]
 
-            lg:flex
+            xl:flex
 
             ${
               isArabic
                 ? `
-                  left-[-115px]
+                  left-[-65px]
                   flex-row-reverse
                 `
                 : `
@@ -1254,11 +1239,11 @@ export function LandingPage() {
                 `
             }
           `}
-        >
-          {/* Icon */}
+                >
+                  {/* Icon */}
 
-          <span
-            className="
+                  <span
+                    className="
               grid
               h-10
               w-10
@@ -1269,19 +1254,19 @@ export function LandingPage() {
 
               bg-[rgba(251,244,177,0.32)]
             "
-          >
-            <ImageIcon
-              src={ASSETS.quickSearch}
-              alt=""
-              className="h-5 w-5"
-            />
-          </span>
+                  >
+                    <ImageIcon
+                      src={ASSETS.quickSearch}
+                      alt=""
+                      className="h-5 w-5"
+                    />
+                  </span>
 
-          {/* Text */}
+                  {/* Text */}
 
-          <div
-            dir={textDirection}
-            className={`
+                  <div
+                    dir={textDirection}
+                    className={`
               flex
               min-h-[42px]
               min-w-0
@@ -1290,46 +1275,42 @@ export function LandingPage() {
               justify-center
               gap-1
 
-              ${
-                isArabic
-                  ? "items-end text-right"
-                  : "items-start text-left"
-              }
+              ${isArabic ? "items-end text-right" : "items-start text-left"}
             `}
-          >
-            <strong
-              className="
+                  >
+                    <strong
+                      className="
                 w-full
                 text-[15px]
                 font-medium
                 leading-5
                 text-[#333333]
               "
-            >
-              {t("بحث سريع")}
-            </strong>
+                    >
+                      {t("بحث سريع")}
+                    </strong>
 
-            <small
-              className="
+                    <small
+                      className="
                 w-full
                 text-[11px]
                 font-normal
                 leading-4
                 text-[#A5A5A5]
               "
-            >
-              {t("وصول إلى أقرب صيدلية")}
-            </small>
-          </div>
-        </div>
-      </div>
+                    >
+                      {t("وصول إلى أقرب صيدلية")}
+                    </small>
+                  </div>
+                </div>
+              </div>
 
-      {/* ======================================================= */}
-      {/* ======================= CONTENT ======================= */}
-      {/* ======================================================= */}
+              {/* ======================================================= */}
+              {/* ======================= CONTENT ======================= */}
+              {/* ======================================================= */}
 
-      <div
-        className={`
+              <div
+                className={`
           ml-hero-copy-enter
           z-20
 
@@ -1343,10 +1324,9 @@ export function LandingPage() {
           ${itemsAlignClass}
           ${textAlignClass}
         `}
-      >
-
-        <div
-          className={`
+              >
+                <div
+                  className={`
             flex
             w-full
             flex-col
@@ -1354,15 +1334,14 @@ export function LandingPage() {
 
             ${itemsAlignClass}
           `}
-        >
+                >
+                  {/* =================================================== */}
+                  {/* ====================== BADGE ====================== */}
+                  {/* =================================================== */}
 
-          {/* =================================================== */}
-          {/* ====================== BADGE ====================== */}
-          {/* =================================================== */}
-
-          <div
-            dir={textDirection}
-            className="
+                  <div
+                    dir={textDirection}
+                    className="
               inline-flex
               min-h-[40px]
               w-fit
@@ -1380,108 +1359,88 @@ export function LandingPage() {
 
               shadow-[0_4px_18px_rgba(33,100,116,0.06)]
             "
-          >
-            {isArabic ? (
-              <>
-                <span
-                  className="
+                  >
+                    {isArabic ? (
+                      <>
+                        <span
+                          className="
                     text-[15px]
                     font-normal
                     leading-6
                     text-[#444444]
                   "
-                >
-                  {t("حل ذكي للعثور على الأدوية")}
-                </span>
+                        >
+                          {t("حل ذكي للعثور على الأدوية")}
+                        </span>
 
-                <ImageIcon
-                  src={ASSETS.sparkle}
-                  className="h-5 w-5"
-                />
-              </>
-            ) : (
-              <>
-                <ImageIcon
-                  src={ASSETS.sparkle}
-                  className="h-5 w-5"
-                />
+                        <ImageIcon src={ASSETS.sparkle} className="h-5 w-5" />
+                      </>
+                    ) : (
+                      <>
+                        <ImageIcon src={ASSETS.sparkle} className="h-5 w-5" />
 
-                <span
-                  className="
+                        <span
+                          className="
                     text-[15px]
                     font-normal
                     leading-6
                     text-[#444444]
                   "
-                >
-                  {t("حل ذكي للعثور على الأدوية")}
-                </span>
-              </>
-            )}
-          </div>
+                        >
+                          {t("حل ذكي للعثور على الأدوية")}
+                        </span>
+                      </>
+                    )}
+                  </div>
 
-          {/* =================================================== */}
-          {/* ====================== TITLE ====================== */}
-          {/* =================================================== */}
+                  {/* =================================================== */}
+                  {/* ====================== TITLE ====================== */}
+                  {/* =================================================== */}
 
-          <h1
-            dir={textDirection}
-            className={`
+                  <h1
+                    dir={textDirection}
+                    className={`
               max-w-[650px]
 
               break-words
 
-              text-[42px]
+              text-[34px]
               font-medium
               leading-[1.3]
 
               text-[#333333]
 
-              sm:text-[46px]
+              sm:text-[42px]
+
+              lg:text-[46px]
 
               xl:text-[50px]
 
               ${textAlignClass}
             `}
-          >
-            {isTurkish ? (
-              <>
-                <span>
-                  {t("دواؤك...")}
-                </span>{" "}
+                  >
+                    {isTurkish ? (
+                      <>
+                        <span>{t("دواؤك...")}</span>{" "}
+                        <span>{t("مما تتوقع")}</span>{" "}
+                        <span className="text-[#DFAE0D]">{t("أقرب")}</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>{t("دواؤك...")}</span>{" "}
+                        <span className="text-[#DFAE0D]">{t("أقرب")}</span>{" "}
+                        <span>{t("مما تتوقع")}</span>
+                      </>
+                    )}
+                  </h1>
 
-                <span>
-                  {t("مما تتوقع")}
-                </span>{" "}
+                  {/* =================================================== */}
+                  {/* ==================== DESCRIPTION ================== */}
+                  {/* =================================================== */}
 
-                <span className="text-[#DFAE0D]">
-                  {t("أقرب")}
-                </span>
-              </>
-            ) : (
-              <>
-                <span>
-                  {t("دواؤك...")}
-                </span>{" "}
-
-                <span className="text-[#DFAE0D]">
-                  {t("أقرب")}
-                </span>{" "}
-
-                <span>
-                  {t("مما تتوقع")}
-                </span>
-              </>
-            )}
-          </h1>
-
-          {/* =================================================== */}
-          {/* ==================== DESCRIPTION ================== */}
-          {/* =================================================== */}
-
-          <p
-            dir={textDirection}
-            className={`
+                  <p
+                    dir={textDirection}
+                    className={`
               max-w-[570px]
 
               break-words
@@ -1494,40 +1453,41 @@ export function LandingPage() {
 
               ${textAlignClass}
             `}
-          >
-            {t(
-              "نساعدك في العثور على الأدوية المتوفرة في الصيدليات القريبة منك بسرعة ودقة عالية",
-            )}
-          </p>
-        </div>
+                  >
+                    {t(
+                      "نساعدك في العثور على الأدوية المتوفرة في الصيدليات القريبة منك بسرعة ودقة عالية",
+                    )}
+                  </p>
+                </div>
 
-        {/* ===================================================== */}
-        {/* ======================== BUTTONS ==================== */}
-        {/* ===================================================== */}
+                {/* ===================================================== */}
+                {/* ======================== BUTTONS ==================== */}
+                {/* ===================================================== */}
 
-        <div
-          dir={textDirection}
-          className="
+                <div
+                  dir={textDirection}
+                  className="
             flex
             min-h-[58px]
             flex-wrap
             items-center
             gap-3
           "
-        >
+                >
+                  {/* ================= SECONDARY ================= */}
 
-          {/* ================= SECONDARY ================= */}
-
-          <a
-            href="#features"
-            dir="ltr"
-            className={`
+                  <a
+                    href="#features"
+                    dir="ltr"
+                    className={`
               ml-button
 
               inline-flex
 
               h-[56px]
-              w-[170px]
+              w-full
+
+              min-[420px]:w-[170px]
 
               items-center
               justify-center
@@ -1554,14 +1514,12 @@ export function LandingPage() {
 
               ${isArabic ? "flex-row-reverse" : "flex-row"}
             `}
-          >
-            <span dir={textDirection}>
-              {t("كيف يعمل")}
-            </span>
+                  >
+                    <span dir={textDirection}>{t("كيف يعمل")}</span>
 
-            <ImageIcon
-              src={ASSETS.arrowTeal}
-              className={`
+                    <ImageIcon
+                      src={ASSETS.arrowTeal}
+                      className={`
                 h-5
                 w-5
 
@@ -1570,21 +1528,23 @@ export function LandingPage() {
 
                 ${isArabic ? "" : "rotate-180"}
               `}
-            />
-          </a>
+                    />
+                  </a>
 
-          {/* ================= PRIMARY ================= */}
+                  {/* ================= PRIMARY ================= */}
 
-          <Link
-            to="/register"
-            dir="ltr"
-            className={`
+                  <Link
+                    to="/register"
+                    dir="ltr"
+                    className={`
               ml-button
 
               inline-flex
 
               h-[56px]
-              w-[170px]
+              w-full
+
+              min-[420px]:w-[170px]
 
               items-center
               justify-center
@@ -1608,14 +1568,12 @@ export function LandingPage() {
 
               ${isArabic ? "flex-row-reverse" : "flex-row"}
             `}
-          >
-            <span dir={textDirection}>
-              {t("ابدأ تجربتك")}
-            </span>
+                  >
+                    <span dir={textDirection}>{t("ابدأ تجربتك")}</span>
 
-            <ImageIcon
-              src={ASSETS.Diagonal}
-              className={`
+                    <ImageIcon
+                      src={ASSETS.Diagonal}
+                      className={`
                 h-5
                 w-5
 
@@ -1624,29 +1582,26 @@ export function LandingPage() {
 
                 ${isArabic ? "" : "rotate-180"}
               `}
-            />
-          </Link>
-        </div>
-      </div>
-    </div>
+                    />
+                  </Link>
+                </div>
+              </div>
+            </div>
 
-    {/* ========================================================= */}
-    {/* ======================= FEATURES ======================== */}
+            {/* ========================================================= */}
+            {/* ======================= FEATURES ======================== */}
 
-    {/* ================= FEATURES ================= */}
-    <section
-      id="features"
-      className="relative mt-[28px]"
-    >
-      <div
-        dir="ltr"
-        className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"
-      >
-        {features.map(({ image, title, text }) => (
-          <article
-            key={title}
-            dir={textDirection}
-            className="
+            {/* ================= FEATURES ================= */}
+            <section id="features" className="relative z-30 mt-[28px]">
+              <div
+                dir="ltr"
+                className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"
+              >
+                {features.map(({ image, title, text }) => (
+                  <article
+                    key={title}
+                    dir={textDirection}
+                    className="
               ml-card
               flex
               min-h-[180px]
@@ -1667,54 +1622,52 @@ export function LandingPage() {
               hover:-translate-y-1
               hover:shadow-[0_12px_30px_rgba(33,100,116,0.08)]
             "
-          >
-            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#E6F3F6]">
-              <ImageIcon
-                src={image}
-                alt={t(title)}
-                className="h-6 w-6"
-              />
-            </span>
+                  >
+                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#E6F3F6]">
+                      <ImageIcon
+                        src={image}
+                        alt={t(title)}
+                        className="h-6 w-6"
+                      />
+                    </span>
 
-            <div className="flex min-h-[70px] w-full flex-col items-center justify-center gap-2">
-              <h3 className="text-center text-[18px] font-medium leading-6 text-[#333333]">
-                {t(title)}
-              </h3>
+                    <div className="flex min-h-[70px] w-full flex-col items-center justify-center gap-2">
+                      <h3 className="text-center text-[18px] font-medium leading-6 text-[#333333]">
+                        {t(title)}
+                      </h3>
 
-              <p className="line-clamp-2 text-center text-[14px] font-normal leading-6 text-[#A5A5A5]">
-                {t(text)}
-              </p>
-            </div>
-          </article>
-        ))}
-      </div>
-    </section>
-  </div>
-</section>
-{/* ================= PLATFORM IMPACT ================= */}
-<section
-  className="relative overflow-hidden bg-[#F8FAFC] py-[76px] sm:py-[88px]"
-  aria-labelledby="live-statistics-title"
->
-  {/* Subtle glow */}
-  <div className="pointer-events-none absolute -right-[180px] top-[40px] h-[320px] w-[320px] rounded-full bg-[rgba(21,142,171,0.06)] blur-[100px]" />
+                      <p className="line-clamp-2 text-center text-[14px] font-normal leading-6 text-[#A5A5A5]">
+                        {t(text)}
+                      </p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          </div>
+        </section>
+        {/* ================= PLATFORM IMPACT ================= */}
+        <section
+          className="relative overflow-hidden bg-[#F8FAFC] py-[76px] sm:py-[88px]"
+          aria-labelledby="live-statistics-title"
+        >
+          {/* Subtle glow */}
+          <div className="pointer-events-none absolute -right-[180px] top-[40px] h-[320px] w-[320px] rounded-full bg-[rgba(21,142,171,0.06)] blur-[100px]" />
 
-  <div className="relative mx-auto flex w-full max-w-[1200px] flex-col items-center gap-[42px] px-5 xl:px-0">
+          <div className="relative mx-auto flex w-full max-w-[1200px] flex-col items-center gap-[42px] px-5 xl:px-0">
+            {/* Section heading */}
+            <div className="flex w-full flex-col items-center gap-4">
+              <div
+                dir="ltr"
+                className="flex w-full max-w-[600px] items-center justify-center gap-5"
+              >
+                {/* Left line */}
+                <span className="h-[2px] flex-1 rounded-full bg-gradient-to-r from-transparent to-[#DFAE0D]" />
 
-    {/* Section heading */}
-    <div className="flex w-full flex-col items-center gap-4">
-
-      <div
-        dir="ltr"
-        className="flex w-full max-w-[600px] items-center justify-center gap-5"
-      >
-        {/* Left line */}
-        <span className="h-[2px] flex-1 rounded-full bg-gradient-to-r from-transparent to-[#DFAE0D]" />
-
-        <h2
-          id="live-statistics-title"
-          dir={textDirection}
-          className="
+                <h2
+                  id="live-statistics-title"
+                  dir={textDirection}
+                  className="
             whitespace-nowrap
             text-[28px]
             font-medium
@@ -1722,17 +1675,17 @@ export function LandingPage() {
             text-[#333333]
             sm:text-[32px]
           "
-        >
-          {t("أثر المنصة بالأرقام")}
-        </h2>
+                >
+                  {t("أثر المنصة بالأرقام")}
+                </h2>
 
-        {/* Right line */}
-        <span className="h-[2px] flex-1 rounded-full bg-gradient-to-l from-transparent to-[#DFAE0D]" />
-      </div>
+                {/* Right line */}
+                <span className="h-[2px] flex-1 rounded-full bg-gradient-to-l from-transparent to-[#DFAE0D]" />
+              </div>
 
-      <p
-        dir={textDirection}
-        className="
+              <p
+                dir={textDirection}
+                className="
           max-w-[650px]
           text-center
           text-[15px]
@@ -1741,15 +1694,15 @@ export function LandingPage() {
           text-[#999999]
           sm:text-[17px]
         "
-      >
-        {t("إحصائيات حقيقية ومحدثة من خدمات المنصة")}
-      </p>
-    </div>
+              >
+                {t("إحصائيات حقيقية ومحدثة من خدمات المنصة")}
+              </p>
+            </div>
 
-    {/* ================= STATISTICS CONTAINER ================= */}
-    <div
-      dir="ltr"
-      className="
+            {/* ================= STATISTICS CONTAINER ================= */}
+            <div
+              dir="ltr"
+              className="
         w-full
         overflow-hidden
         rounded-2xl
@@ -1758,14 +1711,13 @@ export function LandingPage() {
         bg-white
         shadow-[0_10px_35px_rgba(33,100,116,0.06)]
       "
-    >
-      <div className="grid w-full grid-cols-2 lg:grid-cols-5">
-
-        {statisticItems.map(([label, value], index) => (
-          <article
-            key={label}
-            dir={textDirection}
-            className={`
+            >
+              <div className="grid w-full grid-cols-2 lg:grid-cols-5">
+                {statisticItems.map(([label, value], index) => (
+                  <article
+                    key={label}
+                    dir={textDirection}
+                    className={`
               group
               relative
               flex
@@ -1792,11 +1744,7 @@ export function LandingPage() {
                   : ""
               }
 
-              ${
-                index === 2
-                  ? "border-b border-[#E8EEEE] lg:border-b-0"
-                  : ""
-              }
+              ${index === 2 ? "border-b border-[#E8EEEE] lg:border-b-0" : ""}
 
               ${
                 index % 2 === 0
@@ -1808,10 +1756,10 @@ export function LandingPage() {
               lg:[&:nth-child(3)]:border-r
               lg:[&:nth-child(4)]:border-r
             `}
-          >
-            {/* Number */}
-            <strong
-              className="
+                  >
+                    {/* Number */}
+                    <strong
+                      className="
                 block
                 text-[30px]
                 font-bold
@@ -1823,17 +1771,17 @@ export function LandingPage() {
                 group-hover:-translate-y-0.5
                 sm:text-[34px]
               "
-            >
-              <CountUpStatistic
-                value={value}
-                loading={statistics.isLoading}
-                locale={statisticLocale}
-              />
-            </strong>
+                    >
+                      <CountUpStatistic
+                        value={value}
+                        loading={statistics.isLoading}
+                        locale={statisticLocale}
+                      />
+                    </strong>
 
-            {/* Label */}
-            <span
-              className="
+                    {/* Label */}
+                    <span
+                      className="
                 mt-4
                 text-[14px]
                 font-medium
@@ -1841,29 +1789,27 @@ export function LandingPage() {
                 text-[#666666]
                 sm:text-[15px]
               "
-            >
-              {t(label)}
-            </span>
+                    >
+                      {t(label)}
+                    </span>
 
-            {/* Tiny accent */}
-           
-          </article>
-        ))}
+                    {/* Tiny accent */}
+                  </article>
+                ))}
+              </div>
+            </div>
 
-      </div>
-    </div>
-
-    {/* Error */}
-    {statistics.isError && (
-      <p
-        dir={textDirection}
-        className="text-center text-sm text-rose-600"
-      >
-        {t("تعذر تحميل الإحصائيات الآن، أعد المحاولة لاحقًا.")}
-      </p>
-    )}
-  </div>
-</section>
+            {/* Error */}
+            {statistics.isError && (
+              <p
+                dir={textDirection}
+                className="text-center text-sm text-rose-600"
+              >
+                {t("تعذر تحميل الإحصائيات الآن، أعد المحاولة لاحقًا.")}
+              </p>
+            )}
+          </div>
+        </section>
         {/* Roles */}
         {/* Roles */}
         <section

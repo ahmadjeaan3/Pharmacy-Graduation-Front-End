@@ -27,7 +27,6 @@ import { Brand } from "../../../shared/components/Brand";
 
 const REQUESTS_HERO_BACKGROUND = "/assets/app/home/hero_search.png";
 
-
 const REQUESTS_NOTICE_IMAGE = "/assets/app/home/pharmacy.png";
 
 const FOOTER_SOCIAL_ICONS = {
@@ -46,14 +45,15 @@ const filters = [
 ];
 
 function normalizeSearch(value) {
-  return String(value ?? "").trim().toLowerCase();
+  return String(value ?? "")
+    .trim()
+    .toLowerCase();
 }
 
 function getStatusCount(items, status) {
   if (!status) return items.length;
   return items.filter((item) => item.status === status).length;
 }
-
 
 function getRequestStatusMeta(status) {
   const value = String(status || "").toLowerCase();
@@ -143,7 +143,10 @@ export function MedicineRequestsPage() {
     staleTime: 30_000,
   });
 
-  const allRequests = overviewQuery.data ?? [];
+  const allRequests = useMemo(
+    () => overviewQuery.data ?? [],
+    [overviewQuery.data],
+  );
 
   const pendingCount = useMemo(
     () => getStatusCount(allRequests, "Pending"),
@@ -597,8 +600,8 @@ export function MedicineRequestsPage() {
               })}
             </section>
 
-    <section
-  className="
+            <section
+              className="
     mt-5
     flex min-h-[102px]
     items-center justify-between gap-6
@@ -607,41 +610,41 @@ export function MedicineRequestsPage() {
     bg-[rgba(230,243,246,0.6)]
     px-6 py-4
   "
->
-  {/* الأيقونة ثم النص مباشرة */}
-  <div className="flex min-w-0 items-center gap-3">
-    <Info
-      size={32}
-      strokeWidth={1.7}
-      className="shrink-0 text-[#216474]"
-    />
+            >
+              {/* الأيقونة ثم النص مباشرة */}
+              <div className="flex min-w-0 items-center gap-3">
+                <Info
+                  size={32}
+                  strokeWidth={1.7}
+                  className="shrink-0 text-[#216474]"
+                />
 
-    <div className="min-w-0 text-right">
-      <h3 className="text-[20px] font-medium leading-none text-[#333333]">
-        {t("تنويه هام")}
-      </h3>
+                <div className="min-w-0 text-right">
+                  <h3 className="text-[20px] font-medium leading-none text-[#333333]">
+                    {t("تنويه هام")}
+                  </h3>
 
-      <p className="mt-3 text-[16px] leading-[1.63] text-[#A5A5A5]">
-        {t(
-          "هذه الخدمة مخصصة فقط لتأكيد توفر الدواء داخل الصيدلية، ولا توفر المنصة خدمة توصيل الأدوية.",
-        )}
-      </p>
-    </div>
-  </div>
+                  <p className="mt-3 text-[16px] leading-[1.63] text-[#A5A5A5]">
+                    {t(
+                      "هذه الخدمة مخصصة فقط لتأكيد توفر الدواء داخل الصيدلية، ولا توفر المنصة خدمة توصيل الأدوية.",
+                    )}
+                  </p>
+                </div>
+              </div>
 
-  {/* الصورة في أقصى اليسار + شفافية */}
-  <img
-    src={REQUESTS_NOTICE_IMAGE}
-    alt=""
-    aria-hidden="true"
-    className="
+              {/* الصورة في أقصى اليسار + شفافية */}
+              <img
+                src={REQUESTS_NOTICE_IMAGE}
+                alt=""
+                aria-hidden="true"
+                className="
       h-[68px] w-[102px]
       shrink-0
       object-contain
       opacity-30
     "
-  />
-</section>
+              />
+            </section>
           </>
         ) : (
           <UserEmptyState
@@ -658,11 +661,8 @@ export function MedicineRequestsPage() {
           />
         )}
       </main>
-
-    
     </div>
   );
-
 }
 
 function FooterFeature({ icon: Icon, title, description }) {
@@ -685,9 +685,7 @@ function FooterFeature({ icon: Icon, title, description }) {
           {title}
         </strong>
 
-        <p className="text-[10.5px] text-[#A5A5A5]">
-          {description}
-        </p>
+        <p className="text-[10.5px] text-[#A5A5A5]">{description}</p>
       </div>
     </div>
   );

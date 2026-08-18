@@ -74,19 +74,13 @@ const smartServices = [
   },
 ];
 
-const popularSearches = [
-  "اكاربوس 25",
-  "أوجمنتين",
-  "بيبانتين",
-  "سيفيكسيم 100",
-];
+const popularSearches = ["اكاربوس 25", "أوجمنتين", "بيبانتين", "سيفيكسيم 100"];
 
 const NearbyPharmaciesMap = lazy(() =>
   import("../components/NearbyPharmaciesMap").then((module) => ({
     default: module.NearbyPharmaciesMap,
   })),
 );
-
 
 function getMedicineImageSource(imageUrl) {
   if (!imageUrl) return null;
@@ -137,7 +131,6 @@ function MedicineImage({ imageUrl, displayName }) {
           </span>
         </div>
       )}
-
     </div>
   );
 }
@@ -200,8 +193,6 @@ function UserDashboardPage() {
       />
     );
   const data = query.data;
-  const pharmacies = data.locationContext?.registeredNearbyPharmacies ?? [];
-
   // نفس مصدر البيانات المستخدم بالخريطة، حتى لا تظهر الخريطة بينما تبقى القائمة فارغة.
   const nearbyDisplayPharmacies =
     data.locationContext?.mapMarkers?.slice(0, 3) ?? [];
@@ -222,7 +213,6 @@ function UserDashboardPage() {
     );
   return (
     <div className="w-full">
-    
       <section
         className="relative isolate overflow-hidden bg-[#08788a] text-white shadow-[0_18px_45px_rgba(23,75,87,.10)]"
         style={{
@@ -237,7 +227,6 @@ function UserDashboardPage() {
           draggable={false}
           className="absolute inset-0 -z-20 h-full w-full scale-x-[-1] select-none object-cover object-center"
         />
-        
 
         {/* طبقة خفيفة لتحافظ على وضوح النص فوق الخلفية */}
         <div
@@ -291,8 +280,8 @@ function UserDashboardPage() {
               xl:ps-16
             "
           >
-           <h1
-  className="
+            <h1
+              className="
     w-full
     text-[34px] font-medium
     leading-[1.35] text-white
@@ -301,9 +290,9 @@ function UserDashboardPage() {
     lg:text-[43px]
     xl:text-[46px]
   "
->
-  ابحث عن دوائك بسرعة واطمئن دائماً
-</h1>
+            >
+              ابحث عن دوائك بسرعة واطمئن دائماً
+            </h1>
 
             <p className="mt-5 w-full max-w-[650px] text-[15px] leading-7 text-white/75">
               نوصلك لأقرب الصيدليات التي يتوفر فيها دواؤك بدقة وسرعة في أي وقت.
@@ -471,7 +460,7 @@ function UserDashboardPage() {
 
               {/* Cards */}
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 xl:gap-5 2xl:gap-6">
-                {visiblePopularMedicines.map((medicine, index) => {
+                {visiblePopularMedicines.map((medicine) => {
                   const displayName =
                     medicine.medicineDisplayName ||
                     medicine.arabicMedicineName ||
@@ -483,10 +472,7 @@ function UserDashboardPage() {
                     medicine.manufacturer ||
                     "";
 
-                  const medicineMeta = [
-                    medicine.dosageForm,
-                    medicine.capacity,
-                  ]
+                  const medicineMeta = [medicine.dosageForm, medicine.capacity]
                     .filter(Boolean)
                     .join(" • ");
 
@@ -518,7 +504,11 @@ function UserDashboardPage() {
                         </h3>
 
                         <p
-                          dir={secondaryName && /[A-Za-z]/.test(secondaryName) ? "ltr" : "rtl"}
+                          dir={
+                            secondaryName && /[A-Za-z]/.test(secondaryName)
+                              ? "ltr"
+                              : "rtl"
+                          }
                           className="mt-1 line-clamp-1 min-h-[19px] text-[10.5px] leading-[19px] text-[#96a3a6]"
                         >
                           {secondaryName || "دواء مسجل في المنصة"}
@@ -597,7 +587,10 @@ function UserDashboardPage() {
 
               {/* Pagination indicator */}
               {popularMedicines.length > 5 && (
-                <div className="mt-8 flex items-center justify-center gap-2" dir="ltr">
+                <div
+                  className="mt-8 flex items-center justify-center gap-2"
+                  dir="ltr"
+                >
                   {Array.from({
                     length: Math.max(1, popularMedicines.length - 4),
                   }).map((_, dotIndex) => {
@@ -622,7 +615,6 @@ function UserDashboardPage() {
           )}
         </div>
       </section>
-
 
       {/* تثبيت طبقات الخريطة تحت الـ Header أثناء التمرير */}
       <style>{`
@@ -713,28 +705,24 @@ function UserDashboardPage() {
                             "العنوان غير محدد";
 
                       const rating = Number(
-                        pharmacy.averageRating ??
-                          pharmacy.rating ??
-                          0,
+                        pharmacy.averageRating ?? pharmacy.rating ?? 0,
                       );
 
                       const isOpenNow =
-                        pharmacy.isOpenNow ??
-                        pharmacy.openNow ??
-                        false;
+                        pharmacy.isOpenNow ?? pharmacy.openNow ?? false;
 
                       const statusText =
                         pharmacy.statusText ||
                         (isOpenNow ? "مفتوحة الآن" : "مغلقة الآن");
 
                       const distanceMeters =
-                        pharmacy.distanceMeters ??
-                        pharmacy.distance ??
-                        null;
+                        pharmacy.distanceMeters ?? pharmacy.distance ?? null;
 
                       return (
                         <article
-                          key={pharmacy.pharmacyId || pharmacy.markerId || index}
+                          key={
+                            pharmacy.pharmacyId || pharmacy.markerId || index
+                          }
                           className="
                             group h-full min-h-[118px] rounded-[14px]
                             border border-[#e3e9ea]
@@ -771,7 +759,10 @@ function UserDashboardPage() {
                               <div className="mt-1.5 flex flex-wrap items-center gap-3 text-[10.5px] text-[#697b80]">
                                 {distanceMeters != null && (
                                   <span className="inline-flex items-center gap-1">
-                                    <MapPin size={12} className="text-[#216474]" />
+                                    <MapPin
+                                      size={12}
+                                      className="text-[#216474]"
+                                    />
                                     {formatDistance(distanceMeters)}
                                   </span>
                                 )}
@@ -911,7 +902,6 @@ function UserDashboardPage() {
         </div>
       </section>
 
-
       {/* الخدمات الذكية + المساعدة + Footer — Figma */}
       <section
         dir="rtl"
@@ -924,7 +914,10 @@ function UserDashboardPage() {
         {/* المساعد الذكي */}
         <div className="mx-auto w-full max-w-[1660px] px-6 sm:px-8 lg:px-10 xl:px-12">
           <div dir="rtl" className="flex w-full flex-col items-stretch gap-5">
-            <div dir="rtl" className="flex w-full flex-col items-stretch justify-center gap-2 text-right">
+            <div
+              dir="rtl"
+              className="flex w-full flex-col items-stretch justify-center gap-2 text-right"
+            >
               <h2 className="w-full text-right text-[24px] font-medium leading-none text-[#333333]">
                 المساعد الذكي
               </h2>
@@ -949,13 +942,12 @@ function UserDashboardPage() {
                   "
                 >
                   {/* صورة الخدمة */}
-                  <div className="relative flex h-[136px] w-[144px] shrink-0 items-center justify-center">
+                  <div className="relative grid size-[136px] shrink-0 place-items-center">
                     <span
                       aria-hidden="true"
                       className="
-                        absolute h-[116px] w-[103px]
-                        -rotate-[109.4deg]
-                        rounded-[50%]
+                        absolute size-[116px]
+                        rounded-full
                         bg-[rgba(75,187,187,0.12)]
                       "
                     />
@@ -965,7 +957,7 @@ function UserDashboardPage() {
                       alt={service.title}
                       className="
                         relative z-10
-                        max-h-[90px] max-w-[132px]
+                        size-[96px]
                         object-contain
                       "
                     />
@@ -999,7 +991,11 @@ function UserDashboardPage() {
                     "
                   >
                     <span>استخدم الآن</span>
-                    <ArrowLeft size={24} strokeWidth={1.6} className="shrink-0" />
+                    <ArrowLeft
+                      size={24}
+                      strokeWidth={1.6}
+                      className="shrink-0"
+                    />
                   </Link>
                 </article>
               ))}
@@ -1044,18 +1040,19 @@ function UserDashboardPage() {
               className="
                 pointer-events-none
                 absolute left-1/2 top-1/2 z-10
-                w-[520px]
+                w-[calc(100%-2rem)] max-w-[520px]
                 -translate-x-1/2 -translate-y-1/2
                 text-center
               "
             >
               <div className="flex w-full flex-col items-center justify-center gap-4">
-                <h3 className="w-full text-center text-[32px] font-bold leading-none text-white">
+                <h3 className="w-full text-center text-xl font-bold leading-tight text-white sm:text-[32px] sm:leading-none">
                   لم تجد دواءك؟ نحن هنا لمساعدتك
                 </h3>
 
                 <p className="w-full text-center text-[12px] font-normal leading-[20px] tracking-[0.01em] text-[#D6D6D6]">
-                  تواصل معنا وسنساعدك في إيجاد الدواء أو الوصول إلى الخدمة المناسبة.
+                  تواصل معنا وسنساعدك في إيجاد الدواء أو الوصول إلى الخدمة
+                  المناسبة.
                 </p>
               </div>
             </div>
@@ -1072,24 +1069,24 @@ function UserDashboardPage() {
         </div>
 
         {/* Footer — مطابق لقيم Figma */}
-     <footer
-  dir="rtl"
-  className="
+        <footer
+          dir="rtl"
+          className="
     mt-20 mb-0 w-full
     border-y border-[rgba(102,102,102,0.16)]
     bg-white
   "
->
-  <div
-    className="
+        >
+          <div
+            className="
       mx-auto flex w-full flex-col
       px-9 py-7
       lg:px-12
     "
-  >
-    {/* الصف الرئيسي */}
-    <div
-      className="
+          >
+            {/* الصف الرئيسي */}
+            <div
+              className="
         grid w-full
         grid-cols-1
         items-center
@@ -1098,13 +1095,13 @@ function UserDashboardPage() {
         xl:grid-cols-4
         xl:gap-12
       "
-    >
-      {/* الشعار والوصف */}
-      <div className="flex min-w-0 flex-col items-start gap-3     mr-30">
-        <Brand />
+            >
+              {/* الشعار والوصف */}
+              <div className="flex min-w-0 flex-col items-start gap-3     mr-30">
+                <Brand />
 
-        <p
-          className="
+                <p
+                  className="
             max-w-[300px]
             text-right
             text-[12px]
@@ -1114,138 +1111,138 @@ function UserDashboardPage() {
             text-[#666666]
        
           "
-        >
-          منصة ذكية تساعدك في العثور على أقرب صيدلية والوصول إلى
-          الخدمات الدوائية بصورة أسرع وأكثر موثوقية.
-        </p>
-      </div>
+                >
+                  منصة ذكية تساعدك في العثور على أقرب صيدلية والوصول إلى الخدمات
+                  الدوائية بصورة أسرع وأكثر موثوقية.
+                </p>
+              </div>
 
-      {/* خصوصية كاملة */}
-      <div className="flex items-center justify-start gap-3">
-        <span
-          className="
+              {/* خصوصية كاملة */}
+              <div className="flex items-center justify-start gap-3">
+                <span
+                  className="
             grid size-10 shrink-0
             place-items-center
             rounded-[8px]
             bg-[#E6F3F6]
             text-[#216474]
           "
-        >
-          <LockKeyhole size={22} strokeWidth={1.8} />
-        </span>
+                >
+                  <LockKeyhole size={22} strokeWidth={1.8} />
+                </span>
 
-        <div className="flex flex-col items-start gap-2">
-          <strong
-            className="
+                <div className="flex flex-col items-start gap-2">
+                  <strong
+                    className="
               text-[16px]
               font-medium
               leading-none
               text-[#666666]
             "
-          >
-            خصوصية كاملة
-          </strong>
+                  >
+                    خصوصية كاملة
+                  </strong>
 
-          <p
-            className="
+                  <p
+                    className="
               text-[12px]
               leading-[20px]
               text-[#A5A5A5]
             "
-          >
-            نحافظ على بياناتك ومعلوماتك
-          </p>
-        </div>
-      </div>
+                  >
+                    نحافظ على بياناتك ومعلوماتك
+                  </p>
+                </div>
+              </div>
 
-      {/* معلومات موثوقة */}
-      <div className="flex items-center justify-start gap-3">
-        <span
-          className="
+              {/* معلومات موثوقة */}
+              <div className="flex items-center justify-start gap-3">
+                <span
+                  className="
             grid size-10 shrink-0
             place-items-center
             rounded-[8px]
             bg-[#E6F3F6]
             text-[#216474]
           "
-        >
-          <ShieldCheck size={22} strokeWidth={1.8} />
-        </span>
+                >
+                  <ShieldCheck size={22} strokeWidth={1.8} />
+                </span>
 
-        <div className="flex flex-col items-start gap-2">
-          <strong
-            className="
+                <div className="flex flex-col items-start gap-2">
+                  <strong
+                    className="
               text-[16px]
               font-medium
               leading-none
               text-[#666666]
             "
-          >
-            معلومات موثوقة
-          </strong>
+                  >
+                    معلومات موثوقة
+                  </strong>
 
-          <p
-            className="
+                  <p
+                    className="
               text-[12px]
               leading-[20px]
               text-[#A5A5A5]
             "
-          >
-            بيانات منظمة ومحدثة قدر الإمكان
-          </p>
-        </div>
-      </div>
+                  >
+                    بيانات منظمة ومحدثة قدر الإمكان
+                  </p>
+                </div>
+              </div>
 
-      {/* دعم على مدار الساعة */}
-      <div className="flex items-center justify-start gap-3">
-        <span
-          className="
+              {/* دعم على مدار الساعة */}
+              <div className="flex items-center justify-start gap-3">
+                <span
+                  className="
             grid size-10 shrink-0
             place-items-center
             rounded-[8px]
             bg-[#E6F3F6]
             text-[#216474]
           "
-        >
-          <Headphones size={22} strokeWidth={1.8} />
-        </span>
+                >
+                  <Headphones size={22} strokeWidth={1.8} />
+                </span>
 
-        <div className="flex flex-col items-start gap-2">
-          <strong
-            className="
+                <div className="flex flex-col items-start gap-2">
+                  <strong
+                    className="
               text-[16px]
               font-medium
               leading-none
               text-[#666666]
             "
-          >
-            دعم على مدار الساعة
-          </strong>
+                  >
+                    دعم على مدار الساعة
+                  </strong>
 
-          <p
-            className="
+                  <p
+                    className="
               text-[12px]
               leading-[20px]
               text-[#A5A5A5]
             "
-          >
-            نحن هنا لمساعدتك عند الحاجة
-          </p>
-        </div>
-      </div>
-    </div>
+                  >
+                    نحن هنا لمساعدتك عند الحاجة
+                  </p>
+                </div>
+              </div>
+            </div>
 
-    {/* الخط الفاصل */}
-    <div
-      className="
+            {/* الخط الفاصل */}
+            <div
+              className="
         my-6 h-px w-full
         bg-[rgba(102,102,102,0.16)]
       "
-    />
+            />
 
-    {/* الجزء السفلي */}
-    <div
-      className="
+            {/* الجزء السفلي */}
+            <div
+              className="
         flex w-full
         flex-col
         items-center
@@ -1253,10 +1250,10 @@ function UserDashboardPage() {
         gap-4
         sm:flex-row
       "
-    >
-      {/* الحقوق */}
-      <p
-        className="
+            >
+              {/* الحقوق */}
+              <p
+                className="
           text-right
           text-[12px]
           font-normal
@@ -1265,26 +1262,23 @@ function UserDashboardPage() {
           text-[#A5A5A5]
               mr-30
         "
-      >
-        جميع الحقوق محفوظة لمنصة دوائي © 2026
-      </p>
+              >
+                جميع الحقوق محفوظة لمنصة دوائي © 2026
+              </p>
 
-      {/* التواصل الاجتماعي */}
-      <div
-        dir="ltr"
-        className="flex items-center gap-3  ml-40"
-      >
-        {[
-          ["instagram", "Instagram"],
-          ["email", "Email"],
-          ["facebook", "Facebook"],
-          ["whatsapp", "WhatsApp"],
-        ].map(([key, label]) => (
-          <a
-            key={key}
-            href="#"
-            aria-label={label}
-            className="
+              {/* التواصل الاجتماعي */}
+              <div dir="ltr" className="flex items-center gap-3  ml-40">
+                {[
+                  ["instagram", "Instagram"],
+                  ["email", "Email"],
+                  ["facebook", "Facebook"],
+                  ["whatsapp", "WhatsApp"],
+                ].map(([key, label]) => (
+                  <a
+                    key={key}
+                    href="#"
+                    aria-label={label}
+                    className="
               grid size-[44px]
               place-items-center
               rounded-full
@@ -1295,19 +1289,19 @@ function UserDashboardPage() {
               hover:bg-[#E6F3F6]
             
             "
-          >
-            <img
-              src={FOOTER_SOCIAL_ICONS[key]}
-              alt=""
-              aria-hidden="true"
-              className="size-6 object-contain"
-            />
-          </a>
-        ))}
-      </div>
-    </div>
-  </div>
-</footer>
+                  >
+                    <img
+                      src={FOOTER_SOCIAL_ICONS[key]}
+                      alt=""
+                      aria-hidden="true"
+                      className="size-6 object-contain"
+                    />
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </footer>
       </section>
     </div>
   );

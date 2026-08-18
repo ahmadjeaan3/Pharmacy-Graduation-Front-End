@@ -1,15 +1,7 @@
-import {
-  ArrowLeft,
-  Clock3,
-  Hash,
-  PackageSearch,
-} from "lucide-react";
+import { ArrowLeft, Clock3, Hash, PackageSearch } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import {
-  formatDate,
-  getRequestStatus,
-} from "../utils/userFormatters";
+import { formatDate, getRequestStatus } from "../utils/userFormatters";
 
 function getMedicineImageSource(imageUrl) {
   if (!imageUrl) return null;
@@ -20,17 +12,11 @@ function getMedicineImageSource(imageUrl) {
 
   try {
     const apiBaseUrl =
-      import.meta.env.VITE_API_BASE_URL ||
-      "https://localhost:7048/api";
+      import.meta.env.VITE_API_BASE_URL || "https://localhost:7048/api";
 
-    const apiOrigin = new URL(
-      apiBaseUrl,
-      window.location.origin,
-    ).origin;
+    const apiOrigin = new URL(apiBaseUrl, window.location.origin).origin;
 
-    return `${apiOrigin}${
-      imageUrl.startsWith("/") ? "" : "/"
-    }${imageUrl}`;
+    return `${apiOrigin}${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
   } catch {
     return imageUrl;
   }
@@ -39,15 +25,10 @@ function getMedicineImageSource(imageUrl) {
 export function RequestCard({ request }) {
   const { t, i18n } = useTranslation();
 
-  const status = getRequestStatus(
-    request.status,
-    request.statusDisplayText,
-    t,
-  );
+  const status = getRequestStatus(request.status, request.statusDisplayText, t);
 
   const isReadyForPickup =
-    request.status === "Available" ||
-    status.label === t("جاهز للاستلام");
+    request.status === "Available" || status.label === t("جاهز للاستلام");
 
   const statusClassName = isReadyForPickup
     ? "border-[#CFE4E7] bg-[#EAF4F3] text-[#216474]"
@@ -58,9 +39,7 @@ export function RequestCard({ request }) {
     request.arabicMedicineName ||
     request.medicineName;
 
-  const medicineImageUrl = getMedicineImageSource(
-    request.imageUrl,
-  );
+  const medicineImageUrl = getMedicineImageSource(request.imageUrl);
 
   return (
     <article
@@ -161,15 +140,9 @@ export function RequestCard({ request }) {
         "
       >
         <span className="flex items-center gap-1.5">
-          <Hash
-            size={13}
-            strokeWidth={1.7}
-            className="text-[#216474]"
-          />
+          <Hash size={13} strokeWidth={1.7} className="text-[#216474]" />
 
-          <span className="truncate">
-            {request.requestCode}
-          </span>
+          <span className="truncate">{request.requestCode}</span>
         </span>
 
         <span className="flex items-center gap-1.5">
@@ -182,26 +155,15 @@ export function RequestCard({ request }) {
           <span>
             {t("الكمية")}:{" "}
             <strong className="font-semibold text-[#29464D]">
-              {request.requestedQuantity.toLocaleString(
-                i18n.language,
-              )}
+              {request.requestedQuantity.toLocaleString(i18n.language)}
             </strong>
           </span>
         </span>
 
         <span className="flex items-center gap-1.5">
-          <Clock3
-            size={13}
-            strokeWidth={1.7}
-            className="text-[#216474]"
-          />
+          <Clock3 size={13} strokeWidth={1.7} className="text-[#216474]" />
 
-          <span>
-            {formatDate(
-              request.createdAtUtc,
-              true,
-            )}
-          </span>
+          <span>{formatDate(request.createdAtUtc, true)}</span>
         </span>
       </div>
 

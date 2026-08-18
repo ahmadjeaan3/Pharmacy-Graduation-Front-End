@@ -369,405 +369,407 @@ export function SettingsPage() {
       {/* Main content */}
       <main className="mx-auto w-full max-w-[1240px] px-5 pb-12 pt-8 sm:px-7 lg:px-8">
         <section className="grid items-start gap-5 xl:grid-cols-[minmax(0,1.25fr)_minmax(280px,.75fr)]">
-        <div className="space-y-5">
-          <section className="rounded-xl border border-[rgba(102,102,102,.16)] bg-white p-6">
-            <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-              <div className="relative w-fit shrink-0">
-                <ProfileAvatar
-                  user={profileQuery.data}
-                  sizeClass="size-24"
-                  className="rounded-2xl border-4 border-white shadow-[0_12px_30px_rgba(23,75,87,.14)]"
-                  fallbackIcon
-                />
-                <button
-                  type="button"
-                  onClick={() => avatarInput.current?.click()}
-                  className="absolute -bottom-2 -end-2 grid size-9 place-items-center rounded-xl border-4 border-white bg-[#216474] text-white shadow-md"
-                  aria-label={t("تغيير الصورة الشخصية")}
-                >
-                  <Camera size={15} />
-                </button>
-              </div>
-              <div
-                className={`min-w-0 flex-1 ${isArabic ? "text-right" : "text-left"}`}
-              >
-                <h2 className="text-[18px] font-semibold text-[#333333]">
-                  {t("الصورة الشخصية")}
-                </h2>
-                <p className="mt-1 text-[13px] leading-6 text-[#A5A5A5]">
-                  {t("JPG أو PNG أو WebP، بحجم لا يتجاوز 5 ميغابايت.")}
-                </p>
-                <input
-                  ref={avatarInput}
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp"
-                  className="hidden"
-                  onChange={(event) => {
-                    const file = event.target.files?.[0];
-                    event.target.value = "";
-                    setAvatarMessage("");
-                    if (!file) return;
-                    if (file.size > 5 * 1024 * 1024) {
-                      setAvatarMessage(
-                        t("حجم الصورة يجب ألا يتجاوز 5 ميغابايت."),
-                      );
-                      return;
-                    }
-                    avatarMutation.mutate(file);
-                  }}
-                />
-                <div className="mt-4 flex flex-wrap gap-2">
+          <div className="space-y-5">
+            <section className="rounded-xl border border-[rgba(102,102,102,.16)] bg-white p-6">
+              <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+                <div className="relative w-fit shrink-0">
+                  <ProfileAvatar
+                    user={profileQuery.data}
+                    sizeClass="size-24"
+                    className="rounded-2xl border-4 border-white shadow-[0_12px_30px_rgba(23,75,87,.14)]"
+                    fallbackIcon
+                  />
                   <button
                     type="button"
-                    disabled={avatarMutation.isPending}
                     onClick={() => avatarInput.current?.click()}
-                    className="inline-flex h-10 items-center gap-2 rounded-lg bg-[#174B57] px-4 text-sm font-semibold text-white disabled:opacity-60"
+                    className="absolute -bottom-2 -end-2 grid size-9 place-items-center rounded-xl border-4 border-white bg-[#216474] text-white shadow-md"
+                    aria-label={t("تغيير الصورة الشخصية")}
                   >
-                    <ImagePlus size={16} />
-                    {avatarMutation.isPending
-                      ? t("جاري رفع الصورة...")
-                      : t("رفع أو تغيير الصورة")}
+                    <Camera size={15} />
                   </button>
-                  {profileQuery.data.hasProfileImage && (
+                </div>
+                <div
+                  className={`min-w-0 flex-1 ${isArabic ? "text-right" : "text-left"}`}
+                >
+                  <h2 className="text-[18px] font-semibold text-[#333333]">
+                    {t("الصورة الشخصية")}
+                  </h2>
+                  <p className="mt-1 text-[13px] leading-6 text-[#A5A5A5]">
+                    {t("JPG أو PNG أو WebP، بحجم لا يتجاوز 5 ميغابايت.")}
+                  </p>
+                  <input
+                    ref={avatarInput}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    className="hidden"
+                    onChange={(event) => {
+                      const file = event.target.files?.[0];
+                      event.target.value = "";
+                      setAvatarMessage("");
+                      if (!file) return;
+                      if (file.size > 5 * 1024 * 1024) {
+                        setAvatarMessage(
+                          t("حجم الصورة يجب ألا يتجاوز 5 ميغابايت."),
+                        );
+                        return;
+                      }
+                      avatarMutation.mutate(file);
+                    }}
+                  />
+                  <div className="mt-4 flex flex-wrap gap-2">
                     <button
                       type="button"
-                      disabled={deleteAvatar.isPending}
-                      onClick={() => deleteAvatar.mutate()}
-                      className="inline-flex h-10 items-center gap-2 rounded-lg border border-rose-200 px-4 text-sm font-semibold text-rose-700 disabled:opacity-60"
+                      disabled={avatarMutation.isPending}
+                      onClick={() => avatarInput.current?.click()}
+                      className="inline-flex h-10 items-center gap-2 rounded-lg bg-[#174B57] px-4 text-sm font-semibold text-white disabled:opacity-60"
                     >
-                      <Trash2 size={16} />
-                      {deleteAvatar.isPending
-                        ? t("جاري الحذف...")
-                        : t("حذف الصورة")}
+                      <ImagePlus size={16} />
+                      {avatarMutation.isPending
+                        ? t("جاري رفع الصورة...")
+                        : t("رفع أو تغيير الصورة")}
                     </button>
+                    {profileQuery.data.hasProfileImage && (
+                      <button
+                        type="button"
+                        disabled={deleteAvatar.isPending}
+                        onClick={() => deleteAvatar.mutate()}
+                        className="inline-flex h-10 items-center gap-2 rounded-lg border border-rose-200 px-4 text-sm font-semibold text-rose-700 disabled:opacity-60"
+                      >
+                        <Trash2 size={16} />
+                        {deleteAvatar.isPending
+                          ? t("جاري الحذف...")
+                          : t("حذف الصورة")}
+                      </button>
+                    )}
+                  </div>
+                  {avatarMessage && (
+                    <p className="mt-3 text-sm font-semibold text-[#216474]">
+                      {avatarMessage}
+                    </p>
                   )}
                 </div>
-                {avatarMessage && (
-                  <p className="mt-3 text-sm font-semibold text-[#216474]">
-                    {avatarMessage}
+              </div>
+            </section>
+            {/* Personal information */}
+            <form
+              onSubmit={(event) => {
+                event.preventDefault();
+
+                setProfileMessage("");
+
+                updateProfile.mutate({
+                  fullName: profile.fullName.trim(),
+
+                  phoneNumber: profile.phoneNumber.trim() || null,
+                });
+              }}
+              className="rounded-xl border border-[rgba(102,102,102,.16)] bg-white p-6"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className={isArabic ? "text-right" : "text-left"}>
+                  <h2 className="text-[18px] font-semibold text-[#333333]">
+                    {t("البيانات الشخصية")}
+                  </h2>
+
+                  <p className="mt-1 text-[13px] leading-6 text-[#A5A5A5]">
+                    {t("عدّل معلومات الحساب الأساسية وبيانات التواصل.")}
                   </p>
-                )}
-              </div>
-            </div>
-          </section>
-          {/* Personal information */}
-          <form
-            onSubmit={(event) => {
-              event.preventDefault();
+                </div>
 
-              setProfileMessage("");
-
-              updateProfile.mutate({
-                fullName: profile.fullName.trim(),
-
-                phoneNumber: profile.phoneNumber.trim() || null,
-              });
-            }}
-            className="rounded-xl border border-[rgba(102,102,102,.16)] bg-white p-6"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div className={isArabic ? "text-right" : "text-left"}>
-                <h2 className="text-[18px] font-semibold text-[#333333]">
-                  {t("البيانات الشخصية")}
-                </h2>
-
-                <p className="mt-1 text-[13px] leading-6 text-[#A5A5A5]">
-                  {t("عدّل معلومات الحساب الأساسية وبيانات التواصل.")}
-                </p>
+                <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-[#EAF4F3] text-[#216474]">
+                  <UserRound size={20} strokeWidth={1.8} />
+                </span>
               </div>
 
-              <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-[#EAF4F3] text-[#216474]">
-                <UserRound size={20} strokeWidth={1.8} />
-              </span>
-            </div>
-
-            <div className="mt-6 grid gap-5 md:grid-cols-2">
-              <FormField label={t("الاسم الكامل")} icon={UserRound}>
-                <input
-                  dir={direction}
-                  value={profile.fullName}
-                  onChange={(event) =>
-                    setProfile((current) => ({
-                      ...current,
-
-                      fullName: event.target.value,
-                    }))
-                  }
-                  maxLength={150}
-                  required
-                  placeholder={t("أدخل الاسم الكامل")}
-                  className={`${inputClassName} ${
-                    isArabic ? "text-right" : "text-left"
-                  }`}
-                />
-              </FormField>
-
-              <FormField label={t("رقم الهاتف")} icon={Phone}>
-                <div
-                  dir="ltr"
-                  className="flex h-11 overflow-hidden rounded-lg border border-[rgba(102,102,102,.16)] bg-white transition hover:border-[#AFC9CD] focus-within:border-[#216474] focus-within:ring-2 focus-within:ring-[#216474]/10"
-                >
-                  <span className="flex w-[76px] shrink-0 items-center justify-center border-r border-[rgba(102,102,102,.16)] text-[13px] font-medium text-[#666666]">
-                    +963
-                  </span>
-
+              <div className="mt-6 grid gap-5 md:grid-cols-2">
+                <FormField label={t("الاسم الكامل")} icon={UserRound}>
                   <input
-                    value={profile.phoneNumber}
+                    dir={direction}
+                    value={profile.fullName}
                     onChange={(event) =>
                       setProfile((current) => ({
                         ...current,
 
-                        phoneNumber: event.target.value,
+                        fullName: event.target.value,
                       }))
                     }
-                    inputMode="tel"
-                    maxLength={30}
-                    placeholder={t("أدخل رقم الهاتف")}
-                    className={`min-w-0 flex-1 border-0 bg-transparent px-4 text-[14px] text-[#333333] outline-none placeholder:text-[12px] placeholder:font-normal placeholder:text-[#A5A5A5] ${
+                    maxLength={150}
+                    required
+                    placeholder={t("أدخل الاسم الكامل")}
+                    className={`${inputClassName} ${
                       isArabic ? "text-right" : "text-left"
                     }`}
                   />
-                </div>
-              </FormField>
+                </FormField>
 
-              <FormField
-                label={t("البريد الإلكتروني")}
-                icon={Mail}
-                className="md:col-span-2"
-              >
-                <input
-                  dir="ltr"
-                  value={profileQuery.data.email || ""}
-                  readOnly
-                  placeholder={t("أدخل البريد الإلكتروني")}
-                  className="h-11 w-full rounded-lg border border-[rgba(102,102,102,.16)] bg-[#FAFCFC] px-4 text-left text-[14px] text-[#829499] outline-none placeholder:text-[12px] placeholder:font-normal placeholder:text-[#A5A5A5]"
-                />
-              </FormField>
-            </div>
+                <FormField label={t("رقم الهاتف")} icon={Phone}>
+                  <div
+                    dir="ltr"
+                    className="flex h-11 overflow-hidden rounded-lg border border-[rgba(102,102,102,.16)] bg-white transition hover:border-[#AFC9CD] focus-within:border-[#216474] focus-within:ring-2 focus-within:ring-[#216474]/10"
+                  >
+                    <span className="flex w-[76px] shrink-0 items-center justify-center border-r border-[rgba(102,102,102,.16)] text-[13px] font-medium text-[#666666]">
+                      +963
+                    </span>
 
-            {profileMessage && (
-              <p className="mt-5 flex items-center gap-2 rounded-lg border border-[#CFE4E7] bg-[#EAF4F3] px-4 py-3 text-[14px] font-semibold text-[#216474]">
-                <CheckCircle2 size={17} />
+                    <input
+                      value={profile.phoneNumber}
+                      onChange={(event) =>
+                        setProfile((current) => ({
+                          ...current,
 
-                {profileMessage}
-              </p>
-            )}
+                          phoneNumber: event.target.value,
+                        }))
+                      }
+                      inputMode="tel"
+                      maxLength={30}
+                      placeholder={t("أدخل رقم الهاتف")}
+                      className={`min-w-0 flex-1 border-0 bg-transparent px-4 text-[14px] text-[#333333] outline-none placeholder:text-[12px] placeholder:font-normal placeholder:text-[#A5A5A5] ${
+                        isArabic ? "text-right" : "text-left"
+                      }`}
+                    />
+                  </div>
+                </FormField>
 
-            {updateProfile.isError && (
-              <p className="mt-5 rounded-lg border border-rose-100 bg-rose-50 px-4 py-3 text-[14px] font-semibold text-rose-700">
-                {getApiErrorMessage(updateProfile.error)}
-              </p>
-            )}
+                <FormField
+                  label={t("البريد الإلكتروني")}
+                  icon={Mail}
+                  className="md:col-span-2"
+                >
+                  <input
+                    dir="ltr"
+                    value={profileQuery.data.email || ""}
+                    readOnly
+                    placeholder={t("أدخل البريد الإلكتروني")}
+                    className="h-11 w-full rounded-lg border border-[rgba(102,102,102,.16)] bg-[#FAFCFC] px-4 text-left text-[14px] text-[#829499] outline-none placeholder:text-[12px] placeholder:font-normal placeholder:text-[#A5A5A5]"
+                  />
+                </FormField>
+              </div>
 
-            <button
-              type="submit"
-              disabled={updateProfile.isPending}
-              className="mt-6 inline-flex h-11 items-center gap-2 rounded-lg bg-[#174B57] px-5 text-[14px] font-semibold text-white transition hover:bg-[#123F49] disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              <Save size={16} />
+              {profileMessage && (
+                <p className="mt-5 flex items-center gap-2 rounded-lg border border-[#CFE4E7] bg-[#EAF4F3] px-4 py-3 text-[14px] font-semibold text-[#216474]">
+                  <CheckCircle2 size={17} />
 
-              {updateProfile.isPending ? t("جاري الحفظ...") : t("حفظ البيانات")}
-            </button>
-          </form>
-
-          {/* Change password */}
-          <form
-            onSubmit={submitPassword}
-            className="rounded-xl border border-[rgba(102,102,102,.16)] bg-white p-6"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div className={isArabic ? "text-right" : "text-left"}>
-                <h2 className="text-[18px] font-semibold text-[#333333]">
-                  {t("تغيير كلمة المرور")}
-                </h2>
-
-                <p className="mt-1 text-[13px] leading-6 text-[#A5A5A5]">
-                  {t(
-                    "8 أحرف على الأقل تتضمن حرفًا كبيرًا وصغيرًا ورقمًا ورمزًا خاصًا.",
-                  )}
+                  {profileMessage}
                 </p>
-              </div>
+              )}
 
-              <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-[#FFF7DF] text-[#DFAE0D]">
-                <KeyRound size={20} strokeWidth={1.8} />
-              </span>
-            </div>
+              {updateProfile.isError && (
+                <p className="mt-5 rounded-lg border border-rose-100 bg-rose-50 px-4 py-3 text-[14px] font-semibold text-rose-700">
+                  {getApiErrorMessage(updateProfile.error)}
+                </p>
+              )}
 
-            <div className="mt-6 grid gap-5 md:grid-cols-2">
-              <PasswordField
-                label={t("كلمة المرور الحالية")}
-                value={password.currentPassword}
-                onChange={(event) =>
-                  setPassword((current) => ({
-                    ...current,
-
-                    currentPassword: event.target.value,
-                  }))
-                }
-                t={t}
-                isArabic={isArabic}
-                direction={direction}
-                autoComplete="current-password"
-              />
-
-              <PasswordField
-                label={t("كلمة المرور الجديدة")}
-                value={password.newPassword}
-                onChange={(event) =>
-                  setPassword((current) => ({
-                    ...current,
-
-                    newPassword: event.target.value,
-                  }))
-                }
-                t={t}
-                isArabic={isArabic}
-                direction={direction}
-              />
-
-              <PasswordField
-                label={t("تأكيد كلمة المرور")}
-                value={password.confirmNewPassword}
-                onChange={(event) =>
-                  setPassword((current) => ({
-                    ...current,
-
-                    confirmNewPassword: event.target.value,
-                  }))
-                }
-                t={t}
-                isArabic={isArabic}
-                direction={direction}
-              />
-            </div>
-
-            {passwordMessage && (
-              <p
-                className={`mt-5 rounded-lg border px-4 py-3 text-[14px] font-semibold ${
-                  passwordSucceeded
-                    ? "border-[#CFE4E7] bg-[#EAF4F3] text-[#216474]"
-                    : "border-[#E8DDBE] bg-[#FFF8E8] text-[#A87818]"
-                }`}
+              <button
+                type="submit"
+                disabled={updateProfile.isPending}
+                className="mt-6 inline-flex h-11 items-center gap-2 rounded-lg bg-[#174B57] px-5 text-[14px] font-semibold text-white transition hover:bg-[#123F49] disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {passwordMessage}
-              </p>
-            )}
+                <Save size={16} />
 
-            {updatePassword.isError && (
-              <p className="mt-5 rounded-lg border border-rose-100 bg-rose-50 px-4 py-3 text-[14px] font-semibold text-rose-700">
-                {getApiErrorMessage(updatePassword.error)}
-              </p>
-            )}
+                {updateProfile.isPending
+                  ? t("جاري الحفظ...")
+                  : t("حفظ البيانات")}
+              </button>
+            </form>
 
-            <button
-              type="submit"
-              disabled={updatePassword.isPending}
-              className="mt-6 inline-flex h-11 items-center gap-2 rounded-lg bg-[#174B57] px-5 text-[14px] font-semibold text-white transition hover:bg-[#123F49] disabled:cursor-not-allowed disabled:opacity-60"
+            {/* Change password */}
+            <form
+              onSubmit={submitPassword}
+              className="rounded-xl border border-[rgba(102,102,102,.16)] bg-white p-6"
             >
-              <KeyRound size={16} />
+              <div className="flex items-start justify-between gap-4">
+                <div className={isArabic ? "text-right" : "text-left"}>
+                  <h2 className="text-[18px] font-semibold text-[#333333]">
+                    {t("تغيير كلمة المرور")}
+                  </h2>
 
-              {updatePassword.isPending
-                ? t("جاري التغيير...")
-                : t("تغيير كلمة المرور")}
-            </button>
-          </form>
-        </div>
+                  <p className="mt-1 text-[13px] leading-6 text-[#A5A5A5]">
+                    {t(
+                      "8 أحرف على الأقل تتضمن حرفًا كبيرًا وصغيرًا ورقمًا ورمزًا خاصًا.",
+                    )}
+                  </p>
+                </div>
 
-        {/* Account card */}
-        <aside className="space-y-5">
-          <section className="rounded-xl border border-[rgba(102,102,102,.16)] bg-white p-6">
-            <div
-              className={`flex items-center gap-4 ${
-                isArabic ? "text-right" : "text-left"
-              }`}
-            >
-              <div className="grid size-16 shrink-0 place-items-center rounded-full bg-[#EAF4F3] text-[#216474]">
-                <UserRound size={30} strokeWidth={1.8} />
+                <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-[#FFF7DF] text-[#DFAE0D]">
+                  <KeyRound size={20} strokeWidth={1.8} />
+                </span>
               </div>
 
-              <div className="min-w-0 flex-1">
-                <h2 className="truncate text-[18px] font-semibold text-[#333333]">
-                  {profileQuery.data.fullName}
-                </h2>
+              <div className="mt-6 grid gap-5 md:grid-cols-2">
+                <PasswordField
+                  label={t("كلمة المرور الحالية")}
+                  value={password.currentPassword}
+                  onChange={(event) =>
+                    setPassword((current) => ({
+                      ...current,
 
+                      currentPassword: event.target.value,
+                    }))
+                  }
+                  t={t}
+                  isArabic={isArabic}
+                  direction={direction}
+                  autoComplete="current-password"
+                />
+
+                <PasswordField
+                  label={t("كلمة المرور الجديدة")}
+                  value={password.newPassword}
+                  onChange={(event) =>
+                    setPassword((current) => ({
+                      ...current,
+
+                      newPassword: event.target.value,
+                    }))
+                  }
+                  t={t}
+                  isArabic={isArabic}
+                  direction={direction}
+                />
+
+                <PasswordField
+                  label={t("تأكيد كلمة المرور")}
+                  value={password.confirmNewPassword}
+                  onChange={(event) =>
+                    setPassword((current) => ({
+                      ...current,
+
+                      confirmNewPassword: event.target.value,
+                    }))
+                  }
+                  t={t}
+                  isArabic={isArabic}
+                  direction={direction}
+                />
+              </div>
+
+              {passwordMessage && (
                 <p
-                  dir="ltr"
-                  className={`mt-1 truncate text-[13px] text-[#666666] ${
-                    isArabic ? "text-right" : "text-left"
+                  className={`mt-5 rounded-lg border px-4 py-3 text-[14px] font-semibold ${
+                    passwordSucceeded
+                      ? "border-[#CFE4E7] bg-[#EAF4F3] text-[#216474]"
+                      : "border-[#E8DDBE] bg-[#FFF8E8] text-[#A87818]"
                   }`}
                 >
-                  {profileQuery.data.email}
+                  {passwordMessage}
                 </p>
-              </div>
-            </div>
+              )}
 
-            <div className="mt-6 space-y-3">
-              <AccountRow
-                icon={Mail}
-                label={t("البريد الإلكتروني")}
-                value={profileQuery.data.email}
-                direction={direction}
-              />
-
-              <AccountRow
-                icon={Phone}
-                label={t("رقم الهاتف")}
-                value={profileQuery.data.phoneNumber || t("غير محدد")}
-                direction={direction}
-              />
-
-              <AccountRow
-                icon={Heart}
-                label={t("الدور")}
-                value={t(role?.label || "غير محدد")}
-                direction={direction}
-              />
-
-              <AccountRow
-                icon={CalendarDays}
-                label={t("تاريخ إنشاء الحساب")}
-                value={
-                  profileQuery.data.createdAtUtc
-                    ? new Intl.DateTimeFormat(
-                        currentLanguage === "ar"
-                          ? "ar-SY"
-                          : currentLanguage === "tr"
-                            ? "tr-TR"
-                            : "en-US",
-                        {
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        },
-                      ).format(new Date(profileQuery.data.createdAtUtc))
-                    : t("غير محدد")
-                }
-                direction={direction}
-              />
-            </div>
-          </section>
-
-          <section className="rounded-xl border border-[#DCE8EA] bg-[#F8FBFB] p-5">
-            <div className="flex items-start gap-3">
-              <CheckCircle2
-                className="mt-0.5 shrink-0 text-[#216474]"
-                size={20}
-              />
-
-              <div className={isArabic ? "text-right" : "text-left"}>
-                <h3 className="text-[15px] font-semibold text-[#333333]">
-                  {t("حماية الحساب")}
-                </h3>
-
-                <p className="mt-2 text-[13px] leading-6 text-[#666666]">
-                  {t(
-                    "احرص على استخدام كلمة مرور قوية وعدم مشاركتها مع أي شخص. ننصح بتغييرها بشكل دوري.",
-                  )}
+              {updatePassword.isError && (
+                <p className="mt-5 rounded-lg border border-rose-100 bg-rose-50 px-4 py-3 text-[14px] font-semibold text-rose-700">
+                  {getApiErrorMessage(updatePassword.error)}
                 </p>
+              )}
+
+              <button
+                type="submit"
+                disabled={updatePassword.isPending}
+                className="mt-6 inline-flex h-11 items-center gap-2 rounded-lg bg-[#174B57] px-5 text-[14px] font-semibold text-white transition hover:bg-[#123F49] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <KeyRound size={16} />
+
+                {updatePassword.isPending
+                  ? t("جاري التغيير...")
+                  : t("تغيير كلمة المرور")}
+              </button>
+            </form>
+          </div>
+
+          {/* Account card */}
+          <aside className="space-y-5">
+            <section className="rounded-xl border border-[rgba(102,102,102,.16)] bg-white p-6">
+              <div
+                className={`flex items-center gap-4 ${
+                  isArabic ? "text-right" : "text-left"
+                }`}
+              >
+                <div className="grid size-16 shrink-0 place-items-center rounded-full bg-[#EAF4F3] text-[#216474]">
+                  <UserRound size={30} strokeWidth={1.8} />
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  <h2 className="truncate text-[18px] font-semibold text-[#333333]">
+                    {profileQuery.data.fullName}
+                  </h2>
+
+                  <p
+                    dir="ltr"
+                    className={`mt-1 truncate text-[13px] text-[#666666] ${
+                      isArabic ? "text-right" : "text-left"
+                    }`}
+                  >
+                    {profileQuery.data.email}
+                  </p>
+                </div>
               </div>
-            </div>
-          </section>
-        </aside>
+
+              <div className="mt-6 space-y-3">
+                <AccountRow
+                  icon={Mail}
+                  label={t("البريد الإلكتروني")}
+                  value={profileQuery.data.email}
+                  direction={direction}
+                />
+
+                <AccountRow
+                  icon={Phone}
+                  label={t("رقم الهاتف")}
+                  value={profileQuery.data.phoneNumber || t("غير محدد")}
+                  direction={direction}
+                />
+
+                <AccountRow
+                  icon={Heart}
+                  label={t("الدور")}
+                  value={t(role?.label || "غير محدد")}
+                  direction={direction}
+                />
+
+                <AccountRow
+                  icon={CalendarDays}
+                  label={t("تاريخ إنشاء الحساب")}
+                  value={
+                    profileQuery.data.createdAtUtc
+                      ? new Intl.DateTimeFormat(
+                          currentLanguage === "ar"
+                            ? "ar-SY"
+                            : currentLanguage === "tr"
+                              ? "tr-TR"
+                              : "en-US",
+                          {
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric",
+                          },
+                        ).format(new Date(profileQuery.data.createdAtUtc))
+                      : t("غير محدد")
+                  }
+                  direction={direction}
+                />
+              </div>
+            </section>
+
+            <section className="rounded-xl border border-[#DCE8EA] bg-[#F8FBFB] p-5">
+              <div className="flex items-start gap-3">
+                <CheckCircle2
+                  className="mt-0.5 shrink-0 text-[#216474]"
+                  size={20}
+                />
+
+                <div className={isArabic ? "text-right" : "text-left"}>
+                  <h3 className="text-[15px] font-semibold text-[#333333]">
+                    {t("حماية الحساب")}
+                  </h3>
+
+                  <p className="mt-2 text-[13px] leading-6 text-[#666666]">
+                    {t(
+                      "احرص على استخدام كلمة مرور قوية وعدم مشاركتها مع أي شخص. ننصح بتغييرها بشكل دوري.",
+                    )}
+                  </p>
+                </div>
+              </div>
+            </section>
+          </aside>
         </section>
       </main>
     </div>

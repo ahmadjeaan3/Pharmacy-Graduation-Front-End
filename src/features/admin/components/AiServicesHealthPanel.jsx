@@ -12,10 +12,7 @@ import {
   getIntelligenceHealth,
   intelligenceKeys,
 } from "../../intelligence/api/intelligenceApi";
-import {
-  adminKeys,
-  getAdminAiServicesHealth,
-} from "../api/adminApi";
+import { adminKeys, getAdminAiServicesHealth } from "../api/adminApi";
 
 export function AiServicesHealthPanel() {
   const servicesQuery = useQuery({
@@ -74,10 +71,18 @@ export function AiServicesHealthPanel() {
           </span>
           <div>
             <h2 className="font-black text-[#29464d]">جاهزية الخدمات الذكية</h2>
-            <p className="mt-0.5 text-xs text-[#829499]">مراقبة الاتصال بالنماذج المساندة للمنصة</p>
+            <p className="mt-0.5 text-xs text-[#829499]">
+              مراقبة الاتصال بالنماذج المساندة للمنصة
+            </p>
           </div>
         </div>
-        <button className="btn-secondary" onClick={refresh} disabled={pending || servicesQuery.isFetching || intelligenceQuery.isFetching}>
+        <button
+          className="btn-secondary"
+          onClick={refresh}
+          disabled={
+            pending || servicesQuery.isFetching || intelligenceQuery.isFetching
+          }
+        >
           {servicesQuery.isFetching || intelligenceQuery.isFetching ? (
             <LoaderCircle size={16} className="animate-spin" />
           ) : (
@@ -116,18 +121,37 @@ function ServiceCard({ service, loading, aggregateError }) {
   return (
     <article className="rounded-2xl border border-[#e1ebed] bg-[#f8fbfb] p-4">
       <div className="flex items-start justify-between gap-3">
-        <span className="grid size-10 place-items-center rounded-xl bg-white text-[#216474] shadow-sm"><Icon size={19} /></span>
-        <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-black ${loading ? "bg-slate-100 text-slate-600" : available ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"}`}>
-          <span className={`size-1.5 rounded-full ${loading ? "animate-pulse bg-slate-400" : available ? "bg-emerald-500" : "bg-rose-500"}`} />
+        <span className="grid size-10 place-items-center rounded-xl bg-white text-[#216474] shadow-sm">
+          <Icon size={19} />
+        </span>
+        <span
+          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-black ${loading ? "bg-slate-100 text-slate-600" : available ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"}`}
+        >
+          <span
+            className={`size-1.5 rounded-full ${loading ? "animate-pulse bg-slate-400" : available ? "bg-emerald-500" : "bg-rose-500"}`}
+          />
           {status}
         </span>
       </div>
       <h3 className="mt-4 text-sm font-black text-[#29464d]">{service.name}</h3>
-      <p className="mt-1 min-h-10 text-xs leading-5 text-[#71858a]">{service.description}</p>
+      <p className="mt-1 min-h-10 text-xs leading-5 text-[#71858a]">
+        {service.description}
+      </p>
       {(service.count != null || service.model) && (
         <div className="mt-3 flex flex-wrap gap-2 text-[10px] font-bold text-[#52727a]">
-          {service.count != null && <span className="rounded-lg bg-white px-2 py-1">{Number(service.count).toLocaleString("ar-SY")} دواء</span>}
-          {service.model && <span className="max-w-full truncate rounded-lg bg-white px-2 py-1" dir="ltr">{service.model}</span>}
+          {service.count != null && (
+            <span className="rounded-lg bg-white px-2 py-1">
+              {Number(service.count).toLocaleString("ar-SY")} دواء
+            </span>
+          )}
+          {service.model && (
+            <span
+              className="max-w-full truncate rounded-lg bg-white px-2 py-1"
+              dir="ltr"
+            >
+              {service.model}
+            </span>
+          )}
         </div>
       )}
     </article>

@@ -35,8 +35,7 @@ import {
 import { getApiErrorMessage } from "../../../shared/api/errors";
 import { Brand } from "../../../shared/components/Brand";
 
-const HISTORY_HERO_BACKGROUND =
-  "/assets/app/home/hero_search.png";
+const HISTORY_HERO_BACKGROUND = "/assets/app/home/hero_search.png";
 
 const FOOTER_SOCIAL_ICONS = {
   whatsapp: "/assets/app/social/whatsapp.png",
@@ -132,7 +131,7 @@ export function SearchHistoryPage() {
     },
   });
 
-  const historyItems = query.data ?? [];
+  const historyItems = useMemo(() => query.data ?? [], [query.data]);
 
   const visibleItems = useMemo(
     () => historyItems.slice(0, visibleCount),
@@ -142,10 +141,7 @@ export function SearchHistoryPage() {
   const hasMore = visibleCount < historyItems.length;
 
   return (
-    <div
-      dir="rtl"
-      className="m-0 w-full bg-[#F7F9FA] p-0 text-[#333333]"
-    >
+    <div dir="rtl" className="m-0 w-full bg-[#F7F9FA] p-0 text-[#333333]">
       {/* =========================
           HERO
       ========================== */}
@@ -179,7 +175,8 @@ export function SearchHistoryPage() {
           </h1>
 
           <p className="mt-3 max-w-[560px] text-[13px] leading-7 text-white/75">
-            ارجع إلى عمليات البحث السابقة وأعد الوصول إلى الأدوية التي بحثت عنها بسرعة.
+            ارجع إلى عمليات البحث السابقة وأعد الوصول إلى الأدوية التي بحثت عنها
+            بسرعة.
           </p>
 
           <Link
@@ -236,9 +233,7 @@ export function SearchHistoryPage() {
             <div className="space-y-3">
               {visibleItems.map((item) => {
                 const title =
-                  item.query ||
-                  searchTypeLabels[item.searchType] ||
-                  "بحث سابق";
+                  item.query || searchTypeLabels[item.searchType] || "بحث سابق";
 
                 const typeLabel =
                   searchTypeLabels[item.searchType] || "نشاط بحث";
@@ -383,9 +378,6 @@ export function SearchHistoryPage() {
           </p>
         ) : null}
       </section>
-
-   
-     
 
       {deleteTarget ? (
         <ConfirmDelete

@@ -26,15 +26,11 @@ import {
   ErrorState as UserErrorState,
   LoadingState as UserLoadingState,
 } from "../../../shared/components/AsyncStates";
-import {
-  formatDate,
-  getRequestStatus,
-} from "../utils/userFormatters";
+import { formatDate, getRequestStatus } from "../utils/userFormatters";
 import { getApiErrorMessage } from "../../../shared/api/errors";
 import { Brand } from "../../../shared/components/Brand";
 
-const REQUEST_DETAILS_NOTICE_IMAGE =
-  "/assets/app/home/pharmacy.png";
+const REQUEST_DETAILS_NOTICE_IMAGE = "/assets/app/home/pharmacy.png";
 
 const FOOTER_SOCIAL_ICONS = {
   whatsapp: "/assets/app/social/whatsapp.png",
@@ -52,17 +48,11 @@ function getMedicineImageSource(imageUrl) {
 
   try {
     const apiBaseUrl =
-      import.meta.env.VITE_API_BASE_URL ||
-      "https://localhost:7048/api";
+      import.meta.env.VITE_API_BASE_URL || "https://localhost:7048/api";
 
-    const apiOrigin = new URL(
-      apiBaseUrl,
-      window.location.origin,
-    ).origin;
+    const apiOrigin = new URL(apiBaseUrl, window.location.origin).origin;
 
-    return `${apiOrigin}${
-      imageUrl.startsWith("/") ? "" : "/"
-    }${imageUrl}`;
+    return `${apiOrigin}${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
   } catch {
     return imageUrl;
   }
@@ -82,10 +72,7 @@ export function MedicineRequestDetailsPage() {
     mutationFn: () => cancelMedicineRequest(requestId),
 
     onSuccess: (data) => {
-      queryClient.setQueryData(
-        userKeys.medicineRequest(requestId),
-        data,
-      );
+      queryClient.setQueryData(userKeys.medicineRequest(requestId), data);
 
       queryClient.invalidateQueries({
         queryKey: ["user", "medicine-requests"],
@@ -98,11 +85,7 @@ export function MedicineRequestDetailsPage() {
   });
 
   if (query.isPending) {
-    return (
-      <UserLoadingState
-        label={t("جاري تحميل تفاصيل الطلب...")}
-      />
-    );
+    return <UserLoadingState label={t("جاري تحميل تفاصيل الطلب...")} />;
   }
 
   if (query.isError) {
@@ -116,19 +99,12 @@ export function MedicineRequestDetailsPage() {
 
   const request = query.data;
 
-  const status = getRequestStatus(
-    request.status,
-    request.statusDisplayText,
-    t,
-  );
+  const status = getRequestStatus(request.status, request.statusDisplayText, t);
 
   const normalizedStatus =
-    request.status === "Available"
-      ? "ReadyForPickup"
-      : request.status;
+    request.status === "Available" ? "ReadyForPickup" : request.status;
 
-  const isReadyForPickup =
-    normalizedStatus === "ReadyForPickup";
+  const isReadyForPickup = normalizedStatus === "ReadyForPickup";
 
   const displayName =
     request.medicineDisplayName ||
@@ -136,15 +112,10 @@ export function MedicineRequestDetailsPage() {
     request.medicineName ||
     t("دواء");
 
-  const medicineImageUrl =
-    getMedicineImageSource(request.imageUrl);
+  const medicineImageUrl = getMedicineImageSource(request.imageUrl);
 
   const address =
-    [
-      request.pharmacyAddress,
-      request.pharmacyArea,
-      request.pharmacyCity,
-    ]
+    [request.pharmacyAddress, request.pharmacyArea, request.pharmacyCity]
       .filter(Boolean)
       .join("، ") || t("العنوان غير متوفر");
 
@@ -202,60 +173,60 @@ export function MedicineRequestDetailsPage() {
         {/* ===================================================
             TOP CARDS
         ==================================================== */}
-      <section className="grid gap-6 xl:grid-cols-[.9fr_1.6fr]">
-  {/* بيانات الصيدلية - على اليمين */}
-  <aside
-    className="
+        <section className="grid gap-6 xl:grid-cols-[.9fr_1.6fr]">
+          {/* بيانات الصيدلية - على اليمين */}
+          <aside
+            className="
       rounded-[14px]
       border border-[rgba(102,102,102,0.16)]
       bg-white
       shadow-[0_8px_24px_rgba(23,75,87,.035)]
       px-7 py-7
     "
-  >
-    <div className="mb-4 flex items-center gap-2 text-[#216474]">
-      <MapPin size={20} strokeWidth={1.8} />
+          >
+            <div className="mb-4 flex items-center gap-2 text-[#216474]">
+              <MapPin size={20} strokeWidth={1.8} />
 
-      <h2 className="text-[19px] font-semibold">
-        {t("بيانات الصيدلية")}
-      </h2>
-    </div>
+              <h2 className="text-[19px] font-semibold">
+                {t("بيانات الصيدلية")}
+              </h2>
+            </div>
 
-    <h3 className="text-[20px] font-semibold text-[#333333]">
-      {request.pharmacyName || t("صيدلية")}
-    </h3>
+            <h3 className="text-[20px] font-semibold text-[#333333]">
+              {request.pharmacyName || t("صيدلية")}
+            </h3>
 
-    <p className="mt-2 text-[13px] leading-7 text-[#777777]">
-      {address}
-    </p>
+            <p className="mt-2 text-[13px] leading-7 text-[#777777]">
+              {address}
+            </p>
 
-    <div className="mt-3">
-      {request.pharmacyIsOpenNow ? (
-        <span
-          className="
+            <div className="mt-3">
+              {request.pharmacyIsOpenNow ? (
+                <span
+                  className="
             inline-flex items-center gap-1.5
             text-[13px] font-medium
             text-[#2A8B57]
           "
-        >
-          <span className="size-2 rounded-full bg-[#2A8B57]" />
+                >
+                  <span className="size-2 rounded-full bg-[#2A8B57]" />
 
-          {request.pharmacyStatusText || t("مفتوحة الآن")}
-        </span>
-      ) : request.pharmacyStatusText ? (
-        <span className="text-[12.5px] text-[#777777]">
-          {request.pharmacyStatusText}
-        </span>
-      ) : null}
-    </div>
+                  {request.pharmacyStatusText || t("مفتوحة الآن")}
+                </span>
+              ) : request.pharmacyStatusText ? (
+                <span className="text-[12.5px] text-[#777777]">
+                  {request.pharmacyStatusText}
+                </span>
+              ) : null}
+            </div>
 
-    <div className="mt-5 grid gap-2">
-      {request.pharmacyGoogleMapsUrl ? (
-        <a
-          href={request.pharmacyGoogleMapsUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="
+            <div className="mt-5 grid gap-2">
+              {request.pharmacyGoogleMapsUrl ? (
+                <a
+                  href={request.pharmacyGoogleMapsUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="
             inline-flex h-11
             items-center justify-center gap-2
             rounded-[9px]
@@ -265,16 +236,16 @@ export function MedicineRequestDetailsPage() {
             text-white
             transition hover:bg-[#174B57]
           "
-        >
-          <Navigation size={15} />
-          {t("الاتجاه إلى الصيدلية")}
-        </a>
-      ) : null}
+                >
+                  <Navigation size={15} />
+                  {t("الاتجاه إلى الصيدلية")}
+                </a>
+              ) : null}
 
-      {request.pharmacyPhoneNumber ? (
-        <a
-          href={`tel:${request.pharmacyPhoneNumber}`}
-          className="
+              {request.pharmacyPhoneNumber ? (
+                <a
+                  href={`tel:${request.pharmacyPhoneNumber}`}
+                  className="
             inline-flex h-11
             items-center justify-center gap-2
             rounded-[6px]
@@ -285,15 +256,15 @@ export function MedicineRequestDetailsPage() {
             text-[#216474]
             transition hover:bg-[#F2F8F8]
           "
-        >
-          <Phone size={15} />
-          {t("الاتصال بالصيدلية")}
-        </a>
-      ) : null}
+                >
+                  <Phone size={15} />
+                  {t("الاتصال بالصيدلية")}
+                </a>
+              ) : null}
 
-      <Link
-        to={`/app/pharmacies/${request.pharmacyId}`}
-        className="
+              <Link
+                to={`/app/pharmacies/${request.pharmacyId}`}
+                className="
           inline-flex h-11
           items-center justify-center
           rounded-[6px]
@@ -304,87 +275,87 @@ export function MedicineRequestDetailsPage() {
           text-[#216474]
           transition hover:bg-[#F2F8F8]
         "
-      >
-        {t("عرض الصيدلية")}
-      </Link>
-    </div>
-  </aside>
+              >
+                {t("عرض الصيدلية")}
+              </Link>
+            </div>
+          </aside>
 
-  {/* معلومات الطلب - على اليسار */}
-  <section
-    className="
+          {/* معلومات الطلب - على اليسار */}
+          <section
+            className="
       rounded-[12px]
       border border-[rgba(102,102,102,0.16)]
       bg-white
       shadow-[0_8px_24px_rgba(23,75,87,.035)]
       px-7 py-7
     "
-  >
-    <div className="mb-4 flex items-center justify-between gap-4">
-      <div className="flex items-center gap-2 text-[#216474]">
-        <ClipboardList size={20} strokeWidth={1.8} />
+          >
+            <div className="mb-4 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2 text-[#216474]">
+                <ClipboardList size={20} strokeWidth={1.8} />
 
-        <h2 className="text-[19px] font-semibold">
-          {t("معلومات الطلب")}
-        </h2>
-      </div>
+                <h2 className="text-[19px] font-semibold">
+                  {t("معلومات الطلب")}
+                </h2>
+              </div>
 
-      <span
-        className={`
+              <span
+                className={`
           inline-flex min-h-[28px]
           items-center justify-center
           rounded-full border
           px-3 text-[11px] font-semibold
           ${statusClassName}
         `}
-      >
-        {status.label}
-      </span>
-    </div>
+              >
+                {status.label}
+              </span>
+            </div>
 
-    <div className="divide-y divide-[rgba(102,102,102,0.10)]">
-      <InfoRow
-        icon={ClipboardList}
-        label={t("رقم الطلب")}
-        value={request.requestCode || "—"}
-      />
+            <div className="divide-y divide-[rgba(102,102,102,0.10)]">
+              <InfoRow
+                icon={ClipboardList}
+                label={t("رقم الطلب")}
+                value={request.requestCode || "—"}
+              />
 
-      <InfoRow
-        icon={CalendarDays}
-        label={t("تاريخ الطلب")}
-        value={formatDate(request.createdAtUtc, true)}
-      />
+              <InfoRow
+                icon={CalendarDays}
+                label={t("تاريخ الطلب")}
+                value={formatDate(request.createdAtUtc, true)}
+              />
 
-      <InfoRow
-        icon={Clock3}
-        label={t("آخر تحديث")}
-        value={formatDate(updatedAt, true)}
-      />
+              <InfoRow
+                icon={Clock3}
+                label={t("آخر تحديث")}
+                value={formatDate(updatedAt, true)}
+              />
 
-      <InfoRow
-        icon={PackageSearch}
-        label={t("الكمية المطلوبة")}
-        value={Number(
-          request.requestedQuantity || 0,
-        ).toLocaleString(i18n.language)}
-      />
+              <InfoRow
+                icon={PackageSearch}
+                label={t("الكمية المطلوبة")}
+                value={Number(request.requestedQuantity || 0).toLocaleString(
+                  i18n.language,
+                )}
+              />
 
-      <InfoRow
-        icon={CheckCircle2}
-        label={t("حالة الطلب")}
-        value={status.label}
-      />
+              <InfoRow
+                icon={CheckCircle2}
+                label={t("حالة الطلب")}
+                value={status.label}
+              />
 
-      {request.note ? (
-        <InfoRow
-          icon={Info}
-          label={t("ملاحظات")}
-          value={request.note}
-        />
-      ) : null}
-    </div>
-  </section>
-</section>
+              {request.note ? (
+                <InfoRow
+                  icon={Info}
+                  label={t("ملاحظات")}
+                  value={request.note}
+                />
+              ) : null}
+            </div>
+          </section>
+        </section>
 
         {/* ===================================================
             محتويات الطلب
@@ -401,9 +372,7 @@ export function MedicineRequestDetailsPage() {
           <div className="mb-4 flex items-center gap-2 text-[#216474]">
             <PackageSearch size={20} strokeWidth={1.8} />
 
-            <h2 className="text-[19px] font-semibold">
-              {t("محتويات الطلب")}
-            </h2>
+            <h2 className="text-[19px] font-semibold">{t("محتويات الطلب")}</h2>
           </div>
 
           <div
@@ -489,9 +458,9 @@ export function MedicineRequestDetailsPage() {
                   text-[#555555]
                 "
               >
-                {Number(
-                  request.requestedQuantity || 0,
-                ).toLocaleString(i18n.language)}
+                {Number(request.requestedQuantity || 0).toLocaleString(
+                  i18n.language,
+                )}
               </span>
             </div>
           </div>
@@ -507,14 +476,9 @@ export function MedicineRequestDetailsPage() {
               text-[#71858A]
             "
           >
-            <Info
-              size={16}
-              className="shrink-0 text-[#216474]"
-            />
+            <Info size={16} className="shrink-0 text-[#216474]" />
 
-            {t(
-              "يتم تأكيد توفر الدواء والكمية من الصيدلية بعد مراجعة الطلب.",
-            )}
+            {t("يتم تأكيد توفر الدواء والكمية من الصيدلية بعد مراجعة الطلب.")}
           </div>
         </section>
 
@@ -534,27 +498,21 @@ export function MedicineRequestDetailsPage() {
             <div className="mb-4 flex items-center gap-2 text-[#216474]">
               <CheckCircle2 size={18} />
 
-              <h2 className="text-[19px] font-semibold">
-                {t("حالة الطلب")}
-              </h2>
+              <h2 className="text-[19px] font-semibold">{t("حالة الطلب")}</h2>
             </div>
 
             <div className="divide-y divide-[rgba(102,102,102,0.10)]">
               <CompactRow
                 label={t("الكمية المطلوبة")}
-                value={Number(
-                  request.requestedQuantity || 0,
-                ).toLocaleString(i18n.language)}
+                value={Number(request.requestedQuantity || 0).toLocaleString(
+                  i18n.language,
+                )}
               />
 
               <CompactRow
                 label={t("حالة الطلب")}
                 value={status.label}
-                valueClass={
-                  isReadyForPickup
-                    ? "text-[#2A8B57]"
-                    : ""
-                }
+                valueClass={isReadyForPickup ? "text-[#2A8B57]" : ""}
               />
 
               <CompactRow
@@ -565,9 +523,7 @@ export function MedicineRequestDetailsPage() {
               <CompactRow
                 label={t("رد الصيدلية")}
                 value={
-                  request.hasPharmacyResponse
-                    ? t("تم الرد")
-                    : t("بانتظار الرد")
+                  request.hasPharmacyResponse ? t("تم الرد") : t("بانتظار الرد")
                 }
               />
             </div>
@@ -621,21 +577,15 @@ export function MedicineRequestDetailsPage() {
                 title={t("حالة الاستلام")}
                 text={
                   isReadyForPickup
-                    ? t(
-                        "الدواء جاهز للاستلام من الصيدلية.",
-                      )
-                    : t(
-                        "سيظهر الاستلام بعد تأكيد توفر الدواء من الصيدلية.",
-                      )
+                    ? t("الدواء جاهز للاستلام من الصيدلية.")
+                    : t("سيظهر الاستلام بعد تأكيد توفر الدواء من الصيدلية.")
                 }
               />
 
               <PickupRow
                 icon={ShieldCheck}
                 title={t("ملاحظة مهمة")}
-                text={t(
-                  "يرجى الاحتفاظ برقم الطلب عند التوجه إلى الصيدلية.",
-                )}
+                text={t("يرجى الاحتفاظ برقم الطلب عند التوجه إلى الصيدلية.")}
               />
             </div>
           </section>
@@ -777,29 +727,17 @@ export function MedicineRequestDetailsPage() {
           />
         </section>
       </main>
-
-  
     </div>
   );
 }
 
-function InfoRow({
-  icon: Icon,
-  label,
-  value,
-}) {
+function InfoRow({ icon: Icon, label, value }) {
   return (
     <div className="flex min-h-[58px] items-center justify-between gap-5 py-3.5">
       <div className="flex items-center gap-2 text-[#8A9A9E]">
-        <Icon
-          size={16}
-          strokeWidth={1.7}
-          className="shrink-0 text-[#216474]"
-        />
+        <Icon size={16} strokeWidth={1.7} className="shrink-0 text-[#216474]" />
 
-        <span className="text-[13px]">
-          {label}
-        </span>
+        <span className="text-[13px]">{label}</span>
       </div>
 
       <strong
@@ -818,16 +756,10 @@ function InfoRow({
   );
 }
 
-function CompactRow({
-  label,
-  value,
-  valueClass = "",
-}) {
+function CompactRow({ label, value, valueClass = "" }) {
   return (
     <div className="flex min-h-[54px] items-center justify-between gap-5 py-3.5">
-      <span className="text-[12.5px] text-[#8A9A9E]">
-        {label}
-      </span>
+      <span className="text-[12.5px] text-[#8A9A9E]">{label}</span>
 
       <strong
         className={`
@@ -843,11 +775,7 @@ function CompactRow({
   );
 }
 
-function PickupRow({
-  icon: Icon,
-  title,
-  text,
-}) {
+function PickupRow({ icon: Icon, title, text }) {
   return (
     <div className="flex items-start gap-3">
       <Icon
@@ -859,23 +787,15 @@ function PickupRow({
       />
 
       <div className="min-w-0">
-        <h3 className="text-[12px] font-medium text-[#555555]">
-          {title}
-        </h3>
+        <h3 className="text-[12px] font-medium text-[#555555]">{title}</h3>
 
-        <p className="mt-1 text-[13px] leading-7 text-[#8A9A9E]">
-          {text}
-        </p>
+        <p className="mt-1 text-[13px] leading-7 text-[#8A9A9E]">{text}</p>
       </div>
     </div>
   );
 }
 
-function FooterFeature({
-  icon: Icon,
-  title,
-  description,
-}) {
+function FooterFeature({ icon: Icon, title, description }) {
   return (
     <div className="flex items-center justify-start gap-3">
       <span
@@ -895,9 +815,7 @@ function FooterFeature({
           {title}
         </strong>
 
-        <p className="text-[10.5px] text-[#A5A5A5]">
-          {description}
-        </p>
+        <p className="text-[10.5px] text-[#A5A5A5]">{description}</p>
       </div>
     </div>
   );

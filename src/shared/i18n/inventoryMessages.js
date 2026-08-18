@@ -6,14 +6,14 @@ export const inventoryMessages = {
       "Review availability, prices, and expiry dates from one organized workspace.",
     "إظهار العربية": "Show Arabic",
     "العربية ظاهرة": "Arabic visible",
-    "تحديث": "Refresh",
+    تحديث: "Refresh",
     "إضافة من دليل الأدوية": "Add from medicine catalog",
     "إضافة دواء يدويًا": "Add medicine manually",
     "استيراد ملف Excel": "Import Excel file",
     "إجمالي الأصناف": "Total items",
-    "متوفر": "In stock",
+    متوفر: "In stock",
     "مخزون منخفض": "Low stock",
-    "نافد": "Out of stock",
+    نافد: "Out of stock",
     "منتهي الصلاحية": "Expired",
     "هذا الصنف منتهي الصلاحية وغير متاح للطلبات حتى تحديث بياناته.":
       "This item has expired and cannot be ordered until its details are updated.",
@@ -24,7 +24,7 @@ export const inventoryMessages = {
     "ابحث بالاسم الإنجليزي أو العربي أو العلمي أو الباركود":
       "Search by English, Arabic, or scientific name, or by barcode",
     "مسح الفلاتر": "Clear filters",
-    "الكل": "All",
+    الكل: "All",
     "إظهار الأصناف المتوفرة فقط": "Show in-stock items only",
     "الاسم الإنجليزي أساسي، ويمكن إظهار الاسم العربي عند الحاجة.":
       "English is the primary name; you can show the Arabic name when needed.",
@@ -103,14 +103,14 @@ export const inventoryMessages = {
       "Stok, fiyat ve son kullanma tarihlerini düzenli bir ekrandan yönetin.",
     "إظهار العربية": "Arapçayı göster",
     "العربية ظاهرة": "Arapça görünür",
-    "تحديث": "Yenile",
+    تحديث: "Yenile",
     "إضافة من دليل الأدوية": "İlaç kataloğundan ekle",
     "إضافة دواء يدويًا": "İlacı elle ekle",
     "استيراد ملف Excel": "Excel dosyası içe aktar",
     "إجمالي الأصناف": "Toplam ürün",
-    "متوفر": "Stokta",
+    متوفر: "Stokta",
     "مخزون منخفض": "Düşük stok",
-    "نافد": "Stokta yok",
+    نافد: "Stokta yok",
     "منتهي الصلاحية": "Son kullanma tarihi geçmiş",
     "هذا الصنف منتهي الصلاحية وغير متاح للطلبات حتى تحديث بياناته.":
       "Bu ürünün son kullanma tarihi geçmiştir; bilgileri güncellenene kadar sipariş edilemez.",
@@ -121,7 +121,7 @@ export const inventoryMessages = {
     "ابحث بالاسم الإنجليزي أو العربي أو العلمي أو الباركود":
       "İngilizce, Arapça veya bilimsel adla ya da barkodla ara",
     "مسح الفلاتر": "Filtreleri temizle",
-    "الكل": "Tümü",
+    الكل: "Tümü",
     "إظهار الأصناف المتوفرة فقط": "Yalnızca stoktakileri göster",
     "الاسم الإنجليزي أساسي، ويمكن إظهار الاسم العربي عند الحاجة.":
       "İngilizce ad birincildir; gerektiğinde Arapça ad gösterilebilir.",

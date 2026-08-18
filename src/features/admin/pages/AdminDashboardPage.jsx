@@ -183,9 +183,7 @@ export function AdminDashboardPage() {
             <p className="text-sm font-bold text-[#8bd0cb]">
               مركز إدارة المنصة
             </p>
-            <h2 className="mt-2 text-3xl font-black">
-              نظرة عامة على دوائي
-            </h2>
+            <h2 className="mt-2 text-3xl font-black">نظرة عامة على دوائي</h2>
             <p className="mt-3 max-w-2xl leading-7 text-white/60">
               إحصاءات النشاط والطلبات خلال {activePeriodLabel}، مع عرض حالة
               الاعتمادات الحالية للمنصة.

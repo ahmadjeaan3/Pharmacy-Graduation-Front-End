@@ -11,6 +11,7 @@ export const adminKeys = {
   homeTickerPharmacies: ["admin", "home-ticker", "pharmacies"],
   accounts: (params = {}) => ["admin", "accounts", params],
   account: (userId) => ["admin", "accounts", userId],
+  auditLogs: (params = {}) => ["admin", "audit-logs", params],
   organizationVerification: (organizationId) => [
     "admin",
     "organizations",
@@ -42,6 +43,10 @@ export async function getAdminAccount(userId) {
 }
 export async function updateAdminAccountStatus(userId, payload) {
   return apiClient.put(`/admin/accounts/${userId}/status`, payload);
+}
+
+export async function getAdminAuditLogs(params = {}) {
+  return (await apiClient.get("/admin/audit-logs", { params })).data;
 }
 
 export async function getAdminDashboard(days = 7) {

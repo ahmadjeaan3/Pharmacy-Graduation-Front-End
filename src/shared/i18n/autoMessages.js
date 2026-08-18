@@ -386,21 +386,21 @@ export const autoMessages = {
     "الحد الأدنى لهذا المستودع": "Minimum order for this warehouse",
 
     "أضف أدوية بقيمة": "Add medicines worth",
-// Platform Impact
-"أثر المنصة بالأرقام": "Platform Impact in Numbers",
+    // Platform Impact
+    "أثر المنصة بالأرقام": "Platform Impact in Numbers",
 
-"إحصائيات حقيقية ومحدثة من خدمات المنصة":
-  "Real and up-to-date statistics from platform services",
+    "إحصائيات حقيقية ومحدثة من خدمات المنصة":
+      "Real and up-to-date statistics from platform services",
 
-"صيدليات موثّقة": "Verified Pharmacies",
+    "صيدليات موثّقة": "Verified Pharmacies",
 
-"طلبات مؤكدة": "Confirmed Requests",
+    "طلبات مؤكدة": "Confirmed Requests",
 
-"مستخدمون استفادوا": "Users Helped",
+    "مستخدمون استفادوا": "Users Helped",
 
-"مستخدمون نشطون": "Active Users",
+    "مستخدمون نشطون": "Active Users",
 
-"زوار المنصة": "Platform Visitors",
+    "زوار المنصة": "Platform Visitors",
     "تعذر إرسال الطلب. راجع المخزون والكميات.":
       "Could not submit the order. Review stock and quantities.",
 
@@ -4437,24 +4437,23 @@ export const autoMessages = {
       "Hesabınıza kaydedilen tüm aramalar silinecek ve geri alınamayacaktır.",
     "سيُرسل إشعار بالقرار إلى المنظمة": "Kararın tebliği kuruluşa gönderilecek",
     "شارك رأيك لمساعدة مستخدمين آخرين":
-    
       "Diğer kullanıcılara yardımcı olmak için fikrinizi paylaşın",
     "شارك في العطاء": "Vermeye katılmak",
     // Platform Impact
-"أثر المنصة بالأرقام": "Platform Etkisi",
+    "أثر المنصة بالأرقام": "Platform Etkisi",
 
-"إحصائيات حقيقية ومحدثة من خدمات المنصة":
-  "Platform hizmetlerinden gerçek ve güncel istatistikler",
+    "إحصائيات حقيقية ومحدثة من خدمات المنصة":
+      "Platform hizmetlerinden gerçek ve güncel istatistikler",
 
-"صيدليات موثّقة": "Doğrulanmış Eczaneler",
+    "صيدليات موثّقة": "Doğrulanmış Eczaneler",
 
-"طلبات مؤكدة": "Onaylanmış Talepler",
+    "طلبات مؤكدة": "Onaylanmış Talepler",
 
-"مستخدمون استفادوا": "Hizmet Alan Kullanıcılar",
+    "مستخدمون استفادوا": "Hizmet Alan Kullanıcılar",
 
-"مستخدمون نشطون": "Aktif Kullanıcılar",
+    "مستخدمون نشطون": "Aktif Kullanıcılar",
 
-"زوار المنصة": "Platform Ziyaretçileri",
+    "زوار المنصة": "Platform Ziyaretçileri",
     "شخص يمكن التواصل معه عند الحاجة":
       "Gerektiğinde iletişime geçilebilecek biri",
     "شكراً، تم حفظ تقييمك.": "Teşekkür ederiz, puanınız kaydedildi.",

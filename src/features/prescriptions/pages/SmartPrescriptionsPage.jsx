@@ -7,6 +7,8 @@ import {
   MapPin,
   Pill,
   Search,
+  ShieldCheck,
+  Sparkles,
   Upload,
 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -31,6 +33,8 @@ const labels = {
   Expired: "انتهت المهلة",
   Cancelled: "ملغاة",
 };
+
+const SMART_PRESCRIPTION_IMAGE = "/assets/app/home/smart-prescription.png";
 
 export function SmartPrescriptionsPage() {
   const client = useQueryClient();
@@ -102,24 +106,75 @@ export function SmartPrescriptionsPage() {
   const error =
     analyze.error || reserve.error || cancel.error || reminders.error;
   return (
-    <div className="space-y-6">
-      <header>
-        <span className="eyebrow">الوصفة الذكية</span>
-        <h1 className="mt-2 text-3xl font-black text-[#173f49]">
-          ارفع وصفتك المطبوعة واحجزها
-        </h1>
-        <p className="mt-2 text-sm leading-7 text-[#71858a]">
-          نقبل PDF أو صورة واضحة لوصفة مطبوعة. نرفض خط الطبيب والصور غير الواضحة
-          بدل تخمين أسماء الأدوية.
-        </p>
-      </header>
-      <section className="surface p-6">
+    <div className="space-y-6 pb-4">
+      <section
+        className="relative isolate overflow-hidden bg-[#0d7586] text-white"
+        style={{
+          width: "100vw",
+          marginInline: "calc(50% - 50vw)",
+          marginTop: "-24px",
+        }}
+      >
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_18%_25%,rgba(62,204,219,.46),transparent_31%),linear-gradient(115deg,#064c5c_0%,#0d7586_52%,#093f4d_100%)]"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 opacity-30 [background-image:radial-gradient(circle_at_center,rgba(255,255,255,.55)_1px,transparent_1px)] [background-size:28px_28px]"
+        />
+
+        <div className="mx-auto grid min-h-[330px] w-full max-w-[1440px] items-center gap-4 px-5 py-8 sm:px-8 lg:grid-cols-[minmax(0,1fr)_420px] lg:px-12 lg:py-10">
+          <div className="order-1 text-center lg:text-right">
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-bold text-white/90 backdrop-blur-sm">
+              <Sparkles size={15} /> الوصفة الذكية
+            </span>
+            <h1 className="mx-auto mt-4 max-w-[700px] text-3xl font-black leading-[1.35] sm:text-4xl lg:mx-0 lg:text-[42px]">
+              ارفع وصفتك المطبوعة، ودعنا نقرأها لك
+            </h1>
+            <p className="mx-auto mt-3 max-w-[680px] text-sm leading-7 text-white/75 lg:mx-0">
+              حمّل صورة واضحة أو ملف PDF، وسنستخرج الأدوية ونساعدك في إيجادها
+              وحجزها من الصيدليات القريبة.
+            </p>
+            <div className="mt-5 flex flex-wrap justify-center gap-3 text-xs font-bold text-white/85 lg:justify-start">
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-2">
+                <ShieldCheck size={15} /> قراءة آمنة وواضحة
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-2">
+                <FileImage size={15} /> JPG، PNG، PDF
+              </span>
+            </div>
+          </div>
+
+          <div className="order-2 flex items-center justify-center lg:justify-end">
+            <div className="relative h-[190px] w-full max-w-[320px] sm:h-[220px] lg:h-[270px] lg:max-w-[390px]">
+              <div className="absolute inset-x-8 bottom-2 h-16 rounded-full bg-cyan-200/30 blur-2xl" />
+              <img
+                src={SMART_PRESCRIPTION_IMAGE}
+                alt="تحليل الوصفة الطبية بذكاء"
+                className="relative h-full w-full object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,.22)]"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="surface mx-auto max-w-[1440px] p-4 sm:p-6">
+        <div className="mb-4 text-center sm:text-right">
+          <h2 className="text-xl font-black text-[#29464d]">حمّل وصفتك</h2>
+          <p className="mt-1 text-xs leading-6 text-[#71858a]">
+            استخدم وصفة مطبوعة وواضحة؛ لن نخمن الأسماء إذا كانت الصورة غير
+            مقروءة.
+          </p>
+        </div>
         <button
           type="button"
-          className="flex w-full cursor-pointer flex-col items-center rounded-3xl border-2 border-dashed border-[#216474]/20 bg-[#f7faf9] p-8 text-center"
+          className="group flex min-h-[180px] w-full cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#216474]/20 bg-[#f7faf9] p-6 text-center transition hover:border-[#216474]/45 hover:bg-[#f1f8f7] sm:min-h-[200px]"
           onClick={() => fileInputRef.current?.click()}
         >
-          <Upload className="text-[#216474]" size={30} />
+          <span className="grid size-14 place-items-center rounded-2xl bg-[#e4f2f3] text-[#216474] transition group-hover:scale-105">
+            <Upload size={27} />
+          </span>
           <strong className="mt-3 text-[#29464d]">
             {file ? file.name : "اختر صورة أو ملف PDF"}
           </strong>
@@ -136,26 +191,28 @@ export function SmartPrescriptionsPage() {
           accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
           onChange={(event) => selectFile(event.target.files?.[0])}
         />
-        {file && (
+        <div className="mt-4 flex flex-col-reverse gap-3 sm:flex-row sm:items-center">
+          {file ? (
+            <button
+              type="button"
+              className="min-h-11 rounded-xl px-5 text-sm font-bold text-rose-600 transition hover:bg-rose-50"
+              onClick={() => {
+                setFile(null);
+                if (fileInputRef.current) fileInputRef.current.value = "";
+              }}
+            >
+              إزالة الملف
+            </button>
+          ) : null}
           <button
-            type="button"
-            className="mt-2 text-sm font-bold text-rose-600"
-            onClick={() => {
-              setFile(null);
-              if (fileInputRef.current) fileInputRef.current.value = "";
-            }}
+            className="btn-primary min-h-12 flex-1 justify-center"
+            disabled={!file || analyze.isPending}
+            onClick={() => analyze.mutate()}
           >
-            إزالة الملف
+            <FileImage size={18} />{" "}
+            {analyze.isPending ? "جاري قراءة الوصفة..." : "تحليل الوصفة"}
           </button>
-        )}
-        <button
-          className="btn-primary mt-4 w-full"
-          disabled={!file || analyze.isPending}
-          onClick={() => analyze.mutate()}
-        >
-          <FileImage size={18} />{" "}
-          {analyze.isPending ? "جاري قراءة الوصفة..." : "تحليل الوصفة"}
-        </button>
+        </div>
         {analyze.isPending && (
           <p className="mt-3 text-center text-xs font-bold text-[#71858a]">
             تم رفع الصورة، جارٍ استخراج أسماء الأدوية. قد يستغرق أول تحليل نحو
@@ -173,9 +230,9 @@ export function SmartPrescriptionsPage() {
           </p>
         )}
       </section>
-      <div className="grid items-start gap-6 xl:grid-cols-[240px_minmax(0,1fr)]">
-        <aside className="space-y-2 xl:sticky xl:top-24">
-          <h2 className="px-1 text-sm font-black text-[#29464d]">
+      <div className="grid items-start gap-6 xl:grid-cols-[280px_minmax(0,1fr)]">
+        <aside className="surface space-y-2 p-4 xl:sticky xl:top-24">
+          <h2 className="border-b border-[#174b57]/8 px-1 pb-3 text-base font-black text-[#29464d]">
             الوصفات السابقة
           </h2>
           {(list.data || []).map((order) => (
@@ -192,6 +249,11 @@ export function SmartPrescriptionsPage() {
               </small>
             </button>
           ))}
+          {!list.isLoading && !(list.data || []).length ? (
+            <div className="grid min-h-32 place-items-center px-4 text-center text-xs leading-6 text-[#829499]">
+              لا توجد وصفات سابقة بعد
+            </div>
+          ) : null}
         </aside>
         <main className="min-w-0">
           {detail.data ? (
@@ -202,8 +264,11 @@ export function SmartPrescriptionsPage() {
               reminders={reminders}
             />
           ) : (
-            <div className="surface grid min-h-48 place-items-center p-8 text-sm text-[#829499]">
-              اختر وصفة لعرض نتائجها
+            <div className="surface grid min-h-64 place-items-center p-8 text-center text-sm text-[#829499]">
+              <div>
+                <FileImage className="mx-auto mb-3 text-[#aac3c7]" size={30} />
+                اختر وصفة لعرض نتائجها
+              </div>
             </div>
           )}
         </main>

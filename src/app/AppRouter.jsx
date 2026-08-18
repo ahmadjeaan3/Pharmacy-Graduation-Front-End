@@ -11,6 +11,7 @@ import { AdminHomeTickerPage } from "../features/admin/pages/AdminHomeTickerPage
 import { AdminAccountsPage } from "../features/admin/pages/AdminAccountsPage";
 import { AdminAccountDetailsPage } from "../features/admin/pages/AdminAccountDetailsPage";
 import { AdminPharmacyReviewPage } from "../features/admin/pages/AdminPharmacyReviewPage";
+import { AdminAuditLogsPage } from "../features/admin/pages/AdminAuditLogsPage";
 import { LoginPage } from "../features/auth/pages/LoginPage";
 import { PasswordRecoveryPage } from "../features/auth/pages/PasswordRecoveryPage";
 import { DashboardLayout } from "../features/dashboard/layouts/DashboardLayout";
@@ -269,6 +270,7 @@ export function AppRouter() {
               <Route path="approvals" element={<AdminApprovalsPage />} />
               <Route path="home-ticker" element={<AdminHomeTickerPage />} />
               <Route path="accounts" element={<AdminAccountsPage />} />
+              <Route path="audit-logs" element={<AdminAuditLogsPage />} />
               <Route
                 path="accounts/:userId"
                 element={<AdminAccountDetailsPage />}

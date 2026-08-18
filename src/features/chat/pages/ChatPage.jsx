@@ -11,7 +11,7 @@ import {
   ShieldAlert,
   Sparkles,
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { getApiErrorMessage } from "../../../shared/api/errors";
 import { ErrorState as UserErrorState } from "../../../shared/components/AsyncStates";
@@ -319,15 +319,10 @@ export function ChatPage() {
               ) : sessions.data?.length ? (
                 <div>
                   {sessions.data.slice(0, 5).map((item) => {
-                    const id =
-                      item.sessionId ??
-                      item.id ??
-                      item.chatSessionId;
+                    const id = item.sessionId ?? item.id ?? item.chatSessionId;
 
                     const title =
-                      item.title ||
-                      item.lastMessage ||
-                      "محادثة سابقة";
+                      item.title || item.lastMessage || "محادثة سابقة";
 
                     const activityDate =
                       item.lastActivityAtUtc ||
@@ -455,9 +450,7 @@ export function ChatPage() {
                     </h3>
 
                     <p className="mt-1 text-[10px] text-[#8A9A9E]">
-                      {session.data.isEnded
-                        ? "محادثة منتهية"
-                        : "المحادثة نشطة"}
+                      {session.data.isEnded ? "محادثة منتهية" : "المحادثة نشطة"}
                     </p>
                   </div>
 
@@ -469,9 +462,7 @@ export function ChatPage() {
                       className="inline-flex shrink-0 items-center gap-2 rounded-[8px] px-3 py-2 text-[11px] font-semibold text-rose-600 transition hover:bg-rose-50"
                     >
                       <CircleStop size={15} />
-                      {end.isPending
-                        ? "جاري الإنهاء..."
-                        : "إنهاء المحادثة"}
+                      {end.isPending ? "جاري الإنهاء..." : "إنهاء المحادثة"}
                     </button>
                   ) : null}
                 </header>
@@ -521,10 +512,7 @@ export function ChatPage() {
                       [&_.ring-violet-100]:!ring-[#FFF3D0]
                     "
                   >
-                    <ChatReplyResults
-                      reply={lastReply}
-                      onPrompt={submitText}
-                    />
+                    <ChatReplyResults reply={lastReply} onPrompt={submitText} />
                   </div>
 
                   <div ref={bottomRef} />
@@ -564,9 +552,7 @@ export function ChatPage() {
 
         <div className="mt-4 flex items-start justify-center gap-2 text-center text-[10px] text-[#A0ACAF]">
           <ShieldAlert size={13} className="mt-0.5 shrink-0" />
-          <p>
-            تنبيه: المعلومات المقدمة لا تغني عن استشارة الطبيب أو الصيدلي.
-          </p>
+          <p>تنبيه: المعلومات المقدمة لا تغني عن استشارة الطبيب أو الصيدلي.</p>
         </div>
       </section>
     </div>
@@ -578,9 +564,7 @@ function ChatWelcome({ onCreate, creating }) {
     <div className="flex flex-1 flex-col">
       <div className="flex flex-1 items-center justify-center px-6 py-10 text-center">
         <div className="w-full max-w-[720px]">
-          <p className="text-[16px] font-semibold text-[#29464D]">
-            مرحباً! 👋
-          </p>
+          <p className="text-[16px] font-semibold text-[#29464D]">مرحباً! 👋</p>
 
           <p className="mt-2 text-[11px] leading-6 text-[#A0ACAF]">
             أنا مساعدك الذكي في منصة دوائي.
@@ -689,14 +673,9 @@ function ChatComposer({
           rows={1}
           maxLength={2000}
           value={message}
-          onChange={(event) =>
-            setMessage(event.target.value)
-          }
+          onChange={(event) => setMessage(event.target.value)}
           onKeyDown={(event) => {
-            if (
-              event.key === "Enter" &&
-              !event.shiftKey
-            ) {
+            if (event.key === "Enter" && !event.shiftKey) {
               event.preventDefault();
               onSubmit(event);
             }
@@ -713,10 +692,7 @@ function ChatComposer({
           title="إرسال موقعي الحالي"
         >
           {locating ? (
-            <LoaderCircle
-              size={16}
-              className="animate-spin"
-            />
+            <LoaderCircle size={16} className="animate-spin" />
           ) : (
             <Crosshair size={16} />
           )}

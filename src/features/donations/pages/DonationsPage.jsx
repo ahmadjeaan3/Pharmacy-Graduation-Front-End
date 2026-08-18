@@ -43,16 +43,14 @@ import {
    ASSETS
 ========================================================= */
 
-const HERO_BACKGROUND =
-  "/assets/app/home/hero_search.png";
+const HERO_BACKGROUND = "/assets/app/home/hero_search.png";
 
 /*
   هذه الصورة موجودة أصلًا ضمن assets المستخدمة بالمشروع.
   إذا عندك صورة السلة الكبيرة الخاصة بتصميم Figma،
   غيّر المسار هنا فقط بدون تعديل أي JSX.
 */
-const HERO_DONATION_IMAGE =
-  "/assets/app/home/donation.png";
+const HERO_DONATION_IMAGE = "/assets/app/home/donation.png";
 
 const FOOTER_SOCIAL_ICONS = {
   whatsapp: "/assets/app/social/whatsapp.png",
@@ -80,12 +78,14 @@ function formatDate(value) {
 }
 
 function getRecordStatus(record, type) {
-  return getStatusMeta?.(
-    record?.status,
-    type === "offer" ? "offer" : "assistance",
-  ) || {
-    label: record?.status || "غير محدد",
-  };
+  return (
+    getStatusMeta?.(
+      record?.status,
+      type === "offer" ? "offer" : "assistance",
+    ) || {
+      label: record?.status || "غير محدد",
+    }
+  );
 }
 
 function getStatusClasses(status) {
@@ -99,17 +99,11 @@ function getStatusClasses(status) {
     return "bg-[#DCF8E6] text-[#27824D]";
   }
 
-  if (
-    normalized.includes("rejected") ||
-    normalized.includes("cancel")
-  ) {
+  if (normalized.includes("rejected") || normalized.includes("cancel")) {
     return "bg-[#FFF0F0] text-[#D95454]";
   }
 
-  if (
-    normalized.includes("review") ||
-    normalized.includes("pending")
-  ) {
+  if (normalized.includes("review") || normalized.includes("pending")) {
     return "bg-[#E6F3F6] text-[#216474]";
   }
 
@@ -127,8 +121,7 @@ export function DonationsPage() {
   const [listType, setListType] = useState("offer");
 
   const [offerStatus, setOfferStatus] = useState("");
-  const [assistanceStatus, setAssistanceStatus] =
-    useState("");
+  const [assistanceStatus, setAssistanceStatus] = useState("");
 
   const [search, setSearch] = useState("");
 
@@ -144,19 +137,12 @@ export function DonationsPage() {
 
   const offers = useQuery({
     queryKey: donationKeys.offers(offerParams),
-    queryFn: () =>
-      getMyDonationOffers(offerParams),
+    queryFn: () => getMyDonationOffers(offerParams),
   });
 
   const requests = useQuery({
-    queryKey:
-      donationKeys.assistanceRequests(
-        assistanceParams,
-      ),
-    queryFn: () =>
-      getMyAssistanceRequests(
-        assistanceParams,
-      ),
+    queryKey: donationKeys.assistanceRequests(assistanceParams),
+    queryFn: () => getMyAssistanceRequests(assistanceParams),
   });
 
   const switchForm = (type) => {
@@ -164,24 +150,20 @@ export function DonationsPage() {
     setShowForm(true);
 
     window.setTimeout(() => {
-      document
-        .getElementById("donation-form")
-        ?.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
+      document.getElementById("donation-form")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
     }, 60);
   };
 
-  const activeRecords =
-    listType === "offer"
-      ? offers.data || []
-      : requests.data || [];
+  const activeRecords = useMemo(
+    () => (listType === "offer" ? offers.data || [] : requests.data || []),
+    [listType, offers.data, requests.data],
+  );
 
   const filteredRecords = useMemo(() => {
-    const value = search
-      .trim()
-      .toLowerCase();
+    const value = search.trim().toLowerCase();
 
     if (!value) return activeRecords;
 
@@ -201,25 +183,15 @@ export function DonationsPage() {
     );
   }, [activeRecords, search]);
 
-  const activeQuery =
-    listType === "offer"
-      ? offers
-      : requests;
+  const activeQuery = listType === "offer" ? offers : requests;
 
-  const activeStatus =
-    listType === "offer"
-      ? offerStatus
-      : assistanceStatus;
+  const activeStatus = listType === "offer" ? offerStatus : assistanceStatus;
 
   const activeStatuses =
-    listType === "offer"
-      ? offerStatuses
-      : assistanceStatuses;
+    listType === "offer" ? offerStatuses : assistanceStatuses;
 
   const setActiveStatus =
-    listType === "offer"
-      ? setOfferStatus
-      : setAssistanceStatus;
+    listType === "offer" ? setOfferStatus : setAssistanceStatus;
 
   return (
     <div
@@ -244,8 +216,7 @@ export function DonationsPage() {
         "
         style={{
           width: "100vw",
-          marginInline:
-            "calc(50% - 50vw)",
+          marginInline: "calc(50% - 50vw)",
         }}
       >
         <img
@@ -311,10 +282,7 @@ export function DonationsPage() {
                   backdrop-blur-sm
                 "
               >
-                <HeartHandshake
-                  size={22}
-                  strokeWidth={1.8}
-                />
+                <HeartHandshake size={22} strokeWidth={1.8} />
               </span>
 
               <div>
@@ -325,8 +293,7 @@ export function DonationsPage() {
                     sm:text-[30px]
                   "
                 >
-                  التبرعات والمساعدة
-                  الدوائية
+                  التبرعات والمساعدة الدوائية
                 </h1>
 
                 <p
@@ -335,9 +302,7 @@ export function DonationsPage() {
                     leading-6 text-white/75
                   "
                 >
-                  ساهم في إيصال الدواء
-                  لمن يحتاجه أو اطلب
-                  المساعدة من منظمة
+                  ساهم في إيصال الدواء لمن يحتاجه أو اطلب المساعدة من منظمة
                   معتمدة.
                 </p>
               </div>
@@ -360,9 +325,7 @@ export function DonationsPage() {
                   text-white
                   hover:bg-[#174B57]
                 "
-                onClick={() =>
-                  switchForm("offer")
-                }
+                onClick={() => switchForm("offer")}
               />
 
               <HeroActionCard
@@ -375,11 +338,7 @@ export function DonationsPage() {
                   text-white
                   hover:bg-[#C99B35]
                 "
-                onClick={() =>
-                  switchForm(
-                    "assistance",
-                  )
-                }
+                onClick={() => switchForm("assistance")}
               />
             </div>
           </div>
@@ -420,37 +379,22 @@ export function DonationsPage() {
               "
             >
               <FormTab
-                active={
-                  formType ===
-                  "offer"
-                }
+                active={formType === "offer"}
                 icon={Gift}
                 label="عرض تبرع"
-                onClick={() =>
-                  setFormType(
-                    "offer",
-                  )
-                }
+                onClick={() => setFormType("offer")}
               />
 
               <FormTab
-                active={
-                  formType ===
-                  "assistance"
-                }
+                active={formType === "assistance"}
                 icon={HandHeart}
                 label="طلب مساعدة"
-                onClick={() =>
-                  setFormType(
-                    "assistance",
-                  )
-                }
+                onClick={() => setFormType("assistance")}
               />
             </div>
 
             <div className="p-5 lg:p-7">
-              {formType ===
-              "offer" ? (
+              {formType === "offer" ? (
                 <DonationOfferForm />
               ) : (
                 <AssistanceRequestForm />
@@ -462,13 +406,7 @@ export function DonationsPage() {
         {/* ===================================================
             TABS — مطابق للصورة
         ==================================================== */}
-        <section
-          className={
-            showForm
-              ? "mt-10"
-              : ""
-          }
-        >
+        <section className={showForm ? "mt-10" : ""}>
           <div
             className="
               grid h-11
@@ -491,8 +429,7 @@ export function DonationsPage() {
                 gap-2 text-[13px]
                 font-medium transition
                 ${
-                  listType ===
-                  "offer"
+                  listType === "offer"
                     ? "bg-[#216474] text-white"
                     : "bg-white text-[#A5A5A5]"
                 }
@@ -508,9 +445,7 @@ export function DonationsPage() {
             <button
               type="button"
               onClick={() => {
-                setListType(
-                  "assistance",
-                );
+                setListType("assistance");
                 setShowForm(false);
               }}
               className={`
@@ -519,8 +454,7 @@ export function DonationsPage() {
                 gap-2 text-[13px]
                 font-medium transition
                 ${
-                  listType ===
-                  "assistance"
+                  listType === "assistance"
                     ? "bg-[#216474] text-white"
                     : "bg-white text-[#A5A5A5]"
                 }
@@ -557,18 +491,11 @@ export function DonationsPage() {
                 sm:max-w-[720px]
               "
             >
-              <Search
-                size={16}
-                className="shrink-0 text-[#A5A5A5]"
-              />
+              <Search size={16} className="shrink-0 text-[#A5A5A5]" />
 
               <input
                 value={search}
-                onChange={(event) =>
-                  setSearch(
-                    event.target.value,
-                  )
-                }
+                onChange={(event) => setSearch(event.target.value)}
                 placeholder="ابحث داخل سجل التبرعات..."
                 className="
                   min-w-0 flex-1
@@ -584,11 +511,7 @@ export function DonationsPage() {
             <div className="relative w-full sm:w-[150px]">
               <select
                 value={activeStatus}
-                onChange={(event) =>
-                  setActiveStatus(
-                    event.target.value,
-                  )
-                }
+                onChange={(event) => setActiveStatus(event.target.value)}
                 className="
                   h-10 w-full
                   appearance-none
@@ -601,19 +524,11 @@ export function DonationsPage() {
                   outline-none
                 "
               >
-                {activeStatuses.map(
-                  (item) => (
-                    <option
-                      key={
-                        item.value ||
-                        "all"
-                      }
-                      value={item.value}
-                    >
-                      {item.label}
-                    </option>
-                  ),
-                )}
+                {activeStatuses.map((item) => (
+                  <option key={item.value || "all"} value={item.value}>
+                    {item.label}
+                  </option>
+                ))}
               </select>
 
               <ChevronDown
@@ -637,12 +552,8 @@ export function DonationsPage() {
               <UserLoadingState label="جاري تحميل السجل..." />
             ) : activeQuery.isError ? (
               <UserErrorState
-                message={getApiErrorMessage(
-                  activeQuery.error,
-                )}
-                onRetry={
-                  activeQuery.refetch
-                }
+                message={getApiErrorMessage(activeQuery.error)}
+                onRetry={activeQuery.refetch}
               />
             ) : !filteredRecords.length ? (
               <UserEmptyState
@@ -663,36 +574,22 @@ export function DonationsPage() {
               <div
                 className={`
                   space-y-3
-                  ${
-                    activeQuery.isFetching
-                      ? "opacity-60"
-                      : ""
-                  }
+                  ${activeQuery.isFetching ? "opacity-60" : ""}
                 `}
               >
-                {filteredRecords
-                  .slice(0, 5)
-                  .map((record) => (
-                    <DonationRow
-                      key={
-                        listType ===
-                        "offer"
-                          ? record.offerId
-                          : record.requestId
-                      }
-                      record={
-                        record
-                      }
-                      type={
-                        listType
-                      }
-                    />
-                  ))}
+                {filteredRecords.slice(0, 5).map((record) => (
+                  <DonationRow
+                    key={
+                      listType === "offer" ? record.offerId : record.requestId
+                    }
+                    record={record}
+                    type={listType}
+                  />
+                ))}
               </div>
             )}
 
-            {filteredRecords.length >
-            5 ? (
+            {filteredRecords.length > 5 ? (
               <div className="mt-7 flex justify-center">
                 <button
                   type="button"
@@ -712,17 +609,13 @@ export function DonationsPage() {
                   "
                 >
                   عرض المزيد
-                  <ChevronDown
-                    size={15}
-                  />
+                  <ChevronDown size={15} />
                 </button>
               </div>
             ) : null}
           </div>
         </section>
       </main>
-
-     
     </div>
   );
 }
@@ -760,16 +653,11 @@ function HeroActionCard({
             text-[#216474]
           "
         >
-          <Icon
-            size={18}
-            strokeWidth={1.8}
-          />
+          <Icon size={18} strokeWidth={1.8} />
         </span>
 
         <div className="min-w-0 text-right">
-          <h3 className="text-[13px] font-semibold text-[#333333]">
-            {title}
-          </h3>
+          <h3 className="text-[13px] font-semibold text-[#333333]">{title}</h3>
 
           <p className="mt-1 text-[10.5px] leading-5 text-[#A5A5A5]">
             {description}
@@ -797,12 +685,7 @@ function HeroActionCard({
   );
 }
 
-function FormTab({
-  active,
-  icon: Icon,
-  label,
-  onClick,
-}) {
+function FormTab({ active, icon: Icon, label, onClick }) {
   return (
     <button
       type="button"
@@ -827,32 +710,19 @@ function FormTab({
   );
 }
 
-function DonationRow({
-  record,
-  type,
-}) {
-  const status = getRecordStatus(
-    record,
-    type,
-  );
+function DonationRow({ record, type }) {
+  const status = getRecordStatus(record, type);
 
-  const isOffer =
-    type === "offer";
+  const isOffer = type === "offer";
 
-  const quantity = isOffer
-    ? record.packageCount
-    : record.requestedPackageCount;
+  const quantity = isOffer ? record.packageCount : record.requestedPackageCount;
 
   const date = isOffer
-    ? record.expiryDateUtc ||
-      record.createdAtUtc
-    : record.neededBeforeUtc ||
-      record.createdAtUtc;
+    ? record.expiryDateUtc || record.createdAtUtc
+    : record.neededBeforeUtc || record.createdAtUtc;
 
   const organization =
-    record.targetOrganizationName ||
-    record.campaignTitle ||
-    "منظمة معتمدة";
+    record.targetOrganizationName || record.campaignTitle || "منظمة معتمدة";
 
   return (
     <article
@@ -882,15 +752,11 @@ function DonationRow({
 
         <div className="min-w-0">
           <strong className="block truncate text-[12.5px] font-semibold text-[#333333]">
-            {record.medicineName ||
-              "دواء"}
+            {record.medicineName || "دواء"}
           </strong>
 
           <span className="mt-1 block truncate text-[9.5px] text-[#A5A5A5]">
-            {record.scientificName ||
-              (isOffer
-                ? "عرض تبرع"
-                : "طلب مساعدة")}
+            {record.scientificName || (isOffer ? "عرض تبرع" : "طلب مساعدة")}
           </span>
         </div>
       </div>
@@ -899,21 +765,13 @@ function DonationRow({
       <InfoCell
         label="الجهة"
         value={organization}
-        icon={
-          isOffer
-            ? Gift
-            : HandHeart
-        }
+        icon={isOffer ? Gift : HandHeart}
         accent
       />
 
       {/* التاريخ */}
       <InfoCell
-        label={
-          isOffer
-            ? "تاريخ الصلاحية"
-            : "مطلوب قبل"
-        }
+        label={isOffer ? "تاريخ الصلاحية" : "مطلوب قبل"}
         value={formatDate(date)}
         icon={CalendarDays}
       />
@@ -921,11 +779,7 @@ function DonationRow({
       {/* الكمية */}
       <InfoCell
         label="الكمية"
-        value={`${Number(
-          quantity || 0,
-        ).toLocaleString(
-          "ar-SY",
-        )} عبوة`}
+        value={`${Number(quantity || 0).toLocaleString("ar-SY")} عبوة`}
         icon={Package}
       />
 
@@ -940,14 +794,10 @@ function DonationRow({
             px-3
             text-[10.5px]
             font-medium
-            ${getStatusClasses(
-              record.status,
-            )}
+            ${getStatusClasses(record.status)}
           `}
         >
-          {status.label ||
-            record.status ||
-            "غير محدد"}
+          {status.label || record.status || "غير محدد"}
         </span>
       </div>
 
@@ -976,12 +826,7 @@ function DonationRow({
   );
 }
 
-function InfoCell({
-  label,
-  value,
-  icon: Icon,
-  accent = false,
-}) {
+function InfoCell({ label, value, icon: Icon, accent = false }) {
   return (
     <div className="flex min-w-0 items-center gap-2 text-right">
       <span
@@ -989,20 +834,14 @@ function InfoCell({
           grid size-8 shrink-0
           place-items-center
           rounded-[6px]
-          ${
-            accent
-              ? "bg-[#FF8A2A] text-white"
-              : "bg-[#F5F8F9] text-[#A5A5A5]"
-          }
+          ${accent ? "bg-[#FF8A2A] text-white" : "bg-[#F5F8F9] text-[#A5A5A5]"}
         `}
       >
         <Icon size={14} />
       </span>
 
       <div className="min-w-0">
-        <span className="block text-[9px] text-[#B0B8BA]">
-          {label}
-        </span>
+        <span className="block text-[9px] text-[#B0B8BA]">{label}</span>
 
         <strong className="mt-1 block truncate text-[10.5px] font-medium text-[#555555]">
           {value || "—"}
@@ -1012,11 +851,7 @@ function InfoCell({
   );
 }
 
-function FooterFeature({
-  icon: Icon,
-  title,
-  description,
-}) {
+function FooterFeature({ icon: Icon, title, description }) {
   return (
     <div className="flex items-center justify-start gap-3 text-right">
       <span
@@ -1028,10 +863,7 @@ function FooterFeature({
           text-[#216474]
         "
       >
-        <Icon
-          size={18}
-          strokeWidth={1.8}
-        />
+        <Icon size={18} strokeWidth={1.8} />
       </span>
 
       <div className="min-w-0 text-right">
@@ -1039,9 +871,7 @@ function FooterFeature({
           {title}
         </strong>
 
-        <p className="mt-1 text-[10.5px] text-[#A5A5A5]">
-          {description}
-        </p>
+        <p className="mt-1 text-[10.5px] text-[#A5A5A5]">{description}</p>
       </div>
     </div>
   );

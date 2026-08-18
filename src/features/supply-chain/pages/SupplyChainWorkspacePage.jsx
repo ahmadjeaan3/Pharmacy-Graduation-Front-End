@@ -387,47 +387,63 @@ export function SupplyChainWorkspacePage() {
     queryKey: supplyKeys.dashboard,
     queryFn: getSupplyDashboard,
     enabled: role === "Warehouse",
+    staleTime: 30_000,
+    refetchOnWindowFocus: false,
   });
   const orders = useQuery({
     queryKey: [...supplyKeys.orders, user?.id || user?.email || role],
     queryFn: getSupplyOrders,
-    refetchOnMount: "always",
-    refetchOnWindowFocus: true,
+    enabled: role === "Representative" || activeTab === "orders",
+    staleTime: 15_000,
+    refetchOnWindowFocus: false,
   });
   const batches = useQuery({
     queryKey: supplyKeys.batches,
     queryFn: getBatches,
-    enabled: role === "Warehouse",
+    enabled: role === "Warehouse" && activeTab === "inventory",
+    staleTime: 30_000,
   });
   const reps = useQuery({
     queryKey: supplyKeys.representatives,
     queryFn: getRepresentatives,
-    enabled: role === "Warehouse",
+    enabled: role === "Warehouse" && ["orders", "team"].includes(activeTab),
+    staleTime: 30_000,
   });
   const invoices = useQuery({
     queryKey: [...supplyKeys.invoices, role],
     queryFn: () => getSupplyInvoices(),
-    enabled: ["Warehouse", "Pharmacy", "Admin"].includes(role),
+    enabled:
+      ["Warehouse", "Pharmacy", "Admin"].includes(role) &&
+      activeTab === "invoices",
+    staleTime: 30_000,
   });
   const returns = useQuery({
     queryKey: [...supplyKeys.returns, role],
     queryFn: getSupplyReturns,
-    enabled: ["Warehouse", "Pharmacy", "Admin"].includes(role),
+    enabled:
+      ["Warehouse", "Pharmacy", "Admin"].includes(role) &&
+      activeTab === "returns",
+    staleTime: 30_000,
   });
   const recalls = useQuery({
     queryKey: [...supplyKeys.recalls, role],
     queryFn: getMedicineRecalls,
-    enabled: ["Warehouse", "Pharmacy", "Admin"].includes(role),
+    enabled:
+      ["Warehouse", "Pharmacy", "Admin"].includes(role) &&
+      activeTab === "recalls",
+    staleTime: 30_000,
   });
   const marketplace = useQuery({
     queryKey: supplyKeys.marketplace,
     queryFn: getMarketplace,
-    enabled: role === "Pharmacy",
+    enabled: role === "Pharmacy" && activeTab === "marketplace",
+    staleTime: 60_000,
   });
   const suggestions = useQuery({
     queryKey: supplyKeys.suggestions,
     queryFn: getRestockSuggestions,
-    enabled: role === "Pharmacy",
+    enabled: role === "Pharmacy" && activeTab === "suggestions",
+    staleTime: 30_000,
   });
   const catalog = useQuery({
     queryKey: ["supply-chain", "catalog", selectedWarehouse?.id, catalogSearch],

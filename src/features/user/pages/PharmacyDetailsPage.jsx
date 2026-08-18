@@ -39,10 +39,7 @@ import {
   LoadingState as UserLoadingState,
 } from "../../../shared/components/AsyncStates";
 
-import {
-  formatDistance,
-  formatPrice,
-} from "../utils/userFormatters";
+import { formatDistance, formatPrice } from "../utils/userFormatters";
 
 import { getApiErrorMessage } from "../../../shared/api/errors";
 import { Brand } from "../../../shared/components/Brand";
@@ -66,7 +63,6 @@ const FOOTER_SOCIAL_ICONS = {
   instagram: "/assets/app/social/instagram.png",
 };
 
-
 /* =========================================================
    HELPERS
 ========================================================= */
@@ -80,17 +76,11 @@ function getMedicineImageSource(imageUrl) {
 
   try {
     const apiBaseUrl =
-      import.meta.env.VITE_API_BASE_URL ||
-      "https://localhost:7048/api";
+      import.meta.env.VITE_API_BASE_URL || "https://localhost:7048/api";
 
-    const apiOrigin = new URL(
-      apiBaseUrl,
-      window.location.origin,
-    ).origin;
+    const apiOrigin = new URL(apiBaseUrl, window.location.origin).origin;
 
-    return `${apiOrigin}${
-      imageUrl.startsWith("/") ? "" : "/"
-    }${imageUrl}`;
+    return `${apiOrigin}${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
   } catch {
     return imageUrl;
   }
@@ -112,39 +102,6 @@ function getDayIndex(dayOfWeek) {
   ].indexOf(dayOfWeek);
 }
 
-
-const ARABIC_WEEK_DAYS = [
-  { index: 6, label: "السبت" },
-  { index: 0, label: "الأحد" },
-  { index: 1, label: "الاثنين" },
-  { index: 2, label: "الثلاثاء" },
-  { index: 3, label: "الأربعاء" },
-  { index: 4, label: "الخميس" },
-  { index: 5, label: "الجمعة" },
-];
-
-function getFullWorkingWeek(workingHours) {
-  const normalized = (workingHours || []).map((item) => ({
-    ...item,
-    dayIndex: getDayIndex(item.dayOfWeek),
-  }));
-
-  return ARABIC_WEEK_DAYS.map((day) => {
-    const item = normalized.find(
-      (entry) => entry.dayIndex === day.index,
-    );
-
-    return {
-      ...day,
-      isClosed: item?.isClosed ?? false,
-      hasSchedule: Boolean(item),
-      value: item
-        ? formatWorkingTime(item)
-        : "غير محدد",
-    };
-  });
-}
-
 function formatWorkingTime(item) {
   if (!item || item.isClosed) {
     return "مغلق";
@@ -163,9 +120,7 @@ function getGroupedWorkingHours(workingHours) {
 
   const friday = normalized.find((item) => item.dayIndex === 5);
 
-  const regularDays = normalized.filter(
-    (item) => item.dayIndex !== 5,
-  );
+  const regularDays = normalized.filter((item) => item.dayIndex !== 5);
 
   const regularOpen = regularDays.find((item) => !item.isClosed);
 
@@ -175,9 +130,7 @@ function getGroupedWorkingHours(workingHours) {
       ? formatWorkingTime(regularOpen)
       : "حسب ساعات الدوام",
     fridayLabel: "الجمعة",
-    fridayValue: friday
-      ? formatWorkingTime(friday)
-      : "حسب ساعات الدوام",
+    fridayValue: friday ? formatWorkingTime(friday) : "حسب ساعات الدوام",
   };
 }
 
@@ -216,8 +169,7 @@ export function PharmacyDetailsPage() {
   });
 
   const requestMutation = useMutation({
-    mutationFn: (payload) =>
-      createMedicineRequest(pharmacyId, payload),
+    mutationFn: (payload) => createMedicineRequest(pharmacyId, payload),
 
     onSuccess: () =>
       queryClient.invalidateQueries({
@@ -226,8 +178,7 @@ export function PharmacyDetailsPage() {
   });
 
   const ratingMutation = useMutation({
-    mutationFn: (payload) =>
-      ratePharmacy(pharmacyId, payload),
+    mutationFn: (payload) => ratePharmacy(pharmacyId, payload),
 
     onSuccess: (result) => {
       setRatingDraft({
@@ -262,9 +213,7 @@ export function PharmacyDetailsPage() {
   }, [routeQuery.data]);
 
   if (query.isPending) {
-    return (
-      <UserLoadingState label="جاري تحميل بيانات الصيدلية..." />
-    );
+    return <UserLoadingState label="جاري تحميل بيانات الصيدلية..." />;
   }
 
   if (query.isError) {
@@ -276,34 +225,20 @@ export function PharmacyDetailsPage() {
     );
   }
 
-  const {
-    pharmacy,
-    availableMedicines,
-    workingHours,
-  } = query.data;
+  const { pharmacy, availableMedicines, workingHours } = query.data;
 
   const rating = ratingDraft ?? {
     score: query.data.currentUserRating || 0,
     comment: query.data.currentUserComment || "",
   };
 
-  const fullWorkingWeek =
-    getFullWorkingWeek(workingHours);
+  const groupedHours = getGroupedWorkingHours(workingHours);
 
-  const groupedHours =
-    getGroupedWorkingHours(workingHours);
-
-  const address = [
-    pharmacy.address,
-    pharmacy.area,
-    pharmacy.city,
-  ]
+  const address = [pharmacy.address, pharmacy.area, pharmacy.city]
     .filter(Boolean)
     .join("، ");
 
-  const ratingValue = Number(
-    pharmacy.averageRating || 0,
-  );
+  const ratingValue = Number(pharmacy.averageRating || 0);
 
   return (
     <div
@@ -453,9 +388,7 @@ export function PharmacyDetailsPage() {
                 </span>
 
                 {pharmacy.distanceMeters != null ? (
-                  <span>
-                    {formatDistance(pharmacy.distanceMeters)}
-                  </span>
+                  <span>{formatDistance(pharmacy.distanceMeters)}</span>
                 ) : null}
               </div>
             </div>
@@ -519,60 +452,25 @@ export function PharmacyDetailsPage() {
           </div>
         </div>
 
-          {/* إجراءات الصيدلية داخل الـ Hero */}
-          <div
-            className="
+        {/* إجراءات الصيدلية داخل الـ Hero */}
+        <div
+          className="
               mx-auto grid w-full max-w-[1200px]
               gap-3 px-5 pb-7
               sm:px-7
               md:grid-cols-3
               lg:px-8
             "
-          >
-        <button
-          type="button"
-          onClick={() =>
-            document
-              .getElementById("available-medicines")
-              ?.scrollIntoView({
+        >
+          <button
+            type="button"
+            onClick={() =>
+              document.getElementById("available-medicines")?.scrollIntoView({
                 behavior: "smooth",
                 block: "start",
               })
-          }
-          className="
-            inline-flex h-11
-            items-center justify-center gap-2
-            rounded-[8px]
-            border border-white/25
-            bg-white/10
-            text-[13px] font-medium
-            text-white
-            backdrop-blur-sm
-            transition hover:bg-white/20
-          "
-        >
-          <Search size={18} className="shrink-0" />
-          البحث داخل الصيدلية
-        </button>
-
-        <button
-          type="button"
-          onClick={() => {
-            const next = !showDirections;
-            setShowDirections(next);
-
-            if (!showDirections) {
-              window.setTimeout(() => {
-                document
-                  .getElementById("pharmacy-directions")
-                  ?.scrollIntoView({
-                    behavior: "smooth",
-                    block: "center",
-                  });
-              }, 80);
             }
-          }}
-          className="
+            className="
             inline-flex h-11
             items-center justify-center gap-2
             rounded-[8px]
@@ -583,17 +481,48 @@ export function PharmacyDetailsPage() {
             backdrop-blur-sm
             transition hover:bg-white/20
           "
-        >
-          <Navigation size={18} className="shrink-0" />
-          {showDirections
-            ? "إخفاء الخريطة"
-            : "الانتقال للموقع على الخريطة"}
-        </button>
+          >
+            <Search size={18} className="shrink-0" />
+            البحث داخل الصيدلية
+          </button>
 
-        {pharmacy.phoneNumber ? (
-          <a
-            href={`tel:${pharmacy.phoneNumber}`}
+          <button
+            type="button"
+            onClick={() => {
+              const next = !showDirections;
+              setShowDirections(next);
+
+              if (!showDirections) {
+                window.setTimeout(() => {
+                  document
+                    .getElementById("pharmacy-directions")
+                    ?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "center",
+                    });
+                }, 80);
+              }
+            }}
             className="
+            inline-flex h-11
+            items-center justify-center gap-2
+            rounded-[8px]
+            border border-white/25
+            bg-white/10
+            text-[13px] font-medium
+            text-white
+            backdrop-blur-sm
+            transition hover:bg-white/20
+          "
+          >
+            <Navigation size={18} className="shrink-0" />
+            {showDirections ? "إخفاء الخريطة" : "الانتقال للموقع على الخريطة"}
+          </button>
+
+          {pharmacy.phoneNumber ? (
+            <a
+              href={`tel:${pharmacy.phoneNumber}`}
+              className="
               inline-flex h-11
               items-center justify-center gap-2
               rounded-[8px]
@@ -604,13 +533,13 @@ export function PharmacyDetailsPage() {
               backdrop-blur-sm
               transition hover:bg-white/20
             "
-          >
-            <Phone size={18} className="shrink-0" />
-            اتصل الآن
-          </a>
-        ) : (
-          <div
-            className="
+            >
+              <Phone size={18} className="shrink-0" />
+              اتصل الآن
+            </a>
+          ) : (
+            <div
+              className="
               inline-flex h-11
               items-center justify-center
               rounded-[8px]
@@ -620,12 +549,11 @@ export function PharmacyDetailsPage() {
               text-white/70
               backdrop-blur-sm
             "
-          >
-            رقم الهاتف غير متوفر
-          </div>
-        )}
-          </div>
-
+            >
+              رقم الهاتف غير متوفر
+            </div>
+          )}
+        </div>
       </section>
 
       {/* =====================================================
@@ -655,10 +583,7 @@ export function PharmacyDetailsPage() {
               px-5 pb-6 pt-5
             "
           >
-            <SectionTitle
-              icon={Clock3}
-              title="ساعات العمل"
-            />
+            <SectionTitle icon={Clock3} title="ساعات العمل" />
 
             <div className="mt-5 space-y-3">
               <CompactWorkingHoursCard
@@ -682,10 +607,7 @@ export function PharmacyDetailsPage() {
               px-5 pb-6 pt-5
             "
           >
-            <SectionTitle
-              icon={Building2}
-              title="معلومات الصيدلية"
-            />
+            <SectionTitle icon={Building2} title="معلومات الصيدلية" />
 
             <div className="mt-5 space-y-3">
               <CompactPharmacyInfoCard
@@ -697,10 +619,7 @@ export function PharmacyDetailsPage() {
               <CompactPharmacyInfoCard
                 icon={Phone}
                 title="رقم الهاتف"
-                value={
-                  pharmacy.phoneNumber ||
-                  "رقم الهاتف غير متوفر"
-                }
+                value={pharmacy.phoneNumber || "رقم الهاتف غير متوفر"}
                 dir="ltr"
               />
 
@@ -708,9 +627,7 @@ export function PharmacyDetailsPage() {
                 icon={Building2}
                 title="نوع الصيدلية"
                 value={
-                  pharmacy.pharmacyType ||
-                  pharmacy.type ||
-                  "صيدلية مجتمعية"
+                  pharmacy.pharmacyType || pharmacy.type || "صيدلية مجتمعية"
                 }
               />
             </div>
@@ -759,36 +676,28 @@ export function PharmacyDetailsPage() {
                 xl:grid-cols-5
               "
             >
-              {availableMedicines
-                .slice(0, 5)
-                .map((medicine) => (
-                  <MedicineCard
-                    key={medicine.medicineId}
-                    medicine={medicine}
-                    active={
-                      request.medicineId ===
-                      medicine.medicineId
-                    }
-                    onChoose={() => {
-                      setRequest({
-                        ...request,
-                        medicineId:
-                          medicine.medicineId,
-                      });
+              {availableMedicines.slice(0, 5).map((medicine) => (
+                <MedicineCard
+                  key={medicine.medicineId}
+                  medicine={medicine}
+                  active={request.medicineId === medicine.medicineId}
+                  onChoose={() => {
+                    setRequest({
+                      ...request,
+                      medicineId: medicine.medicineId,
+                    });
 
-                      window.setTimeout(() => {
-                        document
-                          .getElementById(
-                            "medicine-request",
-                          )
-                          ?.scrollIntoView({
-                            behavior: "smooth",
-                            block: "center",
-                          });
-                      }, 50);
-                    }}
-                  />
-                ))}
+                    window.setTimeout(() => {
+                      document
+                        .getElementById("medicine-request")
+                        ?.scrollIntoView({
+                          behavior: "smooth",
+                          block: "center",
+                        });
+                    }, 50);
+                  }}
+                />
+              ))}
             </div>
           ) : (
             <UserEmptyState
@@ -857,9 +766,7 @@ export function PharmacyDetailsPage() {
 
                 {routeQuery.isError ? (
                   <UserErrorState
-                    message={getApiErrorMessage(
-                      routeQuery.error,
-                    )}
+                    message={getApiErrorMessage(routeQuery.error)}
                     onRetry={routeQuery.refetch}
                   />
                 ) : null}
@@ -901,26 +808,19 @@ export function PharmacyDetailsPage() {
               px-5 py-5
             "
           >
-            <SectionTitle
-              icon={Navigation}
-              title="معلومات الوصول"
-            />
+            <SectionTitle icon={Navigation} title="معلومات الوصول" />
 
             <div className="mt-5 space-y-4">
               <AccessRow
                 title="المسافة"
-                value={formatDistance(
-                  pharmacy.distanceMeters,
-                )}
+                value={formatDistance(pharmacy.distanceMeters)}
               />
 
               <AccessRow
                 title="ساعات العمل"
                 value={
                   pharmacy.statusText ||
-                  (pharmacy.isOpenNow
-                    ? "مفتوحة الآن"
-                    : "مغلقة الآن")
+                  (pharmacy.isOpenNow ? "مفتوحة الآن" : "مغلقة الآن")
                 }
               />
 
@@ -952,9 +852,7 @@ export function PharmacyDetailsPage() {
 
               requestMutation.mutate({
                 ...request,
-                requestedQuantity: Number(
-                  request.requestedQuantity,
-                ),
+                requestedQuantity: Number(request.requestedQuantity),
               });
             }}
             className="
@@ -989,9 +887,7 @@ export function PharmacyDetailsPage() {
             </div>
 
             <label className="mt-5 block">
-              <span className="form-label">
-                الدواء
-              </span>
+              <span className="form-label">الدواء</span>
 
               <select
                 required
@@ -1004,29 +900,20 @@ export function PharmacyDetailsPage() {
                 }
                 className="form-input"
               >
-                <option value="">
-                  اختر الدواء
-                </option>
+                <option value="">اختر الدواء</option>
 
-                {availableMedicines.map(
-                  (medicine) => (
-                    <option
-                      key={medicine.medicineId}
-                      value={medicine.medicineId}
-                    >
-                      {medicine.medicineDisplayName ||
-                        medicine.arabicMedicineName ||
-                        medicine.medicineName}
-                    </option>
-                  ),
-                )}
+                {availableMedicines.map((medicine) => (
+                  <option key={medicine.medicineId} value={medicine.medicineId}>
+                    {medicine.medicineDisplayName ||
+                      medicine.arabicMedicineName ||
+                      medicine.medicineName}
+                  </option>
+                ))}
               </select>
             </label>
 
             <label className="mt-4 block">
-              <span className="form-label">
-                الكمية المطلوبة
-              </span>
+              <span className="form-label">الكمية المطلوبة</span>
 
               <input
                 type="number"
@@ -1037,8 +924,7 @@ export function PharmacyDetailsPage() {
                 onChange={(event) =>
                   setRequest({
                     ...request,
-                    requestedQuantity:
-                      event.target.value,
+                    requestedQuantity: event.target.value,
                   })
                 }
                 className="form-input"
@@ -1046,9 +932,7 @@ export function PharmacyDetailsPage() {
             </label>
 
             <label className="mt-4 block">
-              <span className="form-label">
-                ملاحظة للصيدلية (اختياري)
-              </span>
+              <span className="form-label">ملاحظة للصيدلية (اختياري)</span>
 
               <textarea
                 rows={3}
@@ -1074,25 +958,19 @@ export function PharmacyDetailsPage() {
             {requestMutation.isSuccess ? (
               <p className="mt-3 flex items-center gap-2 rounded-[8px] bg-emerald-50 px-3 py-2 text-sm font-bold text-emerald-700">
                 <CheckCircle2 size={17} />
-                تم إرسال الطلب برقم{" "}
-                {requestMutation.data.requestCode}
+                تم إرسال الطلب برقم {requestMutation.data.requestCode}
               </p>
             ) : null}
 
             {requestMutation.isError ? (
               <p className="mt-3 rounded-[8px] bg-rose-50 px-3 py-2 text-sm font-semibold text-rose-700">
-                {getApiErrorMessage(
-                  requestMutation.error,
-                )}
+                {getApiErrorMessage(requestMutation.error)}
               </p>
             ) : null}
 
             <button
               type="submit"
-              disabled={
-                !request.medicineId ||
-                requestMutation.isPending
-              }
+              disabled={!request.medicineId || requestMutation.isPending}
               className="
                 mt-5 inline-flex h-11 w-full
                 items-center justify-center gap-2
@@ -1106,9 +984,7 @@ export function PharmacyDetailsPage() {
             >
               <Send size={17} />
 
-              {requestMutation.isPending
-                ? "جاري الإرسال..."
-                : "إرسال الطلب"}
+              {requestMutation.isPending ? "جاري الإرسال..." : "إرسال الطلب"}
             </button>
           </form>
 
@@ -1132,7 +1008,8 @@ export function PharmacyDetailsPage() {
               </h2>
 
               <p className="mt-2 text-[12px] text-[#A5A5A5]">
-                شارك تجربتك وساعد المستخدمين الآخرين في اختيار الصيدلية المناسبة.
+                شارك تجربتك وساعد المستخدمين الآخرين في اختيار الصيدلية
+                المناسبة.
               </p>
             </div>
 
@@ -1193,7 +1070,8 @@ export function PharmacyDetailsPage() {
               <Brand />
 
               <p className="max-w-[280px] text-right text-[11px] leading-5 text-[#777777]">
-                منصة ذكية تساعدك في العثور على أقرب صيدلية والوصول إلى الخدمات الدوائية بصورة أسرع وأكثر موثوقية.
+                منصة ذكية تساعدك في العثور على أقرب صيدلية والوصول إلى الخدمات
+                الدوائية بصورة أسرع وأكثر موثوقية.
               </p>
             </div>
 
@@ -1277,19 +1155,12 @@ function SectionTitle({ icon: Icon, title }) {
         <Icon size={17} strokeWidth={1.8} />
       </span>
 
-      <h3 className="text-[20px] font-medium">
-        {title}
-      </h3>
+      <h3 className="text-[20px] font-medium">{title}</h3>
     </div>
   );
 }
 
-function CompactPharmacyInfoCard({
-  icon: Icon,
-  title,
-  value,
-  dir,
-}) {
+function CompactPharmacyInfoCard({ icon: Icon, title, value, dir }) {
   return (
     <div
       className="
@@ -1315,15 +1186,10 @@ function CompactPharmacyInfoCard({
       </span>
 
       <div className="min-w-0 flex-1 text-right">
-        <h4 className="text-[13px] font-semibold text-[#555555]">
-          {title}
-        </h4>
+        <h4 className="text-[13px] font-semibold text-[#555555]">{title}</h4>
 
         <div className="mt-2 text-[12px] leading-6 text-[#A5A5A5]">
-          <span
-            dir={dir}
-            className="inline-block max-w-full break-words"
-          >
+          <span dir={dir} className="inline-block max-w-full break-words">
             {value}
           </span>
         </div>
@@ -1332,10 +1198,7 @@ function CompactPharmacyInfoCard({
   );
 }
 
-function CompactWorkingHoursCard({
-  title,
-  value,
-}) {
+function CompactWorkingHoursCard({ title, value }) {
   return (
     <div
       className="
@@ -1361,9 +1224,7 @@ function CompactWorkingHoursCard({
       </span>
 
       <div className="min-w-0 flex-1 text-right">
-        <h4 className="text-[13px] font-semibold text-[#555555]">
-          {title}
-        </h4>
+        <h4 className="text-[13px] font-semibold text-[#555555]">{title}</h4>
 
         <div
           className="
@@ -1380,12 +1241,7 @@ function CompactWorkingHoursCard({
   );
 }
 
-function PharmacyInfoCard({
-  title,
-  value,
-  icon: Icon,
-  dir,
-}) {
+function PharmacyInfoCard({ title, value, icon: Icon, dir }) {
   return (
     <div
       className="
@@ -1411,9 +1267,7 @@ function PharmacyInfoCard({
       </span>
 
       <div className="min-w-0 flex-1 text-right">
-        <h4 className="text-[16px] font-medium text-[#333333]">
-          {title}
-        </h4>
+        <h4 className="text-[16px] font-medium text-[#333333]">{title}</h4>
 
         <div className="mt-3 text-[13px] text-[#A5A5A5]">
           <span dir={dir} className="inline-block max-w-full break-words">
@@ -1425,10 +1279,7 @@ function PharmacyInfoCard({
   );
 }
 
-function WorkingHourCard({
-  title,
-  value,
-}) {
+function WorkingHourCard({ title, value }) {
   return (
     <div
       className="
@@ -1453,9 +1304,7 @@ function WorkingHourCard({
       </span>
 
       <div className="min-w-0 flex-1 text-right">
-        <h4 className="text-[16px] font-medium text-[#333333]">
-          {title}
-        </h4>
+        <h4 className="text-[16px] font-medium text-[#333333]">{title}</h4>
 
         <div dir="ltr" className="mt-3 text-left text-[13px] text-[#A5A5A5]">
           {value}
@@ -1465,14 +1314,9 @@ function WorkingHourCard({
   );
 }
 
-function MedicineCard({
-  medicine,
-  active,
-  onChoose,
-}) {
+function MedicineCard({ medicine, active, onChoose }) {
   const imageUrl = getMedicineImageSource(
-    medicine.imageUrl ||
-      medicine.medicineImageUrl,
+    medicine.imageUrl || medicine.medicineImageUrl,
   );
 
   const name =
@@ -1481,8 +1325,7 @@ function MedicineCard({
     medicine.medicineName;
 
   const details = [
-    medicine.arabicScientificName ||
-      medicine.scientificName,
+    medicine.arabicScientificName || medicine.scientificName,
     medicine.dosageForm,
     medicine.capacity,
   ]
@@ -1522,11 +1365,7 @@ function MedicineCard({
             className="h-full w-full object-contain"
           />
         ) : (
-          <Pill
-            size={42}
-            strokeWidth={1.4}
-            className="text-[#216474]/40"
-          />
+          <Pill size={42} strokeWidth={1.4} className="text-[#216474]/40" />
         )}
 
         <span
@@ -1589,9 +1428,7 @@ function AccessRow({ title, value }) {
         text-right
       "
     >
-      <span className="text-[12px] text-[#A5A5A5]">
-        {title}
-      </span>
+      <span className="text-[12px] text-[#A5A5A5]">{title}</span>
 
       <strong className="mt-2 block text-[14px] font-medium text-[#333333]">
         {value || "غير محدد"}
@@ -1600,11 +1437,7 @@ function AccessRow({ title, value }) {
   );
 }
 
-function RatingForm({
-  rating,
-  setRating,
-  mutation,
-}) {
+function RatingForm({ rating, setRating, mutation }) {
   return (
     <form
       id="pharmacy-rating-form"
@@ -1624,9 +1457,7 @@ function RatingForm({
         text-right
       "
     >
-      <h3 className="text-[18px] font-medium text-[#333333]">
-        قيّم تجربتك
-      </h3>
+      <h3 className="text-[18px] font-medium text-[#333333]">قيّم تجربتك</h3>
 
       <p className="mt-2 text-[12px] text-[#A5A5A5]">
         شارك رأيك لمساعدة مستخدمين آخرين.
@@ -1644,16 +1475,11 @@ function RatingForm({
               })
             }
             className={
-              score <= rating.score
-                ? "text-[#FDBB07]"
-                : "text-slate-200"
+              score <= rating.score ? "text-[#FDBB07]" : "text-slate-200"
             }
             aria-label={`${score} نجوم`}
           >
-            <Star
-              size={28}
-              fill="currentColor"
-            />
+            <Star size={28} fill="currentColor" />
           </button>
         ))}
       </div>
@@ -1680,18 +1506,13 @@ function RatingForm({
 
       {mutation.isError ? (
         <p className="mt-3 text-sm font-semibold text-rose-600">
-          {getApiErrorMessage(
-            mutation.error,
-          )}
+          {getApiErrorMessage(mutation.error)}
         </p>
       ) : null}
 
       <button
         type="submit"
-        disabled={
-          !rating.score ||
-          mutation.isPending
-        }
+        disabled={!rating.score || mutation.isPending}
         className="
           mt-5 inline-flex h-11
           items-center justify-center
@@ -1712,14 +1533,8 @@ function RatingForm({
   );
 }
 
-function ReviewPlaceholder({
-  score,
-  comment,
-}) {
-  const safeScore = Math.max(
-    0,
-    Math.min(5, Math.round(Number(score || 0))),
-  );
+function ReviewPlaceholder({ score, comment }) {
+  const safeScore = Math.max(0, Math.min(5, Math.round(Number(score || 0))));
 
   return (
     <article
@@ -1750,33 +1565,21 @@ function ReviewPlaceholder({
             <Star
               key={item}
               size={15}
-              fill={
-                item <= safeScore
-                  ? "currentColor"
-                  : "none"
-              }
+              fill={item <= safeScore ? "currentColor" : "none"}
               className={
-                item <= safeScore
-                  ? "text-[#FDBB07]"
-                  : "text-[#D6D6D6]"
+                item <= safeScore ? "text-[#FDBB07]" : "text-[#D6D6D6]"
               }
             />
           ))}
         </div>
       </div>
 
-      <p className="mt-4 text-[13px] leading-6 text-[#333333]">
-        {comment}
-      </p>
+      <p className="mt-4 text-[13px] leading-6 text-[#333333]">{comment}</p>
     </article>
   );
 }
 
-function FooterFeature({
-  icon: Icon,
-  title,
-  description,
-}) {
+function FooterFeature({ icon: Icon, title, description }) {
   return (
     <div className="flex items-center justify-start gap-3 text-right">
       <span
@@ -1796,9 +1599,7 @@ function FooterFeature({
           {title}
         </strong>
 
-        <p className="mt-1 text-[10.5px] text-[#A5A5A5]">
-          {description}
-        </p>
+        <p className="mt-1 text-[10.5px] text-[#A5A5A5]">{description}</p>
       </div>
     </div>
   );

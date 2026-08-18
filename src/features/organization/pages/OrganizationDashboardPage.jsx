@@ -146,7 +146,7 @@ export function OrganizationDashboardPage() {
       className="flex w-full flex-col gap-6"
     >
       {/* البانر */}
-      <section className="relative h-[271px] w-full overflow-hidden rounded-xl bg-[#10505a] text-white">
+      <section className="relative min-h-[271px] w-full overflow-hidden rounded-xl bg-[#10505a] text-white max-sm:min-h-[310px]">
         {/* صورة البانر فقط */}
         <div
           aria-hidden="true"
@@ -171,10 +171,8 @@ export function OrganizationDashboardPage() {
         {/* بيانات المنظمة */}
         <div
           dir={direction}
-          className={`absolute top-[48px] z-10 flex w-[540px] flex-col ${
-            isArabic
-              ? "items-end text-right lg:right-[41px]"
-              : "items-start text-left lg:left-[41px]"
+          className={`absolute start-4 top-8 z-10 flex w-[calc(100%-2rem)] max-w-[540px] flex-col sm:start-8 sm:top-12 lg:start-[41px] ${
+            isArabic ? "items-end text-right" : "items-start text-left"
           }`}
         >
           <div

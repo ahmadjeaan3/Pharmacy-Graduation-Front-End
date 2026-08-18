@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   Bell,
   ChevronDown,
+  FileText,
   HeartHandshake,
   LayoutDashboard,
   LogOut,
@@ -29,10 +30,7 @@ import {
 import { Brand } from "../../../shared/components/Brand";
 import { ProfileAvatar } from "../../../shared/components/ProfileAvatar";
 import { useAuth } from "../../auth/hooks/useAuth";
-import {
-  accountKeys,
-  getAccountProfile,
-} from "../../settings/api/accountApi";
+import { accountKeys, getAccountProfile } from "../../settings/api/accountApi";
 import {
   getUnreadNotificationCount,
   notificationKeys,
@@ -377,6 +375,11 @@ export function DashboardLayout() {
       icon: Route,
     },
     {
+      to: "/app/prescriptions",
+      label: "الوصفة الذكية",
+      icon: FileText,
+    },
+    {
       to: "/app/requests",
       label: "طلباتي",
       icon: Bell,
@@ -394,8 +397,7 @@ export function DashboardLayout() {
   ];
 
   if (isUserAccount) {
-    const userFirstName =
-      user?.fullName?.trim()?.split(/\s+/)?.[0] || "";
+    const userFirstName = user?.fullName?.trim()?.split(/\s+/)?.[0] || "";
 
     return (
       <div
@@ -466,66 +468,66 @@ export function DashboardLayout() {
               {/* User profile - like Figma */}
               <div className="relative hidden shrink-0 lg:block">
                 <button
-  type="button"
-  onClick={() => setOpen((value) => !value)}
-  className={`flex h-14 min-w-[170px] items-center gap-3 rounded-xl px-1 transition hover:bg-[#F8FAFC] ${
-    isArabic ? "flex-row-reverse" : "flex-row"
-  }`}
->
-  {/* صورة المستخدم */}
-  <ProfileAvatar
-    user={accountProfile}
-    sizeClass="size-11"
-    className="shrink-0 rounded-full bg-[#EAF4F3] text-[#216474]"
-    fallbackIcon
-  />
+                  type="button"
+                  onClick={() => setOpen((value) => !value)}
+                  className={`flex h-14 min-w-[170px] items-center gap-3 rounded-xl px-1 transition hover:bg-[#F8FAFC] ${
+                    isArabic ? "flex-row-reverse" : "flex-row"
+                  }`}
+                >
+                  {/* صورة المستخدم */}
+                  <ProfileAvatar
+                    user={accountProfile}
+                    sizeClass="size-11"
+                    className="shrink-0 rounded-full bg-[#EAF4F3] text-[#216474]"
+                    fallbackIcon
+                  />
 
-  {/* الاسم + السهم + ملفي الشخصي */}
-  <span
-    className={`flex min-w-0 flex-1 flex-col ${
-      isArabic
-        ? "items-end text-right"
-        : "items-start text-left"
-    }`}
-  >
-    {/* الاسم والسهم */}
-    <span
-      dir={isArabic ? "rtl" : "ltr"}
-      className="inline-flex items-center gap-2 text-[14px] font-medium text-[#216474] ml-4"
-    >
-      {/* السهم على اليمين في العربية */}
-      {isArabic && (
-        <ChevronDown
-          size={15}
-          strokeWidth={1.7}
-          className={`shrink-0 text-[#333333] transition-transform duration-200 ${
-            open ? "rotate-180" : ""
-          }`}
-        />
-      )}
+                  {/* الاسم + السهم + ملفي الشخصي */}
+                  <span
+                    className={`flex min-w-0 flex-1 flex-col ${
+                      isArabic
+                        ? "items-end text-right"
+                        : "items-start text-left"
+                    }`}
+                  >
+                    {/* الاسم والسهم */}
+                    <span
+                      dir={isArabic ? "rtl" : "ltr"}
+                      className="inline-flex items-center gap-2 text-[14px] font-medium text-[#216474] ml-4"
+                    >
+                      {/* السهم على اليمين في العربية */}
+                      {isArabic && (
+                        <ChevronDown
+                          size={15}
+                          strokeWidth={1.7}
+                          className={`shrink-0 text-[#333333] transition-transform duration-200 ${
+                            open ? "rotate-180" : ""
+                          }`}
+                        />
+                      )}
 
-      <span className="whitespace-nowrap">
-        {t("مرحباً")} {userFirstName}
-      </span>
+                      <span className="whitespace-nowrap">
+                        {t("مرحباً")} {userFirstName}
+                      </span>
 
-      {/* السهم على اليسار في الإنجليزية */}
-      {!isArabic && (
-        <ChevronDown
-          size={15}
-          strokeWidth={1.7}
-          className={`shrink-0 text-[#333333] transition-transform duration-200  ${
-            open ? "rotate-180" : ""
-          }`}
-        />
-      )}
-    </span>
+                      {/* السهم على اليسار في الإنجليزية */}
+                      {!isArabic && (
+                        <ChevronDown
+                          size={15}
+                          strokeWidth={1.7}
+                          className={`shrink-0 text-[#333333] transition-transform duration-200  ${
+                            open ? "rotate-180" : ""
+                          }`}
+                        />
+                      )}
+                    </span>
 
-    {/* النص أسفل الاسم */}
-    <span className="mt-1 whitespace-nowrap text-[12px] text-[#666666] ml-4">
-      {t("ملفي الشخصي")}
-    </span>
-  </span>
-</button>
+                    {/* النص أسفل الاسم */}
+                    <span className="mt-1 whitespace-nowrap text-[12px] text-[#666666] ml-4">
+                      {t("ملفي الشخصي")}
+                    </span>
+                  </span>
+                </button>
 
                 {open ? (
                   <div
@@ -543,7 +545,9 @@ export function DashboardLayout() {
                       />
 
                       <strong className="mt-2 max-w-full truncate text-[13px] font-medium text-[#333333]">
-                        {accountProfile?.fullName || user?.fullName || userFirstName}
+                        {accountProfile?.fullName ||
+                          user?.fullName ||
+                          userFirstName}
                       </strong>
                     </div>
 
@@ -555,8 +559,14 @@ export function DashboardLayout() {
                         onClick={() => setOpen(false)}
                         className="flex min-h-[40px] items-center gap-3 rounded-lg px-3 text-[13px] text-[#5F7479] transition hover:bg-[#F4F8F8] hover:text-[#216474]"
                       >
-                        <UserRound size={16} strokeWidth={1.7} className="shrink-0" />
-                        <span className="flex-1 text-right">{t("ملفي الصحي")}</span>
+                        <UserRound
+                          size={16}
+                          strokeWidth={1.7}
+                          className="shrink-0"
+                        />
+                        <span className="flex-1 text-right">
+                          {t("ملفي الصحي")}
+                        </span>
                       </NavLink>
 
                       <NavLink
@@ -564,8 +574,14 @@ export function DashboardLayout() {
                         onClick={() => setOpen(false)}
                         className="flex min-h-[40px] items-center gap-3 rounded-lg px-3 text-[13px] text-[#5F7479] transition hover:bg-[#F4F8F8] hover:text-[#216474]"
                       >
-                        <Search size={16} strokeWidth={1.7} className="shrink-0" />
-                        <span className="flex-1 text-right">{t("سجل البحث")}</span>
+                        <Search
+                          size={16}
+                          strokeWidth={1.7}
+                          className="shrink-0"
+                        />
+                        <span className="flex-1 text-right">
+                          {t("سجل البحث")}
+                        </span>
                       </NavLink>
 
                       <NavLink
@@ -573,8 +589,14 @@ export function DashboardLayout() {
                         onClick={() => setOpen(false)}
                         className="flex min-h-[40px] items-center gap-3 rounded-lg px-3 text-[13px] text-[#5F7479] transition hover:bg-[#F4F8F8] hover:text-[#216474]"
                       >
-                        <Bell size={16} strokeWidth={1.7} className="shrink-0" />
-                        <span className="flex-1 text-right">{t("الإشعارات")}</span>
+                        <Bell
+                          size={16}
+                          strokeWidth={1.7}
+                          className="shrink-0"
+                        />
+                        <span className="flex-1 text-right">
+                          {t("الإشعارات")}
+                        </span>
 
                         {unreadCount > 0 ? (
                           <span className="grid min-w-5 place-items-center rounded-full bg-rose-500 px-1.5 text-[9px] font-bold leading-5 text-white">
@@ -590,8 +612,14 @@ export function DashboardLayout() {
                         onClick={() => setOpen(false)}
                         className="flex min-h-[40px] items-center gap-3 rounded-lg px-3 text-[13px] text-[#5F7479] transition hover:bg-[#F4F8F8] hover:text-[#216474]"
                       >
-                        <Settings size={16} strokeWidth={1.7} className="shrink-0" />
-                        <span className="flex-1 text-right">{t("الإعدادات")}</span>
+                        <Settings
+                          size={16}
+                          strokeWidth={1.7}
+                          className="shrink-0"
+                        />
+                        <span className="flex-1 text-right">
+                          {t("الإعدادات")}
+                        </span>
                       </NavLink>
 
                       <div className="my-1 h-px bg-[#EEF2F3]" />
@@ -601,8 +629,14 @@ export function DashboardLayout() {
                         onClick={signOut}
                         className="flex min-h-[40px] w-full items-center gap-3 rounded-lg px-3 text-[13px] font-medium text-rose-600 transition hover:bg-rose-50"
                       >
-                        <LogOut size={16} strokeWidth={1.8} className="shrink-0" />
-                        <span className="flex-1 text-right">{t("تسجيل الخروج")}</span>
+                        <LogOut
+                          size={16}
+                          strokeWidth={1.8}
+                          className="shrink-0"
+                        />
+                        <span className="flex-1 text-right">
+                          {t("تسجيل الخروج")}
+                        </span>
                       </button>
                     </nav>
                   </div>
@@ -775,7 +809,6 @@ export function DashboardLayout() {
                 className="h-[72px] w-auto select-none object-contain"
               />
             </NavLink>
-
           </div>
           <div className="mx-auto mt-2 h-px w-[233px] bg-white/15" />
 
@@ -902,9 +935,7 @@ export function DashboardLayout() {
             <div
               dir={direction}
               className={`flex min-w-0 flex-col justify-center ${
-                isArabic
-                  ? "items-start text-right"
-                  : "items-start text-left"
+                isArabic ? "items-start text-right" : "items-start text-left"
               }`}
             >
               <h1 className="max-w-full truncate whitespace-nowrap text-lg font-medium leading-[33px] text-[#216474] sm:text-[22px]">
@@ -934,7 +965,6 @@ export function DashboardLayout() {
                 shadow-[0_3px_12px_rgba(23,75,87,.035)]
                 xl:flex
               "
-
             >
               <input
                 type="search"
@@ -944,7 +974,6 @@ export function DashboardLayout() {
                 placeholder={t("ابحث هنا...")}
                 aria-label={t("ابحث هنا...")}
                 className={`min-w-0 flex-1 border-0 bg-transparent px-4 text-xs text-[#333333] outline-none placeholder:text-[#A5A5A5] ${
-
                   isArabic ? "text-right" : "text-left"
                 }`}
               />
@@ -968,7 +997,6 @@ export function DashboardLayout() {
                 "
               >
                 <Search size={18} strokeWidth={1.8} />
-
               </button>
             </form>
 

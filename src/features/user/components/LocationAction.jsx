@@ -46,9 +46,7 @@ export function LocationAction({ compact = false, onUpdated }) {
       },
 
       () => {
-        setMessage(
-          "تعذر تحديد الموقع. تأكد من السماح بالوصول إلى موقعك.",
-        );
+        setMessage("تعذر تحديد الموقع. تأكد من السماح بالوصول إلى موقعك.");
       },
 
       {
@@ -100,9 +98,7 @@ export function LocationAction({ compact = false, onUpdated }) {
 
         {/* النص */}
         <span className="shrink-0 whitespace-nowrap">
-          {mutation.isPending
-            ? "جاري التحديد..."
-            : "موقعي الحالي"}
+          {mutation.isPending ? "جاري التحديد..." : "موقعي الحالي"}
         </span>
 
         {/* السهم الصغير مثل الفيگما */}
@@ -118,9 +114,7 @@ export function LocationAction({ compact = false, onUpdated }) {
       {message && !compact && (
         <p
           className={`text-xs font-semibold ${
-            mutation.isError
-              ? "text-rose-600"
-              : "text-emerald-600"
+            mutation.isError ? "text-rose-600" : "text-emerald-600"
           }`}
         >
           {message}
