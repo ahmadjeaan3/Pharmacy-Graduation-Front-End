@@ -33,6 +33,8 @@ const ORGANIZATION_HERO_IMAGE =
 
 const PHARMACY_HERO_IMAGE = "/assets/app/pharmacy.png";
 
+const ADMIN_HERO_IMAGE = "/assets/app/home/background_hero_admin.png";
+
 export function NotificationsPage() {
   const { t, i18n } = useTranslation();
 
@@ -65,11 +67,17 @@ export function NotificationsPage() {
     (role) => String(role).toLowerCase() === "user",
   );
 
+  const isOrganizationAccount = userRoles.some(
+    (role) => String(role).toLowerCase() === "organization",
+  );
+
   const notificationsHeroImage = isPharmacyAccount
     ? PHARMACY_HERO_IMAGE
     : isUserAccount
       ? USER_HERO_IMAGE
-      : ORGANIZATION_HERO_IMAGE;
+      : isOrganizationAccount
+        ? ORGANIZATION_HERO_IMAGE
+        : ADMIN_HERO_IMAGE;
 
   const summary = useQuery({
     queryKey: notificationKeys.summary,
@@ -138,7 +146,7 @@ export function NotificationsPage() {
     <div
       dir={direction}
       lang={currentLanguage}
-      className="m-0 min-h-screen w-full bg-[#F7F9FA] p-0 text-[#333333]"
+      className="m-0 min-h-screen w-full bg-[#F4F8F9] p-0 text-[#333333]"
     >
       {/* Hero */}
       <section
@@ -191,16 +199,17 @@ export function NotificationsPage() {
           dir={direction}
           className="
             relative z-10
-            mx-auto flex min-h-[220px]
-            w-full max-w-[1240px]
-            items-center gap-6
-            px-5 py-9
+          mx-auto flex min-h-[200px]
+          w-full max-w-[1240px]
+            flex-col items-stretch justify-center gap-6
+            px-4 py-8
             sm:px-7
-            lg:px-8
+            md:flex-row md:items-center md:justify-between
+            lg:px-8 lg:py-9
           "
         >
           <div
-            className={`me-auto flex items-center gap-4 ${
+            className={`flex min-w-0 items-center gap-4 ${
               isArabic ? "text-right" : "text-left"
             }`}
           >
@@ -218,7 +227,7 @@ export function NotificationsPage() {
             </span>
 
             <div className={`min-w-0 ${isArabic ? "text-right" : "text-left"}`}>
-              <h1 className="text-[28px] font-bold leading-tight text-white">
+              <h1 className="text-[24px] font-black leading-tight text-white sm:text-[30px]">
                 {t("إشعاراتك في مكان واحد")}
               </h1>
 
@@ -235,12 +244,12 @@ export function NotificationsPage() {
             disabled={!unread || readAll.isPending}
             onClick={() => readAll.mutate()}
             className="
-              inline-flex h-[48px] shrink-0
+              inline-flex h-[46px] w-full shrink-0
               items-center justify-center gap-2
               rounded-xl
               border border-white/20
               bg-white
-              px-5
+              px-5 md:w-auto
               text-sm font-bold
               text-[#174B57]
               shadow-[0_10px_24px_rgba(7,31,37,.10)]
@@ -257,7 +266,7 @@ export function NotificationsPage() {
         </div>
       </section>
 
-      <main className="mx-auto w-full max-w-[1240px] px-5 pb-12 pt-8 sm:px-7 lg:px-8">
+      <main className="mx-auto w-full max-w-[1240px] space-y-5 px-4 pb-12 pt-6 sm:px-7 sm:pt-8 lg:px-8">
         {/* Notice */}
         {notice && (
           <div className="rounded-xl border border-[#CFE4E7] bg-[#EAF4F3] px-4 py-3 text-sm font-bold text-[#216474]">
@@ -266,7 +275,7 @@ export function NotificationsPage() {
         )}
 
         {/* Summary */}
-        <section className="grid gap-4 sm:grid-cols-3">
+        <section className="grid gap-3 sm:grid-cols-3 lg:gap-4">
           <SummaryCard
             icon={Layers3}
             label={t("جميع الإشعارات")}
@@ -299,8 +308,8 @@ export function NotificationsPage() {
         </section>
 
         {/* Filters */}
-        <section className="rounded-xl border border-[#DCE8EA] bg-white p-4 shadow-[0_6px_24px_rgba(23,75,87,.03)]">
-          <div className="flex flex-wrap items-center gap-2">
+        <section className="rounded-2xl border border-[#DCE8EA] bg-white p-3 shadow-[0_8px_26px_rgba(23,75,87,.04)] sm:p-4">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 [scrollbar-width:thin]">
             <FilterButton
               active={!filters.unreadOnly && !filters.type}
               label={t("جميع الإشعارات")}
@@ -438,10 +447,10 @@ function SummaryCard({
   return (
     <article
       dir={direction}
-      className="flex min-h-[108px] items-center gap-4 rounded-xl border border-[#DCE8EA] bg-white p-5 shadow-[0_6px_24px_rgba(23,75,87,.035)]"
+      className="flex min-h-[100px] items-center gap-4 rounded-2xl border border-[#DCE8EA] bg-white p-4 shadow-[0_8px_26px_rgba(23,75,87,.04)] sm:min-h-[112px] sm:p-5"
     >
       <span
-        className={`grid size-11 shrink-0 place-items-center rounded-xl ${iconBox} ${iconColor}`}
+        className={`grid size-11 shrink-0 place-items-center rounded-xl ${iconBox} ${iconColor} sm:size-12`}
       >
         <Icon size={19} />
       </span>
@@ -451,7 +460,7 @@ function SummaryCard({
 
         <strong
           dir="ltr"
-          className="mt-2 block w-fit text-3xl font-bold leading-none tabular-nums text-[#29464D]"
+          className="mt-2 block w-fit text-2xl font-black leading-none tabular-nums text-[#29464D] sm:text-3xl"
         >
           {formatNotificationCount(value, currentLanguage)}
         </strong>
@@ -471,7 +480,7 @@ function FilterButton({
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex h-10 items-center gap-2 rounded-lg border px-4 text-sm font-bold transition ${
+      className={`inline-flex h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-xl border px-4 text-sm font-bold transition ${
         active
           ? "border-[#216474] bg-[#216474] text-white"
           : "border-[#D8E5E7] bg-[#F8FBFB] text-[#60777D] hover:border-[#AFC9CD] hover:bg-[#EAF4F3]"
@@ -538,20 +547,23 @@ function NotificationCard({
   return (
     <article
       dir={direction}
-      className={`relative flex min-h-[88px] w-full items-center overflow-hidden rounded-xl border border-[rgba(102,102,102,.16)] bg-white px-6 py-3 transition ${
-        notification.isRead ? "" : "shadow-[0_5px_16px_rgba(23,75,87,.035)]"
+      className={`relative flex min-h-[104px] w-full items-center overflow-hidden rounded-2xl border bg-white p-4 transition sm:p-5 ${
+        notification.isRead
+          ? "border-[#DCE8EA]"
+          : "border-[#BFD9DD] shadow-[0_8px_24px_rgba(23,75,87,.06)]"
       }`}
     >
-      <div className="flex w-full flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      {!notification.isRead && (
+        <span className={`absolute inset-y-0 w-1 bg-[#DFAE0D] ${isArabic ? "right-0" : "left-0"}`} />
+      )}
+      <div className="flex w-full flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         {/* Notification content */}
-        <div className="flex min-w-0 items-center gap-3">
+        <div className="flex min-w-0 items-start gap-3 sm:items-center">
           <span
-            className={`flex h-10 w-14 shrink-0 items-center justify-center bg-transparent ${
-              isArabic ? "border-r-2 pr-4" : "border-l-2 pl-4"
-            } ${
+            className={`grid size-11 shrink-0 place-items-center rounded-xl ${
               notification.isRead
-                ? "border-[#C8DADD] text-[#216474]"
-                : "border-[#DFAE0D] text-[#DFAE0D]"
+                ? "bg-[#EAF4F3] text-[#216474]"
+                : "bg-[#FFF7DF] text-[#B88400]"
             }`}
           >
             <Icon size={22} strokeWidth={1.8} />
@@ -559,7 +571,7 @@ function NotificationCard({
 
           <div className={`min-w-0 ${isArabic ? "text-right" : "text-left"}`}>
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="truncate text-base font-medium text-[#333333]">
+              <h2 className="line-clamp-2 text-sm font-bold text-[#29464D] sm:text-base">
                 {title}
               </h2>
 
@@ -570,25 +582,25 @@ function NotificationCard({
               )}
             </div>
 
-            <p className="mt-1 line-clamp-1 max-w-[560px] text-xs leading-5 text-[#A5A5A5]">
+            <p className="mt-1 line-clamp-2 max-w-[650px] text-xs leading-5 text-[#829499] sm:text-sm">
               {message}
             </p>
           </div>
         </div>
 
         {/* Time and actions */}
-        <div className="flex shrink-0 flex-wrap items-center gap-4">
+        <div className="flex shrink-0 flex-col gap-3 border-t border-[#EDF2F3] pt-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between xl:border-0 xl:pt-0">
           <span className="whitespace-nowrap text-sm text-[#666666]">
             {formatNotificationDate(createdAt, currentLanguage) ||
               t("منذ وقت قريب")}
           </span>
 
-          <div className="flex items-center gap-3">
+          <div className="grid grid-cols-1 gap-2 min-[420px]:grid-cols-2 sm:flex sm:items-center">
             {targetAvailable && (
               <button
                 type="button"
                 onClick={onOpen}
-                className="inline-flex h-10 min-w-[128px] items-center justify-center gap-2 rounded-lg border border-[rgba(102,102,102,.16)] bg-white px-4 text-sm font-normal text-[#666666] transition hover:border-[#AFC9CD] hover:bg-[#F8FBFB] hover:text-[#216474]"
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-[#D8E5E7] bg-white px-4 text-sm font-bold text-[#52727A] transition hover:border-[#AFC9CD] hover:bg-[#F8FBFB] hover:text-[#216474] sm:min-w-[128px]"
               >
                 <Eye size={15} />
 
@@ -601,7 +613,7 @@ function NotificationCard({
                 type="button"
                 onClick={onRead}
                 disabled={pending}
-                className="inline-flex h-10 min-w-[128px] items-center justify-center gap-2 rounded-lg border border-[rgba(102,102,102,.16)] bg-white px-4 text-sm font-normal text-[#666666] transition hover:border-[#DFAE0D]/50 hover:bg-[#FFF9EC] hover:text-[#A87818] disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-[#D8E5E7] bg-white px-4 text-sm font-bold text-[#52727A] transition hover:border-[#DFAE0D]/50 hover:bg-[#FFF9EC] hover:text-[#A87818] disabled:cursor-not-allowed disabled:opacity-50 sm:min-w-[128px]"
               >
                 <CheckCheck size={15} />
 

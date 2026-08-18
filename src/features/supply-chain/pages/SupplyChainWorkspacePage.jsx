@@ -87,6 +87,7 @@ const warehousePathTabs = {
   "/app/warehouse/shipments": "orders",
   "/app/warehouse/representatives": "team",
   "/app/warehouse/invoices": "invoices",
+  "/app/warehouse/accounts": "accounts",
   "/app/warehouse/returns": "returns",
   "/app/warehouse/recalls": "recalls",
   "/app/supply-chain": "orders",
@@ -97,6 +98,7 @@ const warehouseTabPaths = {
   inventory: "/app/warehouse/inventory",
   team: "/app/warehouse/representatives",
   invoices: "/app/warehouse/invoices",
+  accounts: "/app/warehouse/accounts",
   returns: "/app/warehouse/returns",
   recalls: "/app/warehouse/recalls",
 };
@@ -205,6 +207,14 @@ function OrderCard({
   t,
   currentLanguage,
 }) {
+  const assignableRepresentatives = representatives.filter(
+    (rep) =>
+      rep.accountIsActive &&
+      rep.isEnabled &&
+      rep.isAvailable &&
+      rep.isOnShift &&
+      Number(rep.activeDeliveries || 0) === 0,
+  );
   const next =
     role === "Warehouse"
       ? {
@@ -283,19 +293,13 @@ function OrderCard({
             (!order.shipment ||
               ["Failed", "Returned"].includes(order.shipment.status)) && (
               <button
-                disabled={busy || !representatives.some((r) => r.isAvailable)}
-                onClick={() =>
-                  act(
-                    "assign",
-                    order.id,
-                    representatives.find((r) => r.isAvailable)?.id,
-                  )
-                }
+                disabled={busy || !assignableRepresentatives.length}
+                onClick={() => onDetails(order)}
                 className="btn-primary"
               >
                 <Truck size={17} />
-                {representatives.some((r) => r.isAvailable)
-                  ? t("إسناد لمندوب متاح")
+                {assignableRepresentatives.length
+                  ? t("اختيار مندوب وإسناد الشحنة")
                   : t("لا يوجد مندوب متاح")}
               </button>
             )}
@@ -397,6 +401,14 @@ export function SupplyChainWorkspacePage() {
     role === "Warehouse"
       ? requestedTab || warehousePathTabs[location.pathname] || tab
       : tab;
+  const isWarehouseOverview =
+    role === "Warehouse" && location.pathname === "/app";
+  const isRepresentativeOverview =
+    role === "Representative" && location.pathname === "/app";
+  const showOverviewHero =
+    !["Warehouse", "Representative"].includes(role) ||
+    isWarehouseOverview ||
+    isRepresentativeOverview;
   const [dialog, setDialog] = useState(null);
   const [representativeToEdit, setRepresentativeToEdit] = useState(null);
   const [invoiceToManage, setInvoiceToManage] = useState(null);
@@ -405,6 +417,7 @@ export function SupplyChainWorkspacePage() {
   const [batchToRecall, setBatchToRecall] = useState(null);
   const [returnOrder, setReturnOrder] = useState(null);
   const [returnReview, setReturnReview] = useState(null);
+  const [deliveryToConfirm, setDeliveryToConfirm] = useState(null);
   const [selectedWarehouse, setSelectedWarehouse] = useState(null);
   const [catalogSearch, setCatalogSearch] = useState("");
   const [adminResourceSearch, setAdminResourceSearch] = useState("");
@@ -415,7 +428,7 @@ export function SupplyChainWorkspacePage() {
   const dashboard = useQuery({
     queryKey: supplyKeys.dashboard,
     queryFn: getSupplyDashboard,
-    enabled: role === "Warehouse",
+    enabled: isWarehouseOverview,
     staleTime: 30_000,
     refetchOnWindowFocus: false,
   });
@@ -455,7 +468,7 @@ export function SupplyChainWorkspacePage() {
     queryFn: () => getSupplyInvoices(),
     enabled:
       ["Warehouse", "Pharmacy", "Admin"].includes(role) &&
-      activeTab === "invoices",
+      ["invoices", "accounts"].includes(activeTab),
     staleTime: 30_000,
   });
   const returns = useQuery({
@@ -492,7 +505,7 @@ export function SupplyChainWorkspacePage() {
     enabled: role === "Pharmacy" && !!selectedWarehouse,
   });
   const mutation = useMutation({
-    mutationFn: ({ type, id, value, coordinates, note }) =>
+    mutationFn: ({ type, id, value, coordinates, note, payment }) =>
       type === "order"
         ? updateSupplyOrder(id, { status: value, note: "" })
         : type === "shipment"
@@ -510,8 +523,12 @@ export function SupplyChainWorkspacePage() {
             : confirmShipment(id, {
                 qrToken: value,
                 proofNote: "تم التحقق والاستلام",
+                paymentChoice: payment?.choice || "None",
+                paymentAmount: payment?.amount || null,
+                paymentMethod: payment?.method || "CashOnDelivery",
               }),
     onSuccess: () => {
+      setDeliveryToConfirm(null);
       qc.invalidateQueries({ queryKey: supplyKeys.orders });
       qc.invalidateQueries({ queryKey: supplyKeys.dashboard });
       qc.invalidateQueries({ queryKey: supplyKeys.representatives });
@@ -592,6 +609,13 @@ export function SupplyChainWorkspacePage() {
   });
   const act = (type, id, value, note = "") => {
     mutation.reset();
+    if (type === "confirm") {
+      const order = (orders.data || []).find(
+        (item) => item.shipment?.id === id,
+      );
+      setDeliveryToConfirm({ order, shipmentId: id, qrToken: value });
+      return;
+    }
     if (type === "shipment" && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         ({ coords }) => {
@@ -695,6 +719,7 @@ export function SupplyChainWorkspacePage() {
       : [
           "orders",
           "invoices",
+          ...(role === "Warehouse" ? ["accounts"] : []),
           ...(["Warehouse", "Pharmacy", "Admin"].includes(role)
             ? ["returns", "recalls"]
             : []),
@@ -726,114 +751,116 @@ export function SupplyChainWorkspacePage() {
       : activeRepresentativeOrders;
   return (
     <div dir={direction} lang={currentLanguage}>
-      <section
-        className="relative isolate min-h-[220px] overflow-hidden rounded-[14px] text-white shadow-[0_22px_55px_rgba(23,75,87,.16)]
+      {showOverviewHero && (
+        <section
+          className="relative isolate min-h-[220px] overflow-hidden rounded-[14px] text-white shadow-[0_22px_55px_rgba(23,75,87,.16)]
 sm:min-h-[230px]
 lg:min-h-[250px]"
-      >
-        <img
-          src={supplyHeroImage}
-          alt=""
-          aria-hidden="true"
-          className={`absolute inset-0 h-full w-full object-cover ${
-            isAdminAccount
-              ? "object-[center_46%]"
-              : isWarehouseAccount
-                ? "object-[center_48%]"
-                : "object-[center_38%]"
-          } ${
-            isAdminAccount
-              ? isArabic
-                ? "scale-x-100"
-                : "scale-x-[-1]"
-              : isWarehouseAccount
+        >
+          <img
+            src={supplyHeroImage}
+            alt=""
+            aria-hidden="true"
+            className={`absolute inset-0 h-full w-full object-cover ${
+              isAdminAccount
+                ? "object-[center_46%]"
+                : isWarehouseAccount
+                  ? "object-[center_48%]"
+                  : "object-[center_38%]"
+            } ${
+              isAdminAccount
                 ? isArabic
                   ? "scale-x-100"
                   : "scale-x-[-1]"
-                : isArabic
-                  ? "scale-x-[-1]"
-                  : "scale-x-100"
-          }`}
-        />
+                : isWarehouseAccount
+                  ? isArabic
+                    ? "scale-x-100"
+                    : "scale-x-[-1]"
+                  : isArabic
+                    ? "scale-x-[-1]"
+                    : "scale-x-100"
+            }`}
+          />
 
-        <div
-          className="absolute inset-0"
-          style={{
-            background: isAdminAccount
-              ? isArabic
-                ? "linear-gradient(270deg, #0D4E59 0%, rgba(13,78,89,.92) 34%, rgba(33,100,116,.48) 68%, rgba(33,100,116,.10) 100%)"
-                : "linear-gradient(90deg, #0D4E59 0%, rgba(13,78,89,.92) 34%, rgba(33,100,116,.48) 68%, rgba(33,100,116,.10) 100%)"
-              : isWarehouseAccount
+          <div
+            className="absolute inset-0"
+            style={{
+              background: isAdminAccount
                 ? isArabic
-                  ? "linear-gradient(270deg, #10505A 0%, rgba(16,80,90,.91) 34%, rgba(33,100,116,.46) 68%, rgba(33,100,116,.08) 100%)"
-                  : "linear-gradient(90deg, #10505A 0%, rgba(16,80,90,.91) 34%, rgba(33,100,116,.46) 68%, rgba(33,100,116,.08) 100%)"
-                : isArabic
-                  ? "linear-gradient(270deg, #10505A 0%, rgba(16,80,90,.90) 38%, rgba(33,100,116,.48) 70%, rgba(33,100,116,.08) 100%)"
-                  : "linear-gradient(90deg, #10505A 0%, rgba(16,80,90,.90) 38%, rgba(33,100,116,.48) 70%, rgba(33,100,116,.08) 100%)",
-          }}
-        />
+                  ? "linear-gradient(270deg, #0D4E59 0%, rgba(13,78,89,.92) 34%, rgba(33,100,116,.48) 68%, rgba(33,100,116,.10) 100%)"
+                  : "linear-gradient(90deg, #0D4E59 0%, rgba(13,78,89,.92) 34%, rgba(33,100,116,.48) 68%, rgba(33,100,116,.10) 100%)"
+                : isWarehouseAccount
+                  ? isArabic
+                    ? "linear-gradient(270deg, #10505A 0%, rgba(16,80,90,.91) 34%, rgba(33,100,116,.46) 68%, rgba(33,100,116,.08) 100%)"
+                    : "linear-gradient(90deg, #10505A 0%, rgba(16,80,90,.91) 34%, rgba(33,100,116,.46) 68%, rgba(33,100,116,.08) 100%)"
+                  : isArabic
+                    ? "linear-gradient(270deg, #10505A 0%, rgba(16,80,90,.90) 38%, rgba(33,100,116,.48) 70%, rgba(33,100,116,.08) 100%)"
+                    : "linear-gradient(90deg, #10505A 0%, rgba(16,80,90,.90) 38%, rgba(33,100,116,.48) 70%, rgba(33,100,116,.08) 100%)",
+            }}
+          />
 
-        <div className="relative z-10 flex min-h-[190px] flex-col justify-between gap-6 px-6 py-6 sm:min-h-[205px] lg:min-h-[220px] lg:flex-row lg:items-center lg:px-8">
-          <div className={`min-w-0 ${isArabic ? "text-right" : "text-left"}`}>
-            <div className="flex items-center gap-3">
-              <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-white/[.10] text-[#E6F3F6] backdrop-blur-sm">
-                <Truck size={25} strokeWidth={1.8} />
-              </span>
+          <div className="relative z-10 flex min-h-[190px] flex-col justify-between gap-6 px-6 py-6 sm:min-h-[205px] lg:min-h-[220px] lg:flex-row lg:items-center lg:px-8">
+            <div className={`min-w-0 ${isArabic ? "text-right" : "text-left"}`}>
+              <div className="flex items-center gap-3">
+                <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-white/[.10] text-[#E6F3F6] backdrop-blur-sm">
+                  <Truck size={25} strokeWidth={1.8} />
+                </span>
 
-              <div>
-                <p className="text-xs font-bold text-[#E6F3F6]/80">
-                  {t("شبكة دوائي للأعمال")}
-                </p>
+                <div>
+                  <p className="text-xs font-bold text-[#E6F3F6]/80">
+                    {t("شبكة دوائي للأعمال")}
+                  </p>
 
-                <h1 className="mt-1 text-[24px] font-black text-white sm:text-[28px]">
-                  {title}
-                </h1>
+                  <h1 className="mt-1 text-[24px] font-black text-white sm:text-[28px]">
+                    {title}
+                  </h1>
 
-                <p className="mt-1 max-w-2xl text-xs leading-6 text-[#D6D6D6] sm:text-sm">
-                  {sub}
-                </p>
+                  <p className="mt-1 max-w-2xl text-xs leading-6 text-[#D6D6D6] sm:text-sm">
+                    {sub}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid w-full gap-3 sm:grid-cols-2 lg:w-auto lg:min-w-[280px]">
+              <div
+                className={`relative min-h-[88px] rounded-[12px] border border-white/80 bg-white p-4 text-[#17363E] shadow-[0_10px_28px_rgba(4,45,53,.13)] ${isArabic ? "pl-14 text-right" : "pr-14 text-left"}`}
+              >
+                <span
+                  className={`absolute top-1/2 grid size-9 -translate-y-1/2 place-items-center mt-2 rounded-lg bg-[#EAF4F3] text-[#216474] ${isArabic ? "left-4 ml-2" : "right-4 mr-2"}`}
+                >
+                  <Truck size={22} strokeWidth={1.8} />
+                </span>
+
+                <p className="text-xs text-[#71858A]">{t("شحنات جارية")}</p>
+
+                <strong className="mt-2 block text-2xl font-black text-[#17363E]">
+                  {orders.data?.filter((x) => x.status === "OutForDelivery")
+                    .length || 0}
+                </strong>
+              </div>
+
+              <div
+                className={`relative min-h-[88px] rounded-[12px] border border-white/80 bg-white p-4 text-[#17363E] shadow-[0_10px_28px_rgba(4,45,53,.13)] ${isArabic ? "pl-14 text-right" : "pr-14 text-left"}`}
+              >
+                <span
+                  className={`absolute top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-lg mt-2 bg-[#EAF4F3] text-[#216474] ${isArabic ? "left-4 ml-2" : "right-4 mr-2"}`}
+                >
+                  <CheckCircle2 size={22} strokeWidth={1.8} />
+                </span>
+
+                <p className="text-xs text-[#71858A]">{t("تم تسليمها")}</p>
+
+                <strong className="mt-2 block text-2xl font-black text-[#17363E]">
+                  {orders.data?.filter((x) => x.status === "Delivered")
+                    .length || 0}
+                </strong>
               </div>
             </div>
           </div>
-
-          <div className="grid w-full gap-3 sm:grid-cols-2 lg:w-auto lg:min-w-[280px]">
-            <div
-              className={`relative min-h-[88px] rounded-[12px] border border-white/80 bg-white p-4 text-[#17363E] shadow-[0_10px_28px_rgba(4,45,53,.13)] ${isArabic ? "pl-14 text-right" : "pr-14 text-left"}`}
-            >
-              <span
-                className={`absolute top-1/2 grid size-9 -translate-y-1/2 place-items-center mt-2 rounded-lg bg-[#EAF4F3] text-[#216474] ${isArabic ? "left-4 ml-2" : "right-4 mr-2"}`}
-              >
-                <Truck size={22} strokeWidth={1.8} />
-              </span>
-
-              <p className="text-xs text-[#71858A]">{t("شحنات جارية")}</p>
-
-              <strong className="mt-2 block text-2xl font-black text-[#17363E]">
-                {orders.data?.filter((x) => x.status === "OutForDelivery")
-                  .length || 0}
-              </strong>
-            </div>
-
-            <div
-              className={`relative min-h-[88px] rounded-[12px] border border-white/80 bg-white p-4 text-[#17363E] shadow-[0_10px_28px_rgba(4,45,53,.13)] ${isArabic ? "pl-14 text-right" : "pr-14 text-left"}`}
-            >
-              <span
-                className={`absolute top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-lg mt-2 bg-[#EAF4F3] text-[#216474] ${isArabic ? "left-4 ml-2" : "right-4 mr-2"}`}
-              >
-                <CheckCircle2 size={22} strokeWidth={1.8} />
-              </span>
-
-              <p className="text-xs text-[#71858A]">{t("تم تسليمها")}</p>
-
-              <strong className="mt-2 block text-2xl font-black text-[#17363E]">
-                {orders.data?.filter((x) => x.status === "Delivered").length ||
-                  0}
-              </strong>
-            </div>
-          </div>
-        </div>
-      </section>
-      {role === "Warehouse" && dashboard.isError && (
+        </section>
+      )}
+      {isWarehouseOverview && dashboard.isError && (
         <div className="mt-5 rounded-2xl border border-[#F5CB72]/45 bg-amber-50 p-5 text-sm font-bold text-amber-800">
           <AlertTriangle className="me-2 inline" size={18} />
           {t(
@@ -841,7 +868,7 @@ lg:min-h-[250px]"
           )}
         </div>
       )}
-      {role === "Warehouse" && d && (
+      {isWarehouseOverview && d && (
         <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <Stat
             icon={Boxes}
@@ -885,7 +912,7 @@ lg:min-h-[250px]"
           />
         </div>
       )}
-      {role === "Representative" && (
+      {isRepresentativeOverview && (
         <div className="mt-6 grid gap-4 sm:grid-cols-3">
           <Stat
             icon={Truck}
@@ -941,6 +968,7 @@ lg:min-h-[250px]"
               {
                 orders: "الطلبات والشحنات",
                 invoices: "الفواتير والمدفوعات",
+                accounts: "حسابات الصيدليات",
                 inventory: "مخزون الدُفعات",
                 team: "فريق المندوبين",
                 marketplace: "المستودعات",
@@ -1287,6 +1315,13 @@ lg:min-h-[250px]"
             onManage={setInvoiceToManage}
           />
         )}
+        {activeTab === "accounts" && role === "Warehouse" && (
+          <PharmacyAccountsPanel
+            invoices={invoices.data || []}
+            loading={invoices.isLoading}
+            onManage={setInvoiceToManage}
+          />
+        )}
         {activeTab === "returns" && (
           <ReturnsPanel
             items={returns.data || []}
@@ -1465,6 +1500,22 @@ lg:min-h-[250px]"
           }
         />
       )}
+      {deliveryToConfirm?.order && (
+        <DeliveryPaymentDialog
+          order={deliveryToConfirm.order}
+          busy={mutation.isPending}
+          error={mutation.error}
+          onClose={() => setDeliveryToConfirm(null)}
+          onConfirm={(payment) =>
+            mutation.mutate({
+              type: "confirm",
+              id: deliveryToConfirm.shipmentId,
+              value: deliveryToConfirm.qrToken,
+              payment,
+            })
+          }
+        />
+      )}
     </div>
   );
 }
@@ -1485,8 +1536,16 @@ function OrderDetailsDialog({
   const isArabic = currentLanguage === "ar";
   const direction = isArabic ? "rtl" : "ltr";
 
+  const assignableRepresentatives = representatives.filter(
+    (rep) =>
+      rep.accountIsActive &&
+      rep.isEnabled &&
+      rep.isAvailable &&
+      rep.isOnShift &&
+      Number(rep.activeDeliveries || 0) === 0,
+  );
   const [representativeId, setRepresentativeId] = useState(
-    representatives.find((x) => x.isAvailable)?.id || "",
+    assignableRepresentatives[0]?.id || "",
   );
   const [shipmentIssueNote, setShipmentIssueNote] = useState("");
   useEffect(() => {
@@ -1780,13 +1839,11 @@ function OrderDetailsDialog({
                           className="form-input"
                         >
                           <option value="">{t("اختر مندوبًا")}</option>
-                          {representatives
-                            .filter((rep) => rep.isAvailable)
-                            .map((rep) => (
-                              <option key={rep.id} value={rep.id}>
-                                {rep.fullName} — متاح
-                              </option>
-                            ))}
+                          {assignableRepresentatives.map((rep) => (
+                            <option key={rep.id} value={rep.id}>
+                              {rep.fullName} — متاح وبدون مهمة
+                            </option>
+                          ))}
                         </select>
                       </label>
                       <button
@@ -1801,6 +1858,12 @@ function OrderDetailsDialog({
                           ? "إعادة إسناد الشحنة"
                           : "إسناد وتجهيز الشحنة"}
                       </button>
+                      {!assignableRepresentatives.length && (
+                        <p className="mt-3 rounded-xl bg-amber-50 p-3 text-xs font-bold text-amber-800">
+                          لا يوجد مندوب ضمن الدوام، متاح، وبدون مهمة نشطة
+                          حاليًا.
+                        </p>
+                      )}
                     </>
                   )}
                 {!next &&
@@ -2601,6 +2664,143 @@ function ReturnReviewDialog({ review, busy, error, onClose, onSubmit }) {
   );
 }
 
+function DeliveryPaymentDialog({ order, busy, error, onClose, onConfirm }) {
+  const { i18n } = useTranslation();
+  const currentLanguage = normalizeLanguage(
+    i18n.resolvedLanguage || i18n.language || "ar",
+  );
+  const remaining = Number(order.invoice?.remainingAmount || 0);
+  const [choice, setChoice] = useState(remaining > 0 ? "Full" : "None");
+  const [amount, setAmount] = useState("");
+  const [method, setMethod] = useState("CashOnDelivery");
+  const partialAmount = Number(amount || 0);
+  const partialInvalid =
+    choice === "Partial" && (partialAmount <= 0 || partialAmount >= remaining);
+
+  return (
+    <SimpleDialog
+      title="تأكيد الاستلام وتسوية الحساب"
+      icon={WalletCards}
+      onClose={onClose}
+    >
+      <form
+        className="space-y-4"
+        onSubmit={(event) => {
+          event.preventDefault();
+          onConfirm({
+            choice,
+            amount: choice === "Partial" ? partialAmount : null,
+            method,
+          });
+        }}
+      >
+        <div className="rounded-2xl bg-[#F8FBFB] p-4">
+          <p className="text-sm font-black">{order.warehouseName}</p>
+          <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
+            <AccountValue
+              label="إجمالي الفاتورة"
+              value={money(
+                order.invoice?.totalAmount || order.totalAmount,
+                currentLanguage,
+              )}
+            />
+            <AccountValue
+              label="مدفوع سابقًا"
+              value={money(order.invoice?.paidAmount || 0, currentLanguage)}
+              tone="text-emerald-700"
+            />
+            <AccountValue
+              label="المتبقي"
+              value={money(remaining, currentLanguage)}
+              tone="text-rose-700"
+            />
+          </div>
+        </div>
+        {remaining > 0 ? (
+          <>
+            <div>
+              <span className="form-label">ماذا ستدفع الصيدلية الآن؟</span>
+              <div className="grid gap-2 sm:grid-cols-3">
+                {[
+                  ["Full", "دفع كامل", "إغلاق الفاتورة"],
+                  ["Partial", "دفعة جزئية", "ويبقى رصيد"],
+                  ["None", "بدون دفع", "ترحيل كامل الرصيد"],
+                ].map(([value, label, hint]) => (
+                  <button
+                    type="button"
+                    key={value}
+                    onClick={() => setChoice(value)}
+                    className={`rounded-2xl border p-3 text-center transition ${choice === value ? "border-[#216474] bg-[#EAF4F3] text-[#174B57] ring-1 ring-[#216474]" : "border-[#DCE8EA] bg-white text-[#60777D]"}`}
+                  >
+                    <b className="block text-sm">{label}</b>
+                    <small className="mt-1 block opacity-70">{hint}</small>
+                  </button>
+                ))}
+              </div>
+            </div>
+            {choice === "Partial" && (
+              <Field label="قيمة الدفعة الجزئية">
+                <input
+                  required
+                  autoFocus
+                  type="number"
+                  min="1"
+                  max={Math.max(1, remaining - 1)}
+                  className="form-input"
+                  value={amount}
+                  onChange={(event) => setAmount(event.target.value)}
+                  placeholder={`أقل من ${remaining}`}
+                />
+                {partialInvalid && amount && (
+                  <small className="mt-1 block font-bold text-rose-700">
+                    يجب أن تكون الدفعة أكبر من صفر وأقل من الرصيد المتبقي.
+                  </small>
+                )}
+              </Field>
+            )}
+            {choice !== "None" && (
+              <Field label="طريقة الدفع">
+                <select
+                  className="form-input"
+                  value={method}
+                  onChange={(event) => setMethod(event.target.value)}
+                >
+                  <option value="CashOnDelivery">نقدًا للمندوب</option>
+                  <option value="BankTransfer">تحويل بنكي</option>
+                  <option value="Credit">تسوية من الحساب الآجل</option>
+                </select>
+              </Field>
+            )}
+          </>
+        ) : (
+          <p className="rounded-2xl bg-emerald-50 p-4 text-sm font-bold text-emerald-800">
+            الفاتورة مسددة مسبقًا، سيتم تأكيد الاستلام دون تسجيل دفعة جديدة.
+          </p>
+        )}
+        {choice === "None" && remaining > 0 && (
+          <p className="rounded-2xl bg-amber-50 p-4 text-xs leading-6 text-amber-900">
+            سيتم تسليم الأدوية دون تحصيل، ويبقى كامل المبلغ دينًا في حساب
+            الصيدلية لدى المستودع.
+          </p>
+        )}
+        {error && (
+          <p className="rounded-xl bg-rose-50 p-3 text-sm font-bold text-rose-700">
+            {error.response?.data?.error ||
+              error.response?.data?.detail ||
+              "تعذر تأكيد الاستلام وتسوية الحساب."}
+          </p>
+        )}
+        <button
+          disabled={busy || partialInvalid}
+          className="btn-primary w-full justify-center disabled:opacity-50"
+        >
+          {busy ? "جاري التأكيد..." : "تأكيد الاستلام والحساب"}
+        </button>
+      </form>
+    </SimpleDialog>
+  );
+}
+
 function ReturnDialog({ order, returns, busy, error, onClose, onSubmit }) {
   const returnedQuantity = (orderItemId) =>
     returns
@@ -2673,7 +2873,15 @@ function ReturnDialog({ order, returns, busy, error, onClose, onSubmit }) {
             onChange={(event) =>
               setForm((x) => ({ ...x, reason: event.target.value }))
             }
+            minLength="3"
+            maxLength="1000"
+            placeholder="اكتب سببًا واضحًا، مثال: عبوة تالفة أو دواء غير مطلوب"
           />
+          {form.reason.trim().length > 0 && form.reason.trim().length < 3 && (
+            <small className="mt-1 block font-bold text-amber-700">
+              سبب الإرجاع يجب أن يكون 3 أحرف على الأقل.
+            </small>
+          )}
         </Field>
         <p className="rounded-xl bg-amber-50 p-3 text-xs leading-6 text-amber-900">
           بعد موافقة المستودع وتسلمه للمرتجع، تُخصم الكمية من مخزون الصيدلية
@@ -2681,12 +2889,17 @@ function ReturnDialog({ order, returns, busy, error, onClose, onSubmit }) {
         </p>
         {error && (
           <p className="rounded-xl bg-rose-50 p-3 text-sm font-bold text-rose-700">
-            {error.response?.data?.error || "تعذر إرسال طلب المرتجع."}
+            {error.response?.data?.error ||
+              error.response?.data?.detail ||
+              error.message ||
+              "تعذر إرسال طلب المرتجع."}
           </p>
         )}
         <button
-          disabled={busy || !eligibleItems.length}
-          className="btn-primary w-full justify-center"
+          disabled={
+            busy || !eligibleItems.length || form.reason.trim().length < 3
+          }
+          className="btn-primary w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
         >
           {busy ? "جاري الإرسال..." : "إرسال طلب المرتجع"}
         </button>
@@ -3028,7 +3241,168 @@ const paymentMethodLabels = {
   CashOnDelivery: "نقدًا عند الاستلام",
   BankTransfer: "تحويل بنكي",
   Credit: "حساب آجل",
+  ReturnSettlement: "تسوية مرتجع",
 };
+
+function PharmacyAccountsPanel({ invoices, loading, onManage }) {
+  const { i18n } = useTranslation();
+  const currentLanguage = normalizeLanguage(
+    i18n.resolvedLanguage || i18n.language || "ar",
+  );
+  const [search, setSearch] = useState("");
+  const accounts = Object.values(
+    invoices.reduce((result, invoice) => {
+      const key = invoice.pharmacyName || "صيدلية غير معروفة";
+      const account = result[key] || {
+        pharmacyName: key,
+        invoices: [],
+        total: 0,
+        paid: 0,
+        remaining: 0,
+        refunds: 0,
+      };
+      account.invoices.push(invoice);
+      account.total += Number(invoice.totalAmount || 0);
+      account.paid += Number(invoice.paidAmount || 0);
+      account.remaining += Number(invoice.remainingAmount || 0);
+      account.refunds += (invoice.payments || [])
+        .filter((payment) => Number(payment.amount) < 0)
+        .reduce((sum, payment) => sum + Math.abs(Number(payment.amount)), 0);
+      result[key] = account;
+      return result;
+    }, {}),
+  )
+    .filter((account) =>
+      account.pharmacyName.toLowerCase().includes(search.trim().toLowerCase()),
+    )
+    .sort((a, b) => b.remaining - a.remaining);
+
+  if (loading)
+    return (
+      <div className="surface p-12 text-center">جاري تحميل الحسابات...</div>
+    );
+
+  return (
+    <div className="space-y-5">
+      <section className="surface p-5 sm:p-6">
+        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+          <div>
+            <h2 className="text-xl font-black text-[#174B57]">
+              حسابات الصيدليات
+            </h2>
+            <p className="mt-1 text-sm text-[#71858A]">
+              كشف مجمّع لكل صيدلية: الفواتير، المقبوضات، تسويات المرتجعات
+              والرصيد المتبقي.
+            </p>
+          </div>
+          <label className="relative block sm:w-80">
+            <Search
+              className="absolute end-4 top-1/2 -translate-y-1/2 text-[#829499]"
+              size={18}
+            />
+            <input
+              className="form-input pe-11"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="ابحث باسم الصيدلية"
+            />
+          </label>
+        </div>
+      </section>
+      <section className="grid gap-4 xl:grid-cols-2">
+        {accounts.map((account) => (
+          <article key={account.pharmacyName} className="surface p-5 sm:p-6">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <span className="grid size-12 place-items-center rounded-2xl bg-[#EAF4F3] text-[#216474]">
+                  <Building2 />
+                </span>
+                <div>
+                  <h3 className="font-black">{account.pharmacyName}</h3>
+                  <p className="text-xs text-[#829499]">
+                    {account.invoices.length} فاتورة
+                  </p>
+                </div>
+              </div>
+              <span
+                className={`rounded-full px-3 py-1.5 text-xs font-black ${account.remaining > 0 ? "bg-rose-50 text-rose-700" : "bg-emerald-50 text-emerald-700"}`}
+              >
+                {account.remaining > 0 ? "عليه رصيد" : "مسدد"}
+              </span>
+            </div>
+            <div className="mt-5 grid grid-cols-2 gap-2 text-center text-xs sm:grid-cols-4">
+              <AccountValue
+                label="إجمالي الفواتير"
+                value={money(account.total, currentLanguage)}
+              />
+              <AccountValue
+                label="المقبوض"
+                value={money(account.paid, currentLanguage)}
+                tone="text-emerald-700"
+              />
+              <AccountValue
+                label="المتبقي"
+                value={money(account.remaining, currentLanguage)}
+                tone="text-rose-700"
+              />
+              <AccountValue
+                label="مرتجعات مسددة"
+                value={money(account.refunds, currentLanguage)}
+                tone="text-amber-700"
+              />
+            </div>
+            <details className="mt-4 rounded-2xl border border-[#DCE8EA] bg-[#F8FBFB] p-4">
+              <summary className="cursor-pointer font-black text-[#216474]">
+                فتح كشف الحساب التفصيلي
+              </summary>
+              <div className="mt-4 space-y-2">
+                {account.invoices.map((invoice) => (
+                  <button
+                    type="button"
+                    key={invoice.id}
+                    onClick={() => onManage(invoice)}
+                    className="flex w-full items-center justify-between gap-3 rounded-xl bg-white p-3 text-start shadow-sm transition hover:ring-1 hover:ring-[#90C9CF]"
+                  >
+                    <span>
+                      <b className="block font-mono text-xs text-[#216474]">
+                        {invoice.invoiceNumber}
+                      </b>
+                      <small className="text-[#829499]">
+                        طلب {invoice.orderCode}
+                      </small>
+                    </span>
+                    <span className="text-end text-xs">
+                      <b className="block">
+                        {money(invoice.totalAmount, currentLanguage)}
+                      </b>
+                      <small className="text-rose-700">
+                        باقي {money(invoice.remainingAmount, currentLanguage)}
+                      </small>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </details>
+          </article>
+        ))}
+        {!accounts.length && (
+          <div className="surface col-span-full p-12 text-center text-[#829499]">
+            لا توجد حسابات صيدليات مطابقة.
+          </div>
+        )}
+      </section>
+    </div>
+  );
+}
+
+function AccountValue({ label, value, tone = "text-[#174B57]" }) {
+  return (
+    <div className="rounded-xl bg-[#F8FBFB] p-3">
+      <b className={`block text-sm ${tone}`}>{value}</b>
+      <span className="mt-1 block text-[#71858A]">{label}</span>
+    </div>
+  );
+}
 
 function InvoicesPanel({ invoices, loading, role, onManage }) {
   const { t, i18n } = useTranslation();
@@ -3382,8 +3756,9 @@ function InvoiceDialog({ invoice, role, busy, error, onClose, onSubmit }) {
   });
   return (
     <div className="fixed inset-0 z-[110] grid place-items-center bg-[#071f25]/65 p-4 backdrop-blur-sm">
+      <InvoicePrint invoice={invoice} currentLanguage={currentLanguage} />
       <div
-        className="max-h-[94vh] w-full max-w-3xl overflow-auto rounded-[16px] bg-[#F8FBFB] shadow-2xl"
+        className="no-print max-h-[94vh] w-full max-w-3xl overflow-auto rounded-[16px] bg-[#F8FBFB] shadow-2xl"
         dir={direction}
         lang={currentLanguage}
       >
@@ -3655,5 +4030,72 @@ function InvoiceDialog({ invoice, role, busy, error, onClose, onSubmit }) {
         </div>
       </div>
     </div>
+  );
+}
+
+function InvoicePrint({ invoice, currentLanguage }) {
+  const locale = resolveLocale(currentLanguage);
+  const isRefund = (payment) => Number(payment.amount) < 0;
+  return (
+    <article className="invoice-print print-only" dir="rtl">
+      <header className="invoice-print__header">
+        <div>
+          <p className="invoice-print__brand">DAWAAI BUSINESS NETWORK</p>
+          <h1>فاتورة توريد أدوية</h1>
+          <p>نسخة مالية صادرة عن نظام دوائي</p>
+        </div>
+        <div className="invoice-print__number">
+          <b>{invoice.invoiceNumber}</b>
+          <span>
+            تاريخ الإصدار: {new Date(invoice.issuedAtUtc).toLocaleDateString(locale)}
+          </span>
+          <span>
+            تاريخ الاستحقاق: {new Date(invoice.dueAtUtc).toLocaleDateString(locale)}
+          </span>
+        </div>
+      </header>
+
+      <section className="invoice-print__parties">
+        <div><span>من المستودع</span><b>{invoice.warehouseName}</b></div>
+        <div><span>إلى الصيدلية</span><b>{invoice.pharmacyName}</b></div>
+        <div><span>رقم طلب التوريد</span><b>{invoice.orderCode}</b></div>
+        <div><span>حالة الدفع</span><b>{paymentLabels[invoice.paymentStatus] || invoice.paymentStatus}</b></div>
+      </section>
+
+      <table className="invoice-print__table">
+        <thead><tr><th>#</th><th>الدواء</th><th>رقم الدفعة</th><th>الكمية</th><th>سعر الوحدة</th><th>الإجمالي</th></tr></thead>
+        <tbody>
+          {(invoice.items || []).map((item, index) => (
+            <tr key={`${item.medicineName}-${item.batchNumber}-${index}`}>
+              <td>{index + 1}</td><td>{item.medicineName}</td><td>{item.batchNumber || "—"}</td><td>{item.quantity}</td><td>{money(item.unitPrice, currentLanguage)}</td><td>{money(item.lineTotal, currentLanguage)}</td>
+            </tr>
+          ))}
+          {!invoice.items?.length && <tr><td colSpan="6">لا توجد بنود متاحة في هذه النسخة.</td></tr>}
+        </tbody>
+      </table>
+
+      <section className="invoice-print__totals">
+        <div><span>قيمة الأدوية</span><b>{money(invoice.subtotal, currentLanguage)}</b></div>
+        <div><span>التوصيل</span><b>{money(invoice.deliveryFee, currentLanguage)}</b></div>
+        <div><span>الخصم</span><b>- {money(invoice.discountAmount, currentLanguage)}</b></div>
+        <div><span>الضريبة</span><b>{money(invoice.taxAmount, currentLanguage)}</b></div>
+        <div className="invoice-print__grand"><span>إجمالي الفاتورة</span><b>{money(invoice.totalAmount, currentLanguage)}</b></div>
+        <div><span>المدفوع الصافي</span><b>{money(invoice.paidAmount, currentLanguage)}</b></div>
+        <div className="invoice-print__balance"><span>الرصيد المتبقي</span><b>{money(invoice.remainingAmount, currentLanguage)}</b></div>
+      </section>
+
+      {invoice.payments?.length > 0 && (
+        <section className="invoice-print__payments">
+          <h2>سجل الدفعات والتسويات</h2>
+          <table className="invoice-print__table">
+            <thead><tr><th>التاريخ</th><th>النوع</th><th>الطريقة</th><th>المرجع</th><th>المبلغ</th></tr></thead>
+            <tbody>{invoice.payments.map((payment) => <tr key={payment.id}><td>{new Date(payment.paidAtUtc).toLocaleDateString(locale)}</td><td>{isRefund(payment) ? "تسوية مرتجع" : "دفعة"}</td><td>{paymentMethodLabels[payment.method] || payment.method}</td><td>{payment.referenceNumber || "—"}</td><td className={isRefund(payment) ? "invoice-print__negative" : ""}>{money(payment.amount, currentLanguage)}</td></tr>)}</tbody>
+          </table>
+        </section>
+      )}
+
+      {invoice.warehouseNote && <p className="invoice-print__note"><b>ملاحظة المستودع:</b> {invoice.warehouseNote}</p>}
+      <footer><span>توقيع المستودع</span><span>توقيع الصيدلية والاستلام</span></footer>
+    </article>
   );
 }
