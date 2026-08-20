@@ -90,6 +90,7 @@ export const dashboardRouteGroups = [
         element: redirect("/app/warehouse/inventory"),
       },
       { path: "warehouse/invoices", element: <SupplyChainWorkspacePage /> },
+      { path: "warehouse/accounts", element: <SupplyChainWorkspacePage /> },
       { path: "warehouse/returns", element: <SupplyChainWorkspacePage /> },
       { path: "warehouse/recalls", element: <SupplyChainWorkspacePage /> },
       { path: "warehouse/profile", element: redirect("/app/settings") },

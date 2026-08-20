@@ -477,6 +477,11 @@ const roleDefinitions = {
         icon: ReceiptText,
       },
       {
+        to: "/app/warehouse/accounts",
+        label: "حسابات الصيدليات",
+        icon: Building2,
+      },
+      {
         to: "/app/warehouse/returns",
         label: "المرتجعات",
         icon: RotateCcw,

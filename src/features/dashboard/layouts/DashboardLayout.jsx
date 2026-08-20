@@ -159,6 +159,9 @@ function getDashboardPageTitle(pathname) {
   if (pathname.startsWith("/app/warehouse/invoices")) {
     return "الفواتير والمدفوعات";
   }
+  if (pathname.startsWith("/app/warehouse/accounts")) {
+    return "حسابات الصيدليات";
+  }
   if (pathname.startsWith("/app/warehouse/returns")) {
     return "المرتجعات";
   }
