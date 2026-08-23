@@ -1012,76 +1012,7 @@ export function MedicineSearchPage() {
       {/* =====================================================
           FOOTER — نفس Footer الداشبورد
       ====================================================== */}
-      <footer
-        dir="rtl"
-        className="m-0 w-full border-t border-[rgba(102,102,102,0.16)] bg-white"
-        style={{
-          width: "100vw",
-          marginInline: "calc(50% - 50vw)",
-        }}
-      >
-        <div className="mx-auto flex w-full flex-col px-9 pb-5 pt-7 lg:px-12">
-          <div className="grid w-full grid-cols-1 items-center gap-8 md:grid-cols-2 xl:grid-cols-4 xl:gap-12">
-            <div className="flex min-w-0 flex-col items-start gap-3 xl:mr-30">
-              <Brand />
-
-              <p className="max-w-[300px] text-right text-[12px] font-normal leading-[20px] tracking-[0.01em] text-[#666666]">
-                منصة ذكية تساعدك في العثور على أقرب صيدلية والوصول إلى الخدمات
-                الدوائية بصورة أسرع وأكثر موثوقية.
-              </p>
-            </div>
-
-            <DashboardFooterFeature
-              icon={LockKeyhole}
-              title="خصوصية كاملة"
-              description="نحافظ على بياناتك ومعلوماتك"
-            />
-
-            <DashboardFooterFeature
-              icon={ShieldCheck}
-              title="معلومات موثوقة"
-              description="بيانات منظمة ومحدثة قدر الإمكان"
-            />
-
-            <DashboardFooterFeature
-              icon={Headphones}
-              title="دعم على مدار الساعة"
-              description="نحن هنا لمساعدتك عند الحاجة"
-            />
-          </div>
-
-          <div className="my-6 h-px w-full bg-[rgba(102,102,102,0.16)]" />
-
-          <div className="flex w-full flex-col items-center justify-between gap-4 sm:flex-row">
-            <p className="text-right text-[12px] font-normal leading-[20px] tracking-[0.01em] text-[#A5A5A5] xl:mr-30">
-              جميع الحقوق محفوظة لمنصة دوائي © 2026
-            </p>
-
-            <div dir="ltr" className="flex items-center gap-3 xl:ml-40">
-              {[
-                ["instagram", "Instagram"],
-                ["email", "Email"],
-                ["facebook", "Facebook"],
-                ["whatsapp", "WhatsApp"],
-              ].map(([key, label]) => (
-                <a
-                  key={key}
-                  href="#"
-                  aria-label={label}
-                  className="grid size-[44px] place-items-center rounded-full border border-[rgba(102,102,102,0.16)] bg-[rgba(171,222,222,0.16)] transition hover:bg-[#E6F3F6]"
-                >
-                  <img
-                    src={FOOTER_SOCIAL_ICONS[key]}
-                    alt=""
-                    aria-hidden="true"
-                    className="size-6 object-contain"
-                  />
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
-      </footer>
+     
     </div>
   );
 }

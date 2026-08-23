@@ -14,6 +14,7 @@ import {
 import { Link } from "react-router-dom";
 import { QRCodeSVG } from "qrcode.react";
 import { getApiErrorMessage } from "../../../shared/api/errors";
+const HEALTH_HERO_BACKGROUND = "/assets/app/home/hero_search.png";
 import { MedicineAlternativesButton } from "../../intelligence/components/MedicineAlternativesButton";
 import {
   activatePrescriptionReminders,
@@ -107,57 +108,76 @@ export function SmartPrescriptionsPage() {
     analyze.error || reserve.error || cancel.error || reminders.error;
   return (
     <div className="space-y-6 pb-4">
-      <section
-        className="relative isolate overflow-hidden bg-[#0d7586] text-white"
-        style={{
-          width: "100vw",
-          marginInline: "calc(50% - 50vw)",
-          marginTop: "-24px",
-        }}
-      >
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_18%_25%,rgba(62,204,219,.46),transparent_31%),linear-gradient(115deg,#064c5c_0%,#0d7586_52%,#093f4d_100%)]"
-        />
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 -z-10 opacity-30 [background-image:radial-gradient(circle_at_center,rgba(255,255,255,.55)_1px,transparent_1px)] [background-size:28px_28px]"
-        />
+     <section 
+  className="relative isolate overflow-hidden bg-[#0D7586] text-white" 
+  style={{ 
+    width: "100vw", 
+    marginInline: "calc(50% - 50vw)", 
+    marginTop: "-24px", 
+  }} 
+> 
+  {/* نفس خلفية هيرو الملف الصحي */}
+  <img 
+    src={HEALTH_HERO_BACKGROUND} 
+    alt="" 
+    aria-hidden="true" 
+    draggable={false} 
+    className="
+      absolute inset-0 -z-20
+      h-full w-full
+      select-none object-cover object-center
+      opacity-80
+    " 
+  /> 
 
-        <div className="mx-auto grid min-h-[330px] w-full max-w-[1440px] items-center gap-4 px-5 py-8 sm:px-8 lg:grid-cols-[minmax(0,1fr)_420px] lg:px-12 lg:py-10">
-          <div className="order-1 text-center lg:text-right">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-bold text-white/90 backdrop-blur-sm">
-              <Sparkles size={15} /> الوصفة الذكية
-            </span>
-            <h1 className="mx-auto mt-4 max-w-[700px] text-3xl font-black leading-[1.35] sm:text-4xl lg:mx-0 lg:text-[42px]">
-              ارفع وصفتك المطبوعة، ودعنا نقرأها لك
-            </h1>
-            <p className="mx-auto mt-3 max-w-[680px] text-sm leading-7 text-white/75 lg:mx-0">
-              حمّل صورة واضحة أو ملف PDF، وسنستخرج الأدوية ونساعدك في إيجادها
-              وحجزها من الصيدليات القريبة.
-            </p>
-            <div className="mt-5 flex flex-wrap justify-center gap-3 text-xs font-bold text-white/85 lg:justify-start">
-              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-2">
-                <ShieldCheck size={15} /> قراءة آمنة وواضحة
-              </span>
-              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-2">
-                <FileImage size={15} /> JPG، PNG، PDF
-              </span>
-            </div>
-          </div>
+  {/* Overlay */}
+  <div 
+    aria-hidden="true" 
+    className="
+      absolute inset-0 -z-10
+      bg-[linear-gradient(90deg,rgba(0,60,73,.18),rgba(3,110,126,.58),rgba(0,63,76,.44))]
+    " 
+  /> 
 
-          <div className="order-2 flex items-center justify-center lg:justify-end">
-            <div className="relative h-[190px] w-full max-w-[320px] sm:h-[220px] lg:h-[270px] lg:max-w-[390px]">
-              <div className="absolute inset-x-8 bottom-2 h-16 rounded-full bg-cyan-200/30 blur-2xl" />
-              <img
-                src={SMART_PRESCRIPTION_IMAGE}
-                alt="تحليل الوصفة الطبية بذكاء"
-                className="relative h-full w-full object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,.22)]"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
+  <div className="mx-auto grid min-h-[330px] w-full max-w-[1440px] items-center gap-4 px-5 py-8 sm:px-8 lg:grid-cols-[minmax(0,1fr)_420px] lg:px-12 lg:py-10"> 
+    <div className="order-1 text-center lg:text-right"> 
+      <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-bold text-white/90 backdrop-blur-sm"> 
+        <Sparkles size={15} /> الوصفة الذكية 
+      </span> 
+
+      <h1 className="mx-auto mt-4 max-w-[700px] text-3xl font-black leading-[1.35] sm:text-4xl lg:mx-0 lg:text-[35px]"> 
+        ارفع وصفتك المطبوعة، ودعنا نقرأها لك 
+      </h1> 
+
+      <p className="mx-auto mt-3 max-w-[680px] text-sm leading-7 text-white/75 lg:mx-0"> 
+        حمّل صورة واضحة أو ملف PDF، وسنستخرج الأدوية ونساعدك في إيجادها 
+        وحجزها من الصيدليات القريبة. 
+      </p> 
+
+      <div className="mt-5 flex flex-wrap justify-center gap-3 text-xs font-bold text-white/85 lg:justify-start"> 
+        <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-2"> 
+          <ShieldCheck size={15} /> قراءة آمنة وواضحة 
+        </span> 
+
+        <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-2"> 
+          <FileImage size={15} /> JPG، PNG، PDF 
+        </span> 
+      </div> 
+    </div> 
+
+    <div className="order-2 flex items-center justify-center lg:justify-end"> 
+      <div className="relative h-[190px] w-full max-w-[320px] sm:h-[220px] lg:h-[270px] lg:max-w-[390px]"> 
+        <div className="absolute inset-x-8 bottom-2 h-16 rounded-full bg-cyan-200/30 blur-2xl" /> 
+
+        <img 
+          src={SMART_PRESCRIPTION_IMAGE} 
+          alt="تحليل الوصفة الطبية بذكاء" 
+          className="relative h-full w-full object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,.22)]" 
+        /> 
+      </div> 
+    </div> 
+  </div> 
+</section>
 
       <section className="surface mx-auto max-w-[1440px] p-4 sm:p-6">
         <div className="mb-4 text-center sm:text-right">

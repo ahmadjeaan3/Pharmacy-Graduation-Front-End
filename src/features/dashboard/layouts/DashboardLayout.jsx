@@ -124,7 +124,9 @@ function getDashboardPageTitle(pathname) {
   ) {
     return "تحقق التبرعات";
   }
-
+if (pathname.startsWith("/app/sos")) {
+  return "طلبات الأدوية العاجلة";
+}
   if (pathname.startsWith("/app/pharmacy/profile")) {
     return "الملف والموقع";
   }
@@ -209,7 +211,9 @@ function getDashboardPageTitle(pathname) {
   if (pathname.startsWith("/app/accounts")) {
     return "إدارة الحسابات";
   }
-
+if (pathname.startsWith("/app/audit-logs")) {
+  return "سجل النشاطات";
+}
   if (pathname.startsWith("/app/medicines")) {
     return "دليل الأدوية";
   }
@@ -821,7 +825,7 @@ export function DashboardLayout() {
               className="flex items-center justify-center"
             >
               <img
-                src="/assets/app/brand/logo_white.png"
+                src="/assets/app/brand/dawaai-logo-512.png"
                 alt="Dawaai"
                 draggable={false}
                 className="h-[72px] w-auto select-none object-contain"

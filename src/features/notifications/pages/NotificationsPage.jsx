@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 
 import { getApiErrorMessage } from "../../../shared/api/errors";
 import { useAuth } from "../../auth/hooks/useAuth";
+
 import {
   getMyNotifications,
   getNotificationSummary,
@@ -20,6 +21,7 @@ import {
   markNotificationAsRead,
   notificationKeys,
 } from "../api/notificationsApi";
+
 import {
   formatNotificationDate,
   notificationTarget,
@@ -35,10 +37,17 @@ const PHARMACY_HERO_IMAGE = "/assets/app/pharmacy.png";
 
 const ADMIN_HERO_IMAGE = "/assets/app/home/background_hero_admin.png";
 
+const WAREHOUSE_HERO_IMAGE =
+  "/assets/app/home/SupplyChainWorkspace.png";
+
 export function NotificationsPage() {
   const { t, i18n } = useTranslation();
 
-  const currentLanguage = (i18n.resolvedLanguage || i18n.language || "ar")
+  const currentLanguage = (
+    i18n.resolvedLanguage ||
+    i18n.language ||
+    "ar"
+  )
     .split("-")[0]
     .toLowerCase();
 
@@ -55,6 +64,7 @@ export function NotificationsPage() {
 
   const client = useQueryClient();
   const navigate = useNavigate();
+
   const { user } = useAuth();
 
   const userRoles = user?.roles || [];
@@ -71,13 +81,38 @@ export function NotificationsPage() {
     (role) => String(role).toLowerCase() === "organization",
   );
 
+  const isAdminAccount = userRoles.some((role) =>
+    [
+      "admin",
+      "administrator",
+      "systemadmin",
+      "system-admin",
+    ].includes(String(role).toLowerCase()),
+  );
+
+  const isWarehouseAccount = userRoles.some((role) =>
+    [
+      "warehouse",
+      "warehouseadmin",
+      "warehouse-admin",
+    ].includes(String(role).toLowerCase()),
+  );
+
   const notificationsHeroImage = isPharmacyAccount
     ? PHARMACY_HERO_IMAGE
-    : isUserAccount
-      ? USER_HERO_IMAGE
-      : isOrganizationAccount
-        ? ORGANIZATION_HERO_IMAGE
-        : ADMIN_HERO_IMAGE;
+    : isAdminAccount
+      ? ADMIN_HERO_IMAGE
+      : isWarehouseAccount
+        ? WAREHOUSE_HERO_IMAGE
+        : isUserAccount
+          ? USER_HERO_IMAGE
+          : ORGANIZATION_HERO_IMAGE;
+
+  const isDashboardStyleAccount =
+    isPharmacyAccount ||
+    isOrganizationAccount ||
+    isAdminAccount ||
+    isWarehouseAccount;
 
   const summary = useQuery({
     queryKey: notificationKeys.summary,
@@ -95,13 +130,15 @@ export function NotificationsPage() {
     refetchOnReconnect: true,
   });
 
-  const refresh = async () =>
-    client.invalidateQueries({
+  const refresh = async () => {
+    await client.invalidateQueries({
       queryKey: notificationKeys.root,
     });
+  };
 
   const readOne = useMutation({
     mutationFn: markNotificationAsRead,
+
     onSuccess: refresh,
   });
 
@@ -129,7 +166,10 @@ export function NotificationsPage() {
       await readOne.mutateAsync(notification.id);
     }
 
-    const target = notificationTarget(notification, user?.roles || []);
+    const target = notificationTarget(
+      notification,
+      user?.roles || [],
+    );
 
     if (target) {
       navigate(target);
@@ -146,294 +186,417 @@ export function NotificationsPage() {
     <div
       dir={direction}
       lang={currentLanguage}
-      className="m-0 min-h-screen w-full bg-[#F4F8F9] p-0 text-[#333333]"
+      className="m-0 min-h-screen w-full bg-[#F7F9FA] p-0 text-[#333333]"
     >
-      {/* Hero */}
-      <section
-        className="
-          relative isolate
-          -mt-6 overflow-hidden
-          bg-[#0D7586]
-          text-white
-          sm:-mt-7
-          lg:-mt-8
-        "
-        style={{
-          width: "100vw",
-          marginInline: "calc(50% - 50vw)",
-        }}
+      <div
+        className={
+          isDashboardStyleAccount
+            ? "space-y-6"
+            : ""
+        }
       >
-        <img
-          src={notificationsHeroImage}
-          alt=""
-          aria-hidden="true"
-          className={`
-            absolute inset-0 -z-20
-            h-full w-full
-            select-none
-            object-cover object-center
-            opacity-80
-            ${
-              isPharmacyAccount
-                ? isArabic
-                  ? "scale-x-[-1]"
-                  : "scale-x-100"
-                : isArabic
-                  ? "scale-x-100"
-                  : "scale-x-[-1]"
-            }
-          `}
-        />
+        {/* =====================================================
+            HERO
+        ====================================================== */}
 
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 -z-10"
-          style={{
-            background: isArabic
-              ? "linear-gradient(270deg,rgba(0,63,76,.48) 0%,rgba(3,110,126,.60) 48%,rgba(0,60,73,.18) 100%)"
-              : "linear-gradient(90deg,rgba(0,63,76,.48) 0%,rgba(3,110,126,.60) 48%,rgba(0,60,73,.18) 100%)",
-          }}
-        />
-
-        <div
-          dir={direction}
-          className="
-            relative z-10
-          mx-auto flex min-h-[200px]
-          w-full max-w-[1240px]
-            flex-col items-stretch justify-center gap-6
-            px-4 py-8
-            sm:px-7
-            md:flex-row md:items-center md:justify-between
-            lg:px-8 lg:py-9
-          "
+        <section
+          className={
+            isDashboardStyleAccount
+              ? "relative isolate min-h-[220px] overflow-hidden rounded-[14px] text-white shadow-[0_22px_55px_rgba(23,75,87,.16)] sm:min-h-[230px] lg:min-h-[250px]"
+              : "relative isolate -mt-6 overflow-hidden bg-[#0D7586] text-white sm:-mt-7 lg:-mt-8"
+          }
+          style={
+            isDashboardStyleAccount
+              ? undefined
+              : {
+                  width: "100vw",
+                  marginInline: "calc(50% - 50vw)",
+                }
+          }
         >
+          <img
+            src={notificationsHeroImage}
+            alt=""
+            aria-hidden="true"
+            className={`
+              absolute inset-0 -z-20
+              h-full w-full
+              select-none
+              object-cover object-center
+
+              ${
+                isPharmacyAccount
+                  ? isArabic
+                    ? "scale-x-[-1] object-[center_42%] opacity-100"
+                    : "scale-x-100 object-[center_42%] opacity-100"
+                  : isOrganizationAccount
+                    ? isArabic
+                      ? "scale-x-100 object-[center_50%] opacity-100"
+                      : "scale-x-[-1] object-[center_50%] opacity-100"
+                    : isAdminAccount
+                      ? isArabic
+                        ? "scale-x-100 object-[center_46%] opacity-100"
+                        : "scale-x-[-1] object-[center_46%] opacity-100"
+                      : isWarehouseAccount
+                        ? isArabic
+                          ? "scale-x-100 object-[center_48%] opacity-100"
+                          : "scale-x-[-1] object-[center_48%] opacity-100"
+                        : isArabic
+                          ? "scale-x-100"
+                          : "scale-x-[-1]"
+              }
+            `}
+          />
+
           <div
-            className={`flex min-w-0 items-center gap-4 ${
-              isArabic ? "text-right" : "text-left"
-            }`}
+            aria-hidden="true"
+            className="absolute inset-0 -z-10"
+            style={{
+              background: isPharmacyAccount
+                ? isArabic
+                  ? "linear-gradient(270deg, #10505A 0%, rgba(16,80,90,.88) 34%, rgba(33,100,116,.42) 68%, rgba(33,100,116,.08) 100%)"
+                  : "linear-gradient(90deg, #10505A 0%, rgba(16,80,90,.88) 34%, rgba(33,100,116,.42) 68%, rgba(33,100,116,.08) 100%)"
+                : isOrganizationAccount
+                  ? isArabic
+                    ? "linear-gradient(270deg, #10505A 0%, rgba(16,80,90,.90) 32%, rgba(33,100,116,.46) 66%, rgba(33,100,116,.10) 100%)"
+                    : "linear-gradient(90deg, #10505A 0%, rgba(16,80,90,.90) 32%, rgba(33,100,116,.46) 66%, rgba(33,100,116,.10) 100%)"
+                  : isAdminAccount
+                    ? isArabic
+                      ? "linear-gradient(270deg, #0D4E59 0%, rgba(13,78,89,.92) 34%, rgba(33,100,116,.48) 68%, rgba(33,100,116,.10) 100%)"
+                      : "linear-gradient(90deg, #0D4E59 0%, rgba(13,78,89,.92) 34%, rgba(33,100,116,.48) 68%, rgba(33,100,116,.10) 100%)"
+                    : isWarehouseAccount
+                      ? isArabic
+                        ? "linear-gradient(270deg, #10505A 0%, rgba(16,80,90,.91) 34%, rgba(33,100,116,.46) 68%, rgba(33,100,116,.08) 100%)"
+                        : "linear-gradient(90deg, #10505A 0%, rgba(16,80,90,.91) 34%, rgba(33,100,116,.46) 68%, rgba(33,100,116,.08) 100%)"
+                      : isArabic
+                        ? "linear-gradient(270deg,rgba(0,63,76,.48) 0%,rgba(3,110,126,.60) 48%,rgba(0,60,73,.18) 100%)"
+                        : "linear-gradient(90deg,rgba(0,63,76,.48) 0%,rgba(3,110,126,.60) 48%,rgba(0,60,73,.18) 100%)",
+            }}
+          />
+
+          {isDashboardStyleAccount && (
+            <div
+              aria-hidden="true"
+              className={`absolute -top-20 -z-[5] size-64 rounded-full border-[40px] border-white/[.04] ${
+                isArabic
+                  ? "-left-14"
+                  : "-right-14"
+              }`}
+            />
+          )}
+
+          <div
+            dir={direction}
+            className={
+              isDashboardStyleAccount
+                ? "relative z-10 flex min-h-[220px] w-full items-center gap-6 px-6 py-7 sm:min-h-[230px] lg:min-h-[250px] lg:px-9"
+                : "relative z-10 mx-auto flex min-h-[220px] w-full max-w-[1240px] items-center gap-6 px-5 py-9 sm:px-7 lg:px-8"
+            }
           >
-            <span
-              className="
-                grid size-12 shrink-0
-                place-items-center
-                rounded-xl
-                bg-white/[.10]
-                text-[#E6F3F6]
-                backdrop-blur-sm
-              "
+            <div
+              className={`me-auto flex items-center gap-4 ${
+                isArabic
+                  ? "text-right"
+                  : "text-left"
+              }`}
             >
-              <BellDot size={26} strokeWidth={1.8} />
-            </span>
-
-            <div className={`min-w-0 ${isArabic ? "text-right" : "text-left"}`}>
-              <h1 className="text-[24px] font-black leading-tight text-white sm:text-[30px]">
-                {t("إشعاراتك في مكان واحد")}
-              </h1>
-
-              <p className="mt-3 max-w-[620px] text-sm leading-7 text-[#D6D6D6]">
-                {t(
-                  "تابع الطلبات والاعتمادات والتحديثات المهمة، وانتقل مباشرة إلى التفاصيل عندما تكون متاحة.",
-                )}
-              </p>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            disabled={!unread || readAll.isPending}
-            onClick={() => readAll.mutate()}
-            className="
-              inline-flex h-[46px] w-full shrink-0
-              items-center justify-center gap-2
-              rounded-xl
-              border border-white/20
-              bg-white
-              px-5 md:w-auto
-              text-sm font-bold
-              text-[#174B57]
-              shadow-[0_10px_24px_rgba(7,31,37,.10)]
-              transition
-              hover:bg-[#F8FBFB]
-              disabled:cursor-not-allowed
-              disabled:opacity-50
-            "
-          >
-            <CheckCheck size={17} />
-
-            {readAll.isPending ? t("جاري التحديث...") : t("تحديد الكل كمقروء")}
-          </button>
-        </div>
-      </section>
-
-      <main className="mx-auto w-full max-w-[1240px] space-y-5 px-4 pb-12 pt-6 sm:px-7 sm:pt-8 lg:px-8">
-        {/* Notice */}
-        {notice && (
-          <div className="rounded-xl border border-[#CFE4E7] bg-[#EAF4F3] px-4 py-3 text-sm font-bold text-[#216474]">
-            {notice}
-          </div>
-        )}
-
-        {/* Summary */}
-        <section className="grid gap-3 sm:grid-cols-3 lg:gap-4">
-          <SummaryCard
-            icon={Layers3}
-            label={t("جميع الإشعارات")}
-            value={total}
-            iconBox="bg-[#E6F3F6]"
-            iconColor="text-[#216474]"
-            currentLanguage={currentLanguage}
-            direction={direction}
-          />
-
-          <SummaryCard
-            icon={BellDot}
-            label={t("غير المقروءة")}
-            value={unread}
-            iconBox="bg-[#F0F6F7]"
-            iconColor="text-[#52727A]"
-            currentLanguage={currentLanguage}
-            direction={direction}
-          />
-
-          <SummaryCard
-            icon={CircleCheckBig}
-            label={t("تمت قراءتها")}
-            value={read}
-            iconBox="bg-[#EAF4F3]"
-            iconColor="text-[#174B57]"
-            currentLanguage={currentLanguage}
-            direction={direction}
-          />
-        </section>
-
-        {/* Filters */}
-        <section className="rounded-2xl border border-[#DCE8EA] bg-white p-3 shadow-[0_8px_26px_rgba(23,75,87,.04)] sm:p-4">
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 [scrollbar-width:thin]">
-            <FilterButton
-              active={!filters.unreadOnly && !filters.type}
-              label={t("جميع الإشعارات")}
-              currentLanguage={currentLanguage}
-              onClick={() =>
-                setFilters({
-                  unreadOnly: false,
-                  type: "",
-                  take: 100,
-                })
-              }
-            />
-
-            <FilterButton
-              active={filters.unreadOnly && !filters.type}
-              label={t("غير المقروءة")}
-              count={unread}
-              currentLanguage={currentLanguage}
-              onClick={() =>
-                setFilters({
-                  unreadOnly: true,
-                  type: "",
-                  take: 100,
-                })
-              }
-            />
-
-            {Object.entries(notificationTypes)
-              .filter(
-                ([type]) =>
-                  (summary.data?.unreadByType || []).some(
-                    (item) => item.type === type,
-                  ) || list.data?.some((item) => item.type === type),
-              )
-              .map(([type, meta]) => (
-                <FilterButton
-                  key={type}
-                  active={filters.type === type}
-                  label={t(meta.label)}
-                  count={
-                    (summary.data?.unreadByType || []).find(
-                      (item) => item.type === type,
-                    )?.count
-                  }
-                  currentLanguage={currentLanguage}
-                  onClick={() =>
-                    setFilters({
-                      unreadOnly: false,
-                      type,
-                      take: 100,
-                    })
-                  }
+              <span
+                className="
+                  grid size-12 shrink-0
+                  place-items-center
+                  rounded-xl
+                  bg-white/[.10]
+                  text-[#E6F3F6]
+                  backdrop-blur-sm
+                "
+              >
+                <BellDot
+                  size={26}
+                  strokeWidth={1.8}
                 />
-              ))}
-          </div>
-        </section>
+              </span>
 
-        {/* List */}
-        {list.isLoading ? (
-          <div className="grid min-h-64 place-items-center rounded-xl bg-white text-sm font-bold text-[#829499]">
-            {t("جاري تحميل الإشعارات...")}
-          </div>
-        ) : list.isError ? (
-          <div className="rounded-xl border border-rose-100 bg-white p-8 text-center">
-            <p className="font-bold text-rose-700">
-              {t("تعذر تحميل الإشعارات")}
-            </p>
+              <div
+                className={`min-w-0 ${
+                  isArabic
+                    ? "text-right"
+                    : "text-left"
+                }`}
+              >
+                <h1 className="text-[28px] font-bold leading-tight text-white">
+                  {t("إشعاراتك في مكان واحد")}
+                </h1>
 
-            <p className="mt-2 text-sm text-[#71858A]">
-              {getApiErrorMessage(list.error)}
-            </p>
+                <p className="mt-3 max-w-[620px] text-sm leading-7 text-[#D6D6D6]">
+                  {t(
+                    "تابع الطلبات والاعتمادات والتحديثات المهمة، وانتقل مباشرة إلى التفاصيل عندما تكون متاحة.",
+                  )}
+                </p>
+              </div>
+            </div>
 
             <button
               type="button"
-              onClick={() => list.refetch()}
-              className="mt-4 inline-flex h-10 items-center rounded-lg border border-[#D5E3E5] bg-white px-4 text-sm font-bold text-[#216474] transition hover:bg-[#EAF4F3]"
+              disabled={!unread || readAll.isPending}
+              onClick={() => readAll.mutate()}
+              className="
+                inline-flex h-[50px] shrink-0
+                items-center justify-center gap-2
+                rounded-[10px]
+                border border-white
+                bg-white
+                px-6
+                text-[13px] font-bold
+                text-[#216474]
+                shadow-[0_10px_26px_rgba(0,0,0,.16)]
+                transition-all duration-200
+                hover:-translate-y-0.5
+                hover:bg-[#F4FAFA]
+                hover:shadow-[0_14px_30px_rgba(0,0,0,.20)]
+                disabled:cursor-not-allowed
+                disabled:border-white/70
+                disabled:bg-white/75
+                disabled:text-[#216474]/70
+                disabled:opacity-100
+              "
             >
-              {t("إعادة المحاولة")}
+              <CheckCheck
+                size={18}
+                strokeWidth={2}
+              />
+
+              {readAll.isPending
+                ? t("جاري التحديث...")
+                : t("تحديد الكل كمقروء")}
             </button>
           </div>
-        ) : !list.data?.length ? (
-          <div className="grid min-h-64 place-items-center rounded-xl border border-dashed border-[#CFE0E3] bg-white p-8 text-center">
-            <div>
-              <span className="mx-auto grid size-12 place-items-center rounded-xl bg-[#EAF4F3] text-[#216474]">
-                <Bell size={23} />
-              </span>
+        </section>
 
-              <h2 className="mt-4 font-bold text-[#29464D]">
-                {t("لا توجد إشعارات هنا")}
-              </h2>
+        {/* =====================================================
+            MAIN
+        ====================================================== */}
 
-              <p className="mt-2 text-sm text-[#829499]">
-                {t("ستظهر التحديثات المهمة فور حدوثها.")}
-              </p>
+        <main
+          className={
+            isDashboardStyleAccount
+              ? "w-full"
+              : "mx-auto w-full max-w-[1240px] px-5 pb-12 pt-8 sm:px-7 lg:px-8"
+          }
+        >
+          {/* =====================================================
+              NOTICE
+          ====================================================== */}
+
+          {notice && (
+            <div className="rounded-xl border border-[#CFE4E7] bg-[#EAF4F3] px-4 py-3 text-sm font-bold text-[#216474]">
+              {notice}
             </div>
-          </div>
-        ) : (
-          <section className="space-y-3">
-            {list.data.map((notification) => {
-              const target = notificationTarget(
-                notification,
-                user?.roles || [],
-              );
+          )}
 
-              return (
-                <NotificationCard
-                  key={notification.id}
-                  notification={notification}
-                  targetAvailable={Boolean(target)}
-                  pending={readOne.isPending}
-                  onRead={() => readOne.mutate(notification.id)}
-                  onOpen={() => openNotification(notification)}
-                  t={t}
-                  direction={direction}
-                  currentLanguage={currentLanguage}
-                />
-              );
-            })}
+          {/* =====================================================
+              SUMMARY
+          ====================================================== */}
+
+          <section className="grid gap-4 sm:grid-cols-3">
+            <SummaryCard
+              icon={Layers3}
+              label={t("جميع الإشعارات")}
+              value={total}
+              iconBox="bg-[#E6F3F6]"
+              iconColor="text-[#216474]"
+              currentLanguage={currentLanguage}
+              direction={direction}
+            />
+
+            <SummaryCard
+              icon={BellDot}
+              label={t("غير المقروءة")}
+              value={unread}
+              iconBox="bg-[#F0F6F7]"
+              iconColor="text-[#52727A]"
+              currentLanguage={currentLanguage}
+              direction={direction}
+            />
+
+            <SummaryCard
+              icon={CircleCheckBig}
+              label={t("تمت قراءتها")}
+              value={read}
+              iconBox="bg-[#E6F3F6]"
+              iconColor="text-[#216474]"
+              currentLanguage={currentLanguage}
+              direction={direction}
+            />
           </section>
-        )}
-      </main>
+
+          {/* =====================================================
+              FILTERS
+          ====================================================== */}
+
+          <section className="mt-5 rounded-[10px] border border-[rgba(102,102,102,.14)] bg-white p-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <FilterButton
+                active={
+                  !filters.unreadOnly &&
+                  !filters.type
+                }
+                label={t("جميع الإشعارات")}
+                currentLanguage={currentLanguage}
+                onClick={() =>
+                  setFilters({
+                    unreadOnly: false,
+                    type: "",
+                    take: 100,
+                  })
+                }
+              />
+
+              <FilterButton
+                active={
+                  filters.unreadOnly &&
+                  !filters.type
+                }
+                label={t("غير المقروءة")}
+                count={unread}
+                currentLanguage={currentLanguage}
+                onClick={() =>
+                  setFilters({
+                    unreadOnly: true,
+                    type: "",
+                    take: 100,
+                  })
+                }
+              />
+
+              {Object.entries(notificationTypes)
+                .filter(
+                  ([type]) =>
+                    (
+                      summary.data?.unreadByType ||
+                      []
+                    ).some(
+                      (item) =>
+                        item.type === type,
+                    ) ||
+                    list.data?.some(
+                      (item) =>
+                        item.type === type,
+                    ),
+                )
+                .map(([type, meta]) => (
+                  <FilterButton
+                    key={type}
+                    active={filters.type === type}
+                    label={t(meta.label)}
+                    count={
+                      (
+                        summary.data
+                          ?.unreadByType || []
+                      ).find(
+                        (item) =>
+                          item.type === type,
+                      )?.count
+                    }
+                    currentLanguage={currentLanguage}
+                    onClick={() =>
+                      setFilters({
+                        unreadOnly: false,
+                        type,
+                        take: 100,
+                      })
+                    }
+                  />
+                ))}
+            </div>
+          </section>
+
+          {/* =====================================================
+              NOTIFICATION LIST
+          ====================================================== */}
+
+          {list.isLoading ? (
+            <div className="grid min-h-64 place-items-center rounded-xl bg-white text-sm font-bold text-[#829499]">
+              {t("جاري تحميل الإشعارات...")}
+            </div>
+          ) : list.isError ? (
+            <div className="rounded-xl border border-rose-100 bg-white p-8 text-center">
+              <p className="font-bold text-rose-700">
+                {t("تعذر تحميل الإشعارات")}
+              </p>
+
+              <p className="mt-2 text-sm text-[#71858A]">
+                {getApiErrorMessage(list.error)}
+              </p>
+
+              <button
+                type="button"
+                onClick={() => list.refetch()}
+                className="mt-4 inline-flex h-10 items-center rounded-[8px] border border-[#D5E3E5] bg-white px-4 text-[12px] font-semibold text-[#216474] transition hover:border-[#216474]/30 hover:bg-[#F4FAFA]"
+              >
+                {t("إعادة المحاولة")}
+              </button>
+            </div>
+          ) : !list.data?.length ? (
+            <div className="grid min-h-64 place-items-center rounded-xl border border-dashed border-[#CFE0E3] bg-white p-8 text-center">
+              <div>
+                <span className="mx-auto grid size-12 place-items-center rounded-xl bg-[#EAF4F3] text-[#216474]">
+                  <Bell size={23} />
+                </span>
+
+                <h2 className="mt-4 font-bold text-[#29464D]">
+                  {t("لا توجد إشعارات هنا")}
+                </h2>
+
+                <p className="mt-2 text-sm text-[#829499]">
+                  {t(
+                    "ستظهر التحديثات المهمة فور حدوثها.",
+                  )}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <section className="space-y-3">
+              {list.data.map((notification) => {
+                const target = notificationTarget(
+                  notification,
+                  user?.roles || [],
+                );
+
+                return (
+                  <NotificationCard
+                    key={notification.id}
+                    notification={notification}
+                    targetAvailable={Boolean(target)}
+                    pending={readOne.isPending}
+                    onRead={() =>
+                      readOne.mutate(
+                        notification.id,
+                      )
+                    }
+                    onOpen={() =>
+                      openNotification(
+                        notification,
+                      )
+                    }
+                    t={t}
+                    direction={direction}
+                    currentLanguage={
+                      currentLanguage
+                    }
+                  />
+                );
+              })}
+            </section>
+          )}
+        </main>
+      </div>
     </div>
   );
 }
+
+/* ============================================================
+   SUMMARY CARD
+============================================================ */
 
 function SummaryCard({
   icon: Icon,
@@ -447,27 +610,36 @@ function SummaryCard({
   return (
     <article
       dir={direction}
-      className="flex min-h-[100px] items-center gap-4 rounded-2xl border border-[#DCE8EA] bg-white p-4 shadow-[0_8px_26px_rgba(23,75,87,.04)] sm:min-h-[112px] sm:p-5"
+      className="flex min-h-[108px] items-center gap-4 rounded-[10px] border border-[rgba(102,102,102,.14)] bg-white p-5"
     >
       <span
-        className={`grid size-11 shrink-0 place-items-center rounded-xl ${iconBox} ${iconColor} sm:size-12`}
+        className={`grid size-11 shrink-0 place-items-center rounded-xl ${iconBox} ${iconColor}`}
       >
         <Icon size={19} />
       </span>
 
       <div>
-        <p className="text-xs font-medium text-[#829499]">{label}</p>
+        <p className="text-xs font-medium text-[#829499]">
+          {label}
+        </p>
 
         <strong
           dir="ltr"
-          className="mt-2 block w-fit text-2xl font-black leading-none tabular-nums text-[#29464D] sm:text-3xl"
+          className="mt-2 block w-fit text-3xl font-bold leading-none tabular-nums text-[#29464D]"
         >
-          {formatNotificationCount(value, currentLanguage)}
+          {formatNotificationCount(
+            value,
+            currentLanguage,
+          )}
         </strong>
       </div>
     </article>
   );
 }
+
+/* ============================================================
+   FILTER BUTTON
+============================================================ */
 
 function FilterButton({
   active,
@@ -480,10 +652,10 @@ function FilterButton({
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-xl border px-4 text-sm font-bold transition ${
+      className={`inline-flex h-10 items-center gap-2 rounded-[8px] border px-4 text-[12px] font-semibold transition ${
         active
-          ? "border-[#216474] bg-[#216474] text-white"
-          : "border-[#D8E5E7] bg-[#F8FBFB] text-[#60777D] hover:border-[#AFC9CD] hover:bg-[#EAF4F3]"
+          ? "border-[#216474] bg-[#216474] text-white shadow-[0_6px_14px_rgba(33,100,116,.10)]"
+          : "border-[#D8E5E7] bg-white text-[#60777D] hover:border-[#216474]/25 hover:bg-[#F4FAFA] hover:text-[#216474]"
       }`}
     >
       <span>{label}</span>
@@ -491,15 +663,24 @@ function FilterButton({
       {count > 0 && (
         <span
           className={`grid min-w-6 place-items-center rounded-full px-1.5 text-[10px] leading-5 ${
-            active ? "bg-white/15 text-white" : "bg-[#E6F3F6] text-[#216474]"
+            active
+              ? "bg-white/15 text-white"
+              : "bg-[#E6F3F6] text-[#216474]"
           }`}
         >
-          {formatNotificationCount(count, currentLanguage)}
+          {formatNotificationCount(
+            count,
+            currentLanguage,
+          )}
         </span>
       )}
     </button>
   );
 }
+
+/* ============================================================
+   NOTIFICATION CARD
+============================================================ */
 
 function NotificationCard({
   notification,
@@ -513,7 +694,8 @@ function NotificationCard({
 }) {
   const isArabic = currentLanguage === "ar";
 
-  const meta = notificationTypes[notification.type] || {};
+  const meta =
+    notificationTypes[notification.type] || {};
 
   const Icon = meta.icon || Bell;
 
@@ -528,7 +710,7 @@ function NotificationCard({
     notification.message ||
     notification.body ||
     notification.description ||
-    "لديك تحديث جديد ضمن حسابك.";
+    "";
 
   const title = translateNotificationTitle({
     rawTitle,
@@ -540,67 +722,88 @@ function NotificationCard({
     rawMessage,
     notification,
     t,
+    currentLanguage,
   });
 
-  const createdAt = notification.createdAtUtc || notification.createdAt;
+  const createdAt =
+    notification.createdAtUtc ||
+    notification.createdAt;
 
   return (
     <article
       dir={direction}
-      className={`relative flex min-h-[104px] w-full items-center overflow-hidden rounded-2xl border bg-white p-4 transition sm:p-5 ${
+      className={`relative flex min-h-[92px] w-full items-center overflow-hidden rounded-[10px] border border-[rgba(102,102,102,.14)] bg-white px-5 py-4 transition ${
         notification.isRead
-          ? "border-[#DCE8EA]"
-          : "border-[#BFD9DD] shadow-[0_8px_24px_rgba(23,75,87,.06)]"
+          ? ""
+          : "shadow-[0_5px_16px_rgba(23,75,87,.035)]"
       }`}
     >
-      {!notification.isRead && (
-        <span className={`absolute inset-y-0 w-1 bg-[#DFAE0D] ${isArabic ? "right-0" : "left-0"}`} />
-      )}
-      <div className="flex w-full flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-        {/* Notification content */}
-        <div className="flex min-w-0 items-start gap-3 sm:items-center">
+      <div className="flex w-full flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        {/* ====================================================
+            CONTENT
+        ===================================================== */}
+
+        <div className="flex min-w-0 items-center gap-3">
           <span
-            className={`grid size-11 shrink-0 place-items-center rounded-xl ${
+            className={`flex h-10 w-14 shrink-0 items-center justify-center bg-transparent ${
+              isArabic
+                ? "border-r-2 pr-4"
+                : "border-l-2 pl-4"
+            } ${
               notification.isRead
-                ? "bg-[#EAF4F3] text-[#216474]"
-                : "bg-[#FFF7DF] text-[#B88400]"
+                ? "border-[#C8DADD] text-[#216474]"
+                : "border-[#216474] text-[#216474]"
             }`}
           >
-            <Icon size={22} strokeWidth={1.8} />
+            <Icon
+              size={22}
+              strokeWidth={1.8}
+            />
           </span>
 
-          <div className={`min-w-0 ${isArabic ? "text-right" : "text-left"}`}>
+          <div
+            className={`min-w-0 ${
+              isArabic
+                ? "text-right"
+                : "text-left"
+            }`}
+          >
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="line-clamp-2 text-sm font-bold text-[#29464D] sm:text-base">
+              <h2 className="truncate text-base font-medium text-[#333333]">
                 {title}
               </h2>
 
               {!notification.isRead && (
-                <span className="inline-flex h-6 items-center justify-center rounded-full border border-[#E6F3F6] bg-[#E6F3F6] px-3 text-[11px] font-medium text-[#216474]">
+                <span className="inline-flex h-6 items-center justify-center rounded-full border border-[#D5E7E9] bg-[#E6F3F6] px-3 text-[10.5px] font-semibold text-[#216474]">
                   {t("جديد")}
                 </span>
               )}
             </div>
 
-            <p className="mt-1 line-clamp-2 max-w-[650px] text-xs leading-5 text-[#829499] sm:text-sm">
+            <p className="mt-1 line-clamp-2 max-w-[700px] text-xs leading-5 text-[#777777]">
               {message}
             </p>
           </div>
         </div>
 
-        {/* Time and actions */}
-        <div className="flex shrink-0 flex-col gap-3 border-t border-[#EDF2F3] pt-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between xl:border-0 xl:pt-0">
+        {/* ====================================================
+            TIME + ACTIONS
+        ===================================================== */}
+
+        <div className="flex shrink-0 flex-wrap items-center gap-4">
           <span className="whitespace-nowrap text-sm text-[#666666]">
-            {formatNotificationDate(createdAt, currentLanguage) ||
-              t("منذ وقت قريب")}
+            {formatNotificationDate(
+              createdAt,
+              currentLanguage,
+            ) || t("منذ وقت قريب")}
           </span>
 
-          <div className="grid grid-cols-1 gap-2 min-[420px]:grid-cols-2 sm:flex sm:items-center">
+          <div className="flex items-center gap-3">
             {targetAvailable && (
               <button
                 type="button"
                 onClick={onOpen}
-                className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-[#D8E5E7] bg-white px-4 text-sm font-bold text-[#52727A] transition hover:border-[#AFC9CD] hover:bg-[#F8FBFB] hover:text-[#216474] sm:min-w-[128px]"
+                className="inline-flex h-10 min-w-[128px] items-center justify-center gap-2 rounded-[8px] border border-[#216474] bg-[#216474] px-4 text-[12px] font-medium text-white transition hover:bg-[#174B57]"
               >
                 <Eye size={15} />
 
@@ -613,7 +816,7 @@ function NotificationCard({
                 type="button"
                 onClick={onRead}
                 disabled={pending}
-                className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-[#D8E5E7] bg-white px-4 text-sm font-bold text-[#52727A] transition hover:border-[#DFAE0D]/50 hover:bg-[#FFF9EC] hover:text-[#A87818] disabled:cursor-not-allowed disabled:opacity-50 sm:min-w-[128px]"
+                className="inline-flex h-10 min-w-[128px] items-center justify-center gap-2 rounded-[8px] border border-[#D5E4E6] bg-white px-4 text-[12px] font-medium text-[#216474] transition hover:border-[#216474]/35 hover:bg-[#F4FAFA] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <CheckCheck size={15} />
 
@@ -627,164 +830,420 @@ function NotificationCard({
   );
 }
 
-function translateNotificationTitle({ rawTitle, notification, t }) {
-  if (notification.type === "OrganizationApprovalUpdated") {
+/* ============================================================
+   NOTIFICATION TITLE TRANSLATION
+============================================================ */
+
+function translateNotificationTitle({
+  rawTitle,
+  notification,
+  t,
+}) {
+  if (
+    notification.type ===
+    "OrganizationApprovalUpdated"
+  ) {
     return t("تحديث اعتماد المنظمة");
   }
 
-  if (notification.type === "PharmacyApprovalUpdated") {
+  if (
+    notification.type ===
+    "PharmacyApprovalUpdated"
+  ) {
     return t("تحديث اعتماد الصيدلية");
   }
 
-  if (notification.type === "WarehouseApprovalUpdated") {
+  if (
+    notification.type ===
+    "WarehouseApprovalUpdated"
+  ) {
     return t("تحديث اعتماد المستودع");
+  }
+
+  if (
+    notification.type ===
+    "MedicineRequestCreated"
+  ) {
+    return t("طلب دواء جديد");
   }
 
   return t(rawTitle);
 }
 
-function translateNotificationMessage({ rawMessage, notification, t }) {
-  /*
-   * الرسائل القادمة من الـ API قد تحتوي على أسماء ديناميكية،
-   * لذلك لا نعتمد على t(rawMessage) فقط.
-   * نستخرج القيم المتغيرة ثم نستخدم مفتاح ترجمة ثابت.
-   */
+/* ============================================================
+   NOTIFICATION MESSAGE TRANSLATION
+============================================================ */
 
-  if (notification.type === "OrganizationApprovalUpdated") {
-    const organizationName = extractOrganizationName(rawMessage);
+function translateNotificationMessage({
+  rawMessage,
+  notification,
+  t,
+  currentLanguage,
+}) {
+  if (!rawMessage) {
+    return t("لديك تحديث جديد ضمن حسابك.");
+  }
+
+  /* ==========================================================
+     ORGANIZATION APPROVAL
+  ========================================================== */
+
+  if (
+    notification.type ===
+    "OrganizationApprovalUpdated"
+  ) {
+    const organizationName =
+      extractOrganizationName(rawMessage);
 
     if (organizationName) {
-      return t("تم اعتماد المنظمة {{name}}.", {
-        name: organizationName,
-      });
+      if (currentLanguage === "ar") {
+        return `تم اعتماد المنظمة ${organizationName}.`;
+      }
+
+      if (currentLanguage === "tr") {
+        return `Kuruluş ${organizationName} onaylandı.`;
+      }
+
+      return `Organization ${organizationName} has been approved.`;
     }
 
-    return t("تم تحديث حالة اعتماد المنظمة من إدارة المنصة.");
+    return t(
+      "تم تحديث حالة اعتماد المنظمة من إدارة المنصة.",
+    );
   }
 
-  if (notification.type === "PharmacyApprovalUpdated") {
-    const pharmacyName = extractPharmacyName(rawMessage);
+  /* ==========================================================
+     PHARMACY APPROVAL
+  ========================================================== */
+
+  if (
+    notification.type ===
+    "PharmacyApprovalUpdated"
+  ) {
+    const pharmacyName =
+      extractPharmacyName(rawMessage);
 
     if (pharmacyName) {
-      return t("تم اعتماد صيدلية {{name}}.", {
-        name: pharmacyName,
-      });
+      if (currentLanguage === "ar") {
+        return `تم اعتماد صيدلية ${pharmacyName}.`;
+      }
+
+      if (currentLanguage === "tr") {
+        return `${pharmacyName} eczanesi onaylandı.`;
+      }
+
+      return `Pharmacy ${pharmacyName} has been approved.`;
     }
 
-    return t("تم تحديث حالة اعتماد الصيدلية من إدارة المنصة.");
+    return t(
+      "تم تحديث حالة اعتماد الصيدلية من إدارة المنصة.",
+    );
   }
 
-  if (notification.type === "MedicineRequestCreated") {
-    const requestData = extractMedicineRequestData(rawMessage);
+  /* ==========================================================
+     MEDICINE REQUEST
+  ========================================================== */
+
+  if (
+    notification.type ===
+    "MedicineRequestCreated"
+  ) {
+    const requestData =
+      extractMedicineRequestData(rawMessage);
 
     if (requestData) {
-      return t("طلب {{user}} دواء {{medicine}} من {{pharmacy}}.", {
-        user: requestData.user,
-        medicine: requestData.medicine,
-        pharmacy: requestData.pharmacy,
-      });
+      /*
+       * مهم:
+       * لا نستخدم هنا:
+       *
+       * t("طلب {{user}} دواء {{medicine}} من {{pharmacy}}.")
+       *
+       * لأن المفتاح قد لا يكون موجودًا في ملفات الترجمة.
+       *
+       * نبني النص مباشرة باستخدام البيانات المستخرجة.
+       */
+
+      if (currentLanguage === "ar") {
+        return `طلب ${requestData.user} دواء ${requestData.medicine} من ${requestData.pharmacy}.`;
+      }
+
+      if (currentLanguage === "tr") {
+        return `${requestData.user}, ${requestData.pharmacy} eczanesinden ${requestData.medicine} ilacını istedi.`;
+      }
+
+      return `${requestData.user} requested ${requestData.medicine} from ${requestData.pharmacy}.`;
     }
 
-    return t("تم إنشاء طلب دواء جديد.");
+    /*
+     * إذا لم نستطع استخراج البيانات،
+     * نحاول عرض الرسالة الأصلية بدل إظهار
+     * {{user}} و {{medicine}} و {{pharmacy}}.
+     */
+
+    return cleanNotificationTemplate(
+      rawMessage,
+    );
   }
 
-  return t(rawMessage);
+  /* ==========================================================
+     GENERIC NOTIFICATION
+  ========================================================== */
+
+  return cleanNotificationTemplate(
+    t(rawMessage),
+  );
 }
+
+/* ============================================================
+   CLEAN NOTIFICATION TEMPLATE
+============================================================ */
+
+function cleanNotificationTemplate(message) {
+  if (!message) {
+    return "";
+  }
+
+  const text = String(message).trim();
+
+  /*
+   * إذا كانت الرسالة تحتوي placeholders
+   * ولم نستطع تعويضها، لا نريد عرضها للمستخدم.
+   */
+
+  if (
+    text.includes("{{user}}") ||
+    text.includes("{{medicine}}") ||
+    text.includes("{{pharmacy}}")
+  ) {
+    return text
+      .replace(/\{\{user\}\}/gi, "")
+      .replace(/\{\{medicine\}\}/gi, "")
+      .replace(/\{\{pharmacy\}\}/gi, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  return text;
+}
+
+/* ============================================================
+   EXTRACT ORGANIZATION NAME
+============================================================ */
 
 function extractOrganizationName(message) {
   if (!message) {
     return "";
   }
 
-  const normalized = String(message).replace(/\s+/g, " ").trim();
+  const normalized = String(message)
+    .replace(/\s+/g, " ")
+    .trim();
 
   const patterns = [
     /تم اعتماد منظمة\s+(.+?)[.،]?$/i,
     /تم اعتماد المنظمة\s+(.+?)[.،]?$/i,
     /اعتماد منظمة\s+(.+?)[.،]?$/i,
     /Organization\s+(.+?)\s+has been approved[.]?$/i,
+    /Organization\s+(.+?)\s+approved[.]?$/i,
   ];
 
   for (const pattern of patterns) {
     const match = normalized.match(pattern);
 
     if (match?.[1]) {
-      return match[1].replace(/[.،]+$/g, "").trim();
+      return match[1]
+        .replace(/[.،]+$/g, "")
+        .trim();
     }
   }
 
   return "";
 }
+
+/* ============================================================
+   EXTRACT PHARMACY NAME
+============================================================ */
 
 function extractPharmacyName(message) {
   if (!message) {
     return "";
   }
 
-  const normalized = String(message).replace(/\s+/g, " ").trim();
+  const normalized = String(message)
+    .replace(/\s+/g, " ")
+    .trim();
 
   const patterns = [
     /تم اعتماد صيدلية\s+(.+?)[.،]?$/i,
     /تم اعتماد الصيدلية\s+(.+?)[.،]?$/i,
     /اعتماد صيدلية\s+(.+?)[.،]?$/i,
     /Pharmacy\s+(.+?)\s+has been approved[.]?$/i,
+    /Pharmacy\s+(.+?)\s+approved[.]?$/i,
   ];
 
   for (const pattern of patterns) {
     const match = normalized.match(pattern);
 
     if (match?.[1]) {
-      return match[1].replace(/[.،]+$/g, "").trim();
+      return match[1]
+        .replace(/[.،]+$/g, "")
+        .trim();
     }
   }
 
   return "";
 }
 
+/* ============================================================
+   EXTRACT MEDICINE REQUEST DATA
+============================================================ */
+
 function extractMedicineRequestData(message) {
   if (!message) {
     return null;
   }
 
-  const normalized = String(message).replace(/\s+/g, " ").trim();
+  const normalized = String(message)
+    .replace(/\s+/g, " ")
+    .trim();
 
   /*
-   * مثال من الـ API:
-   * طلب eman habbar دواء Acarbose 25 من صيدلية.
+   * ----------------------------------------------------------
+   * الشكل العربي الأساسي
    *
-   * إذا كان اسم الصيدلية موجودًا:
    * طلب eman habbar دواء Acarbose 25 من صيدلية الشفاء.
+   *
+   * النتيجة:
+   *
+   * user     = eman habbar
+   * medicine = Acarbose 25
+   * pharmacy = صيدلية الشفاء
+   * ----------------------------------------------------------
    */
-  const arabicMatch = normalized.match(
-    /^طلب\s+(.+?)\s+دواء\s+(.+?)\s+من\s+(.+?)[.،]?$/i,
-  );
 
-  if (arabicMatch) {
-    return {
-      user: arabicMatch[1].replace(/[.،]+$/g, "").trim(),
+  const arabicPatterns = [
+    /^طلب\s+(.+?)\s+دواء\s+(.+?)\s+من\s+(.+?)[.،]?\s*$/i,
 
-      medicine: arabicMatch[2].replace(/[.،]+$/g, "").trim(),
+    /^طلب\s+(.+?)\s+الدواء\s+(.+?)\s+من\s+(.+?)[.،]?\s*$/i,
 
-      pharmacy: arabicMatch[3].replace(/[.،]+$/g, "").trim(),
-    };
+    /^(.+?)\s+طلب\s+دواء\s+(.+?)\s+من\s+(.+?)[.،]?\s*$/i,
+  ];
+
+  for (const pattern of arabicPatterns) {
+    const match = normalized.match(pattern);
+
+    if (match) {
+      const user = cleanExtractedValue(
+        match[1],
+      );
+
+      const medicine = cleanExtractedValue(
+        match[2],
+      );
+
+      const pharmacy = cleanExtractedValue(
+        match[3],
+      );
+
+      if (user && medicine && pharmacy) {
+        return {
+          user,
+          medicine,
+          pharmacy,
+        };
+      }
+    }
   }
 
-  const englishMatch = normalized.match(
-    /^(.+?)\s+requested\s+(.+?)\s+from\s+(.+?)[.]?$/i,
-  );
+  /*
+   * ----------------------------------------------------------
+   * إذا كانت الـ API ترسل placeholders نفسها:
+   *
+   * طلب {{user}} دواء {{medicine}} من {{pharmacy}}.
+   *
+   * لن نستطيع استخراج البيانات من هذا النص وحده.
+   * لذلك نحاول البحث عن البيانات من حقول notification
+   * لاحقًا في extractNotificationRequestData.
+   * ----------------------------------------------------------
+   */
 
-  if (englishMatch) {
-    return {
-      user: englishMatch[1].trim(),
-      medicine: englishMatch[2].trim(),
-      pharmacy: englishMatch[3].trim(),
-    };
+  if (
+    normalized.includes("{{user}}") ||
+    normalized.includes("{{medicine}}") ||
+    normalized.includes("{{pharmacy}}")
+  ) {
+    return null;
+  }
+
+  /*
+   * ----------------------------------------------------------
+   * English
+   *
+   * eman habbar requested Acarbose 25 from Pharmacy Al Shifa.
+   * ----------------------------------------------------------
+   */
+
+  const englishPatterns = [
+    /^(.+?)\s+requested\s+(.+?)\s+from\s+(.+?)[.]?\s*$/i,
+
+    /^(.+?)\s+requested\s+the\s+medicine\s+(.+?)\s+from\s+(.+?)[.]?\s*$/i,
+
+    /^(.+?)\s+requested\s+medicine\s+(.+?)\s+from\s+(.+?)[.]?\s*$/i,
+  ];
+
+  for (const pattern of englishPatterns) {
+    const match = normalized.match(pattern);
+
+    if (match) {
+      const user = cleanExtractedValue(
+        match[1],
+      );
+
+      const medicine = cleanExtractedValue(
+        match[2],
+      );
+
+      const pharmacy = cleanExtractedValue(
+        match[3],
+      );
+
+      if (user && medicine && pharmacy) {
+        return {
+          user,
+          medicine,
+          pharmacy,
+        };
+      }
+    }
   }
 
   return null;
 }
 
-function formatNotificationCount(value, currentLanguage = "ar") {
+/* ============================================================
+   CLEAN EXTRACTED VALUE
+============================================================ */
+
+function cleanExtractedValue(value) {
+  if (!value) {
+    return "";
+  }
+
+  return String(value)
+    .replace(/[.،]+$/g, "")
+    .replace(/^\s+|\s+$/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/* ============================================================
+   COUNT FORMATTER
+============================================================ */
+
+function formatNotificationCount(
+  value,
+  currentLanguage = "ar",
+) {
   const locale =
     currentLanguage === "ar"
       ? "ar-SY"
@@ -792,5 +1251,7 @@ function formatNotificationCount(value, currentLanguage = "ar") {
         ? "tr-TR"
         : "en-US";
 
-  return Number(value || 0).toLocaleString(locale);
+  return Number(value || 0).toLocaleString(
+    locale,
+  );
 }

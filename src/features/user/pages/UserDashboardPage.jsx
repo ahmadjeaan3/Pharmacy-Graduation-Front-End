@@ -1078,7 +1078,7 @@ function UserDashboardPage() {
         >
           <div
             className="
-      mx-auto flex w-full flex-col
+      mx-auto flex w-[1450px] flex-col
       px-9 py-7
       lg:px-12
     "
@@ -1086,22 +1086,22 @@ function UserDashboardPage() {
             {/* الصف الرئيسي */}
             <div
               className="
-        grid w-full
+        grid w-[1450px]
         grid-cols-1
         items-center
-        gap-8
+        gap-10
         md:grid-cols-2
         xl:grid-cols-4
         xl:gap-12
       "
             >
               {/* الشعار والوصف */}
-              <div className="flex min-w-0 flex-col items-start gap-3     mr-30">
+              <div className="flex min-w-0 flex-col items-start gap-3   ">
                 <Brand />
 
                 <p
                   className="
-            max-w-[300px]
+            max-w-[230px]
             text-right
             text-[12px]
             font-normal
@@ -1259,14 +1259,14 @@ function UserDashboardPage() {
           leading-[20px]
           tracking-[0.01em]
           text-[#A5A5A5]
-              mr-30
+            
         "
               >
                 جميع الحقوق محفوظة لمنصة دوائي © 2026
               </p>
 
               {/* التواصل الاجتماعي */}
-              <div dir="ltr" className="flex items-center gap-3  ml-40">
+              <div dir="ltr" className="flex items-center gap-3  ">
                 {[
                   ["instagram", "Instagram"],
                   ["email", "Email"],

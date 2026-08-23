@@ -12,7 +12,7 @@ import {
   Edit3,
   FileSpreadsheet,
   FilePlus2,
-  Languages,
+  ImagePlus,
   PackagePlus,
   PackageCheck,
   PackageX,
@@ -29,6 +29,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { getApiErrorMessage } from "../../../shared/api/errors";
+import { apiClient } from "../../../shared/api/client";
 import {
   addInventoryMedicine,
   addInventoryBatch,
@@ -55,9 +56,67 @@ import { ManualInventoryDialog } from "../components/ManualInventoryDialog";
 
 const PHARMACY_HERO_IMAGE = "/assets/app/pharmacy.png";
 
+const MEDICINE_IMAGE_UPLOAD_URL_TEMPLATE =
+  import.meta.env.VITE_MEDICINE_IMAGE_UPLOAD_URL_TEMPLATE || "";
+
+function resolveMedicineImageUploadUrl(medicineId) {
+  if (MEDICINE_IMAGE_UPLOAD_URL_TEMPLATE) {
+    return MEDICINE_IMAGE_UPLOAD_URL_TEMPLATE.replace(
+      "{medicineId}",
+      encodeURIComponent(medicineId),
+    );
+  }
+
+  const apiBaseUrl =
+    import.meta.env.VITE_API_BASE_URL ||
+    "https://localhost:7048/api";
+
+  const apiOrigin = new URL(apiBaseUrl, window.location.origin).origin;
+
+  // المسار الافتراضي. إذا كان Controller عندك يستخدم مسارًا مختلفًا،
+  // ضع المسار الكامل في VITE_MEDICINE_IMAGE_UPLOAD_URL_TEMPLATE.
+  return `${apiOrigin}/api/medicines/${encodeURIComponent(medicineId)}/image`;
+}
+
+async function uploadMedicineImageFile(medicineId, file) {
+  if (!medicineId || !file) return null;
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const response = await apiClient.post(
+      `/medicines/${encodeURIComponent(medicineId)}/image`,
+      formData,
+      {
+        timeout: 60_000,
+      },
+    );
+
+    const data = response.data;
+
+    if (data?.success === false) {
+      throw new Error(data.error || "تعذر حفظ صورة الدواء.");
+    }
+
+    return data;
+  } catch (error) {
+    const message =
+      error?.response?.data?.message ||
+      error?.response?.data?.error ||
+      error?.message ||
+      "تعذر رفع صورة الدواء.";
+
+    throw new Error(message);
+  }
+}
+
+
 const blank = {
   medicineId: "",
   medicineName: "",
+  imageFile: null,
+  imagePreview: "",
   quantity: 1,
   unitPrice: 0,
   isAvailable: true,
@@ -250,14 +309,7 @@ function PredictionField({ label, value, onChange, step = "1" }) {
   );
 }
 
-function InventoryDialog({
-  item,
-  initialMedicine,
-  onClose,
-  onSave,
-  onSaveBatch,
-  pending,
-}) {
+function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
   const { t, i18n } = useTranslation();
 
   const currentLanguage = (i18n.resolvedLanguage || i18n.language || "ar")
@@ -272,6 +324,8 @@ function InventoryDialog({
       ? {
           medicineId: item.medicineId,
           medicineName: item.medicineName,
+          imageFile: null,
+          imagePreview: item.imageUrl || "",
           quantity: item.quantity,
           unitPrice: item.sellingPrice,
           isAvailable: item.isAvailable,
@@ -286,6 +340,8 @@ function InventoryDialog({
           medicineId: initialMedicine?.id || "",
           medicineName:
             initialMedicine?.displayName || initialMedicine?.name || "",
+          imageFile: null,
+          imagePreview: initialMedicine?.imageUrl || "",
           unitPrice: initialMedicine?.sellingPrice || 0,
         },
   );
@@ -295,9 +351,6 @@ function InventoryDialog({
   );
   const [catalogPage, setCatalogPage] = useState(1);
   const [showArabicCatalog, setShowArabicCatalog] = useState(false);
-  const [selectedMedicines, setSelectedMedicines] = useState(() =>
-    initialMedicine ? [initialMedicine] : [],
-  );
 
   const catalog = useQuery({
     queryKey: pharmacyKeys.catalog({ catalogSearch, catalogPage }),
@@ -320,6 +373,34 @@ function InventoryDialog({
           ? event.target.checked
           : event.target.value,
     }));
+
+  const handleImageChange = (event) => {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      event.target.value = "";
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      event.target.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      setForm((old) => ({
+        ...old,
+        imageFile: file,
+        imagePreview: String(reader.result || ""),
+      }));
+    };
+
+    reader.readAsDataURL(file);
+  };
 
   return (
     <div
@@ -358,21 +439,7 @@ function InventoryDialog({
         <form
           onSubmit={(event) => {
             event.preventDefault();
-            if (!item && selectedMedicines.length > 1) {
-              onSaveBatch(
-                selectedMedicines.map((medicine) => ({
-                  medicineId: medicine.id,
-                  medicineName: medicine.displayName || medicine.name,
-                  quantity: 0,
-                  unitPrice: 0,
-                  isAvailable: false,
-                  isPriceVisibleToUsers: false,
-                  expiryDateUtc: null,
-                  lowStockThreshold: 5,
-                })),
-              );
-              return;
-            }
+
             onSave({
               ...form,
               quantity: Number(form.quantity),
@@ -405,29 +472,11 @@ function InventoryDialog({
                       : "border-[#cfe0e3] bg-white text-[#216474] hover:bg-[#eef7f6]"
                   }`}
                 >
-                  <Languages size={16} />
                   {showArabicCatalog
                     ? t("إخفاء الاسم العربي")
                     : t("إظهار الاسم العربي")}
                 </button>
               </div>
-
-              {selectedMedicines.length > 0 && (
-                <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[#cfe0e3] bg-[#f4f9f8] px-4 py-3 text-xs font-bold text-[#47666d]">
-                  <span>
-                    {t("تم اختيار {{count}} دواء", {
-                      count: selectedMedicines.length,
-                    })}
-                  </span>
-                  {selectedMedicines.length > 1 && (
-                    <span className="text-[#b58112]">
-                      {t(
-                        "ستُضاف دون كمية أو سعر، ثم تعدّل بيانات كل دواء من المخزون.",
-                      )}
-                    </span>
-                  )}
-                </div>
-              )}
 
               <label>
                 <div className="field-control">
@@ -457,53 +506,49 @@ function InventoryDialog({
                   <button
                     type="button"
                     key={medicine.id}
-                    onClick={() => {
-                      const selected = selectedMedicines.some(
-                        (entry) => entry.id === medicine.id,
-                      );
-                      const next = selected
-                        ? selectedMedicines.filter(
-                            (entry) => entry.id !== medicine.id,
-                          )
-                        : [...selectedMedicines, medicine];
-                      const primary = next[0];
-                      setSelectedMedicines(next);
+                    onClick={() =>
                       setForm((old) => ({
                         ...old,
-                        medicineId: primary?.id || "",
-                        medicineName:
-                          primary?.displayName || primary?.name || "",
-                        unitPrice:
-                          next.length === 1
-                            ? primary?.sellingPrice || 0
-                            : old.unitPrice,
-                      }));
-                    }}
+                        medicineId: medicine.id,
+                        medicineName: medicine.name,
+                        imageFile: null,
+                        imagePreview: medicine.imageUrl || "",
+                        unitPrice: medicine.sellingPrice || 0,
+                      }))
+                    }
                     className={`flex items-center gap-3 rounded-2xl border p-3 transition ${
                       isArabic ? "text-right" : "text-left"
                     } ${
-                      selectedMedicines.some(
-                        (entry) => entry.id === medicine.id,
-                      )
+                      form.medicineId === medicine.id
                         ? "border-[#216474] bg-[#eef7f6]"
                         : "border-[#174b57]/9 hover:border-[#216474]/35"
                     }`}
                   >
                     <span
-                      className={`grid size-9 shrink-0 place-items-center rounded-xl ${
-                        selectedMedicines.some(
-                          (entry) => entry.id === medicine.id,
-                        )
-                          ? "bg-[#216474] text-white"
-                          : "bg-[#edf5f4] text-[#216474]"
+                      className={`relative grid size-11 shrink-0 place-items-center overflow-hidden rounded-xl border ${
+                        form.medicineId === medicine.id
+                          ? "border-[#216474] bg-[#EAF4F3] text-[#216474]"
+                          : "border-[#DCE8EA] bg-[#F8FBFB] text-[#216474]"
                       }`}
                     >
-                      {selectedMedicines.some(
-                        (entry) => entry.id === medicine.id,
-                      ) ? (
-                        <Check size={17} />
-                      ) : (
-                        <Pill size={17} />
+                      <Pill size={18} className="absolute z-0" />
+
+                      {medicine.imageUrl && (
+                        <img
+                          src={medicine.imageUrl}
+                          alt={medicine.name || t("صورة الدواء")}
+                          loading="lazy"
+                          className="relative z-10 h-full w-full bg-white object-contain p-1"
+                          onError={(event) => {
+                            event.currentTarget.style.display = "none";
+                          }}
+                        />
+                      )}
+
+                      {form.medicineId === medicine.id && (
+                        <span className="absolute bottom-0.5 end-0.5 z-20 grid size-4 place-items-center rounded-full bg-[#216474] text-white shadow-sm">
+                          <Check size={10} strokeWidth={3} />
+                        </span>
                       )}
                     </span>
 
@@ -591,106 +636,160 @@ function InventoryDialog({
             </div>
           )}
 
-          {!item && selectedMedicines.length > 1 ? (
-            <div className="mt-7 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm font-bold leading-7 text-amber-900">
-              {t(
-                "ستُحفظ الأدوية المختارة بكمية 0، وسعر 0، ولن تظهر كمتاحة للمستخدمين حتى تعدّل كل دواء وتحدد بياناته.",
-              )}
-            </div>
-          ) : (
-            <>
-              <div
-                className={`${
-                  item ? "" : "mt-7 border-t border-[#174b57]/8 pt-6"
-                } grid gap-5 md:grid-cols-2`}
-              >
-                <label>
-                  <span className="form-label">{t("الكمية")}</span>
-                  <input
-                    type="number"
-                    min="0"
-                    className="form-input"
-                    value={form.quantity}
-                    onChange={change("quantity")}
-                    required
-                  />
-                </label>
+          <div className={`${item ? "mt-1" : "mt-7 border-t border-[#174b57]/8 pt-6"}`}>
+            <div className="rounded-2xl border border-[#DCE8EA] bg-[#F8FBFB] p-4 sm:p-5">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                <div className="relative grid size-24 shrink-0 place-items-center overflow-hidden rounded-2xl border border-[#DCE8EA] bg-white text-[#216474] shadow-[0_8px_22px_rgba(23,75,87,.06)]">
+                  <Pill size={30} className="absolute z-0" />
 
-                <label>
-                  <span className="form-label">{t("سعر البيع")}</span>
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    className="form-input"
-                    value={form.unitPrice}
-                    onChange={change("unitPrice")}
-                    required
-                  />
-                </label>
-
-                <label>
-                  <span className="form-label">
-                    {t("حد تنبيه انخفاض المخزون")}
-                  </span>
-                  <input
-                    type="number"
-                    min="0"
-                    className="form-input"
-                    value={form.lowStockThreshold}
-                    onChange={change("lowStockThreshold")}
-                    required
-                  />
-                </label>
-
-                <label>
-                  <span className="form-label">{t("تاريخ الانتهاء")}</span>
-                  <input
-                    type="date"
-                    className="form-input"
-                    value={form.expiryDateUtc}
-                    onChange={change("expiryDateUtc")}
-                  />
-                </label>
-              </div>
-
-              <label className="mt-5 flex items-center justify-between rounded-2xl bg-[#f7faf9] p-4">
-                <div className={isArabic ? "text-right" : "text-left"}>
-                  <p className="text-sm font-extrabold">{t("متاح للطلبات")}</p>
-                  <p className="mt-1 text-xs text-[#829499]">
-                    {t("يتوقف تلقائيًا عندما تصبح الكمية صفرًا")}
-                  </p>
+                  {form.imagePreview && (
+                    <img
+                      src={form.imagePreview}
+                      alt={form.medicineName || t("صورة الدواء")}
+                      className="relative z-10 h-full w-full bg-white object-contain p-2"
+                      onError={(event) => {
+                        event.currentTarget.style.display = "none";
+                      }}
+                    />
+                  )}
                 </div>
 
-                <input
-                  className="size-5 accent-[#216474]"
-                  type="checkbox"
-                  checked={form.isAvailable}
-                  onChange={change("isAvailable")}
-                />
-              </label>
-
-              <label className="mt-3 flex items-center justify-between rounded-2xl border border-[#174b57]/8 bg-white p-4">
-                <div className={isArabic ? "text-right" : "text-left"}>
-                  <p className="text-sm font-extrabold">
-                    {t("إظهار السعر للمستخدمين")}
+                <div className={`min-w-0 flex-1 ${isArabic ? "text-right" : "text-left"}`}>
+                  <p className="text-sm font-black text-[#29464D]">
+                    {t("صورة الدواء")}
                   </p>
-                  <p className="mt-1 text-xs text-[#829499]">
-                    {t(
-                      "عند إخفائه سيظهر للمستخدم أن السعر متاح عند التواصل مع الصيدلية.",
+
+                  <p className="mt-1 text-xs leading-6 text-[#829499]">
+                    {form.imagePreview
+                      ? t("يمكنك استبدال الصورة الحالية بصورة أوضح للدواء.")
+                      : t("اختر صورة واضحة لعبوة الدواء بصيغة JPG أو PNG أو WebP.")}
+                  </p>
+
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <label className="inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#216474] px-4 text-xs font-black text-white transition hover:bg-[#174B57]">
+                      <ImagePlus size={16} />
+                      {form.imagePreview ? t("تغيير الصورة") : t("رفع صورة الدواء")}
+
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        className="hidden"
+                        onChange={handleImageChange}
+                      />
+                    </label>
+
+                    {form.imagePreview && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setForm((old) => ({
+                            ...old,
+                            imageFile: null,
+                            imagePreview: "",
+                          }))
+                        }
+                        className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-[#DCE8EA] bg-white px-4 text-xs font-black text-[#60777D] transition hover:bg-[#F4FAFA] hover:text-[#216474]"
+                      >
+                        <Trash2 size={15} />
+                        {t("إزالة الصورة")}
+                      </button>
                     )}
+                  </div>
+
+                  <p className="mt-2 text-[10px] leading-5 text-[#9AABAD]">
+                    {t("الحد الأقصى 5 ميغابايت.")}
                   </p>
                 </div>
+              </div>
+            </div>
+          </div>
 
-                <input
-                  className="size-5 accent-[#216474]"
-                  type="checkbox"
-                  checked={form.isPriceVisibleToUsers}
-                  onChange={change("isPriceVisibleToUsers")}
-                />
-              </label>
-            </>
-          )}
+          <div
+            className="mt-6 grid gap-5 md:grid-cols-2"
+          >
+            <label>
+              <span className="form-label">{t("الكمية")}</span>
+              <input
+                type="number"
+                min="0"
+                className="form-input"
+                value={form.quantity}
+                onChange={change("quantity")}
+                required
+              />
+            </label>
+
+            <label>
+              <span className="form-label">{t("سعر البيع")}</span>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                className="form-input"
+                value={form.unitPrice}
+                onChange={change("unitPrice")}
+                required
+              />
+            </label>
+
+            <label>
+              <span className="form-label">{t("حد تنبيه انخفاض المخزون")}</span>
+              <input
+                type="number"
+                min="0"
+                className="form-input"
+                value={form.lowStockThreshold}
+                onChange={change("lowStockThreshold")}
+                required
+              />
+            </label>
+
+            <label>
+              <span className="form-label">{t("تاريخ الانتهاء")}</span>
+              <input
+                type="date"
+                className="form-input"
+                value={form.expiryDateUtc}
+                onChange={change("expiryDateUtc")}
+              />
+            </label>
+          </div>
+
+          <label className="mt-5 flex items-center justify-between rounded-2xl bg-[#f7faf9] p-4">
+            <div className={isArabic ? "text-right" : "text-left"}>
+              <p className="text-sm font-extrabold">{t("متاح للطلبات")}</p>
+              <p className="mt-1 text-xs text-[#829499]">
+                {t("يتوقف تلقائيًا عندما تصبح الكمية صفرًا")}
+              </p>
+            </div>
+
+            <input
+              className="size-5 accent-[#216474]"
+              type="checkbox"
+              checked={form.isAvailable}
+              onChange={change("isAvailable")}
+            />
+          </label>
+
+          <label className="mt-3 flex items-center justify-between rounded-2xl border border-[#174b57]/8 bg-white p-4">
+            <div className={isArabic ? "text-right" : "text-left"}>
+              <p className="text-sm font-extrabold">
+                {t("إظهار السعر للمستخدمين")}
+              </p>
+              <p className="mt-1 text-xs text-[#829499]">
+                {t(
+                  "عند إخفائه سيظهر للمستخدم أن السعر متاح عند التواصل مع الصيدلية.",
+                )}
+              </p>
+            </div>
+
+            <input
+              className="size-5 accent-[#216474]"
+              type="checkbox"
+              checked={form.isPriceVisibleToUsers}
+              onChange={change("isPriceVisibleToUsers")}
+            />
+          </label>
 
           <div
             className={`mt-6 flex gap-2 ${
@@ -710,11 +809,7 @@ function InventoryDialog({
                 ? t("جاري الحفظ...")
                 : item
                   ? t("حفظ التعديل")
-                  : selectedMedicines.length > 1
-                    ? t("إضافة {{count}} أدوية كمسودات", {
-                        count: selectedMedicines.length,
-                      })
-                    : t("إضافة للمخزون")}
+                  : t("إضافة للمخزون")}
             </button>
           </div>
         </form>
@@ -1106,39 +1201,63 @@ export function PharmacyInventoryPage() {
   };
 
   const save = useMutation({
-    mutationFn: (payload) =>
-      editor?.inventoryItemId
-        ? updateInventoryMedicine(editor.inventoryItemId, payload)
-        : addInventoryMedicine(payload),
-    onSuccess: async () => {
+    mutationFn: async (payload) => {
+      const {
+        imageFile,
+        imagePreview,
+        medicineName,
+        ...inventoryPayload
+      } = payload;
+
+      const savedItem = editor?.inventoryItemId
+        ? await updateInventoryMedicine(
+            editor.inventoryItemId,
+            inventoryPayload,
+          )
+        : await addInventoryMedicine(inventoryPayload);
+
+      const medicineId =
+        savedItem?.medicineId ||
+        inventoryPayload.medicineId ||
+        editor?.medicineId;
+
+      let imageResult = null;
+
+      if (imageFile && medicineId) {
+        imageResult = await uploadMedicineImageFile(
+          medicineId,
+          imageFile,
+        );
+      }
+
+      return {
+        savedItem,
+        imageResult,
+        imageUploaded: Boolean(imageFile && imageResult),
+      };
+    },
+    onSuccess: async (result) => {
       setEditor(null);
       setNotice({
         ok: true,
-        text: t("تم تحديث المخزون بنجاح."),
+        text: result?.imageUploaded
+          ? t("تم تحديث المخزون وحفظ صورة الدواء بنجاح.")
+          : t("تم تحديث المخزون بنجاح."),
       });
       await invalidate();
     },
-    onError: (error) =>
+    onError: async (error) => {
       setNotice({
         ok: false,
-        text: getApiErrorMessage(error),
-      }),
-  });
-
-  const saveCatalogBatch = useMutation({
-    mutationFn: addInventoryBatch,
-    onSuccess: async (_result, items) => {
-      setEditor(null);
-      setNotice({
-        ok: true,
-        text: t("تمت إضافة {{count}} أدوية للمخزون. عدّل بيانات كل دواء.", {
-          count: items.length,
-        }),
+        text:
+          error?.message ||
+          getApiErrorMessage(error),
       });
+
+      // قد يكون حفظ المخزون نجح قبل فشل رفع الصورة،
+      // لذلك نحدّث البيانات المعروضة دائمًا.
       await invalidate();
     },
-    onError: (error) =>
-      setNotice({ ok: false, text: getApiErrorMessage(error) }),
   });
 
   const remove = useMutation({
@@ -1458,7 +1577,6 @@ export function PharmacyInventoryPage() {
           </label>
         </div>
       </section>
-
       {inventory.isLoading ? (
         <PharmacyLoadingState label={t("جاري قراءة المخزون...")} />
       ) : inventory.isError ? (
@@ -1475,7 +1593,7 @@ export function PharmacyInventoryPage() {
           action={
             <button
               onClick={() => setEditor({})}
-              className="btn-primary mx-auto mt-5"
+              className="btn-primary mx-auto mt-5 inline-flex items-center gap-2"
             >
               <Plus size={16} />
               {t("إضافة دواء")}
@@ -1483,100 +1601,262 @@ export function PharmacyInventoryPage() {
           }
         />
       ) : (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
           {inventory.data.map((item) => {
             const meta = stockMeta(item.stockStatus);
+
+            const medicineName =
+              item.arabicMedicineName ||
+              item.medicineName ||
+              t("دواء غير محدد");
+
+            const scientificName =
+              item.arabicScientificName ||
+              item.scientificName ||
+              "";
 
             return (
               <article
                 key={item.inventoryItemId}
-                className="group relative overflow-hidden rounded-[1.5rem] border border-[#DCE8EA] bg-white p-5 shadow-[0_8px_26px_rgba(23,75,87,.04)] transition duration-300 hover:-translate-y-1 hover:border-[#B9D2D6] hover:shadow-[0_18px_42px_rgba(23,75,87,.09)] sm:p-6"
+                className="
+                  group
+                  relative
+                  flex
+                  min-w-0
+                  flex-col
+                  overflow-hidden
+                  rounded-[1.5rem]
+                  border
+                  border-[#DCE8EA]
+                  bg-white
+                  p-5
+                  shadow-[0_8px_28px_rgba(23,75,87,.045)]
+                  transition-all
+                  duration-300
+                  hover:-translate-y-1
+                  hover:border-[#B9D2D6]
+                  hover:shadow-[0_18px_42px_rgba(23,75,87,.10)]
+                "
               >
+                {/* =====================================================
+                    TOP
+                ====================================================== */}
                 <div className="flex items-start justify-between gap-3">
-                  <span className="grid size-12 place-items-center rounded-2xl border border-[#DCE8EA] bg-[#F2F8F8] text-[#216474]">
-                    <Pill size={22} />
-                  </span>
+                  {/* Medicine Image */}
+                  <div
+                    className="
+                      relative
+                      grid
+                      h-[76px]
+                      w-[76px]
+                      shrink-0
+                      place-items-center
+                      overflow-hidden
+                      rounded-[1.25rem]
+                      border
+                      border-[#DCE8EA]
+                      bg-[#F3F8F8]
+                      shadow-[0_6px_18px_rgba(23,75,87,.06)]
+                    "
+                  >
+                    {/* Fallback icon */}
+                    <Pill
+                      size={30}
+                      strokeWidth={1.7}
+                      className="absolute text-[#216474]"
+                    />
 
+                    {/* Medicine image */}
+                    {item.imageUrl && (
+                      <img
+                        src={item.imageUrl}
+                        alt={medicineName}
+                        loading="lazy"
+                        className="
+                          relative
+                          z-10
+                          h-full
+                          w-full
+                          bg-white
+                          object-contain
+                          p-2
+                        "
+                        onError={(event) => {
+                          event.currentTarget.style.display = "none";
+                        }}
+                      />
+                    )}
+                  </div>
+
+                  {/* Stock Status */}
                   <span
-                    className={`rounded-full px-3 py-1 text-xs font-black ${meta.className}`}
+                    className={`
+                      shrink-0
+                      rounded-full
+                      px-3
+                      py-1.5
+                      text-[11px]
+                      font-black
+                      ${meta.className}
+                    `}
                   >
                     {t(meta.label)}
                   </span>
                 </div>
 
-                <h3
-                  className="mt-4 truncate text-lg font-black text-[#29464d]"
-                  dir="ltr"
-                >
-                  {item.medicineName}
-                </h3>
+                {/* =====================================================
+                    MEDICINE NAME
+                ====================================================== */}
 
-                {showArabicNames && item.arabicMedicineName && (
-                  <p
-                    className="mt-1 truncate text-sm font-bold text-[#216474]"
+                <div className="mt-4 min-w-0">
+                  <h3
+                    className="
+                      truncate
+                      text-[17px]
+                      font-black
+                      leading-7
+                      text-[#29464D]
+                    "
                     dir="rtl"
+                    title={medicineName}
                   >
-                    {item.arabicMedicineName}
-                  </p>
-                )}
+                    {medicineName}
+                  </h3>
 
-                <p
-                  className={`mt-1 truncate text-xs text-[#829499] ${
-                    isArabic ? "text-right" : "text-left"
-                  }`}
-                  dir={
-                    showArabicNames && item.arabicScientificName ? "rtl" : "ltr"
-                  }
-                >
-                  {(showArabicNames && item.arabicScientificName) ||
-                    item.scientificName ||
-                    item.manufacturer ||
-                    t("لا توجد تفاصيل إضافية")}
-                </p>
-
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {item.manufacturer && (
-                    <MedicineIdentityChip label={item.manufacturer} />
-                  )}
-                  {item.dosageForm && (
-                    <MedicineIdentityChip label={item.dosageForm} />
-                  )}
-                  {item.capacity && (
-                    <MedicineIdentityChip label={item.capacity} />
+                  {scientificName && (
+                    <p
+                      className="
+                        mt-0.5
+                        truncate
+                        text-xs
+                        font-medium
+                        leading-5
+                        text-[#829499]
+                      "
+                      dir="rtl"
+                      title={scientificName}
+                    >
+                      {scientificName}
+                    </p>
                   )}
                 </div>
 
-                <div className="mt-5 grid grid-cols-2 gap-3">
+                {/* =====================================================
+                    IDENTITY INFORMATION
+                ====================================================== */}
+
+                <div className="mt-3 flex min-h-[28px] flex-wrap gap-1.5">
+                  {item.manufacturer && (
+                    <MedicineIdentityChip
+                      label={item.manufacturer}
+                    />
+                  )}
+
+                  {item.dosageForm && (
+                    <MedicineIdentityChip
+                      label={item.dosageForm}
+                    />
+                  )}
+
+                  {item.capacity && (
+                    <MedicineIdentityChip
+                      label={item.capacity}
+                    />
+                  )}
+                </div>
+
+                {/* =====================================================
+                    MAIN INFO
+                ====================================================== */}
+
+                <div className="mt-5 grid grid-cols-2 gap-2.5">
+                  {/* Quantity */}
                   <div
-                    className={`rounded-2xl border border-[#E6EEF0] bg-[#FAFCFC] p-3.5 ${
-                      isArabic ? "text-right" : "text-left"
-                    }`}
+                    className="
+                      rounded-2xl
+                      border
+                      border-[#E5EEF0]
+                      bg-[#F9FBFB]
+                      px-3.5
+                      py-3
+                    "
                   >
-                    <p className="text-[11px] text-[#829499]">{t("الكمية")}</p>
-                    <strong className="mt-1 block text-lg">
-                      {formatNumber(item.quantity, currentLanguage)}
+                    <p
+                      className="
+                        text-[10px]
+                        font-bold
+                        text-[#829499]
+                      "
+                    >
+                      {t("الكمية")}
+                    </p>
+
+                    <strong
+                      className="
+                        mt-1
+                        block
+                        text-lg
+                        font-black
+                        text-[#29464D]
+                      "
+                    >
+                      {formatNumber(
+                        item.quantity,
+                        currentLanguage,
+                      )}
                     </strong>
                   </div>
 
+                  {/* Selling Price */}
                   <div
-                    className={`rounded-2xl border border-[#E6EEF0] bg-[#FAFCFC] p-3.5 ${
-                      isArabic ? "text-right" : "text-left"
-                    }`}
+                    className="
+                      rounded-2xl
+                      border
+                      border-[#E5EEF0]
+                      bg-[#F9FBFB]
+                      px-3.5
+                      py-3
+                    "
                   >
-                    <p className="text-[11px] text-[#829499]">
+                    <p
+                      className="
+                        text-[10px]
+                        font-bold
+                        text-[#829499]
+                      "
+                    >
                       {t("سعر البيع")}
                     </p>
 
-                    <strong className="mt-1 block text-sm">
-                      {formatCurrency(item.sellingPrice, currentLanguage)}
+                    <strong
+                      className="
+                        mt-1
+                        block
+                        truncate
+                        text-sm
+                        font-black
+                        text-[#29464D]
+                      "
+                    >
+                      {formatCurrency(
+                        item.sellingPrice,
+                        currentLanguage,
+                      )}
                     </strong>
 
                     <span
-                      className={`mt-1 block text-[10px] font-bold ${
-                        item.isPriceVisibleToUsers
-                          ? "text-[#216474]"
-                          : "text-[#DFAE0D]"
-                      }`}
+                      className={`
+                        mt-0.5
+                        block
+                        truncate
+                        text-[9px]
+                        font-bold
+                        ${
+                          item.isPriceVisibleToUsers
+                            ? "text-[#216474]"
+                            : "text-[#DFAE0D]"
+                        }
+                      `}
                     >
                       {item.isPriceVisibleToUsers
                         ? t("ظاهر للمستخدمين")
@@ -1585,12 +1865,41 @@ export function PharmacyInventoryPage() {
                   </div>
                 </div>
 
-                <div className="mt-4 flex items-center gap-2 text-xs text-[#71858a]">
-                  <CalendarClock size={15} />
-                  <span>
-                    {t("الانتهاء")}:{" "}
+                {/* =====================================================
+                    EXPIRY
+                ====================================================== */}
+
+                <div
+                  className="
+                    mt-4
+                    flex
+                    min-w-0
+                    items-center
+                    gap-2
+                    rounded-xl
+                    border
+                    border-[#E8EFF0]
+                    bg-[#FAFCFC]
+                    px-3
+                    py-2.5
+                    text-xs
+                    text-[#71858A]
+                  "
+                >
+                  <CalendarClock
+                    size={15}
+                    className="shrink-0 text-[#216474]"
+                  />
+
+                  <span className="min-w-0 truncate">
+                    {t("الانتهاء")}:
+                    {" "}
                     {item.expiryDateUtc
-                      ? formatDate(item.expiryDateUtc, false, currentLanguage)
+                      ? formatDate(
+                          item.expiryDateUtc,
+                          false,
+                          currentLanguage,
+                        )
                       : t("غير محدد")}
                   </span>
 
@@ -1598,69 +1907,196 @@ export function PharmacyInventoryPage() {
                     item.daysUntilExpiry <= 30 && (
                       <AlertTriangle
                         size={15}
-                        className="ms-auto text-[#E11D48]"
+                        className="ms-auto shrink-0 text-[#E11D48]"
                       />
                     )}
                 </div>
 
+                {/* =====================================================
+                    EXPIRED WARNING
+                ====================================================== */}
+
                 {item.stockStatus === "Expired" && (
-                  <p className="mt-3 flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-black text-slate-700">
-                    <CalendarX2 size={15} />
-                    {t(
-                      "هذا الصنف منتهي الصلاحية وغير متاح للطلبات حتى تحديث بياناته.",
-                    )}
-                  </p>
+                  <div
+                    className="
+                      mt-3
+                      flex
+                      items-start
+                      gap-2
+                      rounded-xl
+                      border
+                      border-slate-200
+                      bg-slate-50
+                      px-3
+                      py-2.5
+                      text-xs
+                      font-bold
+                      leading-5
+                      text-slate-700
+                    "
+                  >
+                    <CalendarX2
+                      size={15}
+                      className="mt-0.5 shrink-0"
+                    />
+
+                    <span>
+                      {t(
+                        "هذا الصنف منتهي الصلاحية وغير متاح للطلبات حتى تحديث بياناته.",
+                      )}
+                    </span>
+                  </div>
                 )}
+
+                {/* =====================================================
+                    PRESCRIPTION
+                ====================================================== */}
 
                 {item.requiresPrescription && (
-                  <p
-                    className={`mt-3 rounded-xl bg-[#FFF7DF] px-3 py-2 text-xs font-bold text-[#DFAE0D] ${
-                      isArabic ? "text-right" : "text-left"
-                    }`}
+                  <div
+                    className="
+                      mt-3
+                      rounded-xl
+                      border
+                      border-[#F3E4AF]
+                      bg-[#FFF9E8]
+                      px-3
+                      py-2.5
+                      text-xs
+                      font-bold
+                      text-[#B58112]
+                    "
                   >
                     {t("يصرف بوصفة طبية")}
-                  </p>
+                  </div>
                 )}
 
-                <div className="mt-5 flex flex-wrap gap-2 border-t border-[#174b57]/8 pt-4">
+                {/* =====================================================
+                    ACTIONS
+                ====================================================== */}
+
+                <div
+                  className="
+                    mt-5
+                    flex
+                    items-center
+                    gap-2
+                    border-t
+                    border-[#174B57]/10
+                    pt-4
+                  "
+                >
+                  {/* Prediction */}
                   {item.stockStatus !== "Expired" && (
                     <button
-                      className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-[#cfe4e7] bg-[#eef7f6] px-4 text-xs font-black text-[#216474] transition hover:-translate-y-0.5 hover:border-[#a9cdd1] hover:bg-[#e4f1f0]"
-                      onClick={() => setPredictionItem(item)}
-                      aria-label={t("تحليل مخزون {{name}}", {
-                        name: item.medicineName,
-                      })}
+                      type="button"
+                      className="
+                        inline-flex
+                        min-h-10
+                        min-w-0
+                        flex-1
+                        items-center
+                        justify-center
+                        gap-2
+                        rounded-xl
+                        border
+                        border-[#CFE4E7]
+                        bg-[#EEF7F6]
+                        px-3
+                        text-[11px]
+                        font-black
+                        text-[#216474]
+                        transition-all
+                        duration-200
+                        hover:-translate-y-0.5
+                        hover:border-[#A9CDD1]
+                        hover:bg-[#E4F1F0]
+                      "
+                      onClick={() =>
+                        setPredictionItem(item)
+                      }
+                      aria-label={t(
+                        "تحليل مخزون {{name}}",
+                        {
+                          name: medicineName,
+                        },
+                      )}
                     >
-                      <BrainCircuit size={16} />
-                      {t("توقع النفاد")}
+                      <BrainCircuit
+                        size={15}
+                        className="shrink-0"
+                      />
+
+                      <span className="truncate">
+                        {t("توقع النفاد")}
+                      </span>
                     </button>
                   )}
+
+                  {/* Edit */}
                   <button
-                    className="grid size-11 shrink-0 place-items-center rounded-xl border border-[#CFE4E7] bg-[#EAF4F3] text-[#216474] transition hover:-translate-y-0.5 hover:bg-[#DCEFED]"
+                    type="button"
+                    className="
+                      grid
+                      size-10
+                      shrink-0
+                      place-items-center
+                      rounded-xl
+                      border
+                      border-[#CFE4E7]
+                      bg-[#EAF4F3]
+                      text-[#216474]
+                      transition-all
+                      duration-200
+                      hover:-translate-y-0.5
+                      hover:bg-[#DCEFED]
+                    "
                     onClick={() => setEditor(item)}
                     aria-label={t("تعديل الصنف")}
                     title={t("تعديل الصنف")}
                   >
-                    <Edit3 size={17} />
+                    <Edit3 size={16} />
                   </button>
 
+                  {/* Delete */}
                   <button
-                    className="grid size-11 shrink-0 place-items-center rounded-xl border border-rose-100 bg-rose-50 text-rose-600 transition hover:bg-rose-100"
+                    type="button"
+                    className="
+                      grid
+                      size-10
+                      shrink-0
+                      place-items-center
+                      rounded-xl
+                      border
+                      border-rose-100
+                      bg-rose-50
+                      text-rose-600
+                      transition-all
+                      duration-200
+                      hover:-translate-y-0.5
+                      hover:bg-rose-100
+                    "
                     disabled={remove.isPending}
                     onClick={() => {
                       if (
                         window.confirm(
-                          t("هل تريد حذف {{name}} من المخزون؟", {
-                            name: item.medicineName,
-                          }),
+                          t(
+                            "هل تريد حذف {{name}} من المخزون؟",
+                            {
+                              name: medicineName,
+                            },
+                          ),
                         )
                       ) {
-                        remove.mutate(item.inventoryItemId);
+                        remove.mutate(
+                          item.inventoryItemId,
+                        );
                       }
                     }}
                     aria-label={t("حذف")}
+                    title={t("حذف")}
                   >
-                    <Trash2 size={17} />
+                    <Trash2 size={16} />
                   </button>
                 </div>
               </article>
@@ -1669,71 +2105,164 @@ export function PharmacyInventoryPage() {
         </div>
       )}
 
+      {/* =========================================================
+          INVENTORY EDITOR
+      ========================================================= */}
+
       {editor && (
         <InventoryDialog
-          item={editor.inventoryItemId ? editor : null}
+          item={
+            editor.inventoryItemId
+              ? editor
+              : null
+          }
           initialMedicine={editor.initialMedicine}
-          pending={save.isPending || saveCatalogBatch.isPending}
+          pending={save.isPending}
           onClose={() => setEditor(null)}
-          onSave={(payload) => save.mutate(payload)}
-          onSaveBatch={(items) => saveCatalogBatch.mutate(items)}
+          onSave={(payload) =>
+            save.mutate(payload)
+          }
         />
       )}
+
+      {/* =========================================================
+          BARCODE LOOKUP
+      ========================================================= */}
+
       {showBarcodeLookup && (
         <BarcodeLookupDialog
-          onClose={() => setShowBarcodeLookup(false)}
+          onClose={() =>
+            setShowBarcodeLookup(false)
+          }
           onFound={(medicine) => {
             setShowBarcodeLookup(false);
-            setEditor({ initialMedicine: medicine });
+            setEditor({
+              initialMedicine: medicine,
+            });
           }}
         />
       )}
+
+      {/* =========================================================
+          EXCEL IMPORT
+      ========================================================= */}
+
       {showExcelImport && (
         <ExcelImportDialog
           pending={importBatch.isPending}
-          onClose={() => setShowExcelImport(false)}
-          onImport={(items) => importBatch.mutate(items)}
+          onClose={() =>
+            setShowExcelImport(false)
+          }
+          onImport={(items) =>
+            importBatch.mutate(items)
+          }
         />
       )}
+
+      {/* =========================================================
+          MANUAL ADD
+      ========================================================= */}
 
       {showManualAdd && (
         <ManualInventoryDialog
           pending={manualAdd.isPending}
-          onClose={() => setShowManualAdd(false)}
-          onSave={(payload) => manualAdd.mutate(payload)}
+          onClose={() =>
+            setShowManualAdd(false)
+          }
+          onSave={(payload) =>
+            manualAdd.mutate(payload)
+          }
         />
       )}
+
+      {/* =========================================================
+          STOCK PREDICTION
+      ========================================================= */}
+
       {predictionItem && (
         <StockPredictionDialog
           item={predictionItem}
-          onClose={() => setPredictionItem(null)}
+          onClose={() =>
+            setPredictionItem(null)
+          }
         />
       )}
     </div>
   );
 }
 
-function InventoryOverviewCard({ icon: Icon, label, value, tone, language }) {
+/* =============================================================
+   INVENTORY OVERVIEW CARD
+============================================================= */
+
+function InventoryOverviewCard({
+  icon: Icon,
+  label,
+  value,
+  tone,
+  language,
+}) {
   const tones = {
-    teal: "bg-[#eaf4f3] text-[#216474]",
+    teal: "bg-[#EAF4F3] text-[#216474]",
     green: "bg-emerald-50 text-emerald-700",
-    gold: "bg-[#fff7df] text-[#b58112]",
+    gold: "bg-[#FFF7DF] text-[#B58112]",
     rose: "bg-rose-50 text-rose-700",
     slate: "bg-slate-100 text-slate-700",
   };
 
   return (
-    <article className="flex min-h-[104px] items-center gap-3 rounded-[1.25rem] border border-[#dce8ea] bg-white p-4 shadow-[0_8px_24px_rgba(23,75,87,.035)] sm:p-5">
+    <article
+      className="
+        flex
+        min-h-[104px]
+        items-center
+        gap-3
+        rounded-[1.25rem]
+        border
+        border-[#DCE8EA]
+        bg-white
+        p-4
+        shadow-[0_8px_24px_rgba(23,75,87,.035)]
+        sm:p-5
+      "
+    >
       <span
-        className={`grid size-11 shrink-0 place-items-center rounded-2xl ${tones[tone]}`}
+        className={`
+          grid
+          size-11
+          shrink-0
+          place-items-center
+          rounded-2xl
+          ${tones[tone] || tones.teal}
+        `}
       >
-        <Icon size={20} />
+        {Icon && <Icon size={20} />}
       </span>
+
       <div className="min-w-0">
-        <strong className="block text-xl font-black text-[#29464d] sm:text-2xl">
+        <strong
+          className="
+            block
+            text-xl
+            font-black
+            text-[#29464D]
+            sm:text-2xl
+          "
+        >
           {formatNumber(value, language)}
         </strong>
-        <span className="mt-1 block truncate text-[11px] font-bold text-[#71858a] sm:text-xs">
+
+        <span
+          className="
+            mt-1
+            block
+            truncate
+            text-[11px]
+            font-bold
+            text-[#71858A]
+            sm:text-xs
+          "
+        >
           {label}
         </span>
       </div>
@@ -1741,9 +2270,30 @@ function InventoryOverviewCard({ icon: Icon, label, value, tone, language }) {
   );
 }
 
+/* =============================================================
+   MEDICINE IDENTITY CHIP
+============================================================= */
+
 function MedicineIdentityChip({ label }) {
+  if (!label) return null;
+
   return (
-    <span className="max-w-full truncate rounded-lg border border-[#e1ebed] bg-[#f8fbfb] px-2.5 py-1 text-[10px] font-bold text-[#60777d]">
+    <span
+      className="
+        max-w-full
+        truncate
+        rounded-lg
+        border
+        border-[#E1EBED]
+        bg-[#F8FBFB]
+        px-2.5
+        py-1
+        text-[10px]
+        font-bold
+        text-[#60777D]
+      "
+      title={label}
+    >
       {label}
     </span>
   );
