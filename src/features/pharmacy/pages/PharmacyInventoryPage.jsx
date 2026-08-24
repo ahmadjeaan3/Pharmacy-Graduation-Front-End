@@ -1381,37 +1381,40 @@ export function PharmacyInventoryPage() {
             </div>
           </div>
 
-          <div className="mt-7 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
-            <button
-              className="inline-flex min-h-[54px] w-full items-center justify-center gap-2 rounded-2xl bg-white px-4 text-sm font-black text-[#174b57] shadow-[0_12px_30px_rgba(7,31,37,.16)] transition hover:-translate-y-0.5 hover:bg-[#f8fbfb]"
-              onClick={() => setEditor({})}
-            >
-              <Plus size={20} strokeWidth={2.3} />
-              {t("إضافة من دليل الأدوية")}
-            </button>
-            <button
-              className="inline-flex min-h-[54px] w-full items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/[.08] px-4 text-sm font-black text-white backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white/15"
-              onClick={() => setShowBarcodeLookup(true)}
-            >
-              <ScanBarcode size={19} />
-              {t("إضافة بالباركود")}
-            </button>
-            <button
-              className="inline-flex min-h-[54px] w-full items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/[.08] px-4 text-sm font-black text-white backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white/15"
-              onClick={() => setShowManualAdd(true)}
-            >
-              <FilePlus2 size={19} />
-              {t("إضافة دواء يدويًا")}
-            </button>
-            <button
-              className="inline-flex min-h-[54px] w-full items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/[.08] px-4 text-sm font-black text-white backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white/15"
-              onClick={() => setShowExcelImport(true)}
-            >
-              <FileSpreadsheet size={19} />
-              {t("استيراد ملف Excel")}
-            </button>
-          </div>
-        </div>
+          <div className="mt-7 flex gap-4">
+  <button
+    className="inline-flex min-h-[54px] w-50 items-center justify-center gap-2 rounded-2xl bg-white px-4 text-sm font-black text-[#174b57] shadow-[0_12px_30px_rgba(7,31,37,.16)] transition hover:-translate-y-0.5 hover:bg-[#f8fbfb]"
+    onClick={() => setEditor({})}
+  >
+    <Plus size={20} strokeWidth={2.3} />
+    {t("إضافة من دليل الأدوية")}
+  </button>
+
+  <button
+    className="inline-flex min-h-[54px] w-50 items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/[.08] px-4 text-sm font-black text-white backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white/15"
+    onClick={() => setShowBarcodeLookup(true)}
+  >
+    <ScanBarcode size={19} />
+    {t("إضافة بالباركود")}
+  </button>
+
+  <button
+    className="inline-flex min-h-[54px] w-50 items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/[.08] px-4 text-sm font-black text-white backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white/15"
+    onClick={() => setShowManualAdd(true)}
+  >
+    <FilePlus2 size={19} />
+    {t("إضافة دواء يدويًا")}
+  </button>
+
+  <button
+    className="inline-flex min-h-[54px] w-50 items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/[.08] px-4 text-sm font-black text-white backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white/15"
+    onClick={() => setShowExcelImport(true)}
+  >
+    <FileSpreadsheet size={19} />
+    {t("استيراد ملف Excel")}
+  </button>
+</div>
+</div>
       </section>
 
       {notice && (
@@ -1426,43 +1429,7 @@ export function PharmacyInventoryPage() {
         </div>
       )}
 
-      <section className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-5">
-        <InventoryOverviewCard
-          icon={PackagePlus}
-          label={t("إجمالي الأصناف")}
-          value={overview.total}
-          tone="teal"
-          language={currentLanguage}
-        />
-        <InventoryOverviewCard
-          icon={PackageCheck}
-          label={t("متوفر")}
-          value={overview.inStock}
-          tone="green"
-          language={currentLanguage}
-        />
-        <InventoryOverviewCard
-          icon={AlertTriangle}
-          label={t("مخزون منخفض")}
-          value={overview.lowStock}
-          tone="gold"
-          language={currentLanguage}
-        />
-        <InventoryOverviewCard
-          icon={PackageX}
-          label={t("نافد")}
-          value={overview.outOfStock}
-          tone="rose"
-          language={currentLanguage}
-        />
-        <InventoryOverviewCard
-          icon={CalendarX2}
-          label={t("منتهي الصلاحية")}
-          value={overview.expired}
-          tone="slate"
-          language={currentLanguage}
-        />
-      </section>
+    
 
       {/* Filters */}
       <section className="mb-5 rounded-[1.35rem] border border-[#dce8ea] bg-white p-4 shadow-[0_10px_30px_rgba(23,75,87,.04)] sm:p-5">
