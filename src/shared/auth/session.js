@@ -1,23 +1,37 @@
+import { normalizeRoleNames } from "../config/roleNames";
+
 const SESSION_KEY = "pharmacy.auth.session.v1";
+const ROLE_CLAIM =
+  "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
+
+function readTokenRoles(accessToken) {
+  try {
+    const payloadPart = String(accessToken || "").split(".")[1];
+    if (!payloadPart) return [];
+    const normalized = payloadPart.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = normalized.padEnd(
+      normalized.length + ((4 - (normalized.length % 4)) % 4),
+      "=",
+    );
+    const payload = JSON.parse(atob(padded));
+    return [payload.role, payload.roles, payload[ROLE_CLAIM]]
+      .flatMap((value) => (Array.isArray(value) ? value : [value]))
+      .filter(Boolean);
+  } catch {
+    return [];
+  }
+}
 
 function normalizeSession(session) {
-  const canonicalRoles = ["Admin", "Pharmacy", "Organization", "User"];
   const receivedRoles = Array.isArray(session?.user?.roles)
     ? session.user.roles
     : session?.user?.roles
       ? [session.user.roles]
       : [];
-  const roles = [
-    ...new Set(
-      receivedRoles
-        .map((value) =>
-          canonicalRoles.find(
-            (role) => role.toLowerCase() === String(value).trim().toLowerCase(),
-          ),
-        )
-        .filter(Boolean),
-    ),
-  ];
+  const roles = normalizeRoleNames([
+    ...receivedRoles,
+    ...readTokenRoles(session?.accessToken),
+  ]);
   return { ...session, user: { ...session.user, roles } };
 }
 

@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import {
   AlertTriangle,
   ArrowRight,
@@ -79,6 +84,7 @@ const RepresentativeRouteMap = lazy(() =>
 const SUPPLY_HERO_IMAGE = "/assets/app/pharmacy.png";
 const ADMIN_HERO_IMAGE = "/assets/app/home/background_hero_admin.png";
 const WAREHOUSE_HERO_IMAGE = "/assets/app/home/SupplyChainWorkspace.png";
+const SUPPLY_DATA_STALE_TIME = 2 * 60_000;
 
 const warehousePathTabs = {
   "/app/warehouse/inventory": "inventory",
@@ -429,27 +435,30 @@ export function SupplyChainWorkspacePage() {
     queryKey: supplyKeys.dashboard,
     queryFn: getSupplyDashboard,
     enabled: isWarehouseOverview,
-    staleTime: 30_000,
+    staleTime: SUPPLY_DATA_STALE_TIME,
     refetchOnWindowFocus: false,
   });
   const orders = useQuery({
     queryKey: [...supplyKeys.orders, user?.id || user?.email || role],
     queryFn: getSupplyOrders,
     enabled: role === "Representative" || activeTab === "orders",
-    staleTime: 15_000,
+    staleTime: 45_000,
+    placeholderData: keepPreviousData,
     refetchOnWindowFocus: false,
   });
   const batches = useQuery({
     queryKey: supplyKeys.batches,
     queryFn: getBatches,
     enabled: role === "Warehouse" && activeTab === "inventory",
-    staleTime: 30_000,
+    staleTime: SUPPLY_DATA_STALE_TIME,
+    placeholderData: keepPreviousData,
   });
   const reps = useQuery({
     queryKey: supplyKeys.representatives,
     queryFn: getRepresentatives,
     enabled: role === "Warehouse" && ["orders", "team"].includes(activeTab),
-    staleTime: 30_000,
+    staleTime: SUPPLY_DATA_STALE_TIME,
+    placeholderData: keepPreviousData,
   });
   const adminBatches = useQuery({
     queryKey: [...supplyKeys.adminBatches, adminResourceSearch],
@@ -469,7 +478,8 @@ export function SupplyChainWorkspacePage() {
     enabled:
       ["Warehouse", "Pharmacy", "Admin"].includes(role) &&
       ["invoices", "accounts"].includes(activeTab),
-    staleTime: 30_000,
+    staleTime: SUPPLY_DATA_STALE_TIME,
+    placeholderData: keepPreviousData,
   });
   const returns = useQuery({
     queryKey: [...supplyKeys.returns, role],
@@ -477,7 +487,8 @@ export function SupplyChainWorkspacePage() {
     enabled:
       ["Warehouse", "Pharmacy", "Admin"].includes(role) &&
       activeTab === "returns",
-    staleTime: 30_000,
+    staleTime: SUPPLY_DATA_STALE_TIME,
+    placeholderData: keepPreviousData,
   });
   const recalls = useQuery({
     queryKey: [...supplyKeys.recalls, role],
@@ -485,25 +496,61 @@ export function SupplyChainWorkspacePage() {
     enabled:
       ["Warehouse", "Pharmacy", "Admin"].includes(role) &&
       activeTab === "recalls",
-    staleTime: 30_000,
+    staleTime: SUPPLY_DATA_STALE_TIME,
+    placeholderData: keepPreviousData,
   });
   const marketplace = useQuery({
     queryKey: supplyKeys.marketplace,
     queryFn: getMarketplace,
     enabled: role === "Pharmacy" && activeTab === "marketplace",
-    staleTime: 60_000,
+    staleTime: SUPPLY_DATA_STALE_TIME,
+    placeholderData: keepPreviousData,
   });
   const suggestions = useQuery({
     queryKey: supplyKeys.suggestions,
     queryFn: getRestockSuggestions,
     enabled: role === "Pharmacy" && activeTab === "suggestions",
-    staleTime: 30_000,
+    staleTime: SUPPLY_DATA_STALE_TIME,
+    placeholderData: keepPreviousData,
   });
   const catalog = useQuery({
     queryKey: ["supply-chain", "catalog", selectedWarehouse?.id, catalogSearch],
     queryFn: () => getWarehouseCatalog(selectedWarehouse.id, catalogSearch),
     enabled: role === "Pharmacy" && !!selectedWarehouse,
+    staleTime: SUPPLY_DATA_STALE_TIME,
+    placeholderData: keepPreviousData,
   });
+  useEffect(() => {
+    if (role !== "Warehouse") return undefined;
+
+    const timer = window.setTimeout(() => {
+      const identity = user?.id || user?.email || role;
+      Promise.allSettled([
+        qc.prefetchQuery({
+          queryKey: [...supplyKeys.orders, identity],
+          queryFn: getSupplyOrders,
+          staleTime: 45_000,
+        }),
+        qc.prefetchQuery({
+          queryKey: supplyKeys.batches,
+          queryFn: getBatches,
+          staleTime: SUPPLY_DATA_STALE_TIME,
+        }),
+        qc.prefetchQuery({
+          queryKey: supplyKeys.representatives,
+          queryFn: getRepresentatives,
+          staleTime: SUPPLY_DATA_STALE_TIME,
+        }),
+        qc.prefetchQuery({
+          queryKey: [...supplyKeys.returns, role],
+          queryFn: getSupplyReturns,
+          staleTime: SUPPLY_DATA_STALE_TIME,
+        }),
+      ]);
+    }, 250);
+
+    return () => window.clearTimeout(timer);
+  }, [qc, role, user?.email, user?.id]);
   const mutation = useMutation({
     mutationFn: ({ type, id, value, coordinates, note, payment }) =>
       type === "order"
@@ -591,9 +638,19 @@ export function SupplyChainWorkspacePage() {
   });
   const reviewReturnMutation = useMutation({
     mutationFn: ({ id, payload }) => reviewSupplyReturn(id, payload),
-    onSuccess: () => {
+    onSuccess: (updatedReturn) => {
       setReturnReview(null);
-      qc.invalidateQueries({ queryKey: supplyKeys.returns });
+      qc.setQueriesData({ queryKey: supplyKeys.returns }, (items) =>
+        Array.isArray(items)
+          ? items.map((item) =>
+              item.id === updatedReturn?.id ? updatedReturn : item,
+            )
+          : items,
+      );
+      qc.invalidateQueries({
+        queryKey: supplyKeys.returns,
+        refetchType: "inactive",
+      });
       qc.invalidateQueries({ queryKey: supplyKeys.batches });
       qc.invalidateQueries({ queryKey: supplyKeys.dashboard });
     },

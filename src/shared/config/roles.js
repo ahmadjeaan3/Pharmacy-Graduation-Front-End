@@ -25,6 +25,7 @@ import {
   UserRound,
   Warehouse,
 } from "lucide-react";
+import { ROLE_PRIORITY, normalizeRoleNames } from "./roleNames";
 
 /*
 |--------------------------------------------------------------------------
@@ -931,14 +932,7 @@ const roleDefinitions = {
 | ترتيب أولوية الأدوار
 |--------------------------------------------------------------------------
 */
-const rolePriority = [
-  "Admin",
-  "Warehouse",
-  "Representative",
-  "Pharmacy",
-  "Organization",
-  "User",
-];
+const rolePriority = ROLE_PRIORITY;
 
 /*
 |--------------------------------------------------------------------------
@@ -946,23 +940,7 @@ const rolePriority = [
 |--------------------------------------------------------------------------
 */
 export function normalizeRoles(roles = []) {
-  const values = Array.isArray(roles) ? roles : [roles];
-
-  return [
-    ...new Set(
-      values
-        .map((value) =>
-          rolePriority.find(
-            (role) =>
-              role.toLowerCase() ===
-              String(value || "")
-                .trim()
-                .toLowerCase(),
-          ),
-        )
-        .filter(Boolean),
-    ),
-  ];
+  return normalizeRoleNames(roles);
 }
 
 /*
