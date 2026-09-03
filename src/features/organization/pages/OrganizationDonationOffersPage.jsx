@@ -150,10 +150,12 @@ export function OrganizationDonationOffersPage() {
       className="min-h-[calc(100vh-164px)] space-y-5 bg-[#F4F8F8]"
     >
       {/* Hero */}
-      <section className="relative h-[230px] w-full overflow-hidden rounded-[14px] bg-[#10505A] text-white sm:h-[271px] sm:rounded-[16px]">
+      <section className="relative h-[190px] w-full overflow-hidden rounded-[14px] bg-[#10505A] text-white sm:h-[271px] sm:rounded-[16px]">
         <div
           aria-hidden="true"
-          className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-300 ${isArabic ? "" : "scale-x-[-1]"}`}
+          className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-300 max-sm:hidden ${
+            isArabic ? "" : "scale-x-[-1]"
+          }`}
           style={{
             backgroundImage: `url("${OFFERS_HERO_IMAGE}")`,
           }}
@@ -161,7 +163,7 @@ export function OrganizationDonationOffersPage() {
 
         <div
           aria-hidden="true"
-          className={`absolute inset-0 ${
+          className={`absolute inset-0 max-sm:hidden ${
             isArabic
               ? "bg-[linear-gradient(270deg,#10505A_0%,rgba(33,100,116,.25)_70%,rgba(33,100,116,.05)_100%)]"
               : "bg-[linear-gradient(90deg,#10505A_0%,rgba(33,100,116,.25)_70%,rgba(33,100,116,.05)_100%)]"
@@ -194,7 +196,7 @@ export function OrganizationDonationOffersPage() {
       </section>
 
       {/* Flow */}
-      <section className="rounded-xl border border-[#D8E6E8] bg-white p-4 sm:p-5 shadow-[0_6px_24px_rgba(23,75,87,.035)]">
+      <section className="rounded-xl border border-[#D8E6E8] bg-white p-4 shadow-[0_6px_24px_rgba(23,75,87,.035)] sm:p-5">
         <div className="flex items-start gap-3">
           <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#E6F3F6] text-[#216474]">
             <ShieldCheck size={19} />
@@ -234,6 +236,7 @@ export function OrganizationDonationOffersPage() {
           ))}
         </div>
       </section>
+
       {/* Notice */}
       {notice && (
         <div
@@ -248,7 +251,7 @@ export function OrganizationDonationOffersPage() {
       )}
 
       {/* Filters */}
-      <section className="rounded-xl bg-white p-4 sm:p-5 shadow-[0_6px_24px_rgba(23,75,87,.03)]">
+      <section className="rounded-xl bg-white p-4 shadow-[0_6px_24px_rgba(23,75,87,.03)] sm:p-5">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
           <div className={isArabic ? "text-right" : "text-left"}>
             <h2 className="text-xl font-bold text-[#333333]">
@@ -509,6 +512,7 @@ function OfferCard({
             accent
           />
         )}
+
         {actionable ? (
           <div className="mt-5 border-t border-[#E7EFF0] pt-5">
             <div className="grid gap-3 sm:grid-cols-[180px_1fr]">
@@ -588,7 +592,8 @@ function StatusBadge({ label, status }) {
   return (
     <span
       className={`shrink-0 rounded-full border px-3 py-1.5 text-[11px] font-bold ${
-        styles[status] || "border-[#D5E3E6] bg-[#F2F6F7] text-[#60777D]"
+        styles[status] ||
+        "border-[#D5E3E6] bg-[#F2F6F7] text-[#60777D]"
       }`}
     >
       {label}

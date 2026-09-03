@@ -37,12 +37,16 @@ export function AdminDashboardPage() {
 
   const locale =
     language === "ar" ? "ar-SY" : language === "tr" ? "tr-TR" : "en-US";
+
   const [periodDays, setPeriodDays] = useState(7);
+
   const query = useQuery({
     queryKey: adminKeys.dashboard(periodDays),
     queryFn: () => getAdminDashboard(periodDays),
   });
+
   if (query.isPending) return <AdminLoadingState />;
+
   if (query.isError)
     return (
       <AdminErrorState
@@ -50,10 +54,12 @@ export function AdminDashboardPage() {
         onRetry={query.refetch}
       />
     );
+
   const data = query.data;
   const activePeriodDays = data.periodDays ?? periodDays;
   const activePeriodLabel = periodLabel(activePeriodDays);
   const isAllTime = activePeriodDays === 0;
+
   const stats = [
     {
       label: isAllTime ? "المستخدمون" : "مستخدمون جدد",
@@ -69,7 +75,11 @@ export function AdminDashboardPage() {
       value: isAllTime ? data.totalPharmacies : data.newPharmaciesInPeriod,
       detail: isAllTime
         ? formatApprovedDetail(data.approvedPharmacies, language, locale)
-        : formatPharmaciesTotalDetail(data.totalPharmacies, language, locale),
+        : formatPharmaciesTotalDetail(
+            data.totalPharmacies,
+            language,
+            locale,
+          ),
       icon: Building2,
       tone: "bg-[#FFF7DF] text-[#DFAE0D]",
     },
@@ -100,6 +110,7 @@ export function AdminDashboardPage() {
       tone: "bg-[#EAF4F3] text-[#174B57]",
     },
   ];
+
   const queues = [
     {
       label: "صيدليات بانتظار الاعتماد",
@@ -120,6 +131,7 @@ export function AdminDashboardPage() {
       icon: ShieldCheck,
     },
   ];
+
   const requestSegments = [
     {
       label: "قيد الانتظار",
@@ -142,6 +154,7 @@ export function AdminDashboardPage() {
       color: "#829499",
     },
   ];
+
   const accountSegments = [
     {
       label: "المستخدمون",
@@ -159,16 +172,20 @@ export function AdminDashboardPage() {
       color: "bg-[#6E969E]",
     },
   ];
+
   const totalAccounts =
     data.totalUsers + data.totalPharmacies + data.totalOrganizations;
+
   const pharmacyApprovalRate = percentage(
     data.approvedPharmacies,
     data.totalPharmacies,
   );
+
   const organizationApprovalRate = percentage(
     data.approvedOrganizations,
     data.totalOrganizations,
   );
+
   const activeUserRate = percentage(data.activeUsers, data.totalUsers);
 
   return (
@@ -176,37 +193,52 @@ export function AdminDashboardPage() {
       <Motion.section
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative isolate min-h-[230px] overflow-hidden rounded-[16px] bg-[#10505A] px-5 py-7 text-white shadow-[0_22px_55px_rgba(23,75,87,.14)] sm:min-h-[250px] sm:px-7 sm:py-8 lg:min-h-[271px] lg:px-10"
+        className="relative isolate w-full overflow-hidden rounded-[16px] bg-[#10505A] px-5 py-7 text-white shadow-[0_22px_55px_rgba(23,75,87,.14)] sm:min-h-[250px] sm:px-7 sm:py-8 lg:min-h-[271px] lg:px-10"
       >
+        {/* Desktop / Tablet background image */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 -z-20 bg-cover bg-[position:38%_center] bg-no-repeat"
+          className="absolute inset-0 -z-20 hidden bg-cover bg-[position:38%_center] bg-no-repeat sm:block"
           style={{ backgroundImage: `url("${ADMIN_HERO_IMAGE}")` }}
         />
+
+        {/* Desktop / Tablet gradient */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 -z-10 bg-[linear-gradient(270deg,#10505A_0%,rgba(16,80,90,.88)_36%,rgba(33,100,116,.42)_70%,rgba(33,100,116,.08)_100%)]"
+          className="absolute inset-0 -z-10 hidden bg-[linear-gradient(270deg,#10505A_0%,rgba(16,80,90,.88)_36%,rgba(33,100,116,.42)_70%,rgba(33,100,116,.08)_100%)] sm:block"
         />
+
         <div className="noise absolute inset-0 -z-[5] opacity-30" />
-        <div className="absolute -left-12 -top-24 -z-[4] size-72 rounded-full border-[44px] border-white/[.035]" />
+
         <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-sm font-bold text-[#8bd0cb]">
               مركز إدارة المنصة
             </p>
-            <h2 className="mt-2 text-3xl font-black">نظرة عامة على دوائي</h2>
+
+            <h2 className="mt-2 text-3xl font-black">
+              نظرة عامة على دوائي
+            </h2>
+
             <p className="mt-3 max-w-2xl leading-7 text-white/60">
               إحصاءات النشاط والطلبات خلال {activePeriodLabel}، مع عرض حالة
               الاعتمادات الحالية للمنصة.
             </p>
           </div>
+
           <div className="flex flex-col gap-3 sm:items-end">
             <label className="flex min-h-[52px] items-center gap-2.5 rounded-xl border border-white/90 bg-white px-4 py-2.5 text-[#17363e] shadow-[0_10px_28px_rgba(4,45,53,.14)]">
               <CalendarRange size={17} className="text-[#DFAE0D]" />
-              <span className="text-xs font-bold text-[#71858a]">عرض نشاط</span>
+
+              <span className="text-xs font-bold text-[#71858a]">
+                عرض نشاط
+              </span>
+
               <select
                 value={periodDays}
-                onChange={(event) => setPeriodDays(Number(event.target.value))}
+                onChange={(event) =>
+                  setPeriodDays(Number(event.target.value))
+                }
                 className="cursor-pointer bg-transparent py-1 text-sm font-black text-[#17363e] outline-none [&>option]:text-[#333333]"
               >
                 <option value={1}>آخر 24 ساعة</option>
@@ -216,6 +248,7 @@ export function AdminDashboardPage() {
                 <option value={0}>كل الوقت</option>
               </select>
             </label>
+
             <div className="min-h-[46px] rounded-xl border border-white/90 bg-white px-4 py-3 text-xs text-[#17363e] shadow-[0_8px_24px_rgba(4,45,53,.12)]">
               {query.isFetching ? (
                 <strong className="inline-flex items-center gap-2 text-[#f5cb72]">
@@ -240,29 +273,37 @@ export function AdminDashboardPage() {
           query.isFetching ? "pointer-events-none opacity-55" : ""
         }`}
       >
-        {stats.map(({ label, value, detail, icon: Icon, tone }, index) => (
-          <Motion.article
-            key={label}
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.06 }}
-            className="rounded-[1.4rem] border border-[#174b57]/8 bg-white p-5 shadow-[0_12px_35px_rgba(23,75,87,.045)]"
-          >
-            <div className="flex items-start justify-between">
-              <span
-                className={`grid size-11 place-items-center rounded-xl ${tone}`}
-              >
-                <Icon size={21} />
-              </span>
-              <Activity size={17} className="text-[#C8DADD]" />
-            </div>
-            <p className="mt-5 text-sm font-semibold text-[#71858a]">{label}</p>
-            <p className="mt-1 text-3xl font-black text-[#17363e]">
-              {value.toLocaleString(locale)}
-            </p>
-            <p className="mt-2 text-xs text-[#A5A5A5]">{detail}</p>
-          </Motion.article>
-        ))}
+        {stats.map(
+          ({ label, value, detail, icon: Icon, tone }, index) => (
+            <Motion.article
+              key={label}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.06 }}
+              className="rounded-[1.4rem] border border-[#174b57]/8 bg-white p-5 shadow-[0_12px_35px_rgba(23,75,87,.045)]"
+            >
+              <div className="flex items-start justify-between">
+                <span
+                  className={`grid size-11 place-items-center rounded-xl ${tone}`}
+                >
+                  <Icon size={21} />
+                </span>
+
+                <Activity size={17} className="text-[#C8DADD]" />
+              </div>
+
+              <p className="mt-5 text-sm font-semibold text-[#71858a]">
+                {label}
+              </p>
+
+              <p className="mt-1 text-3xl font-black text-[#17363e]">
+                {value.toLocaleString(locale)}
+              </p>
+
+              <p className="mt-2 text-xs text-[#A5A5A5]">{detail}</p>
+            </Motion.article>
+          ),
+        )}
       </section>
 
       <section className="grid gap-4 lg:grid-cols-3">
@@ -275,12 +316,15 @@ export function AdminDashboardPage() {
             <span className="grid size-12 place-items-center rounded-2xl bg-[#eaf4f3] text-[#216474]">
               <Icon size={22} />
             </span>
+
             <span className="min-w-0 flex-1">
               <strong className="block text-2xl font-black text-[#17363e]">
                 {value.toLocaleString(locale)}
               </strong>
+
               <small className="text-[#71858a]">{label}</small>
             </span>
+
             <ArrowLeft
               size={18}
               className="text-[#216474] transition group-hover:-translate-x-1"
@@ -296,23 +340,30 @@ export function AdminDashboardPage() {
               <span className="grid size-11 place-items-center rounded-xl bg-[#eaf4f3] text-[#216474]">
                 <PieChart size={20} />
               </span>
+
               <div>
-                <h3 className="font-black text-[#17363e]">صحة دورة الطلبات</h3>
+                <h3 className="font-black text-[#17363e]">
+                  صحة دورة الطلبات
+                </h3>
+
                 <p className="mt-0.5 text-xs text-[#A5A5A5]">
                   توزيع طلبات الأدوية خلال {activePeriodLabel}
                 </p>
               </div>
             </div>
+
             <span className="rounded-full bg-[#F4F8F8] px-3 py-1.5 text-xs font-black text-[#216474]">
               {data.totalMedicineRequests.toLocaleString(locale)} طلب
             </span>
           </div>
+
           <div className="grid items-center gap-7 p-6 sm:grid-cols-[220px_1fr]">
             <DonutChart
               segments={requestSegments}
               total={data.totalMedicineRequests}
               locale={locale}
             />
+
             <div className="grid gap-3">
               {requestSegments.map((segment) => (
                 <div
@@ -323,12 +374,15 @@ export function AdminDashboardPage() {
                     className="size-2.5 rounded-full"
                     style={{ backgroundColor: segment.color }}
                   />
+
                   <span className="flex-1 text-sm font-semibold text-[#60777c]">
                     {segment.label}
                   </span>
+
                   <strong className="text-sm text-[#17363e]">
                     {segment.value.toLocaleString(locale)}
                   </strong>
+
                   <span className="w-10 text-end text-[11px] text-[#A5A5A5]">
                     {percentage(
                       segment.value,
@@ -345,15 +399,20 @@ export function AdminDashboardPage() {
         <article className="rounded-[1.65rem] border border-[#174b57]/8 bg-white p-6 shadow-[0_14px_40px_rgba(23,75,87,.05)]">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-black text-[#17363e]">تكوين مجتمع المنصة</h3>
+              <h3 className="font-black text-[#17363e]">
+                تكوين مجتمع المنصة
+              </h3>
+
               <p className="mt-1 text-xs text-[#A5A5A5]">
                 لقطة حالية لإجمالي الحسابات ونسب جاهزيتها
               </p>
             </div>
+
             <span className="grid size-11 place-items-center rounded-xl bg-[#F0F6F7] text-[#52727A]">
               <UsersRound size={20} />
             </span>
           </div>
+
           <div className="mt-7 flex h-4 overflow-hidden rounded-full bg-[#F0F6F7]">
             {accountSegments.map((segment) => (
               <Motion.span
@@ -368,18 +427,21 @@ export function AdminDashboardPage() {
               />
             ))}
           </div>
+
           <div className="mt-4 grid grid-cols-3 gap-2">
             {accountSegments.map((segment) => (
               <div key={segment.label} className="text-center">
                 <strong className="block text-lg font-black text-[#17363e]">
                   {segment.value.toLocaleString(locale)}
                 </strong>
+
                 <span className="text-[11px] text-[#A5A5A5]">
                   {segment.label}
                 </span>
               </div>
             ))}
           </div>
+
           <div className="mt-7 grid gap-4">
             <ProgressMetric
               label="نشاط المستخدمين"
@@ -387,12 +449,14 @@ export function AdminDashboardPage() {
               color="bg-[#216474]"
               locale={locale}
             />
+
             <ProgressMetric
               label="اعتماد الصيدليات"
               value={pharmacyApprovalRate}
               color="bg-[#DFAE0D]"
               locale={locale}
             />
+
             <ProgressMetric
               label="اعتماد المنظمات"
               value={organizationApprovalRate}
@@ -408,23 +472,31 @@ export function AdminDashboardPage() {
           icon={TrendingUp}
           label={`عمليات البحث — ${activePeriodLabel}`}
           value={data.totalSearches}
-          detail={`${data.newUsersInPeriod.toLocaleString(locale)} حساب مستخدم جديد`}
+          detail={`${data.newUsersInPeriod.toLocaleString(
+            locale,
+          )} حساب مستخدم جديد`}
           tone="bg-[#EAF4F3] text-[#216474]"
           locale={locale}
         />
+
         <InsightCard
           icon={HeartHandshake}
           label={`عروض التبرع المعلّقة — ${activePeriodLabel}`}
           value={data.pendingDonationOffers}
-          detail={`من أصل ${data.totalDonationOffers.toLocaleString(locale)} عرض خلال الفترة`}
+          detail={`من أصل ${data.totalDonationOffers.toLocaleString(
+            locale,
+          )} عرض خلال الفترة`}
           tone="bg-[#F0F6F7] text-[#60777D]"
           locale={locale}
         />
+
         <InsightCard
           icon={ShieldCheck}
           label={`طلبات المساعدة المفتوحة — ${activePeriodLabel}`}
           value={data.openAssistanceRequests}
-          detail={`من أصل ${data.totalAssistanceRequests.toLocaleString(locale)} طلب خلال الفترة`}
+          detail={`من أصل ${data.totalAssistanceRequests.toLocaleString(
+            locale,
+          )} طلب خلال الفترة`}
           tone="bg-[#EAF4F3] text-[#216474]"
           locale={locale}
         />
@@ -437,10 +509,13 @@ export function AdminDashboardPage() {
               <h3 className="font-extrabold text-[#17363e]">
                 مؤشر جاهزية الطلبات — {activePeriodLabel}
               </h3>
+
               <p className="mt-1 text-sm text-[#A5A5A5]">
-                متابعة سريعة للطلبات التي تحتاج تدخلاً خلال {activePeriodLabel}
+                متابعة سريعة للطلبات التي تحتاج تدخلاً خلال{" "}
+                {activePeriodLabel}
               </p>
             </div>
+
             <div className="rounded-2xl bg-[#eaf4f3] px-4 py-2 text-center">
               <strong className="block text-xl font-black text-[#216474]">
                 {percentage(
@@ -450,11 +525,13 @@ export function AdminDashboardPage() {
                 ).toLocaleString(locale)}
                 %
               </strong>
+
               <span className="text-[10px] font-bold text-[#71858a]">
                 تمت معالجتها
               </span>
             </div>
           </div>
+
           {data.requestStatusCounts.length ? (
             <div className="grid gap-3 p-5 sm:grid-cols-2">
               {data.requestStatusCounts.map((item, index) => {
@@ -464,22 +541,28 @@ export function AdminDashboardPage() {
                   "bg-[#FFF1F2] text-[#E11D48] border-[#FECDD3]",
                   "bg-[#F8FBFB] text-[#60777D] border-[#DCE8EA]",
                 ];
+
                 return (
                   <div
                     key={item.status}
-                    className={`flex items-center gap-4 rounded-2xl border p-4 ${styles[index % styles.length]}`}
+                    className={`flex items-center gap-4 rounded-2xl border p-4 ${
+                      styles[index % styles.length]
+                    }`}
                   >
                     <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-white/75 shadow-sm">
                       <Activity size={19} />
                     </span>
+
                     <div className="min-w-0 flex-1">
                       <span className="block truncate text-xs font-bold opacity-75">
                         {formatRequestStatus(item.status)}
                       </span>
+
                       <strong className="mt-1 block text-2xl font-black">
                         {item.count.toLocaleString(locale)}
                       </strong>
                     </div>
+
                     <span className="rounded-full bg-white/70 px-2.5 py-1 text-[11px] font-black">
                       {percentage(
                         item.count,
@@ -498,21 +581,25 @@ export function AdminDashboardPage() {
             />
           )}
         </div>
+
         <div className="rounded-[1.5rem] border border-[#174b57]/8 bg-white p-6 shadow-[0_12px_35px_rgba(23,75,87,.045)]">
           <div className="flex items-center gap-3">
             <span className="grid size-10 place-items-center rounded-xl bg-[#EAF4F3] text-[#216474]">
               <Search size={19} />
             </span>
+
             <div>
               <h3 className="font-extrabold text-[#17363e]">
                 عبارات البحث الأكثر استخداماً
               </h3>
+
               <p className="text-xs text-[#A5A5A5]">
                 إجمالي البحث خلال {activePeriodLabel}:{" "}
                 {data.totalSearches.toLocaleString(locale)}
               </p>
             </div>
           </div>
+
           <div className="mt-6">
             {data.topSearchQueries.length ? (
               <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
@@ -551,16 +638,19 @@ export function AdminDashboardPage() {
             <h3 className="font-extrabold text-[#17363e]">
               أحدث طلبات الأدوية
             </h3>
+
             <p className="mt-1 text-sm text-[#A5A5A5]">
               آخر عشرة طلبات ضمن {activePeriodLabel}
             </p>
           </div>
+
           <span className="inline-flex w-fit items-center gap-2 rounded-xl border border-[#216474]/8 bg-white px-3.5 py-2.5 text-xs font-black text-[#216474] shadow-sm">
             <PackageSearch size={14} />
             {data.recentMedicineRequests.length.toLocaleString(locale)} طلبات
             حديثة
           </span>
         </div>
+
         {data.recentMedicineRequests.length ? (
           <div className="overflow-x-auto p-4 lg:p-6">
             <table className="w-full min-w-[940px] table-fixed border-separate border-spacing-0 text-start text-sm">
@@ -569,15 +659,29 @@ export function AdminDashboardPage() {
                   <th className="w-[21%] rounded-s-xl px-5 py-4 font-black">
                     رقم الطلب
                   </th>
-                  <th className="w-[18%] px-5 py-4 font-black">الدواء</th>
-                  <th className="w-[18%] px-5 py-4 font-black">المستخدم</th>
-                  <th className="w-[17%] px-5 py-4 font-black">الصيدلية</th>
-                  <th className="w-[14%] px-5 py-4 font-black">الحالة</th>
+
+                  <th className="w-[18%] px-5 py-4 font-black">
+                    الدواء
+                  </th>
+
+                  <th className="w-[18%] px-5 py-4 font-black">
+                    المستخدم
+                  </th>
+
+                  <th className="w-[17%] px-5 py-4 font-black">
+                    الصيدلية
+                  </th>
+
+                  <th className="w-[14%] px-5 py-4 font-black">
+                    الحالة
+                  </th>
+
                   <th className="w-[12%] rounded-e-xl px-5 py-4 font-black">
                     التاريخ
                   </th>
                 </tr>
               </thead>
+
               <tbody>
                 {data.recentMedicineRequests.map((request) => (
                   <tr
@@ -593,11 +697,13 @@ export function AdminDashboardPage() {
                         {request.requestCode}
                       </span>
                     </td>
+
                     <td className="border-b border-[#174b57]/7 px-5 py-4">
                       <div className="flex min-w-0 items-center gap-2.5">
                         <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-[#EAF4F3] text-[#216474]">
                           <PackageSearch size={15} />
                         </span>
+
                         <strong
                           className="block truncate font-black text-[#29464d]"
                           title={request.medicineName}
@@ -606,11 +712,13 @@ export function AdminDashboardPage() {
                         </strong>
                       </div>
                     </td>
+
                     <td className="border-b border-[#174b57]/7 px-5 py-4">
                       <div className="flex min-w-0 items-center gap-2.5">
                         <span className="grid size-8 shrink-0 place-items-center rounded-full bg-[#F0F6F7] text-xs font-black text-[#52727A]">
                           {request.userFullName?.trim()?.[0] || "م"}
                         </span>
+
                         <span
                           className="block truncate font-semibold text-[#60777c]"
                           title={request.userFullName}
@@ -619,12 +727,14 @@ export function AdminDashboardPage() {
                         </span>
                       </div>
                     </td>
+
                     <td className="border-b border-[#174b57]/7 px-5 py-4">
                       <div className="flex min-w-0 items-center gap-2">
                         <Building2
                           size={15}
                           className="shrink-0 text-[#DFAE0D]"
                         />
+
                         <span
                           className="block truncate text-[#60777c]"
                           title={request.pharmacyName}
@@ -633,13 +743,17 @@ export function AdminDashboardPage() {
                         </span>
                       </div>
                     </td>
+
                     <td className="border-b border-[#174b57]/7 px-5 py-4">
                       <span
-                        className={`inline-flex whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-black ${requestStatusTone(request.status)}`}
+                        className={`inline-flex whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-black ${requestStatusTone(
+                          request.status,
+                        )}`}
                       >
                         {formatRequestStatus(request.status)}
                       </span>
                     </td>
+
                     <td className="border-b border-[#174b57]/7 px-5 py-4">
                       <span
                         className="inline-flex whitespace-nowrap rounded-lg bg-[#F8FBFB] px-2.5 py-2 font-mono text-[11px] font-bold text-[#829499]"
@@ -779,7 +893,9 @@ function requestStatusTone(status) {
 
 function formatRequestDate(value) {
   if (!value) return "—";
+
   const date = new Date(value);
+
   return new Intl.DateTimeFormat("en-GB", {
     day: "2-digit",
     month: "2-digit",
@@ -790,15 +906,19 @@ function formatRequestDate(value) {
 function DonutChart({ segments, total, locale }) {
   const radius = 72;
   const circumference = 2 * Math.PI * radius;
+
   const segmentsWithOffset = segments.map((segment, index) => ({
     ...segment,
     offset: segments
       .slice(0, index)
       .reduce(
-        (sum, item) => sum + (item.value / Math.max(total, 1)) * circumference,
+        (sum, item) =>
+          sum +
+          (item.value / Math.max(total, 1)) * circumference,
         0,
       ),
   }));
+
   return (
     <div className="relative mx-auto size-[210px]">
       <svg viewBox="0 0 180 180" className="-rotate-90">
@@ -810,8 +930,11 @@ function DonutChart({ segments, total, locale }) {
           stroke="#edf3f2"
           strokeWidth="17"
         />
+
         {segmentsWithOffset.map((segment) => {
-          const length = (segment.value / Math.max(total, 1)) * circumference;
+          const length =
+            (segment.value / Math.max(total, 1)) * circumference;
+
           const element = (
             <Motion.circle
               key={segment.label}
@@ -822,22 +945,32 @@ function DonutChart({ segments, total, locale }) {
               stroke={segment.color}
               strokeWidth="17"
               strokeLinecap="round"
-              initial={{ strokeDasharray: `0 ${circumference}` }}
+              initial={{
+                strokeDasharray: `0 ${circumference}`,
+              }}
               animate={{
-                strokeDasharray: `${Math.max(length - 3, 0)} ${circumference}`,
+                strokeDasharray: `${Math.max(
+                  length - 3,
+                  0,
+                )} ${circumference}`,
               }}
               transition={{ duration: 0.8 }}
-              style={{ strokeDashoffset: -segment.offset }}
+              style={{
+                strokeDashoffset: -segment.offset,
+              }}
             />
           );
+
           return element;
         })}
       </svg>
+
       <div className="absolute inset-0 grid place-items-center text-center">
         <div>
           <strong className="block text-3xl font-black text-[#17363e]">
             {Number(total || 0).toLocaleString(locale)}
           </strong>
+
           <span className="mt-1 block text-xs text-[#A5A5A5]">
             إجمالي الطلبات
           </span>
@@ -852,10 +985,12 @@ function ProgressMetric({ label, value, color, locale }) {
     <div>
       <div className="mb-2 flex items-center justify-between text-xs">
         <span className="font-bold text-[#60777c]">{label}</span>
+
         <strong className="text-[#17363e]">
           {value.toLocaleString(locale)}%
         </strong>
       </div>
+
       <div className="h-2 overflow-hidden rounded-full bg-[#F0F6F7]">
         <Motion.div
           initial={{ width: 0 }}
@@ -868,7 +1003,14 @@ function ProgressMetric({ label, value, color, locale }) {
   );
 }
 
-function InsightCard({ icon: Icon, label, value, detail, tone, locale }) {
+function InsightCard({
+  icon: Icon,
+  label,
+  value,
+  detail,
+  tone,
+  locale,
+}) {
   return (
     <article className="group flex items-center gap-4 rounded-[1.4rem] border border-[#174b57]/8 bg-white p-5 shadow-[0_10px_30px_rgba(23,75,87,.04)] transition hover:-translate-y-1 hover:shadow-lg">
       <span
@@ -876,14 +1018,19 @@ function InsightCard({ icon: Icon, label, value, detail, tone, locale }) {
       >
         <Icon size={21} />
       </span>
+
       <div className="min-w-0 flex-1">
         <span className="block text-xs font-semibold text-[#71858a]">
           {label}
         </span>
+
         <strong className="mt-1 block text-2xl font-black text-[#17363e]">
           {Number(value || 0).toLocaleString(locale)}
         </strong>
-        <small className="mt-1 block truncate text-[#A5A5A5]">{detail}</small>
+
+        <small className="mt-1 block truncate text-[#A5A5A5]">
+          {detail}
+        </small>
       </div>
     </article>
   );

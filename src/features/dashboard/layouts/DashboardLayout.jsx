@@ -124,9 +124,11 @@ function getDashboardPageTitle(pathname) {
   ) {
     return "تحقق التبرعات";
   }
-if (pathname.startsWith("/app/sos")) {
-  return "طلبات الأدوية العاجلة";
-}
+
+  if (pathname.startsWith("/app/sos")) {
+    return "طلبات الأدوية العاجلة";
+  }
+
   if (pathname.startsWith("/app/pharmacy/profile")) {
     return "الملف والموقع";
   }
@@ -146,30 +148,39 @@ if (pathname.startsWith("/app/sos")) {
   if (pathname.startsWith("/app/warehouse/inventory")) {
     return "المخزون والدفعات";
   }
+
   if (pathname.startsWith("/app/warehouse/batches")) {
     return "الدُفعات الدوائية";
   }
+
   if (pathname.startsWith("/app/warehouse/orders")) {
     return "الطلبات والشحنات";
   }
+
   if (pathname.startsWith("/app/warehouse/shipments")) {
     return "الشحنات والتوصيل";
   }
+
   if (pathname.startsWith("/app/warehouse/representatives")) {
     return "إدارة المندوبين";
   }
+
   if (pathname.startsWith("/app/warehouse/invoices")) {
     return "الفواتير والمدفوعات";
   }
+
   if (pathname.startsWith("/app/warehouse/accounts")) {
     return "حسابات الصيدليات";
   }
+
   if (pathname.startsWith("/app/warehouse/returns")) {
     return "المرتجعات";
   }
+
   if (pathname.startsWith("/app/warehouse/recalls")) {
     return "استدعاءات الدفعات";
   }
+
   if (pathname.startsWith("/app/supply-chain")) {
     return "مركز سلسلة التوريد";
   }
@@ -211,9 +222,11 @@ if (pathname.startsWith("/app/sos")) {
   if (pathname.startsWith("/app/accounts")) {
     return "إدارة الحسابات";
   }
-if (pathname.startsWith("/app/audit-logs")) {
-  return "سجل النشاطات";
-}
+
+  if (pathname.startsWith("/app/audit-logs")) {
+    return "سجل النشاطات";
+  }
+
   if (pathname.startsWith("/app/medicines")) {
     return "دليل الأدوية";
   }
@@ -832,6 +845,7 @@ export function DashboardLayout() {
               />
             </NavLink>
           </div>
+
           <div className="mx-auto mt-2 h-px w-[233px] bg-white/15" />
 
           <div className="mx-auto mt-9 w-[251px] rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3">
@@ -965,7 +979,7 @@ export function DashboardLayout() {
               </h1>
 
               <span
-                className={`h-0.5 w-[107px] ${
+                className={`hidden h-0.5 w-[107px] sm:block ${
                   isArabic
                     ? "bg-[linear-gradient(to_left,#eeb73a,rgba(238,183,58,0))]"
                     : "bg-[linear-gradient(to_right,#eeb73a,rgba(238,183,58,0))]"
@@ -999,6 +1013,7 @@ export function DashboardLayout() {
                   isArabic ? "text-right" : "text-left"
                 }`}
               />
+
               <datalist id="dashboard-navigation-search">
                 {searchableNavigation.map((item) => (
                   <option key={item.to} value={item.translatedLabel} />

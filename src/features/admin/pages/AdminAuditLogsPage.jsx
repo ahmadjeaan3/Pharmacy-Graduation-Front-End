@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import {
   Activity,
@@ -113,49 +114,60 @@ export function AdminAuditLogsPage() {
     <div dir="rtl" className="space-y-5 pb-6">
 
       {/* ================= HERO ================= */}
-      <section className="relative isolate min-h-[270px] overflow-hidden rounded-[2rem] border border-[#d5e7e8] bg-[#8bcbd0] shadow-[0_24px_60px_rgba(23,75,87,.13)] sm:min-h-[300px]">
+      <section className="relative isolate min-h-[230px] overflow-hidden rounded-[1.5rem] border border-[#d5e7e8] bg-[#10505A] shadow-[0_24px_60px_rgba(23,75,87,.13)] sm:min-h-[270px] sm:rounded-[2rem] lg:min-h-[300px]">
 
+        {/* صورة الهيرو — ديسكتوب فقط */}
         <img
           src={AUDIT_HERO_IMAGE}
           alt=""
           aria-hidden="true"
-          className="absolute inset-0 -z-20 h-full w-full object-cover object-[42%_center] sm:object-center"
+          className="absolute inset-0 -z-20 hidden h-full w-full object-cover object-[42%_center] md:block"
         />
 
-        <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(255,255,255,.02)_0%,rgba(20,91,103,.12)_38%,rgba(8,73,85,.76)_72%,rgba(7,61,72,.9)_100%)]" />
+        {/* Gradient — ديسكتوب فقط */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 hidden bg-[linear-gradient(90deg,rgba(255,255,255,.02)_0%,rgba(20,91,103,.12)_38%,rgba(8,73,85,.76)_72%,rgba(7,61,72,.9)_100%)] md:block"
+        />
 
-        <div className="flex min-h-[270px] flex-col justify-center gap-6 px-6 py-8 sm:min-h-[300px] sm:px-9 lg:flex-row lg:items-center lg:justify-between lg:px-12">
+        {/* خلفية سادة — الجوال فقط */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 block bg-[#10505A] md:hidden"
+        />
 
-          <div className="max-w-[720px] text-white">
+        <div className="flex min-h-[230px] flex-col justify-center gap-6 px-5 py-6 sm:min-h-[270px] sm:px-8 sm:py-8 md:px-9 lg:min-h-[300px] lg:flex-row lg:items-center lg:justify-between lg:px-12">
 
-            <p className="flex items-center gap-2 text-sm font-bold text-[#b9f0ec]">
+          <div className="max-w-[720px] min-w-0 text-white">
+
+            <p className="flex items-center gap-2 text-xs font-bold text-[#b9f0ec] sm:text-sm">
               <ShieldCheck size={17} />
               رقابة إدارية محمية
             </p>
 
-            <h1 className="mt-3 text-3xl font-black leading-tight drop-shadow-sm sm:text-4xl lg:text-[44px]">
+            <h1 className="mt-3 text-2xl font-black leading-tight drop-shadow-sm sm:text-3xl md:text-4xl lg:text-[44px]">
               سجل نشاطات النظام
             </h1>
 
-            <p className="mt-3 max-w-2xl text-sm leading-7 text-white/80">
+            <p className="mt-3 max-w-2xl text-xs leading-6 text-white/80 sm:text-sm sm:leading-7">
               متابعة عمليات الإضافة والتعديل والحذف في جميع أقسام المنصة دون
               تخزين كلمات المرور أو محتوى الطلبات الحساسة.
             </p>
 
           </div>
 
-          <div className="flex w-fit min-w-[160px] items-center gap-3 rounded-2xl border border-white/35 bg-white/90 px-5 py-4 text-[#174b57] shadow-xl backdrop-blur-md">
+          <div className="flex w-full shrink-0 items-center gap-3 rounded-2xl border border-white/35 bg-white/90 px-4 py-3.5 text-[#174b57] shadow-xl backdrop-blur-md sm:w-fit sm:min-w-[160px] sm:px-5 sm:py-4">
 
-            <span className="grid size-11 place-items-center rounded-xl bg-[#e5f3f2] text-[#216474]">
+            <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#e5f3f2] text-[#216474] sm:size-11">
               <Database size={21} />
             </span>
 
-            <div>
+            <div className="min-w-0">
               <span className="text-xs font-bold text-[#71858a]">
                 إجمالي النتائج
               </span>
 
-              <strong className="mt-0.5 block text-2xl font-black">
+              <strong className="mt-0.5 block text-xl font-black sm:text-2xl">
                 {data.totalCount}
               </strong>
             </div>
@@ -694,3 +706,4 @@ function formatDate(value) {
     timeStyle: "short",
   }).format(new Date(value));
 }
+

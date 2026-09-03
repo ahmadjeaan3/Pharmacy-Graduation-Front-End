@@ -1025,13 +1025,14 @@ export function LandingPage() {
 
               <div
                 className="
-          relative
-          z-10
-          h-[320px]
-          w-full
-          shrink-0
+          hidden
 
+          sm:relative
+          sm:block
+          sm:z-10
           sm:h-[400px]
+          sm:w-full
+          sm:shrink-0
 
           xl:h-[500px]
           xl:w-[545px]
@@ -1321,8 +1322,11 @@ export function LandingPage() {
           justify-center
           gap-8
 
-          ${itemsAlignClass}
-          ${textAlignClass}
+          items-center
+          text-center
+
+          ${isArabic ? "sm:items-end" : "sm:items-start"}
+          ${isArabic ? "sm:text-right" : "sm:text-left"}
         `}
               >
                 <div
@@ -1332,7 +1336,9 @@ export function LandingPage() {
             flex-col
             gap-6
 
-            ${itemsAlignClass}
+            items-center
+
+            ${isArabic ? "sm:items-end" : "sm:items-start"}
           `}
                 >
                   {/* =================================================== */}
@@ -1416,7 +1422,9 @@ export function LandingPage() {
 
               xl:text-[50px]
 
-              ${textAlignClass}
+              text-center
+
+              ${isArabic ? "sm:text-right" : "sm:text-left"}
             `}
                   >
                     {isTurkish ? (
@@ -1451,7 +1459,9 @@ export function LandingPage() {
 
               text-[#666666]
 
-              ${textAlignClass}
+              text-center
+
+              ${isArabic ? "sm:text-right" : "sm:text-left"}
             `}
                   >
                     {t(
@@ -1469,9 +1479,14 @@ export function LandingPage() {
                   className="
             flex
             min-h-[58px]
+            w-full
             flex-wrap
             items-center
+            justify-center
             gap-3
+
+            sm:w-auto
+            sm:justify-start
           "
                 >
                   {/* ================= SECONDARY ================= */}
@@ -2092,11 +2107,11 @@ export function LandingPage() {
               className="pointer-events-none absolute right-[-180px] top-[-170px] z-0 h-[420px] w-[380px] bg-[rgba(118,229,255,0.16)] blur-[130px]"
             />
 
-            {/* Section image */}
+            {/* Section image (hidden on mobile, unchanged from sm and up) */}
             <img
               src={ASSETS.servicesPhoto}
               alt={t("خدمات المنصة")}
-              className="relative z-10 h-auto w-full object-contain"
+              className="relative z-10 hidden h-auto w-full object-contain sm:block"
             />
 
             {/* Mobile content */}
@@ -2105,31 +2120,44 @@ export function LandingPage() {
               className="relative z-20 px-5 py-10 sm:px-8"
             >
               {/* Heading */}
-              {/* Heading */}
               <div
                 dir={textDirection}
-                className={`flex w-full flex-col gap-[5px] ${
-                  isArabic ? "items-end" : "items-start"
+                className={`flex w-full flex-col items-center gap-[5px] ${
+                  isArabic ? "sm:items-end" : "sm:items-start"
                 }`}
               >
-                <h2
-                  className={`w-full text-[20px] font-medium leading-6 text-white ${
-                    isArabic ? "text-right" : "text-left"
-                  }`}
-                >
-                  {t("خدمات المنصة")}
-                </h2>
+                {/* Mobile: same look as the other section headings (side bars + centered title). Wrapper disappears from sm and up. */}
+                <div className="flex w-full items-center justify-center gap-3 sm:contents">
+                  <span
+                    aria-hidden="true"
+                    className="h-[3px] min-w-0 max-w-[69px] flex-1 rounded-lg bg-gradient-to-l from-[#EEB73A] to-[rgba(22,58,66,0)] sm:hidden"
+                  />
 
+                  <h2
+                    className={`min-w-0 text-center text-2xl font-medium leading-tight text-white sm:w-full sm:text-[20px] sm:leading-6 ${
+                      isArabic ? "sm:text-right" : "sm:text-left"
+                    }`}
+                  >
+                    {t("خدمات المنصة")}
+                  </h2>
+
+                  <span
+                    aria-hidden="true"
+                    className="h-[3px] min-w-0 max-w-[69px] flex-1 rounded-lg bg-gradient-to-r from-[#EEB73A] to-[rgba(22,58,66,0)] sm:hidden"
+                  />
+                </div>
+
+                {/* Yellow accent bar: hidden on mobile, unchanged from sm and up */}
                 <span
-                  className={`h-[3px] w-[156px] rounded-lg ${
+                  className={`hidden h-[3px] w-[156px] rounded-lg sm:block ${
                     isArabic
-                      ? "self-end bg-[linear-gradient(90deg,rgba(22,58,66,0)_0%,#FEE252_100%)]"
-                      : "self-start bg-[linear-gradient(270deg,rgba(22,58,66,0)_0%,#FEE252_100%)]"
+                      ? "sm:self-end sm:bg-[linear-gradient(90deg,rgba(22,58,66,0)_0%,#FEE252_100%)]"
+                      : "sm:self-start sm:bg-[linear-gradient(270deg,rgba(22,58,66,0)_0%,#FEE252_100%)]"
                   }`}
                 />
               </div>
               {/* Mobile cards */}
-              <div className="mt-7 flex flex-col gap-5">
+              <div className="mt-7 flex flex-col items-center gap-5 sm:items-stretch">
                 {services.map(({ number, icon, title, text }) => (
                   <article
                     key={number}
@@ -2537,7 +2565,7 @@ export function LandingPage() {
               {/* Buttons */}
               <div
                 dir="ltr"
-                className={`z-20 order-3 grid w-full grid-cols-1 gap-3 min-[420px]:grid-cols-2 lg:order-1 lg:flex lg:h-10 lg:w-full lg:items-center lg:gap-5 ${
+                className={`z-20 order-3 grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:order-1 lg:flex lg:h-10 lg:w-full lg:items-center lg:gap-5 ${
                   isArabic ? "flex-row-reverse" : "flex-row"
                 }`}
               >

@@ -114,15 +114,30 @@ export function AdminAccountsPage() {
     >
       {/* Hero */}
       <section className="relative isolate min-h-[230px] overflow-hidden rounded-[16px] bg-[#10505A] px-5 py-7 text-white shadow-[0_22px_55px_rgba(23,75,87,.14)] sm:min-h-[250px] sm:px-7 sm:py-8 lg:min-h-[271px] lg:px-10">
+
+        {/* صورة الهيرو — تظهر فقط على md وما فوق */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 -z-10 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${ADMIN_HERO_IMAGE})` }}
+          className="absolute inset-0 -z-20 hidden bg-cover bg-center bg-no-repeat md:block"
+          style={{
+            backgroundImage: `url("${ADMIN_HERO_IMAGE}")`,
+          }}
         />
 
+        {/* Gradient — يظهر فقط على md وما فوق */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 -z-[9] bg-gradient-to-l from-[#0A4B56]/95 via-[#0B5963]/70 to-[#0B5963]/10"
+          className="absolute inset-0 -z-10 hidden md:block"
+          style={{
+            background:
+              "linear-gradient(270deg,#0A4B56 0%,rgba(11,89,99,.70) 55%,rgba(11,89,99,.10) 100%)",
+          }}
+        />
+
+        {/* خلفية سادة للجوال — بدون صورة */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-30 block bg-[#10505A] md:hidden"
         />
 
         <div className="relative flex min-h-[175px] flex-col justify-center sm:min-h-[190px] lg:min-h-[207px]">
@@ -189,7 +204,9 @@ export function AdminAccountsPage() {
       <section className="rounded-[1.6rem] border border-[#174B57]/8 bg-white p-5 shadow-[0_14px_40px_rgba(23,75,87,.055)]">
         <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
           <div className={isArabic ? "text-right" : "text-left"}>
-            <h3 className="font-black text-[#29464D]">{t("البحث والتصفية")}</h3>
+            <h3 className="font-black text-[#29464D]">
+              {t("البحث والتصفية")}
+            </h3>
 
             <p className="mt-1 text-xs text-[#829499]">
               {t("اعثر على الحساب المطلوب بسرعة")}
@@ -197,7 +214,11 @@ export function AdminAccountsPage() {
           </div>
 
           <span className="rounded-full bg-[#EAF4F3] px-3 py-1.5 text-xs font-bold text-[#216474]">
-            {formatResultsCount(allAccounts.length, currentLanguage, locale)}
+            {formatResultsCount(
+              allAccounts.length,
+              currentLanguage,
+              locale,
+            )}
           </span>
         </div>
 
@@ -207,7 +228,9 @@ export function AdminAccountsPage() {
               {...field("search")}
               dir={direction}
               className={`h-12 w-full rounded-xl border border-[#DCE8EA] bg-white text-[14px] text-[#29464D] outline-none transition placeholder:text-[12px] placeholder:text-[#A5A5A5] hover:border-[#AFC9CD] focus:border-[#216474] focus:ring-2 focus:ring-[#216474]/10 ${
-                isArabic ? "pl-4 pr-11 text-right" : "pl-11 pr-4 text-left"
+                isArabic
+                  ? "pl-4 pr-11 text-right"
+                  : "pl-11 pr-4 text-left"
               }`}
               placeholder={t("ابحث بالاسم أو البريد أو اسم الجهة")}
             />
@@ -225,7 +248,9 @@ export function AdminAccountsPage() {
               {...field("role")}
               dir={direction}
               className={`h-12 w-full appearance-none rounded-xl border border-[#DCE8EA] bg-white text-[14px] text-[#29464D] outline-none transition hover:border-[#AFC9CD] focus:border-[#216474] focus:ring-2 focus:ring-[#216474]/10 ${
-                isArabic ? "pl-10 pr-4 text-right" : "pl-4 pr-10 text-left"
+                isArabic
+                  ? "pl-10 pr-4 text-right"
+                  : "pl-4 pr-10 text-left"
               }`}
             >
               <option value="">{t("كل أنواع الحسابات")}</option>
@@ -257,7 +282,9 @@ export function AdminAccountsPage() {
               {...field("status")}
               dir={direction}
               className={`h-12 w-full appearance-none rounded-xl border border-[#DCE8EA] bg-white text-[14px] text-[#29464D] outline-none transition hover:border-[#AFC9CD] focus:border-[#216474] focus:ring-2 focus:ring-[#216474]/10 ${
-                isArabic ? "pl-10 pr-4 text-right" : "pl-4 pr-10 text-left"
+                isArabic
+                  ? "pl-10 pr-4 text-right"
+                  : "pl-4 pr-10 text-left"
               }`}
             >
               <option value="">{t("كل الحالات")}</option>
@@ -288,7 +315,9 @@ export function AdminAccountsPage() {
       {/* Error */}
       {accounts.isError && (
         <section className="rounded-[1.5rem] border border-[#FECDD3] bg-[#FFF1F2] p-6 text-center">
-          <p className="font-bold text-[#BE123C]">{t("تعذر تحميل الحسابات")}</p>
+          <p className="font-bold text-[#BE123C]">
+            {t("تعذر تحميل الحسابات")}
+          </p>
 
           <p className="mt-2 text-sm text-[#E11D48]">
             {getApiErrorMessage(accounts.error)}
@@ -354,9 +383,12 @@ export function AdminAccountsPage() {
                   >
                     <span
                       className={`size-1.5 rounded-full ${
-                        account.isActive ? "bg-[#216474]" : "bg-[#E11D48]"
+                        account.isActive
+                          ? "bg-[#216474]"
+                          : "bg-[#E11D48]"
                       }`}
                     />
+
                     {account.isActive ? t("فعال") : t("موقوف")}
                   </span>
                 </div>
@@ -366,6 +398,7 @@ export function AdminAccountsPage() {
                     <span className="block text-[10px] text-[#829499]">
                       {t("المدينة")}
                     </span>
+
                     <strong className="mt-1 block truncate text-[13px] font-bold text-[#29464D]">
                       {account.city || t("غير محدد")}
                     </strong>
@@ -375,6 +408,7 @@ export function AdminAccountsPage() {
                     <span className="block text-[10px] text-[#829499]">
                       {t("رقم الهاتف")}
                     </span>
+
                     <strong
                       dir="ltr"
                       className={`mt-1 block truncate text-[13px] font-bold text-[#29464D] ${
@@ -396,6 +430,7 @@ export function AdminAccountsPage() {
                     className="inline-flex items-center gap-2 rounded-lg bg-[#EAF4F3] px-3.5 py-2 text-[12px] font-bold text-[#216474] transition hover:bg-[#174B57] hover:text-white"
                   >
                     {t("عرض التفاصيل")}
+
                     {isArabic ? (
                       <ChevronLeft size={15} />
                     ) : (

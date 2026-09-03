@@ -1,3 +1,4 @@
+
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Activity,
@@ -57,6 +58,8 @@ const statTones = {
   success: "bg-[#EAF4F3] text-[#174B57]",
 };
 
+const ADMIN_HERO_IMAGE = "/assets/app/home/background_hero_admin.png";
+
 const parseList = (value, fallback) => {
   if (!value) {
     return fallback;
@@ -90,6 +93,7 @@ export function AdminAccountDetailsPage() {
         : "en-US";
 
   const { userId } = useParams();
+
   const client = useQueryClient();
 
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -118,7 +122,9 @@ export function AdminAccountDetailsPage() {
       setConfirmOpen(false);
       setStatusReason("");
 
-      setFeedback(t("تم تحديث حالة الحساب وإرسال إشعار إلى صاحبه بنجاح."));
+      setFeedback(
+        t("تم تحديث حالة الحساب وإرسال إشعار إلى صاحبه بنجاح."),
+      );
     },
 
     onError: (error) => setFeedback(getApiErrorMessage(error)),
@@ -135,7 +141,9 @@ export function AdminAccountDetailsPage() {
   if (account.isError) {
     return (
       <section className="rounded-[1.5rem] border border-[#FECDD3] bg-[#FFF1F2] p-8 text-center">
-        <p className="font-bold text-[#BE123C]">{t("تعذر تحميل الحساب")}</p>
+        <p className="font-bold text-[#BE123C]">
+          {t("تعذر تحميل الحساب")}
+        </p>
 
         <p className="mt-2 text-sm text-[#E11D48]">
           {getApiErrorMessage(account.error)}
@@ -174,104 +182,151 @@ export function AdminAccountDetailsPage() {
           to="/app/accounts"
           className="inline-flex items-center gap-2 rounded-xl border border-[#DCE8EA] bg-white px-4 py-2.5 text-sm font-bold text-[#216474] shadow-[0_6px_20px_rgba(23,75,87,.04)] transition hover:border-[#AFC9CD] hover:bg-[#F8FBFB]"
         >
-          {isArabic ? <ArrowRight size={17} /> : <ArrowLeft size={17} />}
+          {isArabic ? (
+            <ArrowRight size={17} />
+          ) : (
+            <ArrowLeft size={17} />
+          )}
 
           {t("العودة إلى جميع الحسابات")}
         </Link>
       </div>
 
       {/* Hero */}
-      <section className="relative isolate min-h-[230px] overflow-hidden rounded-[16px] bg-[#10505A] px-5 py-7 text-white shadow-[0_22px_55px_rgba(23,75,87,.14)] sm:min-h-[250px] sm:px-7 lg:min-h-[271px] lg:px-9">
-        <div className="noise absolute inset-0 -z-10" />
-
+      <section className="relative isolate min-h-[230px] overflow-hidden rounded-[16px] bg-[#10505A] px-5 py-6 text-white shadow-[0_22px_55px_rgba(23,75,87,.14)] sm:min-h-[250px] sm:px-7 sm:py-8 lg:min-h-[271px] lg:px-9">
+        {/* صورة الهيرو — للديسكتوب فقط */}
         <div
           aria-hidden="true"
-          className={`absolute -top-24 -z-[4] size-72 rounded-full border-[44px] border-white/[.035] ${
-            isArabic ? "-left-12" : "-right-12"
-          }`}
+          className="absolute inset-0 -z-20 hidden bg-cover bg-center bg-no-repeat md:block"
+          style={{
+            backgroundImage: `url("${ADMIN_HERO_IMAGE}")`,
+          }}
         />
 
-        <div className="relative flex flex-col gap-6 xl:flex-row xl:items-stretch xl:justify-between">
-          <div className="flex min-w-0 flex-1 items-center gap-5">
-            <span className="grid size-20 shrink-0 place-items-center rounded-[1.35rem] border border-white/10 bg-white/10 text-[#F5CB72]">
-              <RoleIcon size={34} strokeWidth={1.8} />
-            </span>
+        {/* Gradient — للديسكتوب فقط */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 hidden md:block"
+          style={{
+            background:
+              "linear-gradient(270deg,#0A4B56 0%,rgba(11,89,99,.70) 55%,rgba(11,89,99,.10) 100%)",
+          }}
+        />
 
-            <div
-              className={`min-w-0 flex-1 ${isArabic ? "text-right" : "text-left"}`}
-            >
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="rounded-full border border-white/10 bg-white/[.07] px-3 py-1 text-xs font-bold text-[#BCE7E3]">
-                  {t(roleLabels[item.role] || item.role)}
-                </span>
+        {/* خلفية سادة للجوال — بدون صورة */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-30 block bg-[#10505A] md:hidden"
+        />
 
-                <span
-                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ${
-                    isAccountActive
-                      ? "bg-white/[.10] text-[#BCE7E3]"
-                      : "bg-[#FFF1F2]/10 text-[#FFD7DF]"
-                  }`}
-                >
+        <div className="relative flex flex-col gap-5 xl:flex-row xl:items-stretch xl:justify-between xl:gap-7">
+          {/* Account information */}
+          <div className="flex min-w-0 flex-1 flex-col">
+            <div className="flex min-w-0 items-start gap-3 sm:gap-5">
+              {/* Role icon */}
+              <span className="grid size-14 shrink-0 place-items-center rounded-[1.15rem] border border-white/10 bg-white/10 text-[#F5CB72] sm:size-20 sm:rounded-[1.35rem]">
+                <RoleIcon
+                  size={27}
+                  strokeWidth={1.8}
+                  className="sm:hidden"
+                />
+
+                <RoleIcon
+                  size={34}
+                  strokeWidth={1.8}
+                  className="hidden sm:block"
+                />
+              </span>
+
+              <div
+                className={`min-w-0 flex-1 pt-0.5 ${
+                  isArabic ? "text-right" : "text-left"
+                }`}
+              >
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="rounded-full border border-white/10 bg-white/[.07] px-3 py-1 text-xs font-bold text-[#BCE7E3]">
+                    {t(roleLabels[item.role] || item.role)}
+                  </span>
+
                   <span
-                    className={`size-1.5 rounded-full ${
-                      isAccountActive ? "bg-[#8BD0CB]" : "bg-[#FCA5A5]"
+                    className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ${
+                      isAccountActive
+                        ? "bg-white/[.10] text-[#BCE7E3]"
+                        : "bg-[#FFF1F2]/10 text-[#FFD7DF]"
                     }`}
-                  />
+                  >
+                    <span
+                      className={`size-1.5 rounded-full ${
+                        isAccountActive
+                          ? "bg-[#8BD0CB]"
+                          : "bg-[#FCA5A5]"
+                      }`}
+                    />
 
-                  {isAccountActive ? t("حساب فعال") : t("حساب موقوف")}
-                </span>
+                    {isAccountActive
+                      ? t("حساب فعال")
+                      : t("حساب موقوف")}
+                  </span>
+                </div>
+
+                <h1 className="mt-3 truncate text-2xl font-black leading-tight sm:mt-4 sm:text-4xl">
+                  {accountName}
+                </h1>
+
+                <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-white/60 sm:mt-3 sm:text-sm">
+                  <span>{item.fullName}</span>
+
+                  <span className="text-white/25">•</span>
+
+                  <span dir="ltr">{item.email}</span>
+
+                  {item.phoneNumber ? (
+                    <>
+                      <span className="text-white/25">•</span>
+
+                      <span dir="ltr">{item.phoneNumber}</span>
+                    </>
+                  ) : null}
+                </div>
+
+                <p className="mt-2 flex items-center gap-2 text-[11px] text-white/45 sm:mt-3 sm:text-xs">
+                  <CalendarDays size={14} />
+
+                  {t("انضم في")} {createdAt}
+                </p>
               </div>
-
-              <h1 className="mt-4 truncate text-3xl font-black sm:text-4xl">
-                {accountName}
-              </h1>
-
-              <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-white/60">
-                <span>{item.fullName}</span>
-                <span className="text-white/25">•</span>
-                <span dir="ltr">{item.email}</span>
-
-                {item.phoneNumber ? (
-                  <>
-                    <span className="text-white/25">•</span>
-                    <span dir="ltr">{item.phoneNumber}</span>
-                  </>
-                ) : null}
-              </div>
-
-              <p className="mt-3 flex items-center gap-2 text-xs text-white/45">
-                <CalendarDays size={14} />
-                {t("انضم في")} {createdAt}
-              </p>
             </div>
           </div>
 
-          <div className="w-full rounded-[1.25rem] border border-white/10 bg-white/[.07] p-5 backdrop-blur-sm xl:w-[290px]">
+          {/* Account status card */}
+          <div className="w-full rounded-[1.25rem] border border-white/70 bg-white p-4 text-[#10505A] shadow-[0_12px_35px_rgba(7,31,37,.16)] sm:p-5 xl:w-[290px] xl:shrink-0">
             <div className="flex items-start gap-3">
               <span
                 className={`grid size-10 shrink-0 place-items-center rounded-xl ${
                   isAccountActive
-                    ? "bg-[#F5CB72]/10 text-[#F5CB72]"
-                    : "bg-[#FFF1F2]/10 text-[#FCA5A5]"
+                    ? "bg-[#EAF4F3] text-[#10505A]"
+                    : "bg-[#FFF1F2] text-[#BE123C]"
                 }`}
               >
                 <ShieldCheck size={19} strokeWidth={2} />
               </span>
 
               <div className="min-w-0 flex-1">
-                <p className="text-[10px] font-bold text-white/40">
+                <p className="text-[10px] font-bold text-[#60777D]">
                   {t("إدارة حالة الحساب")}
                 </p>
 
-                <strong className="mt-1 block text-sm">
+                <strong className="mt-1 block text-sm font-black text-[#10505A]">
                   {isAccountActive
                     ? t("الحساب متاح للخدمات")
                     : t("الوصول إلى المنصة موقوف")}
                 </strong>
 
-                <p className="mt-2 text-[11px] leading-5 text-white/45">
+                <p className="mt-2 text-[11px] leading-5 text-[#71858A]">
                   {isAccountActive
-                    ? t("يمكن لصاحب الحساب تسجيل الدخول واستخدام خدمات دوره.")
+                    ? t(
+                        "يمكن لصاحب الحساب تسجيل الدخول واستخدام خدمات دوره.",
+                      )
                     : t(
                         "لن يتمكن صاحب الحساب من تسجيل الدخول حتى إعادة تفعيله.",
                       )}
@@ -279,6 +334,7 @@ export function AdminAccountDetailsPage() {
               </div>
             </div>
 
+            {/* زر الحالة */}
             <button
               type="button"
               disabled={status.isPending}
@@ -287,22 +343,24 @@ export function AdminAccountDetailsPage() {
                 setStatusReason("");
                 setConfirmOpen(true);
               }}
-              className={`group mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-black transition duration-300 hover:-translate-y-0.5 ${
+              className={`group mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-black transition duration-300 hover:-translate-y-0.5 ${
                 isAccountActive
-                  ? "border-[#F5CB72]/70 text-[#F5CB72] bg-transparent hover:bg-[#F5CB72]/10"
-                  : "border-[#8BD0CB]/60 text-[#8BD0CB] bg-transparent hover:bg-[#8BD0CB]/10"
+                  ? "border-[#E11D48]/25 bg-[#FFF1F2] text-[#BE123C] hover:border-[#E11D48]/40 hover:bg-[#FFE4E6]"
+                  : "border-[#216474]/25 bg-[#EAF4F3] text-[#216474] hover:border-[#216474]/40 hover:bg-[#DCEFED]"
               }`}
             >
               <ToggleLeft
                 size={19}
                 className={`transition group-hover:scale-110 ${
                   isAccountActive
-                    ? "text-[##F5CB72]"
-                    : "text-[##F5CB72] rotate-180"
+                    ? "text-[#BE123C]"
+                    : "rotate-180 text-[#216474]"
                 }`}
               />
 
-              {isAccountActive ? t("إيقاف الحساب") : t("تفعيل الحساب")}
+              {isAccountActive
+                ? t("إيقاف الحساب")
+                : t("تفعيل الحساب")}
             </button>
           </div>
         </div>
@@ -345,7 +403,9 @@ export function AdminAccountDetailsPage() {
                   ? t(
                       "الحساب يستطيع تسجيل الدخول واستخدام الخدمات المتاحة لدوره.",
                     )
-                  : t("تم منع الحساب من تسجيل الدخول واستخدام خدمات المنصة.")}
+                  : t(
+                      "تم منع الحساب من تسجيل الدخول واستخدام خدمات المنصة.",
+                    )}
               </p>
             </div>
           </div>
@@ -365,10 +425,14 @@ export function AdminAccountDetailsPage() {
 
             <strong
               className={`mt-1 block text-lg font-black ${
-                isAccountActive ? "text-[#174B57]" : "text-[#BE123C]"
+                isAccountActive
+                  ? "text-[#174B57]"
+                  : "text-[#BE123C]"
               }`}
             >
-              {isAccountActive ? t("نشط ومتاح") : t("موقوف")}
+              {isAccountActive
+                ? t("نشط ومتاح")
+                : t("موقوف")}
             </strong>
           </div>
 
@@ -443,7 +507,11 @@ export function AdminAccountDetailsPage() {
           subtitle={t("معلومات الهوية والتواصل")}
         >
           <InfoGrid>
-            <InfoBox label={t("الاسم الكامل")} value={item.fullName} t={t} />
+            <InfoBox
+              label={t("الاسم الكامل")}
+              value={item.fullName}
+              t={t}
+            />
 
             <InfoBox
               label={t("نوع الحساب")}
@@ -467,7 +535,11 @@ export function AdminAccountDetailsPage() {
 
             <InfoBox
               label={t("الحالة")}
-              value={isAccountActive ? t("فعال") : t("موقوف")}
+              value={
+                isAccountActive
+                  ? t("فعال")
+                  : t("موقوف")
+              }
               fullWidth
               t={t}
             />
@@ -480,13 +552,29 @@ export function AdminAccountDetailsPage() {
           subtitle={t("تفاصيل الجهة والاعتماد")}
         >
           <InfoGrid>
-            <InfoBox label={t("اسم الجهة")} value={item.profileName} t={t} />
+            <InfoBox
+              label={t("اسم الجهة")}
+              value={item.profileName}
+              t={t}
+            />
 
-            <InfoBox label={t("المدينة")} value={item.city} t={t} />
+            <InfoBox
+              label={t("المدينة")}
+              value={item.city}
+              t={t}
+            />
 
-            <InfoBox label={t("المنطقة")} value={item.area} t={t} />
+            <InfoBox
+              label={t("المنطقة")}
+              value={item.area}
+              t={t}
+            />
 
-            <InfoBox label={t("العنوان")} value={item.address} t={t} />
+            <InfoBox
+              label={t("العنوان")}
+              value={item.address}
+              t={t}
+            />
 
             <InfoBox
               label={t("رقم الترخيص/التسجيل")}
@@ -524,23 +612,36 @@ export function AdminAccountDetailsPage() {
           subtitle={t("المعلومات الطبية المسجلة")}
         >
           <InfoGrid>
-            <InfoBox label={t("زمرة الدم")} value={item.bloodType} t={t} />
+            <InfoBox
+              label={t("زمرة الدم")}
+              value={item.bloodType}
+              t={t}
+            />
 
             <InfoBox
               label={t("الحساسيات")}
-              value={parseList(item.allergies, t("غير مضاف"))}
+              value={parseList(
+                item.allergies,
+                t("غير مضاف"),
+              )}
               t={t}
             />
 
             <InfoBox
               label={t("الأمراض المزمنة")}
-              value={parseList(item.chronicConditions, t("غير مضاف"))}
+              value={parseList(
+                item.chronicConditions,
+                t("غير مضاف"),
+              )}
               t={t}
             />
 
             <InfoBox
               label={t("الأدوية الحالية")}
-              value={parseList(item.currentMedications, t("غير مضاف"))}
+              value={parseList(
+                item.currentMedications,
+                t("غير مضاف"),
+              )}
               t={t}
             />
 
@@ -583,7 +684,9 @@ export function AdminAccountDetailsPage() {
 
               <span
                 className={`grid size-12 place-items-center rounded-2xl border border-white/10 bg-white/[.08] ${
-                  isAccountActive ? "text-[#FFD7DF]" : "text-[#BCE7E3]"
+                  isAccountActive
+                    ? "text-[#FFD7DF]"
+                    : "text-[#BCE7E3]"
                 }`}
               >
                 <ShieldCheck size={24} />
@@ -626,19 +729,30 @@ export function AdminAccountDetailsPage() {
                   maxLength={500}
                   required={isAccountActive}
                   value={statusReason}
-                  onChange={(event) => setStatusReason(event.target.value)}
+                  onChange={(event) =>
+                    setStatusReason(event.target.value)
+                  }
                   className="w-full rounded-xl border border-[#DCE8EA] bg-white px-4 py-3 text-sm text-[#29464D] outline-none transition placeholder:text-[#A5A5A5] focus:border-[#216474] focus:ring-2 focus:ring-[#216474]/10"
                   placeholder={
                     isAccountActive
-                      ? t("اكتب سببًا واضحًا لصاحب الحساب (10 أحرف على الأقل)")
-                      : t("اكتب ملاحظة توضيحية لصاحب الحساب إن لزم")
+                      ? t(
+                          "اكتب سببًا واضحًا لصاحب الحساب (10 أحرف على الأقل)",
+                        )
+                      : t(
+                          "اكتب ملاحظة توضيحية لصاحب الحساب إن لزم",
+                        )
                   }
                 />
 
                 <span className="mt-2 flex items-center gap-2 text-xs font-semibold text-[#71858A]">
-                  <Bell size={14} className="text-[#216474]" />
+                  <Bell
+                    size={14}
+                    className="text-[#216474]"
+                  />
 
-                  {t("سيصل إشعار إلى صاحب الحساب يوضح القرار وملاحظة الإدارة.")}
+                  {t(
+                    "سيصل إشعار إلى صاحب الحساب يوضح القرار وملاحظة الإدارة.",
+                  )}
                 </span>
               </label>
 
@@ -657,13 +771,13 @@ export function AdminAccountDetailsPage() {
                   onClick={() =>
                     status.mutate({
                       isActive: !isAccountActive,
-
                       reason: statusReason.trim() || null,
                     })
                   }
                   disabled={
                     status.isPending ||
-                    (isAccountActive && statusReason.trim().length < 10)
+                    (isAccountActive &&
+                      statusReason.trim().length < 10)
                   }
                   className={`rounded-xl border px-4 py-3 font-black transition disabled:cursor-not-allowed disabled:opacity-60 ${
                     isAccountActive
@@ -695,9 +809,13 @@ function Card({ icon: Icon, title, subtitle, children }) {
         </span>
 
         <div>
-          <h3 className="font-black text-[#29464D]">{title}</h3>
+          <h3 className="font-black text-[#29464D]">
+            {title}
+          </h3>
 
-          <p className="mt-0.5 text-xs text-[#829499]">{subtitle}</p>
+          <p className="mt-0.5 text-xs text-[#829499]">
+            {subtitle}
+          </p>
         </div>
       </div>
 
@@ -707,10 +825,20 @@ function Card({ icon: Icon, title, subtitle, children }) {
 }
 
 function InfoGrid({ children }) {
-  return <div className="grid gap-3 sm:grid-cols-2">{children}</div>;
+  return (
+    <div className="grid gap-3 sm:grid-cols-2">
+      {children}
+    </div>
+  );
 }
 
-function InfoBox({ label, value, dir, fullWidth = false, t }) {
+function InfoBox({
+  label,
+  value,
+  dir,
+  fullWidth = false,
+  t,
+}) {
   return (
     <div
       className={`rounded-xl border border-[#E6EEF0] bg-[#F8FBFB] px-4 py-3 text-start ${
@@ -760,3 +888,4 @@ function Stat({
     </article>
   );
 }
+

@@ -1,3 +1,4 @@
+
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   AlertTriangle,
@@ -293,7 +294,13 @@ export function PharmacyLicenseVerificationPage() {
     <div
       dir={direction}
       lang={currentLanguage}
-      className="space-y-5"
+      className="
+        w-full
+        min-w-0
+        space-y-5
+        overflow-x-hidden
+        sm:space-y-6
+      "
     >
       {/* =====================================================
           HERO
@@ -301,17 +308,26 @@ export function PharmacyLicenseVerificationPage() {
 
       <section
         className="
-          relative isolate
-          min-h-[220px]
+          relative
+          isolate
+          block
+          w-full
+          min-w-0
+          max-w-full
           overflow-hidden
           rounded-[14px]
+          bg-[#10505A]
           text-white
           shadow-[0_22px_55px_rgba(23,75,87,.16)]
-          sm:min-h-[230px]
+          min-h-[140px]
+          sm:min-h-[180px]
           lg:min-h-[250px]
         "
       >
-        {/* Hero Image */}
+        {/* =====================================================
+            BACKGROUND IMAGE
+            تظهر فقط على الشاشات الكبيرة
+        ====================================================== */}
 
         <img
           src={PHARMACY_HERO_IMAGE}
@@ -319,23 +335,29 @@ export function PharmacyLicenseVerificationPage() {
           aria-hidden="true"
           draggable={false}
           className={`
-            absolute inset-0
-            h-full w-full
+            pointer-events-none
+            absolute
+            inset-0
+            hidden
+            h-full
+            w-full
+            min-w-0
+            max-w-none
+            select-none
             object-cover
             object-[center_38%]
-            select-none
-            ${
-              isArabic
-                ? "scale-x-[-1]"
-                : ""
-            }
+            lg:block
+            ${isArabic ? "scale-x-[-1]" : ""}
           `}
         />
 
-        {/* Overlay */}
+        {/* =====================================================
+            OVERLAY
+            يظهر فقط على الشاشات الكبيرة
+        ====================================================== */}
 
         <div
-          className="absolute inset-0"
+          className="pointer-events-none absolute inset-0 hidden lg:block"
           style={{
             background: isArabic
               ? "linear-gradient(270deg,#10505A 0%,rgba(16,80,90,.90) 38%,rgba(33,100,116,.48) 70%,rgba(33,100,116,.08) 100%)"
@@ -343,7 +365,10 @@ export function PharmacyLicenseVerificationPage() {
           }}
         />
 
-        {/* Decorative Circle */}
+        {/* =====================================================
+            DECORATIVE CIRCLE
+            يظهر فقط على الشاشات الكبيرة
+        ====================================================== */}
 
         <div
           aria-hidden="true"
@@ -351,74 +376,92 @@ export function PharmacyLicenseVerificationPage() {
             pointer-events-none
             absolute
             -top-20
-            ${
-              isArabic
-                ? "-left-14"
-                : "-right-14"
-            }
+            hidden
             size-64
             rounded-full
             border-[40px]
             border-white/[.04]
+            lg:block
+            ${isArabic ? "-left-14" : "-right-14"}
           `}
         />
 
-        {/* Content */}
+        {/* =====================================================
+            CONTENT
+        ====================================================== */}
 
         <div
           className="
-            relative z-10
-            flex min-h-[220px]
-            flex-col
-            justify-center
-            gap-7
-            px-6 py-7
-            sm:min-h-[230px]
-            sm:px-8
+            relative
+            z-10
+            flex
+            min-h-[140px]
+            w-full
+            min-w-0
+            max-w-full
+            items-center
+            overflow-hidden
+            px-5
+            py-5
+            sm:min-h-[180px]
+            sm:px-7
             lg:min-h-[250px]
-            lg:flex-row
-            lg:items-center
-            lg:justify-between
             lg:px-10
+            lg:py-7
           "
         >
-          {/* Title */}
-
           <div
             className={`
               flex
+              w-full
+              min-w-0
+              max-w-[690px]
               items-center
-              gap-5
-              ${
-                isArabic
-                  ? "text-right"
-                  : "text-left"
-              }
+              gap-4
+              sm:gap-5
+              ${isArabic ? "ml-auto" : "mr-auto"}
             `}
           >
             <span
               className="
-                grid size-12
+                grid
+                size-10
                 shrink-0
                 place-items-center
                 rounded-lg
                 bg-[rgba(230,243,246,.10)]
                 text-[#E6F3F6]
                 backdrop-blur-sm
+                sm:size-12
               "
             >
               <ShieldCheck
+                size={24}
+                strokeWidth={1.7}
+                className="sm:hidden"
+              />
+
+              <ShieldCheck
                 size={28}
                 strokeWidth={1.7}
+                className="hidden sm:block"
               />
             </span>
 
-            <div>
+            <div
+              className={`
+                min-w-0
+                flex-1
+                overflow-hidden
+                ${isArabic ? "text-right" : "text-left"}
+              `}
+            >
               <div
                 className="
-                  text-xs
+                  text-[10px]
                   font-bold
                   text-[#B9E6E4]
+                  sm:text-xs
                 "
               >
                 {t("اعتماد المنشأة")}
@@ -426,11 +469,15 @@ export function PharmacyLicenseVerificationPage() {
 
               <h1
                 className="
+                  m-0
                   mt-1
-                  text-[28px]
+                  break-words
+                  text-[21px]
                   font-medium
-                  leading-[1.2]
+                  leading-[1.25]
                   text-white
+                  sm:text-[26px]
+                  lg:text-[28px]
                 "
               >
                 {t("الترخيص والتحقق")}
@@ -438,11 +485,17 @@ export function PharmacyLicenseVerificationPage() {
 
               <p
                 className="
-                  mt-3
-                  max-w-[600px]
-                  text-[14px]
-                  leading-7
+                  mt-2
+                  max-w-full
+                  break-words
+                  text-[11px]
+                  leading-5
                   text-[#D6D6D6]
+                  sm:mt-3
+                  sm:text-[13px]
+                  sm:leading-6
+                  lg:text-[14px]
+                  lg:leading-7
                 "
               >
                 {t(
@@ -450,38 +503,6 @@ export function PharmacyLicenseVerificationPage() {
                 )}
               </p>
             </div>
-          </div>
-
-          {/* Approval Status */}
-
-          <div
-            className={`
-              inline-flex
-              h-11
-              shrink-0
-              items-center
-              gap-2
-              rounded-full
-              px-5
-              text-sm
-              font-bold
-              shadow-sm
-              ${
-                profile.data?.isApproved
-                  ? "bg-[#EAF7F0] text-[#16804B]"
-                  : "bg-[#F0F6F7] text-[#60777D]"
-              }
-            `}
-          >
-            {profile.data?.isApproved ? (
-              <BadgeCheck size={17} />
-            ) : (
-              <ShieldCheck size={17} />
-            )}
-
-            {profile.data?.isApproved
-              ? t("معتمدة من الإدارة")
-              : t("بانتظار الاعتماد")}
           </div>
         </div>
       </section>
@@ -493,6 +514,7 @@ export function PharmacyLicenseVerificationPage() {
       {notice && (
         <div
           className={`
+            w-full
             rounded-2xl
             border
             p-4
@@ -503,11 +525,7 @@ export function PharmacyLicenseVerificationPage() {
                 ? "border-emerald-100 bg-emerald-50 text-emerald-700"
                 : "border-rose-100 bg-rose-50 text-rose-700"
             }
-            ${
-              isArabic
-                ? "text-right"
-                : "text-left"
-            }
+            ${isArabic ? "text-right" : "text-left"}
           `}
         >
           {notice.text}
@@ -521,72 +539,66 @@ export function PharmacyLicenseVerificationPage() {
       <div
         className="
           grid
+          min-w-0
           gap-5
           xl:grid-cols-[.9fr_1.1fr]
         "
       >
         {/* ===================================================
             UPLOAD
-        =================================================== */}
+        ==================================================== */}
 
         <section
           className="
+            min-w-0
             rounded-[14px]
             border
             border-[#DCE8EA]
             bg-white
-            p-6
+            p-4
             shadow-[0_10px_30px_rgba(23,75,87,.04)]
+            sm:p-5
+            lg:p-6
           "
         >
           <div
             className={`
               flex
+              min-w-0
               items-center
               gap-3
-              ${
-                isArabic
-                  ? "text-right"
-                  : "text-left"
-              }
+              ${isArabic ? "text-right" : "text-left"}
             `}
           >
             <span
               className="
-                grid size-11
+                grid
+                size-10
                 shrink-0
                 place-items-center
                 rounded-2xl
                 bg-[#EAF4F3]
                 text-[#216474]
+                sm:size-11
               "
             >
-              <Upload size={21} />
+              <Upload size={20} />
             </span>
 
-            <div>
-              <h3
-                className="
-                  font-black
-                  text-[#29464D]
-                "
-              >
+            <div className="min-w-0">
+              <h3 className="font-black text-[#29464D]">
                 {t("رفع ترخيص الصيدلية")}
               </h3>
 
-              <p
-                className="
-                  mt-1
-                  text-xs
-                  text-[#829499]
-                "
-              >
+              <p className="mt-1 text-[11px] text-[#829499] sm:text-xs">
                 {t("PNG أو JPEG، بحد أقصى 8 MB")}
               </p>
             </div>
           </div>
 
-          {/* Upload Box */}
+          {/* =================================================
+              UPLOAD BOX
+          ================================================= */}
 
           <div
             className="
@@ -596,21 +608,24 @@ export function PharmacyLicenseVerificationPage() {
               border-dashed
               border-[#216474]/30
               bg-[#F7FBFA]
-              p-6
+              p-4
               text-center
+              sm:p-6
             "
           >
             <FileImage
               className="mx-auto text-[#216474]"
-              size={36}
+              size={34}
             />
 
             <p
               className="
                 mt-3
-                text-sm
+                text-[13px]
                 font-black
+                leading-6
                 text-[#29464D]
+                sm:text-sm
               "
             >
               {t(
@@ -621,9 +636,11 @@ export function PharmacyLicenseVerificationPage() {
             <p
               className="
                 mt-1
-                text-xs
-                leading-6
+                text-[11px]
+                leading-5
                 text-[#829499]
+                sm:text-xs
+                sm:leading-6
               "
             >
               {t(
@@ -635,8 +652,10 @@ export function PharmacyLicenseVerificationPage() {
               className="
                 btn-secondary
                 mt-4
+                w-full
                 cursor-pointer
                 justify-center
+                sm:w-auto
               "
             >
               <FileImage size={17} />
@@ -656,18 +675,28 @@ export function PharmacyLicenseVerificationPage() {
             </label>
           </div>
 
-          {/* Selected File */}
+          {/* =================================================
+              SELECTED FILE
+          ================================================= */}
 
           {file && (
             <div
               className="
                 mt-4
+                min-w-0
                 rounded-xl
                 bg-[#EEF7F6]
                 p-4
               "
             >
-              <strong className="block truncate text-sm text-[#29464D]">
+              <strong
+                className="
+                  block
+                  truncate
+                  text-sm
+                  text-[#29464D]
+                "
+              >
                 {file.name}
               </strong>
 
@@ -684,7 +713,9 @@ export function PharmacyLicenseVerificationPage() {
             </div>
           )}
 
-          {/* Upload Button */}
+          {/* =================================================
+              UPLOAD BUTTON
+          ================================================= */}
 
           <button
             type="button"
@@ -694,13 +725,8 @@ export function PharmacyLicenseVerificationPage() {
               w-full
               justify-center
             "
-            disabled={
-              !file ||
-              upload.isPending
-            }
-            onClick={() =>
-              upload.mutate(file)
-            }
+            disabled={!file || upload.isPending}
+            onClick={() => upload.mutate(file)}
           >
             <Upload size={17} />
 
@@ -711,18 +737,22 @@ export function PharmacyLicenseVerificationPage() {
                 : t("إرسال الترخيص للتحقق")}
           </button>
 
-          {/* Privacy */}
+          {/* =================================================
+              PRIVACY
+          ================================================= */}
 
           <div
             className="
               mt-5
               rounded-xl
               bg-amber-50
-              p-4
-              text-xs
+              p-3
+              text-[11px]
               font-bold
               leading-6
               text-amber-800
+              sm:p-4
+              sm:text-xs
             "
           >
             {t(
@@ -733,54 +763,46 @@ export function PharmacyLicenseVerificationPage() {
 
         {/* ===================================================
             STATUS
-        =================================================== */}
+        ==================================================== */}
 
         <section
           className="
+            min-w-0
             rounded-[14px]
             border
             border-[#DCE8EA]
             bg-white
-            p-6
+            p-4
             shadow-[0_10px_30px_rgba(23,75,87,.04)]
+            sm:p-5
+            lg:p-6
           "
         >
-          {/* Header */}
+          {/* =================================================
+              HEADER
+          ================================================= */}
 
           <div
             className={`
               flex
-              items-start
-              justify-between
-              gap-4
-              ${
-                isArabic
-                  ? "text-right"
-                  : "text-left"
-              }
+              min-w-0
+              flex-col
+              gap-3
+              sm:flex-row
+              sm:items-start
+              sm:justify-between
+              ${isArabic ? "text-right" : "text-left"}
             `}
           >
-            <div>
-              <h3
-                className="
-                  font-black
-                  text-[#29464D]
-                "
-              >
+            <div className="min-w-0">
+              <h3 className="font-black text-[#29464D]">
                 {t("حالة الاعتماد")}
               </h3>
 
-              <p
-                className="
-                  mt-1
-                  text-xs
-                  text-[#829499]
-                "
-              >
+              <p className="mt-1 text-xs text-[#829499]">
                 {t("رقم الترخيص")}:{" "}
                 <span dir="ltr">
-                  {profile.data?.licenseNumber ||
-                    "—"}
+                  {profile.data?.licenseNumber || "—"}
                 </span>
               </p>
             </div>
@@ -789,6 +811,9 @@ export function PharmacyLicenseVerificationPage() {
               <span
                 className="
                   inline-flex
+                  w-fit
+                  max-w-full
+                  shrink-0
                   items-center
                   gap-2
                   rounded-full
@@ -807,6 +832,9 @@ export function PharmacyLicenseVerificationPage() {
             ) : (
               <span
                 className="
+                  w-fit
+                  max-w-full
+                  shrink-0
                   rounded-full
                   bg-slate-100
                   px-3
@@ -821,21 +849,21 @@ export function PharmacyLicenseVerificationPage() {
             )}
           </div>
 
-          {/* Loading */}
+          {/* =================================================
+              LOADING
+          ================================================= */}
 
           {verification.isLoading ? (
             <div
               className="
                 grid
-                min-h-64
+                min-h-56
                 place-items-center
+                sm:min-h-64
               "
             >
               <LoaderCircle
-                className="
-                  animate-spin
-                  text-[#216474]
-                "
+                className="animate-spin text-[#216474]"
               />
             </div>
           ) : missing ? (
@@ -845,19 +873,18 @@ export function PharmacyLicenseVerificationPage() {
 
             <div
               className="
-                mt-6
+                mt-5
                 rounded-2xl
                 bg-[#F7FAF9]
-                p-8
+                p-5
                 text-center
+                sm:mt-6
+                sm:p-8
               "
             >
               <FileCheck2
-                className="
-                  mx-auto
-                  text-[#829499]
-                "
-                size={38}
+                className="mx-auto text-[#829499]"
+                size={36}
               />
 
               <h4
@@ -873,8 +900,10 @@ export function PharmacyLicenseVerificationPage() {
               <p
                 className="
                   mt-2
-                  text-sm
+                  text-[13px]
+                  leading-6
                   text-[#829499]
+                  sm:text-sm
                 "
               >
                 {t(
@@ -889,13 +918,16 @@ export function PharmacyLicenseVerificationPage() {
 
             <div
               className="
-                mt-6
+                mt-5
                 rounded-2xl
                 bg-rose-50
-                p-5
+                p-4
                 text-sm
                 font-bold
+                leading-6
                 text-rose-700
+                sm:mt-6
+                sm:p-5
               "
             >
               {getApiErrorMessage(
@@ -907,29 +939,39 @@ export function PharmacyLicenseVerificationPage() {
                DATA
             =============================================== */
 
-            <div className="mt-6">
-              {/* Status */}
+            <div className="mt-5 sm:mt-6">
+              {/* =================================================
+                  STATUS
+              ================================================= */}
 
               <div
                 className={`
                   flex
-                  items-center
+                  min-w-0
+                  items-start
                   gap-3
                   rounded-2xl
-                  p-5
+                  p-4
+                  sm:items-center
+                  sm:p-5
                   ${meta.tone}
                 `}
               >
                 <StatusIcon
-                  className={
-                    data.status === "Processing"
-                      ? "animate-spin"
-                      : ""
-                  }
+                  className={`
+                    mt-0.5
+                    shrink-0
+                    sm:mt-0
+                    ${
+                      data.status === "Processing"
+                        ? "animate-spin"
+                        : ""
+                    }
+                  `}
                 />
 
-                <div>
-                  <strong className="block">
+                <div className="min-w-0">
+                  <strong className="block break-words">
                     {t(meta.label)}
                   </strong>
 
@@ -938,6 +980,7 @@ export function PharmacyLicenseVerificationPage() {
                       mt-1
                       block
                       text-xs
+                      leading-5
                       opacity-75
                     "
                   >
@@ -950,13 +993,17 @@ export function PharmacyLicenseVerificationPage() {
                 </div>
               </div>
 
-              {/* Details */}
+              {/* =================================================
+                  DETAILS
+              ================================================= */}
 
               <div
                 className="
-                  mt-5
+                  mt-4
                   grid
+                  min-w-0
                   gap-3
+                  sm:mt-5
                   sm:grid-cols-2
                 "
               >
@@ -999,7 +1046,9 @@ export function PharmacyLicenseVerificationPage() {
                 />
               </div>
 
-              {/* Error / Rejection */}
+              {/* =================================================
+                  ERROR / REJECTION
+              ================================================= */}
 
               {(data.rejectionReason ||
                 data.failureReason) && (
@@ -1011,6 +1060,7 @@ export function PharmacyLicenseVerificationPage() {
                     p-4
                     text-sm
                     font-bold
+                    leading-6
                     text-rose-700
                   "
                 >
@@ -1019,7 +1069,9 @@ export function PharmacyLicenseVerificationPage() {
                 </div>
               )}
 
-              {/* Document */}
+              {/* =================================================
+                  DOCUMENT
+              ================================================= */}
 
               <button
                 type="button"
@@ -1038,18 +1090,23 @@ export function PharmacyLicenseVerificationPage() {
             </div>
           )}
 
-          {/* Security Notice */}
+          {/* =================================================
+              SECURITY NOTICE
+          ================================================= */}
 
           <div
             className="
-              mt-6
+              mt-5
               flex
+              min-w-0
               items-start
               gap-3
               rounded-2xl
               border
               border-[#174B57]/8
-              p-4
+              p-3
+              sm:mt-6
+              sm:p-4
             "
           >
             <ShieldCheck
@@ -1063,15 +1120,13 @@ export function PharmacyLicenseVerificationPage() {
 
             <p
               className={`
-                text-xs
+                min-w-0
+                text-[11px]
                 font-bold
                 leading-6
                 text-[#526A70]
-                ${
-                  isArabic
-                    ? "text-right"
-                    : "text-left"
-                }
+                sm:text-xs
+                ${isArabic ? "text-right" : "text-left"}
               `}
             >
               {t(
@@ -1080,7 +1135,9 @@ export function PharmacyLicenseVerificationPage() {
             </p>
           </div>
 
-          {/* Refresh */}
+          {/* =================================================
+              REFRESH
+          ================================================= */}
 
           {!profile.data?.isApproved &&
             data?.status === "Matched" && (
@@ -1115,9 +1172,11 @@ function Detail({ label, value }) {
   return (
     <div
       className="
+        min-w-0
         rounded-xl
         bg-[#F7FAF9]
-        p-4
+        p-3
+        sm:p-4
       "
     >
       <span
@@ -1133,6 +1192,7 @@ function Detail({ label, value }) {
         className="
           mt-1
           block
+          min-w-0
           truncate
           text-sm
           text-[#29464D]
@@ -1143,3 +1203,4 @@ function Detail({ label, value }) {
     </div>
   );
 }
+

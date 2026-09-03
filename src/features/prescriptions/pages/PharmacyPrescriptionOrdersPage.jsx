@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -86,16 +87,18 @@ export function PharmacyPrescriptionOrdersPage() {
       <section
         className="
           relative isolate
-          min-h-[220px]
+          min-h-[140px]
           overflow-hidden
           rounded-[14px]
+          bg-[#10505A]
           text-white
           shadow-[0_22px_55px_rgba(23,75,87,.16)]
-          sm:min-h-[230px]
+          sm:min-h-[180px]
+          md:min-h-[200px]
           lg:min-h-[250px]
         "
       >
-        {/* Hero image */}
+        {/* Hero image - Desktop only */}
 
         <img
           src={PHARMACY_HERO_IMAGE}
@@ -103,10 +106,14 @@ export function PharmacyPrescriptionOrdersPage() {
           aria-hidden="true"
           draggable={false}
           className={`
+            pointer-events-none
             absolute inset-0
+            hidden
             h-full w-full
+            select-none
             object-cover
             object-[center_38%]
+            lg:block
             ${
               isArabic
                 ? "scale-x-[-1]"
@@ -115,10 +122,10 @@ export function PharmacyPrescriptionOrdersPage() {
           `}
         />
 
-        {/* Same overlay as Pharmacy Working Hours */}
+        {/* Overlay - Desktop only */}
 
         <div
-          className="absolute inset-0"
+          className="pointer-events-none absolute inset-0 hidden lg:block"
           style={{
             background: isArabic
               ? "linear-gradient(270deg,#10505A 0%,rgba(16,80,90,.90) 38%,rgba(33,100,116,.48) 70%,rgba(33,100,116,.08) 100%)"
@@ -126,18 +133,21 @@ export function PharmacyPrescriptionOrdersPage() {
           }}
         />
 
-        {/* Decorative circle */}
+        {/* Decorative circle - Desktop only */}
 
         <div
           aria-hidden="true"
           className="
+            pointer-events-none
             absolute
             -top-20
             -left-14
+            hidden
             size-64
             rounded-full
             border-[40px]
             border-white/[.04]
+            lg:block
           "
         />
 
@@ -146,14 +156,20 @@ export function PharmacyPrescriptionOrdersPage() {
         <div
           className="
             relative z-10
-            flex min-h-[188px]
+            flex
+            min-h-[140px]
+            w-full
             items-center
             justify-between
             gap-6
-            px-6
-            py-7
-            mt-10
+            overflow-hidden
+            px-5
+            py-5
+            sm:min-h-[180px]
+            sm:px-7
+            lg:min-h-[250px]
             lg:px-10
+            lg:py-7
           "
         >
           {/* Title */}
@@ -197,11 +213,12 @@ export function PharmacyPrescriptionOrdersPage() {
               <h1
                 className="
                   mt-1.5
-                  text-[28px]
+                  text-[24px]
                   font-medium
                   leading-[1.2]
                   text-white
-                  sm:text-[30px]
+                  sm:text-[28px]
+                  md:text-[30px]
                 "
               >
                 {t("تجهيز واستلام الوصفات")}
@@ -209,11 +226,14 @@ export function PharmacyPrescriptionOrdersPage() {
 
               <p
                 className="
-                  mt-3
+                  mt-2
                   max-w-[560px]
-                  text-[14px]
-                  leading-7
+                  text-[12px]
+                  leading-6
                   text-[#D6D6D6]
+                  sm:mt-3
+                  sm:text-[14px]
+                  sm:leading-7
                 "
               >
                 {t(
@@ -222,8 +242,6 @@ export function PharmacyPrescriptionOrdersPage() {
               </p>
             </div>
           </div>
-
-         
         </div>
       </section>
 
@@ -892,3 +910,4 @@ function PrescriptionOrderCard({
     </article>
   );
 }
+

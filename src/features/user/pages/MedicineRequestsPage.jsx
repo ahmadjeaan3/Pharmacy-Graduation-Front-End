@@ -26,7 +26,6 @@ import { getApiErrorMessage } from "../../../shared/api/errors";
 import { Brand } from "../../../shared/components/Brand";
 
 const REQUESTS_HERO_BACKGROUND = "/assets/app/home/hero_search.png";
-
 const REQUESTS_NOTICE_IMAGE = "/assets/app/home/pharmacy.png";
 
 const filters = [
@@ -123,15 +122,16 @@ export function MedicineRequestsPage() {
   const [search, setSearch] = useState("");
   const [sortOrder, setSortOrder] = useState("Newest");
 
-  // القائمة الأساسية حسب الفلتر المحدد.
   const query = useQuery({
     queryKey: userKeys.medicineRequests({ status }),
     queryFn: () => getMedicineRequests({ status, take: 100 }),
   });
 
-  // نسخة كاملة من الطلبات لاستخدامها فقط في إحصائيات الهيرو.
   const overviewQuery = useQuery({
-    queryKey: userKeys.medicineRequests({ status: "", overview: true }),
+    queryKey: userKeys.medicineRequests({
+      status: "",
+      overview: true,
+    }),
     queryFn: () => getMedicineRequests({ take: 100 }),
     staleTime: 30_000,
   });
@@ -161,9 +161,11 @@ export function MedicineRequestsPage() {
       if (!term) return true;
 
       return normalizeSearch(
-        `${item.medicineName ?? ""} ${item.arabicMedicineName ?? ""} ${
-          item.medicineDisplayName ?? ""
-        } ${item.pharmacyName ?? ""} ${item.requestCode ?? ""}`,
+        `${item.medicineName ?? ""} ${
+          item.arabicMedicineName ?? ""
+        } ${item.medicineDisplayName ?? ""} ${
+          item.pharmacyName ?? ""
+        } ${item.requestCode ?? ""}`,
       ).includes(term);
     });
 
@@ -171,7 +173,9 @@ export function MedicineRequestsPage() {
       const aDate = new Date(a.createdAtUtc ?? 0).getTime();
       const bDate = new Date(b.createdAtUtc ?? 0).getTime();
 
-      return sortOrder === "Oldest" ? aDate - bDate : bDate - aDate;
+      return sortOrder === "Oldest"
+        ? aDate - bDate
+        : bDate - aDate;
     });
   }, [query.data, search, sortOrder]);
 
@@ -180,9 +184,9 @@ export function MedicineRequestsPage() {
       dir="rtl"
       className="m-0 min-h-screen w-full bg-[#F7F9FA] p-0 text-[#333333]"
     >
-      {/* =====================================================
+      {/* =========================================================
           HERO
-      ====================================================== */}
+      ========================================================= */}
       <section
         className="
           relative isolate
@@ -230,7 +234,6 @@ export function MedicineRequestsPage() {
             lg:px-8
           "
         >
-          {/* العنوان */}
           <div className="flex min-w-0 items-center gap-4 text-right">
             <span
               className="
@@ -252,12 +255,13 @@ export function MedicineRequestsPage() {
               </h1>
 
               <p className="mt-2 max-w-[560px] text-[11.5px] leading-6 text-white/75">
-                {t("تابع حالة طلباتك وتفاصيلها، وتعرّف على آخر تحديث لكل طلب.")}
+                {t(
+                  "تابع حالة طلباتك وتفاصيلها، وتعرّف على آخر تحديث لكل طلب.",
+                )}
               </p>
             </div>
           </div>
 
-          {/* الإحصائيات */}
           <div className="grid w-full gap-3 sm:grid-cols-2 lg:w-[369px]">
             <div
               className="
@@ -277,6 +281,7 @@ export function MedicineRequestsPage() {
                 <span className="block text-[9.5px] text-white/70">
                   {t("طلبات قيد المتابعة")}
                 </span>
+
                 <strong className="mt-1 block text-[20px] font-bold text-white">
                   {activeCount.toLocaleString("ar-SY")}
                 </strong>
@@ -301,6 +306,7 @@ export function MedicineRequestsPage() {
                 <span className="block text-[9.5px] text-white/70">
                   {t("إجمالي الطلبات")}
                 </span>
+
                 <strong className="mt-1 block text-[20px] font-bold text-white">
                   {allRequests.length.toLocaleString("ar-SY")}
                 </strong>
@@ -310,11 +316,13 @@ export function MedicineRequestsPage() {
         </div>
       </section>
 
-      {/* =====================================================
-          CONTENT
-      ====================================================== */}
+      {/* =========================================================
+          MAIN
+      ========================================================= */}
       <main className="mx-auto w-full max-w-[1200px] px-0 pb-10 pt-10">
-        {/* شريط الفلاتر */}
+        {/* =======================================================
+            FILTERS
+        ======================================================= */}
         <section
           className="
             mb-10
@@ -324,7 +332,10 @@ export function MedicineRequestsPage() {
         >
           <div className="flex min-w-0 gap-2 overflow-x-auto">
             {filters.map((item) => {
-              const count = getStatusCount(allRequests, item.value);
+              const count = getStatusCount(
+                allRequests,
+                item.value,
+              );
 
               return (
                 <button
@@ -349,11 +360,13 @@ export function MedicineRequestsPage() {
                 >
                   {t(item.label)}
 
-                  {item.value === "Pending" && pendingCount > 0 ? (
+                  {item.value === "Pending" &&
+                  pendingCount > 0 ? (
                     <span className="me-1 opacity-70">
                       ({pendingCount.toLocaleString("ar-SY")})
                     </span>
-                  ) : item.value === "" && allRequests.length > 0 ? (
+                  ) : item.value === "" &&
+                    allRequests.length > 0 ? (
                     <span className="me-1 opacity-70">
                       ({count.toLocaleString("ar-SY")})
                     </span>
@@ -399,7 +412,9 @@ export function MedicineRequestsPage() {
           <div className="relative">
             <select
               value={sortOrder}
-              onChange={(event) => setSortOrder(event.target.value)}
+              onChange={(event) =>
+                setSortOrder(event.target.value)
+              }
               className="
                 h-10 w-full
                 appearance-none
@@ -412,8 +427,13 @@ export function MedicineRequestsPage() {
                 outline-none
               "
             >
-              <option value="Newest">{t("ترتيب حسب الأحدث")}</option>
-              <option value="Oldest">{t("ترتيب حسب الأقدم")}</option>
+              <option value="Newest">
+                {t("ترتيب حسب الأحدث")}
+              </option>
+
+              <option value="Oldest">
+                {t("ترتيب حسب الأقدم")}
+              </option>
             </select>
 
             <ChevronDown
@@ -428,7 +448,9 @@ export function MedicineRequestsPage() {
           </div>
         </section>
 
-        {/* النتائج */}
+        {/* =======================================================
+            STATES
+        ======================================================= */}
         {query.isPending ? (
           <UserLoadingState label={t("جاري تحميل طلباتك...")} />
         ) : query.isError ? (
@@ -440,7 +462,10 @@ export function MedicineRequestsPage() {
           <>
             <section className="space-y-3">
               {requests.map((request) => {
-                const statusMeta = getRequestStatusMeta(request.status);
+                const statusMeta = getRequestStatusMeta(
+                  request.status,
+                );
+
                 const displayName =
                   request.medicineDisplayName ||
                   request.arabicMedicineName ||
@@ -448,163 +473,431 @@ export function MedicineRequestsPage() {
                   t("دواء");
 
                 return (
-                  <article
-                    key={request.requestId}
-                    className="
-                      group
-                      grid min-h-[88px]
-                      items-center
-                      rounded-[8px]
-                      border border-[rgba(102,102,102,0.16)]
-                      bg-white
-                      px-6 py-2
-                      transition
-                      hover:border-[#C9DADD]
-                      lg:grid-cols-[204px_1px_144px_1px_159px_1px_111px_1px_minmax(101px,1fr)_132px]
-                      lg:gap-0
-                    "
-                  >
-                    {/* الدواء */}
-                    <div className="flex min-w-0 items-center gap-5">
-                      <span
+                  <div key={request.requestId}>
+                    {/* =================================================
+                        MOBILE ONLY
+                        أقل من 640px
+                    ================================================= */}
+                    <article
+                      className="
+                        mx-4
+                        overflow-hidden
+                        rounded-[12px]
+                        border border-[#E3EAEC]
+                        bg-white
+                        shadow-[0_2px_10px_rgba(33,100,116,0.04)]
+                        sm:hidden
+                      "
+                    >
+                      {/* medicine + status */}
+                      <div className="flex items-center justify-between gap-3 px-4 py-4">
+                        <div className="flex min-w-0 items-center gap-3">
+                          <span
+                            className="
+                              grid size-10 shrink-0
+                              place-items-center
+                              rounded-[9px]
+                              bg-[#E6F3F6]
+                              text-[#216474]
+                            "
+                          >
+                            <Pill
+                              size={21}
+                              strokeWidth={1.7}
+                            />
+                          </span>
+
+                          <div className="min-w-0 text-right">
+                            <h3
+                              className="
+                                max-w-[150px]
+                                truncate
+                                text-[13px]
+                                font-semibold
+                                leading-5
+                                text-[#333333]
+                              "
+                            >
+                              {displayName}
+                            </h3>
+
+                            <p
+                              className="
+                                mt-1
+                                truncate
+                                text-[9.5px]
+                                text-[#9AA6A8]
+                              "
+                            >
+                              {request.requestCode || "—"}
+                            </p>
+                          </div>
+                        </div>
+
+                        <span
+                          className={`
+                            inline-flex
+                            min-h-[28px]
+                            shrink-0
+                            items-center
+                            justify-center
+                            rounded-full
+                            border
+                            px-3
+                            text-[9px]
+                            font-medium
+                            ${statusMeta.className}
+                          `}
+                        >
+                          {t(statusMeta.label)}
+                        </span>
+                      </div>
+
+                      {/* divider */}
+                      <div className="mx-4 border-t border-[#EEF2F3]" />
+
+                      {/* =================================================
+                          MOBILE INFO ROW
+                          3 عناصر بجانب بعض + فواصل
+                      ================================================= */}
+                      <div
                         className="
-                          grid size-10 shrink-0
-                          place-items-center
-                          rounded-[8px]
-                          bg-[#E6F3F6]
-                          text-[#216474]
+                          grid
+                          grid-cols-3
+                          items-stretch
+                          px-2
+                          py-4
                         "
                       >
-                        <Pill size={24} strokeWidth={1.7} />
-                      </span>
+                        {/* وقت الطلب */}
+                        <div
+                          className="
+                            flex
+                            min-w-0
+                            items-center
+                            justify-start
+                            gap-1.5
+                            px-2
+                            text-right
+                          "
+                        >
+                          <Clock3
+                            size={16}
+                            strokeWidth={1.7}
+                            className="shrink-0 text-[#216474]"
+                          />
 
-                      <div className="min-w-0 text-right">
-                        <h3 className="truncate text-[16px] font-medium leading-none text-[#333333]">
-                          {displayName}
-                        </h3>
+                          <div className="min-w-0 text-right">
+                            <span className="block text-[8px] text-[#A6B0B2]">
+                              {t("وقت الطلب")}
+                            </span>
 
-                        <p className="mt-2 truncate text-[12px] leading-none text-[#A5A5A5]">
-                          {request.requestCode || "—"}
-                        </p>
+                            <strong
+                              className="
+                                mt-1
+                                block
+                                whitespace-nowrap
+                                text-[9px]
+                                font-semibold
+                                text-[#60777C]
+                              "
+                            >
+                              {formatRequestTime(
+                                request.createdAtUtc,
+                              )}
+                            </strong>
+                          </div>
+                        </div>
+
+                        {/* تاريخ الطلب */}
+                        <div
+                          className="
+                            flex
+                            min-w-0
+                            items-center
+                            justify-start
+                            gap-1.5
+                            border-x
+                            border-[#EEF2F3]
+                            px-2
+                            text-right
+                          "
+                        >
+                          <CalendarDays
+                            size={16}
+                            strokeWidth={1.7}
+                            className="shrink-0 text-[#216474]"
+                          />
+
+                          <div className="min-w-0 text-right">
+                            <span className="block text-[8px] text-[#A6B0B2]">
+                              {t("تاريخ الطلب")}
+                            </span>
+
+                            <strong
+                              className="
+                                mt-1
+                                block
+                                max-w-[70px]
+                                overflow-hidden
+                                text-ellipsis
+                                whitespace-nowrap
+                                text-[8.5px]
+                                font-semibold
+                                text-[#60777C]
+                              "
+                            >
+                              {formatRequestDate(
+                                request.createdAtUtc,
+                              )}
+                            </strong>
+                          </div>
+                        </div>
+
+                        {/* الكمية */}
+                        <div
+                          className="
+                            flex
+                            min-w-0
+                            items-center
+                            justify-start
+                            gap-1.5
+                            px-2
+                            text-right
+                          "
+                        >
+                          <ClipboardList
+                            size={16}
+                            strokeWidth={1.7}
+                            className="shrink-0 text-[#216474]"
+                          />
+
+                          <div className="min-w-0 text-right">
+                            <span className="block text-[8px] text-[#A6B0B2]">
+                              {t("الكمية")}
+                            </span>
+
+                            <strong
+                              className="
+                                mt-1
+                                block
+                                whitespace-nowrap
+                                text-[9px]
+                                font-semibold
+                                text-[#60777C]
+                              "
+                            >
+                              {Number(
+                                request.requestedQuantity || 0,
+                              ).toLocaleString("ar-SY")}
+                            </strong>
+                          </div>
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="hidden h-11 w-px bg-[rgba(102,102,102,0.16)] lg:block" />
+                      {/* divider */}
+                      <div className="mx-4 border-t border-[#EEF2F3]" />
 
-                    {/* وقت الطلب */}
-                    <div className="flex items-center justify-center gap-2 px-3 text-[10px] text-[#71858A]">
-                      <Clock3
-                        size={13}
-                        strokeWidth={1.7}
-                        className="text-[#9AACB0]"
-                      />
-                      <div>
-                        <span className="block text-[8.5px] text-[#A6B0B2]">
-                          {t("وقت الطلب")}
+                      {/* action */}
+                      <div className="px-4 py-3">
+                        <Link
+                          to={`/app/requests/${request.requestId}`}
+                          className="
+                            flex
+                            h-10
+                            w-full
+                            items-center
+                            justify-center
+                            rounded-[8px]
+                            bg-[#216474]
+                            text-[11px]
+                            font-medium
+                            text-white
+                            transition
+                            hover:bg-[#174B57]
+                          "
+                        >
+                          {t("عرض الطلب")}
+                        </Link>
+                      </div>
+                    </article>
+
+                    {/* =================================================
+                        TABLET + LAPTOP + DESKTOP
+                        ORIGINAL CARD — UNCHANGED
+                    ================================================= */}
+                    <article
+                      className="
+                        group
+                        hidden
+                        min-h-[88px]
+                        items-center
+                        rounded-[8px]
+                        border border-[rgba(102,102,102,0.16)]
+                        bg-white
+                        px-6 py-2
+                        transition
+                        hover:border-[#C9DADD]
+                        sm:grid
+                        lg:grid-cols-[204px_1px_144px_1px_159px_1px_111px_1px_minmax(101px,1fr)_132px]
+                        lg:gap-0
+                      "
+                    >
+                      {/* medicine */}
+                      <div className="flex min-w-0 items-center gap-5">
+                        <span className="grid size-10 shrink-0 place-items-center rounded-[8px] bg-[#E6F3F6] text-[#216474]">
+                          <Pill
+                            size={24}
+                            strokeWidth={1.7}
+                          />
                         </span>
-                        <strong className="mt-0.5 block font-semibold text-[#60777C]">
-                          {formatRequestTime(request.createdAtUtc)}
-                        </strong>
+
+                        <div className="min-w-0 text-right">
+                          <h3 className="truncate text-[16px] font-medium leading-none text-[#333333]">
+                            {displayName}
+                          </h3>
+
+                          <p className="mt-2 truncate text-[12px] leading-none text-[#A5A5A5]">
+                            {request.requestCode || "—"}
+                          </p>
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="hidden h-11 w-px bg-[rgba(102,102,102,0.16)] lg:block" />
+                      <div className="hidden h-11 w-px bg-[rgba(102,102,102,0.16)] lg:block" />
 
-                    {/* تاريخ الطلب */}
-                    <div className="flex items-center justify-center gap-2 px-3 text-[10px] text-[#71858A]">
-                      <CalendarDays
-                        size={13}
-                        strokeWidth={1.7}
-                        className="text-[#9AACB0]"
-                      />
-                      <div>
-                        <span className="block text-[8.5px] text-[#A6B0B2]">
-                          {t("تاريخ الطلب")}
+                      {/* time */}
+                      <div className="flex items-center justify-center gap-2 px-3 text-[10px] text-[#71858A]">
+                        <Clock3
+                          size={13}
+                          strokeWidth={1.7}
+                          className="text-[#9AACB0]"
+                        />
+
+                        <div>
+                          <span className="block text-[8.5px] text-[#A6B0B2]">
+                            {t("وقت الطلب")}
+                          </span>
+
+                          <strong className="mt-0.5 block font-semibold text-[#60777C]">
+                            {formatRequestTime(
+                              request.createdAtUtc,
+                            )}
+                          </strong>
+                        </div>
+                      </div>
+
+                      <div className="hidden h-11 w-px bg-[rgba(102,102,102,0.16)] lg:block" />
+
+                      {/* date */}
+                      <div className="flex items-center justify-center gap-2 px-3 text-[10px] text-[#71858A]">
+                        <CalendarDays
+                          size={13}
+                          strokeWidth={1.7}
+                          className="text-[#9AACB0]"
+                        />
+
+                        <div>
+                          <span className="block text-[8.5px] text-[#A6B0B2]">
+                            {t("تاريخ الطلب")}
+                          </span>
+
+                          <strong className="mt-0.5 block whitespace-nowrap font-semibold text-[#60777C]">
+                            {formatRequestDate(
+                              request.createdAtUtc,
+                            )}
+                          </strong>
+                        </div>
+                      </div>
+
+                      <div className="hidden h-11 w-px bg-[rgba(102,102,102,0.16)] lg:block" />
+
+                      {/* quantity */}
+                      <div className="flex items-center justify-center gap-2 px-3 text-[10px] text-[#71858A]">
+                        <ClipboardList
+                          size={14}
+                          strokeWidth={1.7}
+                          className="text-[#A5A5A5]"
+                        />
+
+                        <div>
+                          <span className="block text-[8.5px] text-[#A6B0B2]">
+                            {t("الكمية")}
+                          </span>
+
+                          <strong className="mt-0.5 block font-semibold text-[#60777C]">
+                            {Number(
+                              request.requestedQuantity || 0,
+                            ).toLocaleString("ar-SY")}
+                          </strong>
+                        </div>
+                      </div>
+
+                      <div className="hidden h-11 w-px bg-[rgba(102,102,102,0.16)] lg:block" />
+
+                      {/* status */}
+                      <div className="flex justify-start px-4 lg:justify-center">
+                        <span
+                          className={`
+                            inline-flex
+                            h-7
+                            min-w-[101px]
+                            items-center
+                            justify-center
+                            rounded-full
+                            border
+                            px-3
+                            text-[14px]
+                            font-medium
+                            ${statusMeta.className}
+                          `}
+                        >
+                          {t(statusMeta.label)}
                         </span>
-                        <strong className="mt-0.5 block whitespace-nowrap font-semibold text-[#60777C]">
-                          {formatRequestDate(request.createdAtUtc)}
-                        </strong>
                       </div>
-                    </div>
 
-                    <div className="hidden h-11 w-px bg-[rgba(102,102,102,0.16)] lg:block" />
-
-                    {/* الكمية */}
-                    <div className="flex items-center justify-center gap-2 px-3 text-[10px] text-[#71858A]">
-                      <ClipboardList
-                        size={14}
-                        strokeWidth={1.7}
-                        className="text-[#A5A5A5]"
-                      />
-                      <div>
-                        <span className="block text-[8.5px] text-[#A6B0B2]">
-                          {t("الكمية")}
-                        </span>
-                        <strong className="mt-0.5 block font-semibold text-[#60777C]">
-                          {Number(
-                            request.requestedQuantity || 0,
-                          ).toLocaleString("ar-SY")}
-                        </strong>
+                      {/* action */}
+                      <div className="flex justify-start lg:justify-end">
+                        <Link
+                          to={`/app/requests/${request.requestId}`}
+                          className="
+                            inline-flex
+                            h-11
+                            w-[132px]
+                            items-center
+                            justify-center
+                            rounded-[8px]
+                            bg-[#216474]
+                            px-4
+                            text-[14px]
+                            font-medium
+                            text-white
+                            transition
+                            hover:bg-[#174B57]
+                          "
+                        >
+                          {t("عرض الطلب")}
+                        </Link>
                       </div>
-                    </div>
-
-                    <div className="hidden h-11 w-px bg-[rgba(102,102,102,0.16)] lg:block" />
-
-                    {/* الحالة */}
-                    <div className="flex justify-start px-4 lg:justify-center">
-                      <span
-                        className={`
-                          inline-flex h-7 min-w-[101px]
-                          items-center justify-center
-                          rounded-full border
-                          px-3
-                          text-[14px]
-                          font-medium
-                          ${statusMeta.className}
-                        `}
-                      >
-                        {t(statusMeta.label)}
-                      </span>
-                    </div>
-
-                    {/* الإجراء */}
-                    <div className="flex justify-start lg:justify-end">
-                      <Link
-                        to={`/app/requests/${request.requestId}`}
-                        className="
-                          inline-flex h-11
-                          w-[132px]
-                          items-center justify-center
-                          rounded-[8px]
-                          bg-[#216474]
-                          px-4
-                          text-[14px]
-                          font-medium
-                          text-white
-                          transition
-                          hover:bg-[#174B57]
-                        "
-                      >
-                        {t("عرض الطلب")}
-                      </Link>
-                    </div>
-                  </article>
+                    </article>
+                  </div>
                 );
               })}
             </section>
 
+            {/* =======================================================
+                NOTICE
+            ======================================================= */}
             <section
               className="
-    mt-5
-    flex min-h-[102px]
-    items-center justify-between gap-6
-    rounded-[12px]
-    border border-[rgba(102,102,102,0.16)]
-    bg-[rgba(230,243,246,0.6)]
-    px-6 py-4
-  "
+                mt-5
+                flex min-h-[102px]
+                items-center justify-between gap-6
+                rounded-[12px]
+                border border-[rgba(102,102,102,0.16)]
+                bg-[rgba(230,243,246,0.6)]
+                px-6 py-4
+              "
             >
-              {/* الأيقونة ثم النص مباشرة */}
               <div className="flex min-w-0 items-center gap-3">
                 <Info
                   size={32}
@@ -625,17 +918,16 @@ export function MedicineRequestsPage() {
                 </div>
               </div>
 
-              {/* الصورة في أقصى اليسار + شفافية */}
               <img
                 src={REQUESTS_NOTICE_IMAGE}
                 alt=""
                 aria-hidden="true"
                 className="
-      h-[68px] w-[102px]
-      shrink-0
-      object-contain
-      opacity-30
-    "
+                  h-[68px] w-[102px]
+                  shrink-0
+                  object-contain
+                  opacity-30
+                "
               />
             </section>
           </>
@@ -649,7 +941,9 @@ export function MedicineRequestsPage() {
             description={
               search
                 ? t("جرّب البحث باسم مختلف.")
-                : t("يمكنك البحث عن دواء وإرسال طلب إلى الصيدلية المناسبة.")
+                : t(
+                    "يمكنك البحث عن دواء وإرسال طلب إلى الصيدلية المناسبة.",
+                  )
             }
           />
         )}
@@ -657,31 +951,3 @@ export function MedicineRequestsPage() {
     </div>
   );
 }
-
-function FooterFeature({ icon: Icon, title, description }) {
-  return (
-    <div className="flex items-center justify-start gap-3">
-      <span
-        className="
-          grid size-9 shrink-0
-          place-items-center
-          rounded-[7px]
-          bg-[#E6F3F6]
-          text-[#216474]
-        "
-      >
-        <Icon size={18} strokeWidth={1.8} />
-      </span>
-
-      <div className="flex flex-col items-start gap-1.5">
-        <strong className="text-[13px] font-medium text-[#666666]">
-          {title}
-        </strong>
-
-        <p className="text-[10.5px] text-[#A5A5A5]">{description}</p>
-      </div>
-    </div>
-  );
-}
-
-export default MedicineRequestsPage;

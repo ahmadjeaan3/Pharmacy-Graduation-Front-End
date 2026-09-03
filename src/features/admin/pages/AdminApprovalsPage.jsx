@@ -1,3 +1,4 @@
+
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion as Motion } from "framer-motion";
 import {
@@ -15,6 +16,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+
 import { getApiErrorMessage } from "../../../shared/api/errors";
 import {
   adminKeys,
@@ -29,36 +31,49 @@ import {
   DashboardErrorState as AdminErrorState,
   DashboardLoadingState as AdminLoadingState,
 } from "../../../shared/components/AsyncStates";
-import { formatDate, getVerificationStatus } from "../utils/adminFormatters";
+import {
+  formatDate,
+  getVerificationStatus,
+} from "../utils/adminFormatters";
 
-const ADMIN_HERO_IMAGE = "/assets/app/home/background_hero_admin.png";
+const ADMIN_HERO_IMAGE =
+  "/assets/app/home/background_hero_admin.png";
 
 export function AdminApprovalsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const requestedTab = searchParams.get("tab");
-  const activeTab = ["pharmacies", "organizations", "warehouses"].includes(
-    requestedTab,
-  )
+
+  const activeTab = [
+    "pharmacies",
+    "organizations",
+    "warehouses",
+  ].includes(requestedTab)
     ? requestedTab
     : "pharmacies";
+
   const [search, setSearch] = useState("");
   const [approvalTarget, setApprovalTarget] = useState(null);
   const [manualDecision, setManualDecision] = useState(null);
   const [manualReason, setManualReason] = useState("");
   const [notice, setNotice] = useState("");
+
   const queryClient = useQueryClient();
+
   const pharmacies = useQuery({
     queryKey: adminKeys.pendingPharmacies,
     queryFn: getPendingPharmacies,
   });
+
   const organizations = useQuery({
     queryKey: adminKeys.pendingOrganizations,
     queryFn: getPendingOrganizations,
   });
+
   const warehouses = useQuery({
     queryKey: adminKeys.pendingWarehouses,
     queryFn: getPendingWarehouses,
   });
+
   const approval = useMutation({
     mutationFn: () =>
       updateWarehouseApproval(
@@ -66,33 +81,49 @@ export function AdminApprovalsPage() {
         manualDecision === "approve",
         manualReason.trim(),
       ),
+
     onSuccess: async () => {
       const approvedName = approvalTarget.name;
+
       setApprovalTarget(null);
       setManualDecision(null);
       setManualReason("");
+
       setNotice(
-        `تم ${manualDecision === "approve" ? "اعتماد" : "رفض"} ${approvedName} يدويًا بنجاح.`,
+        `تم ${
+          manualDecision === "approve" ? "اعتماد" : "رفض"
+        } ${approvedName} يدويًا بنجاح.`,
       );
-      await queryClient.invalidateQueries({ queryKey: adminKeys.root });
+
+      await queryClient.invalidateQueries({
+        queryKey: adminKeys.root,
+      });
     },
   });
+
   const activeQuery =
     activeTab === "pharmacies"
       ? pharmacies
       : activeTab === "warehouses"
         ? warehouses
         : organizations;
+
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
-    if (!term || !activeQuery.data) return activeQuery.data ?? [];
+
+    if (!term || !activeQuery.data) {
+      return activeQuery.data ?? [];
+    }
+
     return activeQuery.data.filter((item) =>
       Object.values(item).some(
         (value) =>
-          typeof value === "string" && value.toLowerCase().includes(term),
+          typeof value === "string" &&
+          value.toLowerCase().includes(term),
       ),
     );
   }, [activeQuery.data, search]);
+
   const switchTab = (tab) => {
     setSearchParams({ tab });
     setSearch("");
@@ -101,20 +132,45 @@ export function AdminApprovalsPage() {
 
   return (
     <div className="space-y-5 sm:space-y-6">
+
+      {/* ================= HERO ================= */}
       <section className="relative isolate overflow-hidden rounded-[16px] border border-[#174b57]/8 bg-white shadow-[0_18px_45px_rgba(23,75,87,.07)]">
+
         <div className="relative isolate min-h-[230px] overflow-hidden bg-[#10505A] px-5 py-7 text-white sm:min-h-[250px] sm:px-7 sm:py-8 lg:min-h-[271px] lg:px-10">
+
+          {/* صورة الهيرو — سطح المكتب فقط */}
           <div
             aria-hidden="true"
-            className="absolute inset-0 -z-20 bg-cover bg-[position:38%_center] bg-no-repeat"
-            style={{ backgroundImage: `url("${ADMIN_HERO_IMAGE}")` }}
+            className="absolute inset-0 -z-20 hidden bg-cover bg-no-repeat md:block"
+            style={{
+              backgroundImage: `url("${ADMIN_HERO_IMAGE}")`,
+              backgroundPosition: "38% center",
+            }}
           />
+
+          {/* Gradient — سطح المكتب فقط */}
           <div
             aria-hidden="true"
-            className="absolute inset-0 -z-10 bg-[linear-gradient(270deg,#10505A_0%,rgba(16,80,90,.88)_36%,rgba(33,100,116,.42)_70%,rgba(33,100,116,.08)_100%)]"
+            className="absolute inset-0 -z-10 hidden md:block"
+            style={{
+              background:
+                "linear-gradient(270deg,#10505A 0%,rgba(16,80,90,.88) 36%,rgba(33,100,116,.42) 70%,rgba(33,100,116,.08) 100%)",
+            }}
           />
-          <div className="flex h-full flex-col justify-center">
+
+          {/* خلفية سادة — الجوال فقط */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 -z-30 block bg-[#10505A] md:hidden"
+          />
+
+          <div className="flex h-full min-h-[230px] flex-col justify-center sm:min-h-[250px] lg:min-h-[271px]">
+
             <div className="w-full max-w-2xl">
-              <p className="text-sm font-bold text-[#8BD0CB]">إدارة الحسابات</p>
+
+              <p className="text-sm font-bold text-[#8BD0CB]">
+                إدارة الحسابات
+              </p>
 
               <h2 className="mt-2 text-3xl font-black text-white sm:text-4xl">
                 طلبات الاعتماد
@@ -125,10 +181,14 @@ export function AdminApprovalsPage() {
               </p>
 
               <div className="mt-6 w-full max-w-md">
+
                 <div className="relative">
+
                   <input
                     value={search}
-                    onChange={(event) => setSearch(event.target.value)}
+                    onChange={(event) =>
+                      setSearch(event.target.value)
+                    }
                     type="search"
                     placeholder="بحث بالاسم أو البريد أو الرقم"
                     className="h-12 w-full rounded-xl border border-white/20 bg-white/10 px-4 pl-12 text-sm font-medium text-white outline-none backdrop-blur-sm transition placeholder:text-white/55 hover:bg-white/15 focus:border-white/40 focus:bg-white/15 focus:ring-2 focus:ring-white/10"
@@ -137,12 +197,20 @@ export function AdminApprovalsPage() {
                   <span className="pointer-events-none absolute left-4 top-1/2 flex -translate-y-1/2 items-center justify-center text-white/70">
                     <Search size={18} />
                   </span>
+
                 </div>
+
               </div>
+
             </div>
+
           </div>
+
         </div>
-        <div className="flex flex-wrap gap-2 border-b border-[#E6EEF0] bg-white px-5 pt-4 sm:px-7 lg:px-8">
+
+        {/* ================= TABS ================= */}
+        <div className="grid grid-cols-3 gap-0 border-b border-[#E6EEF0] bg-white px-2 pt-3 sm:flex sm:flex-wrap sm:gap-2 sm:px-7 sm:pt-4 lg:px-8">
+
           <TabButton
             active={activeTab === "pharmacies"}
             onClick={() => switchTab("pharmacies")}
@@ -150,6 +218,7 @@ export function AdminApprovalsPage() {
             label="الصيدليات"
             count={pharmacies.data?.length}
           />
+
           <TabButton
             active={activeTab === "warehouses"}
             onClick={() => switchTab("warehouses")}
@@ -157,6 +226,7 @@ export function AdminApprovalsPage() {
             label="المستودعات"
             count={warehouses.data?.length}
           />
+
           <TabButton
             active={activeTab === "organizations"}
             onClick={() => switchTab("organizations")}
@@ -164,8 +234,12 @@ export function AdminApprovalsPage() {
             label="المنظمات"
             count={organizations.data?.length}
           />
+
         </div>
+
       </section>
+
+      {/* ================= SUCCESS NOTICE ================= */}
       {notice && (
         <div
           role="status"
@@ -175,6 +249,8 @@ export function AdminApprovalsPage() {
           {notice}
         </div>
       )}
+
+      {/* ================= CONTENT ================= */}
       {activeQuery.isPending ? (
         <AdminLoadingState cards={2} />
       ) : activeQuery.isError ? (
@@ -201,6 +277,7 @@ export function AdminApprovalsPage() {
         />
       ) : (
         <div className="grid gap-4 xl:grid-cols-2">
+
           {activeTab === "pharmacies"
             ? filtered.map((item, index) => (
                 <PharmacyApprovalCard
@@ -217,12 +294,14 @@ export function AdminApprovalsPage() {
                     index={index}
                     onApprove={() => {
                       approval.reset();
+
                       setApprovalTarget({
                         type: "warehouse",
                         id: item.warehouseId,
                         name: item.warehouseName,
                         kindLabel: "المستودع",
                       });
+
                       setManualDecision(null);
                       setManualReason("");
                     }}
@@ -235,12 +314,19 @@ export function AdminApprovalsPage() {
                     index={index}
                   />
                 ))}
+
         </div>
       )}
+
+      {/* ================= APPROVAL DIALOG ================= */}
       <ApprovalConfirmDialog
         item={approvalTarget}
         pending={approval.isPending}
-        error={approval.isError ? getApiErrorMessage(approval.error) : ""}
+        error={
+          approval.isError
+            ? getApiErrorMessage(approval.error)
+            : ""
+        }
         onCancel={() => {
           if (!approval.isPending) {
             setApprovalTarget(null);
@@ -254,11 +340,20 @@ export function AdminApprovalsPage() {
         onDecisionChange={setManualDecision}
         onReasonChange={setManualReason}
       />
+
     </div>
   );
 }
 
-function WarehouseApprovalCard({ item, index, onApprove }) {
+/* =========================================================
+   WAREHOUSE APPROVAL CARD
+========================================================= */
+
+function WarehouseApprovalCard({
+  item,
+  index,
+  onApprove,
+}) {
   return (
     <ApprovalCardShell
       index={index}
@@ -271,71 +366,130 @@ function WarehouseApprovalCard({ item, index, onApprove }) {
         </span>
       }
     >
-      <InfoLine icon={UserRound} value={item.ownerFullName} />
-      <InfoLine icon={Mail} value={item.ownerEmail} ltr />
       <InfoLine
-        icon={Phone}
-        value={item.phoneNumber || "لا يوجد رقم هاتف"}
+        icon={UserRound}
+        value={item.ownerFullName}
+      />
+
+      <InfoLine
+        icon={Mail}
+        value={item.ownerEmail}
         ltr
       />
+
+      <InfoLine
+        icon={Phone}
+        value={
+          item.phoneNumber || "لا يوجد رقم هاتف"
+        }
+        ltr
+      />
+
       <InfoLine
         icon={MapPin}
         value={`${item.city}، ${item.area} — ${item.address}`}
       />
+
       <div className="grid grid-cols-2 gap-2 rounded-2xl bg-[#f7faf9] p-3 text-center text-xs text-[#65797e]">
+
         <span>
           <b className="block text-base text-[#17363e]">
-            {Number(item.minimumOrderAmount).toLocaleString("ar-SY")}
+            {Number(
+              item.minimumOrderAmount,
+            ).toLocaleString("ar-SY")}
           </b>
           الحد الأدنى
         </span>
+
         <span>
           <b className="block text-base text-[#17363e]">
-            {Number(item.deliveryFee).toLocaleString("ar-SY")}
+            {Number(
+              item.deliveryFee,
+            ).toLocaleString("ar-SY")}
           </b>
           أجور التوصيل
         </span>
+
       </div>
+
       <div className="mt-5 border-t border-slate-100 pt-4">
+
         <button
           type="button"
           onClick={onApprove}
           className="btn-primary w-full justify-center"
         >
-          <CheckCircle2 size={17} /> اعتماد المستودع وتفعيل خدماته
+          <CheckCircle2 size={17} />
+          اعتماد المستودع وتفعيل خدماته
         </button>
+
       </div>
     </ApprovalCardShell>
   );
 }
 
-function TabButton({ active, onClick, icon: Icon, label, count }) {
+/* =========================================================
+   TAB BUTTON
+========================================================= */
+
+function TabButton({
+  active,
+  onClick,
+  icon: Icon,
+  label,
+  count,
+}) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`relative flex items-center gap-2 px-4 pb-4 text-sm font-bold transition ${active ? "text-[#174b57]" : "text-slate-400 hover:text-[#526a70]"}`}
+      className={`relative flex min-w-0 items-center justify-center gap-1.5 px-2 pb-3 pt-1 text-[11px] font-bold transition sm:gap-2 sm:px-4 sm:pb-4 sm:pt-0 sm:text-sm ${
+        active
+          ? "text-[#174b57]"
+          : "text-slate-400 hover:text-[#526a70]"
+      }`}
     >
-      <Icon size={18} />
-      {label}
+
+      <Icon
+        size={16}
+        className="shrink-0 sm:size-[18px]"
+      />
+
+      <span className="truncate">
+        {label}
+      </span>
+
       {Number.isFinite(count) && (
         <span
-          className={`rounded-full px-2 py-0.5 text-[11px] ${active ? "bg-[#eaf4f3] text-[#216474]" : "bg-slate-100"}`}
+          className={`shrink-0 rounded-full px-1.5 py-0.5 text-[9px] sm:px-2 sm:text-[11px] ${
+            active
+              ? "bg-[#eaf4f3] text-[#216474]"
+              : "bg-slate-100"
+          }`}
         >
           {count.toLocaleString("ar-SY")}
         </span>
       )}
+
       {active && (
         <Motion.span
           layoutId="approval-tab"
-          className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-[#216474]"
+          className="absolute inset-x-1 bottom-0 h-0.5 rounded-full bg-[#216474] sm:inset-x-2"
         />
       )}
+
     </button>
   );
 }
 
-function PharmacyApprovalCard({ item, index }) {
+/* =========================================================
+   PHARMACY APPROVAL CARD
+========================================================= */
+
+function PharmacyApprovalCard({
+  item,
+  index,
+}) {
   return (
     <ApprovalCardShell
       index={index}
@@ -343,35 +497,67 @@ function PharmacyApprovalCard({ item, index }) {
       title={item.pharmacyName}
       code={`ترخيص: ${item.licenseNumber}`}
     >
-      <InfoLine icon={UserRound} value={item.ownerFullName} />
-      <InfoLine icon={Mail} value={item.ownerEmail} ltr />
+
       <InfoLine
-        icon={Phone}
-        value={item.phoneNumber || "لا يوجد رقم هاتف"}
+        icon={UserRound}
+        value={item.ownerFullName}
+      />
+
+      <InfoLine
+        icon={Mail}
+        value={item.ownerEmail}
         ltr
       />
+
+      <InfoLine
+        icon={Phone}
+        value={
+          item.phoneNumber ||
+          "لا يوجد رقم هاتف"
+        }
+        ltr
+      />
+
       <InfoLine
         icon={MapPin}
         value={`${item.city}، ${item.area} — ${item.address}`}
       />
+
       <InfoLine
         icon={CalendarDays}
-        value={`تاريخ التسجيل: ${formatDate(item.createdAtUtc)}`}
+        value={`تاريخ التسجيل: ${formatDate(
+          item.createdAtUtc,
+        )}`}
       />
+
       <div className="mt-5 border-t border-slate-100 pt-4">
+
         <Link
           to={`/app/pharmacies/${item.pharmacyId}/review`}
           className="btn-primary w-full justify-center"
         >
-          <CheckCircle2 size={17} /> مراجعة الترخيص واتخاذ القرار
+          <CheckCircle2 size={17} />
+          مراجعة الترخيص واتخاذ القرار
         </Link>
+
       </div>
+
     </ApprovalCardShell>
   );
 }
 
-function OrganizationApprovalCard({ item, index }) {
-  const status = getVerificationStatus(item.verificationStatus);
+/* =========================================================
+   ORGANIZATION APPROVAL CARD
+========================================================= */
+
+function OrganizationApprovalCard({
+  item,
+  index,
+}) {
+  const status = getVerificationStatus(
+    item.verificationStatus,
+  );
+
   return (
     <ApprovalCardShell
       index={index}
@@ -386,27 +572,49 @@ function OrganizationApprovalCard({ item, index }) {
         </span>
       }
     >
-      <InfoLine icon={UserRound} value={item.ownerFullName} />
-      <InfoLine icon={Mail} value={item.ownerEmail} ltr />
+
+      <InfoLine
+        icon={UserRound}
+        value={item.ownerFullName}
+      />
+
+      <InfoLine
+        icon={Mail}
+        value={item.ownerEmail}
+        ltr
+      />
+
       <InfoLine
         icon={MapPin}
         value={`${item.city}، ${item.area} — ${item.address}`}
       />
+
       <InfoLine
         icon={FileCheck2}
-        value={`${item.verificationDocumentsCount.toLocaleString("ar-SY")} مستندات تحقق`}
+        value={`${item.verificationDocumentsCount.toLocaleString(
+          "ar-SY",
+        )} مستندات تحقق`}
       />
+
       <div className="mt-5 border-t border-slate-100 pt-4">
+
         <Link
           to={`/app/organizations/${item.organizationId}/review`}
           className="btn-primary w-full justify-center"
         >
-          <FileCheck2 size={17} /> مراجعة الملف واتخاذ قرار يدوي
+          <FileCheck2 size={17} />
+          مراجعة الملف واتخاذ قرار يدوي
         </Link>
+
       </div>
+
     </ApprovalCardShell>
   );
 }
+
+/* =========================================================
+   APPROVAL CARD SHELL
+========================================================= */
 
 function ApprovalCardShell({
   index,
@@ -423,32 +631,66 @@ function ApprovalCardShell({
       transition={{ delay: index * 0.04 }}
       className="rounded-[1.5rem] border border-[#174b57]/8 bg-white p-5 shadow-[0_12px_35px_rgba(23,75,87,.045)]"
     >
+
       <div className="flex items-start gap-4">
+
         <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[#eaf4f3] text-[#216474]">
           <Icon size={23} />
         </span>
+
         <div className="min-w-0 flex-1">
+
           <div className="flex flex-wrap items-center justify-between gap-2">
+
             <h3 className="truncate text-lg font-black text-[#17363e]">
               {title}
             </h3>
+
             {badge}
+
           </div>
-          <p className="mt-1 text-xs font-semibold text-slate-400">{code}</p>
+
+          <p className="mt-1 text-xs font-semibold text-slate-400">
+            {code}
+          </p>
+
         </div>
+
       </div>
-      <div className="mt-5 grid gap-3 text-sm">{children}</div>
+
+      <div className="mt-5 grid gap-3 text-sm">
+        {children}
+      </div>
+
     </Motion.article>
   );
 }
 
-function InfoLine({ icon: Icon, value, ltr = false }) {
+/* =========================================================
+   INFO LINE
+========================================================= */
+
+function InfoLine({
+  icon: Icon,
+  value,
+  ltr = false,
+}) {
   return (
     <div className="flex items-start gap-3 text-[#65797e]">
-      <Icon size={16} className="mt-0.5 shrink-0 text-[#8aa0a5]" />
-      <span className="min-w-0 break-words" dir={ltr ? "ltr" : undefined}>
+
+      <Icon
+        size={16}
+        className="mt-0.5 shrink-0 text-[#8aa0a5]"
+      />
+
+      <span
+        className="min-w-0 break-words"
+        dir={ltr ? "ltr" : undefined}
+      >
         {value}
       </span>
+
     </div>
   );
 }
+

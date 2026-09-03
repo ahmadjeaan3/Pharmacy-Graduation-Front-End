@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
 import {
   Bell,
   BellDot,
@@ -7,11 +8,15 @@ import {
   Eye,
   Layers3,
 } from "lucide-react";
+
 import { useState } from "react";
+
 import { useNavigate } from "react-router-dom";
+
 import { useTranslation } from "react-i18next";
 
 import { getApiErrorMessage } from "../../../shared/api/errors";
+
 import { useAuth } from "../../auth/hooks/useAuth";
 
 import {
@@ -35,7 +40,8 @@ const ORGANIZATION_HERO_IMAGE =
 
 const PHARMACY_HERO_IMAGE = "/assets/app/pharmacy.png";
 
-const ADMIN_HERO_IMAGE = "/assets/app/home/background_hero_admin.png";
+const ADMIN_HERO_IMAGE =
+  "/assets/app/home/background_hero_admin.png";
 
 const WAREHOUSE_HERO_IMAGE =
   "/assets/app/home/SupplyChainWorkspace.png";
@@ -52,6 +58,7 @@ export function NotificationsPage() {
     .toLowerCase();
 
   const isArabic = currentLanguage === "ar";
+
   const direction = isArabic ? "rtl" : "ltr";
 
   const [filters, setFilters] = useState({
@@ -63,6 +70,7 @@ export function NotificationsPage() {
   const [notice, setNotice] = useState("");
 
   const client = useQueryClient();
+
   const navigate = useNavigate();
 
   const { user } = useAuth();
@@ -138,7 +146,6 @@ export function NotificationsPage() {
 
   const readOne = useMutation({
     mutationFn: markNotificationAsRead,
-
     onSuccess: refresh,
   });
 
@@ -177,9 +184,7 @@ export function NotificationsPage() {
   };
 
   const total = summary.data?.totalCount || 0;
-
   const unread = summary.data?.unreadCount || 0;
-
   const read = summary.data?.readCount || 0;
 
   return (
@@ -202,8 +207,8 @@ export function NotificationsPage() {
         <section
           className={
             isDashboardStyleAccount
-              ? "relative isolate min-h-[220px] overflow-hidden rounded-[14px] text-white shadow-[0_22px_55px_rgba(23,75,87,.16)] sm:min-h-[230px] lg:min-h-[250px]"
-              : "relative isolate -mt-6 overflow-hidden bg-[#0D7586] text-white sm:-mt-7 lg:-mt-8"
+              ? "relative isolate min-h-[165px] overflow-hidden rounded-[14px] bg-[#216474] text-white shadow-[0_22px_55px_rgba(23,75,87,.16)] sm:min-h-[230px] lg:min-h-[250px]"
+              : "relative isolate -mt-6 overflow-hidden bg-[#0D7586] text-white sm:-mt-7 lg:-mt-8 max-sm:!mx-0 max-sm:!w-full max-sm:min-h-[165px]"
           }
           style={
             isDashboardStyleAccount
@@ -223,7 +228,7 @@ export function NotificationsPage() {
               h-full w-full
               select-none
               object-cover object-center
-
+              max-sm:hidden
               ${
                 isPharmacyAccount
                   ? isArabic
@@ -250,7 +255,7 @@ export function NotificationsPage() {
 
           <div
             aria-hidden="true"
-            className="absolute inset-0 -z-10"
+            className="absolute inset-0 -z-10 max-sm:hidden"
             style={{
               background: isPharmacyAccount
                 ? isArabic
@@ -277,7 +282,7 @@ export function NotificationsPage() {
           {isDashboardStyleAccount && (
             <div
               aria-hidden="true"
-              className={`absolute -top-20 -z-[5] size-64 rounded-full border-[40px] border-white/[.04] ${
+              className={`absolute -top-20 -z-[5] size-64 rounded-full border-[40px] border-white/[.04] max-sm:hidden ${
                 isArabic
                   ? "-left-14"
                   : "-right-14"
@@ -285,49 +290,77 @@ export function NotificationsPage() {
             />
           )}
 
+          {/* =====================================================
+              HERO CONTENT
+              Mobile only:
+              - icon right
+              - RTL text beside icon
+              - button below
+              Tablet/Desktop unchanged
+          ====================================================== */}
+
           <div
             dir={direction}
             className={
               isDashboardStyleAccount
-                ? "relative z-10 flex min-h-[220px] w-full items-center gap-6 px-6 py-7 sm:min-h-[230px] lg:min-h-[250px] lg:px-9"
-                : "relative z-10 mx-auto flex min-h-[220px] w-full max-w-[1240px] items-center gap-6 px-5 py-9 sm:px-7 lg:px-8"
+                ? "relative z-10 flex min-h-[165px] w-full flex-col items-stretch gap-4 px-5 py-5 sm:min-h-[230px] sm:flex-row sm:items-center sm:gap-6 sm:py-7 lg:min-h-[250px] lg:px-9"
+                : "relative z-10 mx-auto flex min-h-[165px] w-full max-w-[1240px] flex-col items-stretch gap-4 px-5 py-5 sm:min-h-[220px] sm:flex-row sm:items-center sm:gap-6 sm:px-7 sm:py-9 lg:min-h-[220px] lg:px-8"
             }
           >
             <div
-              className={`me-auto flex items-center gap-4 ${
-                isArabic
-                  ? "text-right"
-                  : "text-left"
-              }`}
+              dir={direction}
+              className={`
+                flex w-full items-center gap-3
+                sm:w-auto
+                sm:me-auto
+                sm:gap-4
+                ${
+                  isArabic
+                    ? "text-right"
+                    : "text-left"
+                }
+              `}
             >
               <span
                 className="
-                  grid size-12 shrink-0
+                  grid size-10 shrink-0
                   place-items-center
                   rounded-xl
                   bg-white/[.10]
                   text-[#E6F3F6]
                   backdrop-blur-sm
+                  sm:size-12
                 "
               >
                 <BellDot
+                  size={22}
+                  strokeWidth={1.8}
+                  className="sm:hidden"
+                />
+
+                <BellDot
                   size={26}
                   strokeWidth={1.8}
+                  className="hidden sm:block"
                 />
               </span>
 
               <div
-                className={`min-w-0 ${
-                  isArabic
-                    ? "text-right"
-                    : "text-left"
-                }`}
+                dir={direction}
+                className={`
+                  min-w-0 flex-1
+                  ${
+                    isArabic
+                      ? "text-right"
+                      : "text-left"
+                  }
+                `}
               >
-                <h1 className="text-[28px] font-bold leading-tight text-white">
+                <h1 className="text-xl font-bold leading-tight text-white sm:text-[28px]">
                   {t("إشعاراتك في مكان واحد")}
                 </h1>
 
-                <p className="mt-3 max-w-[620px] text-sm leading-7 text-[#D6D6D6]">
+                <p className="mt-1.5 max-w-[620px] text-xs leading-6 text-[#D6D6D6] sm:mt-3 sm:text-sm sm:leading-7">
                   {t(
                     "تابع الطلبات والاعتمادات والتحديثات المهمة، وانتقل مباشرة إلى التفاصيل عندما تكون متاحة.",
                   )}
@@ -340,16 +373,23 @@ export function NotificationsPage() {
               disabled={!unread || readAll.isPending}
               onClick={() => readAll.mutate()}
               className="
-                inline-flex h-[50px] shrink-0
-                items-center justify-center gap-2
-                rounded-[10px]
+                inline-flex
+                min-h-[46px]
+                w-full
+                shrink-0
+                items-center
+                justify-center
+                gap-2
+                rounded-xl
                 border border-white
                 bg-white
                 px-6
-                text-[13px] font-bold
+                text-[13px]
+                font-bold
                 text-[#216474]
                 shadow-[0_10px_26px_rgba(0,0,0,.16)]
-                transition-all duration-200
+                transition-all
+                duration-200
                 hover:-translate-y-0.5
                 hover:bg-[#F4FAFA]
                 hover:shadow-[0_14px_30px_rgba(0,0,0,.20)]
@@ -358,6 +398,10 @@ export function NotificationsPage() {
                 disabled:bg-white/75
                 disabled:text-[#216474]/70
                 disabled:opacity-100
+                sm:h-[50px]
+                sm:min-h-0
+                sm:w-auto
+                sm:rounded-[10px]
               "
             >
               <CheckCheck
@@ -788,9 +832,12 @@ function NotificationCard({
 
         {/* ====================================================
             TIME + ACTIONS
+
+            Mobile: time above buttons
+            Desktop: unchanged
         ===================================================== */}
 
-        <div className="flex shrink-0 flex-wrap items-center gap-4">
+        <div className="flex shrink-0 flex-col items-start gap-3 lg:flex-row lg:items-center lg:gap-4">
           <span className="whitespace-nowrap text-sm text-[#666666]">
             {formatNotificationDate(
               createdAt,
@@ -806,7 +853,6 @@ function NotificationCard({
                 className="inline-flex h-10 min-w-[128px] items-center justify-center gap-2 rounded-[8px] border border-[#216474] bg-[#216474] px-4 text-[12px] font-medium text-white transition hover:bg-[#174B57]"
               >
                 <Eye size={15} />
-
                 {t("عرض التفاصيل")}
               </button>
             )}
@@ -819,7 +865,6 @@ function NotificationCard({
                 className="inline-flex h-10 min-w-[128px] items-center justify-center gap-2 rounded-[8px] border border-[#D5E4E6] bg-white px-4 text-[12px] font-medium text-[#216474] transition hover:border-[#216474]/35 hover:bg-[#F4FAFA] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <CheckCheck size={15} />
-
                 {t("تمييز كمقروء")}
               </button>
             )}
@@ -952,17 +997,6 @@ function translateNotificationMessage({
       extractMedicineRequestData(rawMessage);
 
     if (requestData) {
-      /*
-       * مهم:
-       * لا نستخدم هنا:
-       *
-       * t("طلب {{user}} دواء {{medicine}} من {{pharmacy}}.")
-       *
-       * لأن المفتاح قد لا يكون موجودًا في ملفات الترجمة.
-       *
-       * نبني النص مباشرة باستخدام البيانات المستخرجة.
-       */
-
       if (currentLanguage === "ar") {
         return `طلب ${requestData.user} دواء ${requestData.medicine} من ${requestData.pharmacy}.`;
       }
@@ -973,12 +1007,6 @@ function translateNotificationMessage({
 
       return `${requestData.user} requested ${requestData.medicine} from ${requestData.pharmacy}.`;
     }
-
-    /*
-     * إذا لم نستطع استخراج البيانات،
-     * نحاول عرض الرسالة الأصلية بدل إظهار
-     * {{user}} و {{medicine}} و {{pharmacy}}.
-     */
 
     return cleanNotificationTemplate(
       rawMessage,
@@ -1004,11 +1032,6 @@ function cleanNotificationTemplate(message) {
   }
 
   const text = String(message).trim();
-
-  /*
-   * إذا كانت الرسالة تحتوي placeholders
-   * ولم نستطع تعويضها، لا نريد عرضها للمستخدم.
-   */
 
   if (
     text.includes("{{user}}") ||
@@ -1107,25 +1130,9 @@ function extractMedicineRequestData(message) {
     .replace(/\s+/g, " ")
     .trim();
 
-  /*
-   * ----------------------------------------------------------
-   * الشكل العربي الأساسي
-   *
-   * طلب eman habbar دواء Acarbose 25 من صيدلية الشفاء.
-   *
-   * النتيجة:
-   *
-   * user     = eman habbar
-   * medicine = Acarbose 25
-   * pharmacy = صيدلية الشفاء
-   * ----------------------------------------------------------
-   */
-
   const arabicPatterns = [
     /^طلب\s+(.+?)\s+دواء\s+(.+?)\s+من\s+(.+?)[.،]?\s*$/i,
-
     /^طلب\s+(.+?)\s+الدواء\s+(.+?)\s+من\s+(.+?)[.،]?\s*$/i,
-
     /^(.+?)\s+طلب\s+دواء\s+(.+?)\s+من\s+(.+?)[.،]?\s*$/i,
   ];
 
@@ -1155,18 +1162,6 @@ function extractMedicineRequestData(message) {
     }
   }
 
-  /*
-   * ----------------------------------------------------------
-   * إذا كانت الـ API ترسل placeholders نفسها:
-   *
-   * طلب {{user}} دواء {{medicine}} من {{pharmacy}}.
-   *
-   * لن نستطيع استخراج البيانات من هذا النص وحده.
-   * لذلك نحاول البحث عن البيانات من حقول notification
-   * لاحقًا في extractNotificationRequestData.
-   * ----------------------------------------------------------
-   */
-
   if (
     normalized.includes("{{user}}") ||
     normalized.includes("{{medicine}}") ||
@@ -1175,19 +1170,9 @@ function extractMedicineRequestData(message) {
     return null;
   }
 
-  /*
-   * ----------------------------------------------------------
-   * English
-   *
-   * eman habbar requested Acarbose 25 from Pharmacy Al Shifa.
-   * ----------------------------------------------------------
-   */
-
   const englishPatterns = [
     /^(.+?)\s+requested\s+(.+?)\s+from\s+(.+?)[.]?\s*$/i,
-
     /^(.+?)\s+requested\s+the\s+medicine\s+(.+?)\s+from\s+(.+?)[.]?\s*$/i,
-
     /^(.+?)\s+requested\s+medicine\s+(.+?)\s+from\s+(.+?)[.]?\s*$/i,
   ];
 

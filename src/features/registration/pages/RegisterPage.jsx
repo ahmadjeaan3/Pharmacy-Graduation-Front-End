@@ -1,3 +1,4 @@
+
 import { useMutation } from "@tanstack/react-query";
 
 import {
@@ -416,6 +417,7 @@ function AccountTypeSelection({ accountTypes, language, onSelect }) {
     </div>
   );
 }
+
 /*
 |--------------------------------------------------------------------------
 | نموذج التسجيل
@@ -608,17 +610,12 @@ function RegistrationForm({ type, accountTypes, language, onChangeType }) {
               <span
                 className={`grid size-14 shrink-0 place-items-center rounded-2xl ${account.tone}`}
               >
-                {type === "warehouse" ? (
-                  <PackageOpen size={27} />
-                ) : (
-                  <RegistrationPageImage
-                    src={REGISTRATION_IMAGE}
-                    alt={t("صورة تسجيل {{account}}", {
-                      account: account.title,
-                    })}
-                    size={27}
-                  />
-                )}
+                <AccountTypeIcon
+                  account={account}
+                  translatedTitle={account.title}
+                  size={27}
+                  strokeWidth={1.8}
+                />
               </span>
             </div>
 
@@ -759,17 +756,12 @@ function RegistrationForm({ type, accountTypes, language, onChangeType }) {
             <span
               className={`grid size-12 shrink-0 place-items-center rounded-2xl ${account.tone}`}
             >
-              {type === "warehouse" ? (
-                <PackageOpen size={23} />
-              ) : (
-                <RegistrationPageImage
-                  src={REGISTRATION_IMAGE}
-                  alt={t("صورة تسجيل {{account}}", {
-                    account: account.title,
-                  })}
-                  size={23}
-                />
-              )}
+              <AccountTypeIcon
+                account={account}
+                translatedTitle={account.title}
+                size={23}
+                strokeWidth={1.8}
+              />
             </span>
           </div>
 
@@ -866,6 +858,7 @@ function RegistrationForm({ type, accountTypes, language, onChangeType }) {
     </div>
   );
 }
+
 /*
 |--------------------------------------------------------------------------
 | حقول بيانات الحساب
@@ -1155,6 +1148,7 @@ function getFieldIconClass(isArabic) {
     isArabic ? "right-3.5" : "left-3.5",
   ].join(" ");
 }
+
 /*
 |--------------------------------------------------------------------------
 | حقول بيانات المنشأة
@@ -1579,6 +1573,7 @@ function getPlainInputClass(isArabic) {
     isArabic ? "text-right" : "text-left",
   ].join(" ");
 }
+
 /*
 |--------------------------------------------------------------------------
 | صورة صفحة التسجيل
@@ -1605,6 +1600,9 @@ function RegistrationPageImage({ src, alt = "", size = 28, className = "" }) {
 /*
 |--------------------------------------------------------------------------
 | أيقونة كارد الحساب
+|--------------------------------------------------------------------------
+| هذا الجزء بقي كما هو تمامًا حتى لا يتغير شكل
+| كروت اختيار نوع الحساب.
 |--------------------------------------------------------------------------
 */
 function AccountCardIcon({
@@ -1762,6 +1760,7 @@ function RegisterHeader({ language }) {
     </header>
   );
 }
+
 /*
 |--------------------------------------------------------------------------
 | ملاحظة الأمان
@@ -1907,3 +1906,4 @@ function submitRegistration(type, form) {
     registrationNumber: form.registrationNumber.trim(),
   });
 }
+

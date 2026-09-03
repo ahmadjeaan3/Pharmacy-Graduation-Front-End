@@ -185,18 +185,20 @@ function StockPredictionDialog({ item, onClose }) {
   }[prediction.data?.riskLevel];
 
   return (
-    <div className="fixed inset-0 z-[110] grid place-items-center bg-[#071f25]/65 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[110] grid place-items-center bg-[#071f25]/65 p-3 backdrop-blur-sm sm:p-4">
       <div
         dir={language === "ar" ? "rtl" : "ltr"}
         lang={language}
-        className="max-h-[92vh] w-full max-w-xl overflow-auto rounded-[1.75rem] bg-white p-4 shadow-2xl sm:p-6"
+        className="max-h-[92vh] w-full max-w-xl overflow-auto rounded-[1.25rem] bg-white p-4 shadow-2xl sm:rounded-[1.75rem] sm:p-6"
       >
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex items-start justify-between gap-3 sm:gap-4">
           <div>
             <p className="text-xs font-black text-[#216474]">
               {t("تحليل المخزون الذكي")}
             </p>
-            <h3 className="mt-1 text-xl font-black">{item.medicineName}</h3>
+            <h3 className="mt-1 text-lg font-black break-words sm:text-xl">
+              {item.medicineName}
+            </h3>
             <p className="mt-1 text-xs text-[#829499]">
               {t("الكمية الحالية")}: {formatNumber(item.quantity, language)}
             </p>
@@ -210,7 +212,7 @@ function StockPredictionDialog({ item, onClose }) {
           </button>
         </div>
         <form
-          className="mt-6 grid gap-4 sm:grid-cols-2"
+          className="mt-5 grid gap-3.5 sm:mt-6 sm:grid-cols-2 sm:gap-4"
           onSubmit={(event) => {
             event.preventDefault();
             prediction.mutate();
@@ -254,25 +256,29 @@ function StockPredictionDialog({ item, onClose }) {
         )}
         {prediction.data && (
           <div
-            className={`mt-5 rounded-2xl border p-5 ${risk?.[1] || "bg-slate-50"}`}
+            className={`mt-5 rounded-2xl border p-4 sm:p-5 ${risk?.[1] || "bg-slate-50"}`}
           >
-            <div className="flex items-center justify-between">
-              <strong>
+            <div className="flex items-center justify-between gap-3">
+              <strong className="text-sm sm:text-base">
                 {t("درجة الخطورة")}: {risk?.[0] || prediction.data.riskLevel}
               </strong>
               <Sparkles size={20} />
             </div>
-            <div className="mt-4 grid grid-cols-2 gap-3 text-center">
+            <div className="mt-4 grid grid-cols-2 gap-2.5 text-center sm:gap-3">
               <div className="rounded-xl bg-white/70 p-3">
-                <span className="block text-xs">{t("المدة المتوقعة")}</span>
-                <strong className="mt-1 block text-xl">
+                <span className="block text-[11px] sm:text-xs">
+                  {t("المدة المتوقعة")}
+                </span>
+                <strong className="mt-1 block text-lg sm:text-xl">
                   {formatNumber(prediction.data.daysUntilStockout, language)}{" "}
                   {t("يوم")}
                 </strong>
               </div>
               <div className="rounded-xl bg-white/70 p-3">
-                <span className="block text-xs">{t("كمية إعادة الطلب")}</span>
-                <strong className="mt-1 block text-xl">
+                <span className="block text-[11px] sm:text-xs">
+                  {t("كمية إعادة الطلب")}
+                </span>
+                <strong className="mt-1 block text-lg sm:text-xl">
                   {formatNumber(
                     prediction.data.recommendedReorderQuantity,
                     language,
@@ -404,18 +410,18 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] grid place-items-center bg-[#071f25]/65 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] grid place-items-center bg-[#071f25]/65 p-3 backdrop-blur-sm sm:p-4"
       role="dialog"
       aria-modal="true"
     >
       <div
         dir={direction}
         lang={currentLanguage}
-        className="max-h-[92vh] w-full max-w-4xl overflow-auto rounded-[1.75rem] bg-white shadow-2xl"
+        className="max-h-[92vh] w-full max-w-4xl overflow-auto rounded-[1.25rem] bg-white shadow-2xl sm:rounded-[1.75rem]"
       >
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#174b57]/8 bg-white/95 p-5 backdrop-blur">
-          <div className={isArabic ? "text-right" : "text-left"}>
-            <h3 className="text-xl font-black">
+        <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-[#174b57]/8 bg-white/95 p-4 backdrop-blur sm:p-5">
+          <div className={isArabic ? "min-w-0 text-right" : "min-w-0 text-left"}>
+            <h3 className="text-base font-black sm:text-xl">
               {item ? t("تعديل بيانات الدواء") : t("إضافة دواء إلى المخزون")}
             </h3>
 
@@ -450,7 +456,7 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
                 : null,
             });
           }}
-          className="p-5 lg:p-6"
+          className="p-4 sm:p-5 lg:p-6"
         >
           {!item && (
             <div>
@@ -636,10 +642,10 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
             </div>
           )}
 
-          <div className={`${item ? "mt-1" : "mt-7 border-t border-[#174b57]/8 pt-6"}`}>
-            <div className="rounded-2xl border border-[#DCE8EA] bg-[#F8FBFB] p-4 sm:p-5">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                <div className="relative grid size-24 shrink-0 place-items-center overflow-hidden rounded-2xl border border-[#DCE8EA] bg-white text-[#216474] shadow-[0_8px_22px_rgba(23,75,87,.06)]">
+          <div className={`${item ? "mt-1" : "mt-5 border-t border-[#174b57]/8 pt-5 sm:mt-7 sm:pt-6"}`}>
+            <div className="rounded-2xl border border-[#DCE8EA] bg-[#F8FBFB] p-3.5 sm:p-5">
+              <div className="flex flex-col gap-3.5 sm:flex-row sm:items-center sm:gap-4">
+                <div className="relative mx-auto grid size-20 shrink-0 place-items-center overflow-hidden rounded-2xl border border-[#DCE8EA] bg-white text-[#216474] shadow-[0_8px_22px_rgba(23,75,87,.06)] sm:mx-0 sm:size-24">
                   <Pill size={30} className="absolute z-0" />
 
                   {form.imagePreview && (
@@ -665,8 +671,8 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
                       : t("اختر صورة واضحة لعبوة الدواء بصيغة JPG أو PNG أو WebP.")}
                   </p>
 
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <label className="inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#216474] px-4 text-xs font-black text-white transition hover:bg-[#174B57]">
+                  <div className="mt-3 grid grid-cols-1 gap-2 sm:flex sm:flex-wrap">
+                    <label className="inline-flex min-h-10 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#216474] px-4 text-xs font-black text-white transition hover:bg-[#174B57] sm:w-auto">
                       <ImagePlus size={16} />
                       {form.imagePreview ? t("تغيير الصورة") : t("رفع صورة الدواء")}
 
@@ -688,7 +694,7 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
                             imagePreview: "",
                           }))
                         }
-                        className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-[#DCE8EA] bg-white px-4 text-xs font-black text-[#60777D] transition hover:bg-[#F4FAFA] hover:text-[#216474]"
+                        className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-[#DCE8EA] bg-white px-4 text-xs font-black text-[#60777D] transition hover:bg-[#F4FAFA] hover:text-[#216474] sm:w-auto"
                       >
                         <Trash2 size={15} />
                         {t("إزالة الصورة")}
@@ -705,7 +711,7 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
           </div>
 
           <div
-            className="mt-6 grid gap-5 md:grid-cols-2"
+            className="mt-5 grid gap-4 sm:mt-6 sm:gap-5 md:grid-cols-2"
           >
             <label>
               <span className="form-label">{t("الكمية")}</span>
@@ -755,7 +761,7 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
             </label>
           </div>
 
-          <label className="mt-5 flex items-center justify-between rounded-2xl bg-[#f7faf9] p-4">
+          <label className="mt-4 flex items-center justify-between gap-3 rounded-2xl bg-[#f7faf9] p-3.5 sm:mt-5 sm:p-4">
             <div className={isArabic ? "text-right" : "text-left"}>
               <p className="text-sm font-extrabold">{t("متاح للطلبات")}</p>
               <p className="mt-1 text-xs text-[#829499]">
@@ -771,7 +777,7 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
             />
           </label>
 
-          <label className="mt-3 flex items-center justify-between rounded-2xl border border-[#174b57]/8 bg-white p-4">
+          <label className="mt-3 flex items-center justify-between gap-3 rounded-2xl border border-[#174b57]/8 bg-white p-3.5 sm:p-4">
             <div className={isArabic ? "text-right" : "text-left"}>
               <p className="text-sm font-extrabold">
                 {t("إظهار السعر للمستخدمين")}
@@ -791,18 +797,18 @@ function InventoryDialog({ item, initialMedicine, onClose, onSave, pending }) {
             />
           </label>
 
-          <div
-            className={`mt-6 flex gap-2 ${
-              isArabic ? "justify-end" : "justify-end"
-            }`}
-          >
-            <button type="button" className="btn-secondary" onClick={onClose}>
+          <div className="mt-5 grid grid-cols-1 gap-2 sm:mt-6 sm:flex sm:justify-end">
+            <button
+              type="button"
+              className="btn-secondary w-full justify-center sm:w-auto"
+              onClick={onClose}
+            >
               {t("إلغاء")}
             </button>
 
             <button
               disabled={pending || !form.medicineId}
-              className="btn-primary"
+              className="btn-primary w-full justify-center sm:w-auto"
             >
               <PackagePlus size={17} />
               {pending
@@ -848,24 +854,24 @@ function BarcodeLookupDialog({ onClose, onFound }) {
 
   return (
     <div
-      className="fixed inset-0 z-[110] grid place-items-center bg-[#071f25]/65 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[110] grid place-items-center bg-[#071f25]/65 p-3 backdrop-blur-sm sm:p-4"
       role="dialog"
       aria-modal="true"
     >
       <div
         dir={language === "ar" ? "rtl" : "ltr"}
         lang={language}
-        className="max-h-[92vh] w-full max-w-lg overflow-auto rounded-[1.75rem] bg-white p-4 shadow-2xl sm:p-6"
+        className="max-h-[92vh] w-full max-w-lg overflow-auto rounded-[1.25rem] bg-white p-4 shadow-2xl sm:rounded-[1.75rem] sm:p-6"
       >
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex items-start justify-between gap-3 sm:gap-4">
           <div>
-            <span className="grid size-12 place-items-center rounded-2xl bg-[#EAF4F3] text-[#216474]">
-              <ScanBarcode size={25} />
+            <span className="grid size-11 place-items-center rounded-2xl bg-[#EAF4F3] text-[#216474] sm:size-12">
+              <ScanBarcode size={23} />
             </span>
-            <h3 className="mt-4 text-xl font-black text-[#174B57]">
+            <h3 className="mt-3.5 text-lg font-black text-[#174B57] sm:mt-4 sm:text-xl">
               {t("إضافة دواء بالباركود")}
             </h3>
-            <p className="mt-2 text-sm leading-7 text-[#71858A]">
+            <p className="mt-2 text-[13px] leading-6 text-[#71858A] sm:text-sm sm:leading-7">
               {t("امسح الباركود بالقارئ أو أدخله يدويًا، ثم اضغط بحث.")}
             </p>
           </div>
@@ -879,7 +885,7 @@ function BarcodeLookupDialog({ onClose, onFound }) {
           </button>
         </div>
         <form
-          className="mt-6"
+          className="mt-5 sm:mt-6"
           onSubmit={(event) => {
             event.preventDefault();
             lookup.mutate();
@@ -915,12 +921,16 @@ function BarcodeLookupDialog({ onClose, onFound }) {
               {lookup.error?.message || getApiErrorMessage(lookup.error)}
             </p>
           )}
-          <div className="mt-6 flex justify-end gap-2">
-            <button type="button" className="btn-secondary" onClick={onClose}>
+          <div className="mt-5 grid grid-cols-1 gap-2 sm:mt-6 sm:flex sm:justify-end">
+            <button
+              type="button"
+              className="btn-secondary w-full justify-center sm:w-auto"
+              onClick={onClose}
+            >
               {t("إلغاء")}
             </button>
             <button
-              className="btn-primary"
+              className="btn-primary w-full justify-center sm:w-auto"
               disabled={lookup.isPending || !barcode.trim()}
             >
               <Search size={17} />{" "}
@@ -1045,18 +1055,18 @@ function ExcelImportDialog({ onClose, onImport, pending }) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] grid place-items-center bg-[#071f25]/65 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] grid place-items-center bg-[#071f25]/65 p-3 backdrop-blur-sm sm:p-4"
       role="dialog"
       aria-modal="true"
     >
       <div
         dir={language === "ar" ? "rtl" : "ltr"}
         lang={language}
-        className="max-h-[92vh] w-full max-w-3xl overflow-auto rounded-[1.75rem] bg-white p-4 shadow-2xl sm:p-6"
+        className="max-h-[92vh] w-full max-w-3xl overflow-auto rounded-[1.25rem] bg-white p-4 shadow-2xl sm:rounded-[1.75rem] sm:p-6"
       >
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex items-start justify-between gap-3 sm:gap-4">
           <div>
-            <h3 className="text-xl font-black">
+            <h3 className="text-lg font-black sm:text-xl">
               {t("استيراد مخزون من Excel")}
             </h3>
             <p className="mt-1 text-xs text-[#829499]">
@@ -1071,12 +1081,12 @@ function ExcelImportDialog({ onClose, onImport, pending }) {
             <X size={19} />
           </button>
         </div>
-        <div className="mt-5 rounded-2xl border border-dashed border-[#216474]/30 bg-[#f5faf9] p-5">
+        <div className="mt-4 rounded-2xl border border-dashed border-[#216474]/30 bg-[#f5faf9] p-4 sm:mt-5 sm:p-5">
           <p className="text-sm font-black">{t("الأعمدة المطلوبة")}</p>
-          <code className="mt-2 block text-xs text-[#216474]">
+          <code className="mt-2 block overflow-x-auto text-[11px] whitespace-nowrap text-[#216474] sm:text-xs">
             Barcode | Quantity | UnitPrice | ExpiryDate | LowStockThreshold
           </code>
-          <label className="btn-primary mt-4 cursor-pointer justify-center">
+          <label className="btn-primary mt-4 w-full cursor-pointer justify-center">
             <FileSpreadsheet size={18} />{" "}
             {reading ? t("جاري قراءة الملف...") : t("اختيار ملف Excel")}
             <input
@@ -1097,14 +1107,16 @@ function ExcelImportDialog({ onClose, onImport, pending }) {
               {t("دواء")}
             </p>
             <div className="mt-3 max-h-48 overflow-auto rounded-xl border">
-              <table className="w-full text-sm">
+              <table className="w-full min-w-[420px] text-[13px] sm:text-sm">
                 <tbody>
                   {rows.map((row) => (
                     <tr key={row.medicineId} className="border-b last:border-0">
-                      <td className="p-3 font-bold">{row.medicineName}</td>
-                      <td className="p-3">{row.barcode}</td>
-                      <td className="p-3">{row.quantity}</td>
-                      <td className="p-3">{row.unitPrice}</td>
+                      <td className="p-2.5 font-bold sm:p-3">
+                        {row.medicineName}
+                      </td>
+                      <td className="p-2.5 sm:p-3">{row.barcode}</td>
+                      <td className="p-2.5 sm:p-3">{row.quantity}</td>
+                      <td className="p-2.5 sm:p-3">{row.unitPrice}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -1119,12 +1131,15 @@ function ExcelImportDialog({ onClose, onImport, pending }) {
             ))}
           </div>
         )}
-        <div className="mt-6 flex justify-end gap-2">
-          <button className="btn-secondary" onClick={onClose}>
+        <div className="mt-5 grid grid-cols-1 gap-2 sm:mt-6 sm:flex sm:justify-end">
+          <button
+            className="btn-secondary w-full justify-center sm:w-auto"
+            onClick={onClose}
+          >
             {t("إلغاء")}
           </button>
           <button
-            className="btn-primary"
+            className="btn-primary w-full justify-center sm:w-auto"
             disabled={!rows.length || pending || reading}
             onClick={() =>
               onImport(
@@ -1323,41 +1338,41 @@ export function PharmacyInventoryPage() {
   return (
     <div dir={direction} lang={currentLanguage} className="space-y-0">
       {/* Header */}
-      <section className="relative isolate mb-5 overflow-hidden rounded-[1.75rem] bg-[#174b57] text-white shadow-[0_22px_55px_rgba(23,75,87,.16)]">
+      <section className="relative isolate mb-4 overflow-hidden rounded-[1.35rem] bg-[#174b57] text-white shadow-[0_18px_40px_rgba(23,75,87,.14)] sm:mb-5 sm:rounded-[1.75rem] sm:shadow-[0_22px_55px_rgba(23,75,87,.16)]">
         <img
           src={PHARMACY_HERO_IMAGE}
           alt=""
           aria-hidden="true"
-          className={`absolute inset-0 h-full w-full object-cover object-[center_42%] ${
+          className={`absolute inset-0 hidden h-full w-full object-cover object-[center_42%] sm:block ${
             isArabic ? "scale-x-[-1]" : ""
           }`}
         />
         <div
-          className="absolute inset-0"
+          className="absolute inset-0 hidden sm:block"
           style={{
             background: isArabic
               ? "linear-gradient(270deg, #10505A 0%, rgba(16,80,90,.88) 34%, rgba(33,100,116,.42) 68%, rgba(33,100,116,.08) 100%)"
               : "linear-gradient(90deg, #10505A 0%, rgba(16,80,90,.88) 34%, rgba(33,100,116,.42) 68%, rgba(33,100,116,.08) 100%)",
           }}
         />
-        <div className="noise absolute inset-0 opacity-25" />
+        <div className="noise absolute inset-0 hidden opacity-25 sm:block" />
 
-        <div className="relative z-10 p-5 sm:p-7 lg:p-8">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+        <div className="relative z-10 p-4 sm:p-7 lg:p-8">
+          <div className="flex flex-col gap-4 sm:gap-5 lg:flex-row lg:items-start lg:justify-between">
             <div
-              className={`flex min-w-0 items-start gap-3 ${isArabic ? "text-right" : "text-left"}`}
+              className={`flex min-w-0 items-start gap-2.5 sm:gap-3 ${isArabic ? "text-right" : "text-left"}`}
             >
-              <span className="grid size-12 shrink-0 place-items-center rounded-2xl border border-white/10 bg-white/10 text-white backdrop-blur-sm">
-                <PackagePlus size={23} strokeWidth={1.8} />
+              <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/10 text-white backdrop-blur-sm sm:size-12 sm:rounded-2xl">
+                <PackagePlus size={21} strokeWidth={1.8} />
               </span>
-              <div>
-                <p className="text-xs font-black text-[#8bd0cb]">
+              <div className="min-w-0">
+                <p className="text-[11px] font-black text-[#8bd0cb] sm:text-xs">
                   {t("مساحة الصيدلية")}
                 </p>
-                <h1 className="mt-1 text-2xl font-black text-white sm:text-[30px]">
+                <h1 className="mt-1 text-xl font-black text-white sm:text-2xl md:text-[30px]">
                   {t("مخزون الأدوية")}
                 </h1>
-                <p className="mt-2 max-w-2xl text-xs leading-6 text-white/65 sm:text-sm">
+                <p className="mt-2 max-w-2xl text-[11px] leading-5 text-white/65 sm:text-sm sm:leading-6">
                   {t(
                     "راجع التوفر والأسعار والانتهاء، وأضف الأصناف بالطريقة الأنسب لعمل الصيدلية.",
                   )}
@@ -1370,7 +1385,7 @@ export function PharmacyInventoryPage() {
                 type="button"
                 onClick={() => inventory.refetch()}
                 disabled={inventory.isFetching}
-                className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 text-xs font-black text-white transition hover:bg-white/15 disabled:opacity-60"
+                className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 text-xs font-black text-white transition hover:bg-white/15 disabled:opacity-60 sm:min-h-11 sm:w-auto sm:justify-start"
               >
                 <RefreshCw
                   size={17}
@@ -1381,36 +1396,36 @@ export function PharmacyInventoryPage() {
             </div>
           </div>
 
-          <div className="mt-7 flex gap-4">
+          <div className="mt-5 grid grid-cols-2 gap-2 sm:mt-7 sm:flex sm:gap-4">
   <button
-    className="inline-flex min-h-[54px] w-50 items-center justify-center gap-2 rounded-2xl bg-white px-4 text-sm font-black text-[#174b57] shadow-[0_12px_30px_rgba(7,31,37,.16)] transition hover:-translate-y-0.5 hover:bg-[#f8fbfb]"
+    className="inline-flex min-h-[46px] w-full items-center justify-center gap-2 rounded-xl bg-white px-3 text-center text-[11px] font-black leading-4 text-[#174b57] shadow-[0_12px_30px_rgba(7,31,37,.16)] transition hover:-translate-y-0.5 hover:bg-[#f8fbfb] sm:min-h-[54px] sm:w-50 sm:rounded-2xl sm:px-4 sm:text-sm sm:leading-normal"
     onClick={() => setEditor({})}
   >
-    <Plus size={20} strokeWidth={2.3} />
+    <Plus size={18} strokeWidth={2.3} className="shrink-0" />
     {t("إضافة من دليل الأدوية")}
   </button>
 
   <button
-    className="inline-flex min-h-[54px] w-50 items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/[.08] px-4 text-sm font-black text-white backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white/15"
+    className="inline-flex min-h-[46px] w-full items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/[.08] px-3 text-center text-[11px] font-black leading-4 text-white backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white/15 sm:min-h-[54px] sm:w-50 sm:rounded-2xl sm:px-4 sm:text-sm sm:leading-normal"
     onClick={() => setShowBarcodeLookup(true)}
   >
-    <ScanBarcode size={19} />
+    <ScanBarcode size={17} className="shrink-0" />
     {t("إضافة بالباركود")}
   </button>
 
   <button
-    className="inline-flex min-h-[54px] w-50 items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/[.08] px-4 text-sm font-black text-white backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white/15"
+    className="inline-flex min-h-[46px] w-full items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/[.08] px-3 text-center text-[11px] font-black leading-4 text-white backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white/15 sm:min-h-[54px] sm:w-50 sm:rounded-2xl sm:px-4 sm:text-sm sm:leading-normal"
     onClick={() => setShowManualAdd(true)}
   >
-    <FilePlus2 size={19} />
+    <FilePlus2 size={17} className="shrink-0" />
     {t("إضافة دواء يدويًا")}
   </button>
 
   <button
-    className="inline-flex min-h-[54px] w-50 items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/[.08] px-4 text-sm font-black text-white backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white/15"
+    className="inline-flex min-h-[46px] w-full items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/[.08] px-3 text-center text-[11px] font-black leading-4 text-white backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white/15 sm:min-h-[54px] sm:w-50 sm:rounded-2xl sm:px-4 sm:text-sm sm:leading-normal"
     onClick={() => setShowExcelImport(true)}
   >
-    <FileSpreadsheet size={19} />
+    <FileSpreadsheet size={17} className="shrink-0" />
     {t("استيراد ملف Excel")}
   </button>
 </div>
@@ -1419,7 +1434,7 @@ export function PharmacyInventoryPage() {
 
       {notice && (
         <div
-          className={`mb-5 rounded-xl border p-4 text-sm font-bold ${
+          className={`mb-4 rounded-xl border p-3 text-[13px] font-bold sm:mb-5 sm:rounded-xl sm:p-4 sm:text-sm ${
             notice.ok
               ? "border-[#CFE4E7] bg-[#EAF4F3] text-[#174B57]"
               : "border-[#FECDD3] bg-[#FFF1F2] text-[#BE123C]"
@@ -1432,20 +1447,20 @@ export function PharmacyInventoryPage() {
     
 
       {/* Filters */}
-      <section className="mb-5 rounded-[1.35rem] border border-[#dce8ea] bg-white p-4 shadow-[0_10px_30px_rgba(23,75,87,.04)] sm:p-5">
-        <div className="grid gap-3 lg:grid-cols-[minmax(280px,1fr)_210px_auto]">
+      <section className="mb-4 rounded-[1.1rem] border border-[#dce8ea] bg-white p-3 shadow-[0_10px_30px_rgba(23,75,87,.04)] sm:mb-5 sm:rounded-[1.35rem] sm:p-5">
+        <div className="grid gap-2.5 sm:gap-3 lg:grid-cols-[minmax(280px,1fr)_210px_auto]">
           <div className="relative">
             <Search
               size={18}
               className={`pointer-events-none absolute top-1/2 z-10 -translate-y-1/2 text-[#216474] ${
-                isArabic ? "right-4" : "left-4"
+                isArabic ? "right-3.5 sm:right-4" : "left-3.5 sm:left-4"
               }`}
             />
             <input
               dir={direction}
               type="text"
-              className={`h-12 w-full rounded-xl border border-[#dce8ea] bg-[#f9fbfb] text-sm font-medium text-[#29464d] placeholder:text-[#9aabad] outline-none transition focus:border-[#216474] focus:bg-white focus:ring-4 focus:ring-[#216474]/8 ${
-                isArabic ? "pr-12 pl-4 text-right" : "pl-12 pr-4 text-left"
+              className={`h-11 w-full rounded-xl border border-[#dce8ea] bg-[#f9fbfb] text-[13px] font-medium text-[#29464d] placeholder:text-xs placeholder:text-[#9aabad] outline-none transition focus:border-[#216474] focus:bg-white focus:ring-4 focus:ring-[#216474]/8 sm:h-12 sm:text-sm sm:placeholder:text-sm ${
+                isArabic ? "pr-11 pl-3 text-right sm:pr-12 sm:pl-4" : "pl-11 pr-3 text-left sm:pl-12 sm:pr-4"
               }`}
               value={filters.searchTerm}
               onChange={(event) =>
@@ -1463,7 +1478,7 @@ export function PharmacyInventoryPage() {
           <div className="relative">
             <select
               dir={direction}
-              className={`h-12 w-full appearance-none rounded-xl border border-[#dce8ea] bg-[#f9fbfb] text-sm font-bold text-[#60777d] outline-none transition focus:border-[#216474] focus:bg-white ${
+              className={`h-11 w-full appearance-none rounded-xl border border-[#dce8ea] bg-[#f9fbfb] text-[13px] font-bold text-[#60777d] outline-none transition focus:border-[#216474] focus:bg-white sm:h-12 sm:text-sm ${
                 isArabic ? "pr-4 pl-10 text-right" : "pl-4 pr-10 text-left"
               }`}
               value={filters.expiringWithinDays}
@@ -1495,15 +1510,15 @@ export function PharmacyInventoryPage() {
                 expiringWithinDays: "",
               })
             }
-            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-[#dce8ea] bg-white px-4 text-xs font-black text-[#60777d] transition hover:border-[#afc9cd] hover:bg-[#f8fbfb] hover:text-[#216474]"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#dce8ea] bg-white px-4 text-xs font-black text-[#60777d] transition hover:border-[#afc9cd] hover:bg-[#f8fbfb] hover:text-[#216474] sm:min-h-12"
           >
             <X size={16} />
             {t("مسح الفلاتر")}
           </button>
         </div>
 
-        <div className="mt-4 flex flex-col gap-3 border-t border-[#174b57]/8 pt-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex gap-2 overflow-x-auto pb-1">
+        <div className="mt-3.5 flex flex-col gap-2.5 border-t border-[#174b57]/8 pt-3.5 sm:mt-4 sm:gap-3 sm:pt-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="-mx-3 flex gap-2 overflow-x-auto px-3 pb-1 sm:mx-0 sm:px-0">
             {[
               ["", t("الكل")],
               ["InStock", t("متوفر")],
@@ -1517,7 +1532,7 @@ export function PharmacyInventoryPage() {
                 onClick={() =>
                   setFilters((old) => ({ ...old, stockStatus: value }))
                 }
-                className={`min-h-10 shrink-0 rounded-xl border px-4 text-xs font-black transition ${
+                className={`min-h-9 shrink-0 rounded-lg border px-3 text-[11px] font-black transition sm:min-h-10 sm:rounded-xl sm:px-4 sm:text-xs ${
                   filters.stockStatus === value
                     ? "border-[#174b57] bg-[#174b57] text-white shadow-sm"
                     : "border-[#dce8ea] bg-white text-[#60777d] hover:bg-[#eef7f6] hover:text-[#216474]"
@@ -1528,7 +1543,7 @@ export function PharmacyInventoryPage() {
             ))}
           </div>
 
-          <label className="flex min-h-10 cursor-pointer items-center justify-between gap-3 rounded-xl bg-[#f5f9f8] px-4 text-xs font-black text-[#47666d] lg:justify-center">
+          <label className="flex min-h-10 cursor-pointer items-center justify-between gap-2.5 rounded-xl bg-[#f5f9f8] px-3 text-[11px] font-black text-[#47666d] sm:gap-3 sm:px-4 sm:text-xs lg:justify-center">
             <span>{t("إظهار الأصناف المتاحة للطلبات فقط")}</span>
             <input
               type="checkbox"
@@ -1568,7 +1583,7 @@ export function PharmacyInventoryPage() {
           }
         />
       ) : (
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3">
           {inventory.data.map((item) => {
             const meta = stockMeta(item.stockStatus);
 
@@ -1592,45 +1607,55 @@ export function PharmacyInventoryPage() {
                   min-w-0
                   flex-col
                   overflow-hidden
-                  rounded-[1.5rem]
+                  rounded-[1.15rem]
                   border
                   border-[#DCE8EA]
                   bg-white
-                  p-5
+                  p-4
                   shadow-[0_8px_28px_rgba(23,75,87,.045)]
                   transition-all
                   duration-300
                   hover:-translate-y-1
                   hover:border-[#B9D2D6]
                   hover:shadow-[0_18px_42px_rgba(23,75,87,.10)]
+                  sm:rounded-[1.5rem]
+                  sm:p-5
                 "
               >
                 {/* =====================================================
                     TOP
                 ====================================================== */}
-                <div className="flex items-start justify-between gap-3">
+                <div className="flex items-start justify-between gap-2.5 sm:gap-3">
                   {/* Medicine Image */}
                   <div
                     className="
                       relative
                       grid
-                      h-[76px]
-                      w-[76px]
+                      h-16
+                      w-16
                       shrink-0
                       place-items-center
                       overflow-hidden
-                      rounded-[1.25rem]
+                      rounded-[1rem]
                       border
                       border-[#DCE8EA]
                       bg-[#F3F8F8]
                       shadow-[0_6px_18px_rgba(23,75,87,.06)]
+                      sm:h-[76px]
+                      sm:w-[76px]
+                      sm:rounded-[1.25rem]
                     "
                   >
                     {/* Fallback icon */}
                     <Pill
+                      size={26}
+                      strokeWidth={1.7}
+                      className="absolute text-[#216474] sm:hidden"
+                    />
+                    <Pill
                       size={30}
                       strokeWidth={1.7}
-                      className="absolute text-[#216474]"
+                      className="absolute hidden text-[#216474] sm:block"
                     />
 
                     {/* Medicine image */}
@@ -1660,10 +1685,13 @@ export function PharmacyInventoryPage() {
                     className={`
                       shrink-0
                       rounded-full
-                      px-3
-                      py-1.5
-                      text-[11px]
+                      px-2.5
+                      py-1
+                      text-[10px]
                       font-black
+                      sm:px-3
+                      sm:py-1.5
+                      sm:text-[11px]
                       ${meta.className}
                     `}
                   >
@@ -1675,14 +1703,16 @@ export function PharmacyInventoryPage() {
                     MEDICINE NAME
                 ====================================================== */}
 
-                <div className="mt-4 min-w-0">
+                <div className="mt-3.5 min-w-0 sm:mt-4">
                   <h3
                     className="
                       truncate
-                      text-[17px]
+                      text-[15px]
                       font-black
-                      leading-7
+                      leading-6
                       text-[#29464D]
+                      sm:text-[17px]
+                      sm:leading-7
                     "
                     dir="rtl"
                     title={medicineName}
@@ -1695,10 +1725,11 @@ export function PharmacyInventoryPage() {
                       className="
                         mt-0.5
                         truncate
-                        text-xs
+                        text-[11px]
                         font-medium
                         leading-5
                         text-[#829499]
+                        sm:text-xs
                       "
                       dir="rtl"
                       title={scientificName}
@@ -1736,16 +1767,19 @@ export function PharmacyInventoryPage() {
                     MAIN INFO
                 ====================================================== */}
 
-                <div className="mt-5 grid grid-cols-2 gap-2.5">
+                <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-5 sm:gap-2.5">
                   {/* Quantity */}
                   <div
                     className="
-                      rounded-2xl
+                      rounded-xl
                       border
                       border-[#E5EEF0]
                       bg-[#F9FBFB]
-                      px-3.5
-                      py-3
+                      px-3
+                      py-2.5
+                      sm:rounded-2xl
+                      sm:px-3.5
+                      sm:py-3
                     "
                   >
                     <p
@@ -1760,11 +1794,13 @@ export function PharmacyInventoryPage() {
 
                     <strong
                       className="
-                        mt-1
+                        mt-0.5
                         block
-                        text-lg
+                        text-base
                         font-black
                         text-[#29464D]
+                        sm:mt-1
+                        sm:text-lg
                       "
                     >
                       {formatNumber(
@@ -1777,12 +1813,15 @@ export function PharmacyInventoryPage() {
                   {/* Selling Price */}
                   <div
                     className="
-                      rounded-2xl
+                      rounded-xl
                       border
                       border-[#E5EEF0]
                       bg-[#F9FBFB]
-                      px-3.5
-                      py-3
+                      px-3
+                      py-2.5
+                      sm:rounded-2xl
+                      sm:px-3.5
+                      sm:py-3
                     "
                   >
                     <p
@@ -1797,12 +1836,14 @@ export function PharmacyInventoryPage() {
 
                     <strong
                       className="
-                        mt-1
+                        mt-0.5
                         block
                         truncate
-                        text-sm
+                        text-[13px]
                         font-black
                         text-[#29464D]
+                        sm:mt-1
+                        sm:text-sm
                       "
                     >
                       {formatCurrency(
@@ -1838,7 +1879,7 @@ export function PharmacyInventoryPage() {
 
                 <div
                   className="
-                    mt-4
+                    mt-3
                     flex
                     min-w-0
                     items-center
@@ -1847,10 +1888,14 @@ export function PharmacyInventoryPage() {
                     border
                     border-[#E8EFF0]
                     bg-[#FAFCFC]
-                    px-3
-                    py-2.5
-                    text-xs
+                    px-2.5
+                    py-2
+                    text-[11px]
                     text-[#71858A]
+                    sm:mt-4
+                    sm:px-3
+                    sm:py-2.5
+                    sm:text-xs
                   "
                 >
                   <CalendarClock
@@ -1944,13 +1989,15 @@ export function PharmacyInventoryPage() {
 
                 <div
                   className="
-                    mt-5
+                    mt-4
                     flex
                     items-center
                     gap-2
                     border-t
                     border-[#174B57]/10
-                    pt-4
+                    pt-3.5
+                    sm:mt-5
+                    sm:pt-4
                   "
                 >
                   {/* Prediction */}

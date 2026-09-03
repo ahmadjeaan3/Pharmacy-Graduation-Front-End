@@ -31,7 +31,11 @@ const PHARMACY_HERO_IMAGE = "/assets/app/pharmacy.png";
 export function PharmacyRequestsPage() {
   const { t, i18n } = useTranslation();
 
-  const currentLanguage = (i18n.resolvedLanguage || i18n.language || "ar")
+  const currentLanguage = (
+    i18n.resolvedLanguage ||
+    i18n.language ||
+    "ar"
+  )
     .split("-")[0]
     .toLowerCase();
 
@@ -48,6 +52,7 @@ export function PharmacyRequestsPage() {
 
   useEffect(() => {
     const timer = setTimeout(() => setQueryFilters(filters), 350);
+
     return () => clearTimeout(timer);
   }, [filters]);
 
@@ -63,24 +68,26 @@ export function PharmacyRequestsPage() {
       {/* Hero */}
       <section
         className="
-          relative isolate min-h-[220px] overflow-hidden
-          rounded-[14px] text-white
+          relative isolate min-h-[140px] overflow-hidden
+          rounded-[14px] bg-[#10505A] text-white
           shadow-[0_22px_55px_rgba(23,75,87,.16)]
-          sm:min-h-[230px]
+          sm:min-h-[180px]
           lg:min-h-[250px]
         "
       >
+        {/* Hero Image - تظهر فقط على الشاشات الكبيرة */}
         <img
           src={PHARMACY_HERO_IMAGE}
           alt=""
           aria-hidden="true"
-          className={`absolute inset-0 h-full w-full object-cover object-[center_38%] ${
+          className={`absolute inset-0 hidden h-full w-full object-cover object-[center_38%] lg:block ${
             isArabic ? "scale-x-[-1]" : ""
           }`}
         />
 
+        {/* Overlay - يظهر فقط على الشاشات الكبيرة */}
         <div
-          className="absolute inset-0"
+          className="absolute inset-0 hidden lg:block"
           style={{
             background: isArabic
               ? "linear-gradient(270deg, #10505A 0%, rgba(16,80,90,.90) 38%, rgba(33,100,116,.48) 70%, rgba(33,100,116,.08) 100%)"
@@ -88,22 +95,32 @@ export function PharmacyRequestsPage() {
           }}
         />
 
-        {/* نحافظ على العربي كما هو، ونقلب المحاذاة فقط للغات LTR */}
+        {/* Hero Content */}
         <div
           className="
-            relative z-10 flex min-h-[220px] items-center px-8 py-7
-            sm:min-h-[230px]
-            lg:min-h-[250px]
-            lg:px-10
+            relative z-10 flex min-h-[140px] items-center
+            px-5 py-5
+            sm:min-h-[180px] sm:px-7
+            lg:min-h-[250px] lg:px-10 lg:py-7
           "
         >
           <div
-            className={`flex w-full max-w-[690px] items-center gap-5 ${
+            className={`flex w-full max-w-[690px] items-center gap-4 sm:gap-5 ${
               isArabic ? "ml-auto justify-start" : "mr-auto justify-start"
             }`}
           >
-            <span className="grid size-12 shrink-0 place-items-center rounded-lg bg-[rgba(230,243,246,.10)] text-[#E6F3F6] backdrop-blur-sm">
-              <ClipboardList size={28} strokeWidth={1.7} />
+            <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-[rgba(230,243,246,.10)] text-[#E6F3F6] backdrop-blur-sm sm:size-12">
+              <ClipboardList
+                size={24}
+                strokeWidth={1.7}
+                className="sm:hidden"
+              />
+
+              <ClipboardList
+                size={28}
+                strokeWidth={1.7}
+                className="hidden sm:block"
+              />
             </span>
 
             <div
@@ -111,11 +128,11 @@ export function PharmacyRequestsPage() {
                 isArabic ? "text-right" : "text-left"
               }`}
             >
-              <h1 className="text-[28px] font-medium leading-[1.2] text-white">
+              <h1 className="text-[22px] font-medium leading-[1.2] text-white sm:text-[26px] lg:text-[28px]">
                 {t("طلبات الأدوية")}
               </h1>
 
-              <p className="mt-3 max-w-[560px] text-[14px] leading-7 text-[#D6D6D6]">
+              <p className="mt-2 max-w-[560px] text-[12px] leading-6 text-[#D6D6D6] sm:mt-3 sm:text-[13px] lg:text-[14px] lg:leading-7">
                 {t(
                   "راجع الطلبات الواردة وتحقق من المخزون ثم أرسل للمريض إجابة دقيقة أو اقترح بديلًا متاحًا.",
                 )}
@@ -138,7 +155,9 @@ export function PharmacyRequestsPage() {
           <input
             dir={direction}
             className={`h-10 w-full rounded-lg border border-[rgba(102,102,102,.16)] bg-white text-[12px] text-[#333333] outline-none transition placeholder:text-[#A5A5A5] focus:border-[#216474] focus:ring-2 focus:ring-[#216474]/10 ${
-              isArabic ? "pr-14 pl-4 text-right" : "pl-14 pr-4 text-left"
+              isArabic
+                ? "pr-14 pl-4 text-right"
+                : "pl-14 pr-4 text-left"
             }`}
             value={filters.searchTerm}
             onChange={(e) =>
@@ -155,7 +174,9 @@ export function PharmacyRequestsPage() {
           <select
             dir={direction}
             className={`h-10 w-full appearance-none rounded border border-[rgba(102,102,102,.16)] bg-white text-[14px] font-medium text-[#A5A5A5] outline-none transition focus:border-[#216474] focus:ring-2 focus:ring-[#216474]/10 ${
-              isArabic ? "pr-4 pl-10 text-right" : "pl-4 pr-10 text-left"
+              isArabic
+                ? "pr-4 pl-10 text-right"
+                : "pl-4 pr-10 text-left"
             }`}
             value={filters.status}
             onChange={(e) =>
@@ -265,13 +286,18 @@ export function PharmacyRequestsPage() {
 
                     <span className="flex items-center gap-2">
                       {t("الكمية")}:{" "}
-                      {formatNumber(request.requestedQuantity, currentLanguage)}
+                      {formatNumber(
+                        request.requestedQuantity,
+                        currentLanguage,
+                      )}
                     </span>
 
                     {request.userPhoneNumber && (
                       <span className="flex items-center gap-2">
                         <Phone size={16} />
-                        <bdi dir="ltr">{request.userPhoneNumber}</bdi>
+                        <bdi dir="ltr">
+                          {request.userPhoneNumber}
+                        </bdi>
                       </span>
                     )}
                   </div>
@@ -285,6 +311,7 @@ export function PharmacyRequestsPage() {
 
                 <span className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap text-[14px] font-medium text-[#216474] md:ms-4">
                   {t("عرض الطلب")}
+
                   <RequestArrow
                     size={24}
                     className={`transition ${

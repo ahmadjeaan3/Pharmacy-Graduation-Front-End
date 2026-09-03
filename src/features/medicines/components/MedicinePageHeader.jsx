@@ -1,3 +1,4 @@
+
 import { LibraryBig } from "lucide-react";
 
 import { PageHeader } from "../../../shared/components/PageHeader";
@@ -14,3 +15,4 @@ export function MedicinePageHeader({ title, description, actions }) {
     />
   );
 }
+

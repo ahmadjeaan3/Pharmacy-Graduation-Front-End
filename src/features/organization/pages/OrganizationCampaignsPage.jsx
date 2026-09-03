@@ -206,11 +206,12 @@ export function OrganizationCampaignsPage() {
 
       await refresh();
     },
-    onError: (error) =>
+    onError: (error) => {
       setNotice({
         ok: false,
         text: getApiErrorMessage(error),
-      }),
+      });
+    },
   });
 
   const filteredCampaigns = useMemo(() => {
@@ -310,7 +311,9 @@ export function OrganizationCampaignsPage() {
 
   const handleDelete = (campaign) => {
     const confirmed = window.confirm(
-      t('هل أنت متأكد من حذف الحملة "{{title}}"؟', { title: campaign.title }),
+      t('هل أنت متأكد من حذف الحملة "{{title}}"؟', {
+        title: campaign.title,
+      }),
     );
 
     if (!confirmed) return;
@@ -329,18 +332,22 @@ export function OrganizationCampaignsPage() {
       {!showForm && (
         <>
           {/* Hero */}
-          <section className="relative h-[230px] w-full overflow-hidden rounded-[14px] bg-[#10505A] text-white sm:h-[271px] sm:rounded-[16px]">
+          <section className="relative h-[230px] w-full overflow-hidden rounded-[14px] bg-[#10505A] text-white max-sm:h-[330px] sm:h-[271px] sm:rounded-[16px]">
+            {/* صورة البانر - مخفية على الجوال فقط */}
             <div
               aria-hidden="true"
-              className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-300 ${isArabic ? "" : "scale-x-[-1]"}`}
+              className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-300 max-sm:hidden ${
+                isArabic ? "" : "scale-x-[-1]"
+              }`}
               style={{
                 backgroundImage: `url("${CAMPAIGNS_HERO_IMAGE}")`,
               }}
             />
 
+            {/* التدرج - مخفي على الجوال فقط */}
             <div
               aria-hidden="true"
-              className={`absolute inset-0 ${
+              className={`absolute inset-0 max-sm:hidden ${
                 isArabic
                   ? "bg-[linear-gradient(270deg,#10505A_0%,rgba(33,100,116,.25)_70%,rgba(33,100,116,.05)_100%)]"
                   : "bg-[linear-gradient(90deg,#10505A_0%,rgba(33,100,116,.25)_70%,rgba(33,100,116,.05)_100%)]"
@@ -349,10 +356,11 @@ export function OrganizationCampaignsPage() {
 
             <div
               dir="ltr"
-              className={`relative z-10 flex h-full w-full items-center justify-between px-8 lg:px-[41px] ${
+              className={`relative z-10 flex h-full w-full items-center justify-between px-5 max-sm:flex-col max-sm:items-stretch max-sm:justify-center max-sm:gap-5 sm:px-8 lg:px-[41px] ${
                 isArabic ? "flex-row" : "flex-row-reverse"
               }`}
             >
+              {/* زر إنشاء الحملة - على الديسكتوب يبقى كما هو */}
               <button
                 type="button"
                 onClick={() => {
@@ -362,7 +370,7 @@ export function OrganizationCampaignsPage() {
                     openCreateForm();
                   }
                 }}
-                className="ms-4 sm:ms-6 lg:ms-8 inline-flex h-12 shrink-0 items-center gap-2 rounded-lg bg-white px-5 text-sm font-bold text-[#216474] shadow-sm transition hover:bg-[#f7fbfb]"
+                className="ms-0 inline-flex h-12 w-full shrink-0 items-center justify-center gap-2 rounded-lg bg-white px-5 text-sm font-bold text-[#216474] shadow-sm transition hover:bg-[#f7fbfb] sm:ms-6 sm:w-auto lg:ms-8 max-sm:order-3"
               >
                 {showForm && !editingCampaignId ? (
                   <X size={18} />
@@ -377,9 +385,10 @@ export function OrganizationCampaignsPage() {
                 </span>
               </button>
 
+              {/* النص */}
               <div
                 dir={direction}
-                className={`flex min-w-0 flex-col items-start ${
+                className={`flex min-w-0 flex-col items-start max-sm:w-full max-sm:order-1 ${
                   isArabic ? "text-right" : "text-left"
                 }`}
               >
@@ -403,7 +412,7 @@ export function OrganizationCampaignsPage() {
                   </span>
                 </div>
 
-                <p className="mt-4 max-w-[650px] text-sm leading-7 text-white/75">
+                <p className="mt-3 max-w-[650px] text-sm leading-7 text-white/75 sm:mt-4">
                   {t(
                     "أنشئ الحملات وحدد احتياجاتها وموقعها وفترة استقبال التبرعات، ثم تابع حالتها من مكان واحد.",
                   )}
@@ -509,7 +518,9 @@ export function OrganizationCampaignsPage() {
                     required
                     maxLength={2000}
                     value={form.description}
-                    onChange={(event) => set("description", event.target.value)}
+                    onChange={(event) =>
+                      set("description", event.target.value)
+                    }
                     placeholder={t(
                       "اكتب وصفًا واضحًا ومختصرًا للحملة وأهدافها...",
                     )}
@@ -575,7 +586,9 @@ export function OrganizationCampaignsPage() {
                     <input
                       type="date"
                       value={form.startsAt}
-                      onChange={(event) => set("startsAt", event.target.value)}
+                      onChange={(event) =>
+                        set("startsAt", event.target.value)
+                      }
                       className="h-11 w-full rounded-lg border border-[#D8E5E7] bg-white px-4 text-sm text-[#667D82] outline-none transition hover:border-[#B9CFD3] focus:border-[#216474] focus:ring-2 focus:ring-[#216474]/10"
                     />
                   </label>
@@ -605,7 +618,9 @@ export function OrganizationCampaignsPage() {
 
                   <CompactToggle
                     checked={form.acceptsPublicDonations}
-                    onChange={(value) => set("acceptsPublicDonations", value)}
+                    onChange={(value) =>
+                      set("acceptsPublicDonations", value)
+                    }
                     label={t("استقبال تبرعات عامة")}
                     description={t("السماح للمستخدمين بالتبرع")}
                   />
@@ -640,6 +655,7 @@ export function OrganizationCampaignsPage() {
           </div>
         </section>
       )}
+
       {!showForm && (
         <>
           {/* Tools */}
@@ -735,7 +751,9 @@ export function OrganizationCampaignsPage() {
           ) : !filteredCampaigns.length ? (
             <UserEmptyState
               title={t("لا توجد حملات مطابقة")}
-              description={t("أنشئ حملة جديدة أو غيّر مرشح الحالة أو البحث.")}
+              description={t(
+                "أنشئ حملة جديدة أو غيّر مرشح الحالة أو البحث.",
+              )}
             />
           ) : viewMode === "grid" ? (
             <div
@@ -808,7 +826,9 @@ function CampaignsTable({
     >
       <div className="overflow-x-auto">
         <table
-          className={`w-full min-w-[1080px] border-collapse ${isArabic ? "text-right" : "text-left"}`}
+          className={`w-full min-w-[1080px] border-collapse ${
+            isArabic ? "text-right" : "text-left"
+          }`}
         >
           <thead>
             <tr className="bg-[#EAF4F3] text-[11px] font-bold text-[#5E7A80]">
@@ -835,6 +855,7 @@ function CampaignsTable({
                     <strong className="block truncate font-bold text-[#29464D]">
                       {campaign.title}
                     </strong>
+
                     <span className="mt-1 block truncate text-[11px] text-[#93A4A8]">
                       {campaign.description}
                     </span>
@@ -849,7 +870,9 @@ function CampaignsTable({
                         : "bg-[#E6F3F6] text-[#216474]"
                     }`}
                   >
-                    {campaign.isUrgent ? t("حملة عاجلة") : t("حملة دوائية")}
+                    {campaign.isUrgent
+                      ? t("حملة عاجلة")
+                      : t("حملة دوائية")}
                   </span>
                 </td>
 
@@ -868,6 +891,7 @@ function CampaignsTable({
                           : "bg-[#AAB8BB]"
                       }`}
                     />
+
                     {campaign.acceptsPublicDonations
                       ? t("بالأدوية")
                       : t("مغلق")}
@@ -884,10 +908,12 @@ function CampaignsTable({
                 <td className="px-4 py-4 text-[#71858A]">
                   <span className="inline-flex max-w-[180px] items-center gap-2">
                     <MapPin size={14} className="shrink-0" />
+
                     <span className="truncate">
                       {[campaign.area, campaign.city]
                         .filter(Boolean)
-                        .join(isArabic ? "، " : ", ") || t("غير محدد")}
+                        .join(isArabic ? "، " : ", ") ||
+                        t("غير محدد")}
                     </span>
                   </span>
                 </td>
@@ -923,7 +949,9 @@ function CampaignsTable({
                       type="button"
                       onClick={() => onDelete(campaign)}
                       disabled={pending}
-                      aria-label={t("حذف {{title}}", { title: campaign.title })}
+                      aria-label={t("حذف {{title}}", {
+                        title: campaign.title,
+                      })}
                       title={t("حذف")}
                       className="grid size-9 place-items-center rounded-xl border border-rose-100 bg-white text-rose-500 transition hover:border-rose-200 hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-50"
                     >
@@ -955,7 +983,9 @@ function StatusSelect({ campaign, pending, onChange, t, direction }) {
   return (
     <div dir={direction} className="relative w-[145px]">
       <select
-        aria-label={t("تغيير حالة {{title}}", { title: campaign.title })}
+        aria-label={t("تغيير حالة {{title}}", {
+          title: campaign.title,
+        })}
         className={`h-10 w-full appearance-none rounded-xl border pe-9 ps-3 text-xs font-bold outline-none transition hover:brightness-[0.98] focus:ring-2 focus:ring-[#216474]/10 ${style}`}
         disabled={pending}
         value={campaign.status}
@@ -1054,7 +1084,9 @@ function CampaignGridCard({
             onClick={onEdit}
             disabled={pending}
             className="grid size-9 place-items-center rounded-lg border border-[#174b57]/10 text-[#216474]"
-            aria-label={t("تعديل {{title}}", { title: campaign.title })}
+            aria-label={t("تعديل {{title}}", {
+              title: campaign.title,
+            })}
           >
             <Edit3 size={16} />
           </button>
@@ -1064,7 +1096,9 @@ function CampaignGridCard({
             onClick={onDelete}
             disabled={pending}
             className="grid size-9 place-items-center rounded-lg border border-rose-100 text-rose-600"
-            aria-label={t("حذف {{title}}", { title: campaign.title })}
+            aria-label={t("حذف {{title}}", {
+              title: campaign.title,
+            })}
           >
             <Trash2 size={16} />
           </button>
@@ -1082,6 +1116,7 @@ function CampaignGridCard({
       <div className="mt-4 grid grid-cols-2 gap-3 text-xs">
         <span className="flex items-center gap-2 text-[#71858a]">
           <MapPin size={14} />
+
           {[campaign.area, campaign.city]
             .filter(Boolean)
             .join(isArabic ? "، " : ", ") || t("غير محدد")}
@@ -1089,6 +1124,7 @@ function CampaignGridCard({
 
         <span className="flex items-center gap-2 text-[#71858a]">
           <CalendarDays size={14} />
+
           {t("حتى")} {formatOrgDate(campaign.endsAtUtc)}
         </span>
       </div>

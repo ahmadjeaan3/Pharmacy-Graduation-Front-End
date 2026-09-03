@@ -165,7 +165,7 @@ export function PharmacyDonationReviewsPage() {
     <div
       dir={direction}
       lang={currentLanguage}
-      className="space-y-6"
+      className="w-full min-w-0 space-y-5 overflow-x-hidden sm:space-y-6"
     >
       {/* =====================================================
           HERO
@@ -180,7 +180,7 @@ export function PharmacyDonationReviewsPage() {
           STEPS
       ===================================================== */}
 
-      <section className="grid gap-3 sm:grid-cols-3">
+      <section className="grid min-w-0 gap-3 sm:grid-cols-3">
         <Step
           icon={Gift}
           number="1"
@@ -222,6 +222,7 @@ export function PharmacyDonationReviewsPage() {
       {notice && (
         <div
           className={`
+            w-full
             rounded-2xl
             border
             p-4
@@ -264,7 +265,7 @@ export function PharmacyDonationReviewsPage() {
            OFFERS
         =================================================== */
 
-        <section className="grid gap-4 xl:grid-cols-2">
+        <section className="grid min-w-0 gap-4 xl:grid-cols-2">
           {query.data.map((offer) => (
             <OfferCard
               key={offer.offerId}
@@ -292,7 +293,7 @@ export function PharmacyDonationReviewsPage() {
 
 /* =========================================================
    DONATION HERO
-   SAME HERO STYLE AS PHARMACY WORKING HOURS
+   RESPONSIVE
 ========================================================= */
 
 function DonationHero({ t, isArabic }) {
@@ -301,17 +302,20 @@ function DonationHero({ t, isArabic }) {
       className="
         relative
         isolate
-        min-h-[220px]
+        min-h-[140px]
+        w-full
         overflow-hidden
         rounded-[14px]
+        bg-[#10505A]
         text-white
         shadow-[0_22px_55px_rgba(23,75,87,.16)]
-        sm:min-h-[230px]
+        sm:min-h-[180px]
         lg:min-h-[250px]
       "
     >
       {/* ===================================================
-          BACKGROUND
+          BACKGROUND IMAGE
+          تظهر فقط على الشاشات الكبيرة
       =================================================== */}
 
       <img
@@ -322,30 +326,34 @@ function DonationHero({ t, isArabic }) {
         className={`
           absolute
           inset-0
+          hidden
           h-full
           w-full
           select-none
           object-cover
           object-[center_38%]
+          lg:block
           ${isArabic ? "scale-x-[-1]" : ""}
         `}
       />
 
       {/* ===================================================
           OVERLAY
+          يظهر فقط على الشاشات الكبيرة
       =================================================== */}
 
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 hidden lg:block"
         style={{
           background: isArabic
-            ? "linear-gradient(270deg,#10505A 0%,rgba(16,80,90,.90) 38%,rgba(33,100,116,.48) 70%,rgba(33,100,116,.08) 100%)"
-            : "linear-gradient(90deg,#10505A 0%,rgba(16,80,90,.90) 38%,rgba(33,100,116,.48) 70%,rgba(33,100,116,.08) 100%)",
+            ? "linear-gradient(270deg,#10505A 0%,rgba(16,80,90,.96) 38%,rgba(33,100,116,.78) 70%,rgba(33,100,116,.58) 100%)"
+            : "linear-gradient(90deg,#10505A 0%,rgba(16,80,90,.96) 38%,rgba(33,100,116,.78) 70%,rgba(33,100,116,.58) 100%)",
         }}
       />
 
       {/* ===================================================
           DECORATIVE CIRCLE
+          يظهر فقط على الشاشات الكبيرة
       =================================================== */}
 
       <div
@@ -354,10 +362,12 @@ function DonationHero({ t, isArabic }) {
           pointer-events-none
           absolute
           -top-20
+          hidden
           size-64
           rounded-full
           border-[40px]
           border-white/[.04]
+          lg:block
           ${isArabic ? "-left-14" : "-right-14"}
         `}
       />
@@ -371,18 +381,16 @@ function DonationHero({ t, isArabic }) {
           relative
           z-10
           flex
-          min-h-[220px]
-          flex-col
+          min-h-[140px]
+          w-full
           items-center
-          justify-center
-          gap-7
-          px-6
-          py-7
-          sm:min-h-[230px]
+          px-5
+          py-5
+          sm:min-h-[180px]
+          sm:px-7
           lg:min-h-[250px]
-          lg:flex-row
-          lg:justify-between
           lg:px-10
+          lg:py-7
         "
       >
         {/* =================================================
@@ -393,38 +401,51 @@ function DonationHero({ t, isArabic }) {
           className={`
             flex
             min-w-0
+            w-full
             items-center
-            gap-5
+            gap-4
+            sm:gap-5
+            lg:max-w-[690px]
+            ${isArabic ? "ml-auto" : "mr-auto"}
             ${isArabic ? "text-right" : "text-left"}
           `}
         >
           <span
             className="
               grid
-              size-12
+              size-10
               shrink-0
               place-items-center
               rounded-lg
               bg-[rgba(230,243,246,.10)]
               text-[#E6F3F6]
               backdrop-blur-sm
+              sm:size-12
             "
           >
             <Gift
+              size={24}
+              strokeWidth={1.7}
+              className="sm:hidden"
+            />
+
+            <Gift
               size={28}
               strokeWidth={1.7}
+              className="hidden sm:block"
             />
           </span>
 
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <p
               className="
                 flex
                 items-center
                 gap-2
-                text-[12px]
+                text-[10px]
                 font-bold
                 text-[#BFE8E7]
+                sm:text-[12px]
               "
             >
               <ShieldCheck size={14} />
@@ -434,12 +455,14 @@ function DonationHero({ t, isArabic }) {
 
             <h1
               className="
-                mt-2
-                text-[28px]
+                mt-1
+                text-[21px]
                 font-medium
-                leading-[1.2]
+                leading-[1.25]
                 text-white
-                sm:text-[30px]
+                sm:mt-2
+                sm:text-[26px]
+                lg:text-[28px]
               "
             >
               {t("التحقق من التبرعات الدوائية")}
@@ -447,11 +470,16 @@ function DonationHero({ t, isArabic }) {
 
             <p
               className="
-                mt-3
+                mt-2
                 max-w-[560px]
-                text-[14px]
-                leading-7
+                text-[11px]
+                leading-5
                 text-[#D6D6D6]
+                sm:mt-3
+                sm:text-[13px]
+                sm:leading-6
+                lg:text-[14px]
+                lg:leading-7
               "
             >
               {t(
@@ -463,12 +491,12 @@ function DonationHero({ t, isArabic }) {
 
         {/* =================================================
             SERVICE STATUS
+            يظهر فقط على الشاشات الكبيرة
         ================================================= */}
 
         <div
           className="
-            flex
-            min-w-[190px]
+            hidden
             shrink-0
             items-center
             gap-3
@@ -476,9 +504,11 @@ function DonationHero({ t, isArabic }) {
             border
             border-white/15
             bg-[rgba(2,77,82,.58)]
-            px-5
-            py-4
+            px-4
+            py-3.5
             backdrop-blur-[10px]
+            lg:flex
+            lg:min-w-[190px]
           "
         >
           <span
@@ -493,12 +523,12 @@ function DonationHero({ t, isArabic }) {
             "
           >
             <PackageCheck
-              size={22}
+              size={21}
               strokeWidth={1.8}
             />
           </span>
 
-          <div>
+          <div className="min-w-0">
             <p className="text-xs text-[#D6D6D6]">
               {t("حالة الخدمة")}
             </p>
@@ -507,6 +537,7 @@ function DonationHero({ t, isArabic }) {
               className="
                 mt-1
                 block
+                truncate
                 text-lg
                 font-black
                 text-[#E6F3F6]
@@ -536,18 +567,21 @@ function Step({
   return (
     <article
       className="
+        min-w-0
         rounded-2xl
         border
         border-[#174b57]/8
         bg-white
         p-4
+        sm:p-5
       "
     >
-      <div className="flex items-center gap-3">
+      <div className="flex min-w-0 items-center gap-3">
         <span
           className="
             grid
             size-10
+            shrink-0
             place-items-center
             rounded-xl
             bg-[#eaf4f3]
@@ -622,42 +656,53 @@ function OfferCard({
         {
           dateStyle: "medium",
         },
-      ).format(
-        new Date(offer.expiryDateUtc),
-      )
+      ).format(new Date(offer.expiryDateUtc))
     : t("غير محددة");
 
   return (
     <article
       className="
+        min-w-0
+        overflow-hidden
         rounded-[1.45rem]
         border
         border-[#174b57]/8
         bg-white
-        p-5
+        p-4
+        sm:p-5
       "
     >
       {/* ===================================================
           HEADER
       =================================================== */}
 
-      <div className="flex items-start justify-between gap-3">
+      <div
+        className="
+          flex
+          min-w-0
+          flex-col
+          gap-3
+          sm:flex-row
+          sm:items-start
+          sm:justify-between
+        "
+      >
         <div
-          className={
-            isArabic
-              ? "text-right"
-              : "text-left"
-          }
+          className={`
+            min-w-0
+            flex-1
+            ${isArabic ? "text-right" : "text-left"}
+          `}
         >
-          <p className="text-xs font-bold text-[#216474]">
+          <p className="truncate text-xs font-bold text-[#216474]">
             {offer.targetOrganizationName}
           </p>
 
-          <h2 className="mt-1 text-lg font-black text-[#29464d]">
+          <h2 className="mt-1 break-words text-lg font-black text-[#29464d]">
             {offer.medicineName}
           </h2>
 
-          <p className="mt-1 text-xs text-[#829499]">
+          <p className="mt-1 break-words text-xs text-[#829499]">
             {offer.scientificName ||
               t("الاسم العلمي غير محدد")}
           </p>
@@ -665,6 +710,9 @@ function OfferCard({
 
         <span
           className={`
+            w-fit
+            max-w-full
+            shrink-0
             rounded-full
             px-3
             py-1.5
@@ -685,12 +733,14 @@ function OfferCard({
         className="
           mt-4
           grid
+          min-w-0
           gap-2
           rounded-2xl
           bg-[#f8fbfa]
-          p-4
+          p-3
           text-xs
           sm:grid-cols-2
+          sm:p-4
         "
       >
         <Detail
@@ -737,6 +787,7 @@ function OfferCard({
         <p
           className={`
             mt-3
+            break-words
             rounded-xl
             border
             border-[#174b57]/8
@@ -780,6 +831,9 @@ function OfferCard({
               className={`
                 form-textarea
                 min-h-20
+                w-full
+                max-w-full
+                resize-y
                 ${isArabic ? "text-right" : "text-left"}
               `}
               value={note}
@@ -793,7 +847,18 @@ function OfferCard({
             />
           </label>
 
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div
+            className="
+              mt-3
+              flex
+              w-full
+              flex-col
+              gap-2
+              sm:flex-row
+              sm:flex-wrap
+              sm:justify-start
+            "
+          >
             {/* =================================================
                 APPROVE
             ================================================= */}
@@ -802,7 +867,12 @@ function OfferCard({
               <>
                 <button
                   type="button"
-                  className="btn-primary"
+                  className="
+                    btn-primary
+                    w-full
+                    justify-center
+                    sm:w-auto
+                  "
                   disabled={pending}
                   onClick={() =>
                     onReview(
@@ -826,7 +896,10 @@ function OfferCard({
                   type="button"
                   className="
                     btn-secondary
+                    w-full
+                    justify-center
                     text-rose-700
+                    sm:w-auto
                   "
                   disabled={pending}
                   onClick={() =>
@@ -850,7 +923,12 @@ function OfferCard({
             {accepted && (
               <button
                 type="button"
-                className="btn-primary"
+                className="
+                  btn-primary
+                  w-full
+                  justify-center
+                  sm:w-auto
+                "
                 disabled={pending}
                 onClick={() =>
                   onReview(
@@ -885,13 +963,20 @@ function Detail({
   ltr = false,
 }) {
   return (
-    <div className="flex items-center gap-2">
+    <div
+      className="
+        flex
+        min-w-0
+        items-center
+        gap-2
+      "
+    >
       <Icon
         size={14}
-        className="text-[#6f888d]"
+        className="shrink-0 text-[#6f888d]"
       />
 
-      <span className="text-[#829499]">
+      <span className="shrink-0 text-[#829499]">
         {label}
       </span>
 
@@ -899,6 +984,8 @@ function Detail({
         dir={ltr ? "ltr" : undefined}
         className={`
           ms-auto
+          min-w-0
+          truncate
           text-[#29464d]
           ${isArabic ? "text-right" : "text-left"}
         `}

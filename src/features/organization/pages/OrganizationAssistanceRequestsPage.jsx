@@ -148,10 +148,12 @@ export function OrganizationAssistanceRequestsPage() {
       className="min-h-[calc(100vh-164px)] space-y-5 bg-[#F4F8F8]"
     >
       {/* Hero */}
-      <section className="relative h-[230px] w-full overflow-hidden rounded-[14px] bg-[#10505A] text-white sm:h-[271px] sm:rounded-[16px]">
+      <section className="relative h-[190px] w-full overflow-hidden rounded-[14px] bg-[#10505A] text-white sm:h-[271px] sm:rounded-[16px]">
         <div
           aria-hidden="true"
-          className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-300 ${isArabic ? "" : "scale-x-[-1]"}`}
+          className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-300 max-sm:hidden ${
+            isArabic ? "" : "scale-x-[-1]"
+          }`}
           style={{
             backgroundImage: `url("${ASSISTANCE_HERO_IMAGE}")`,
           }}
@@ -159,7 +161,7 @@ export function OrganizationAssistanceRequestsPage() {
 
         <div
           aria-hidden="true"
-          className={`absolute inset-0 ${
+          className={`absolute inset-0 max-sm:hidden ${
             isArabic
               ? "bg-[linear-gradient(270deg,#10505A_0%,rgba(33,100,116,.25)_70%,rgba(33,100,116,.05)_100%)]"
               : "bg-[linear-gradient(90deg,#10505A_0%,rgba(33,100,116,.25)_70%,rgba(33,100,116,.05)_100%)]"
@@ -192,7 +194,7 @@ export function OrganizationAssistanceRequestsPage() {
       </section>
 
       {/* Flow */}
-      <section className="rounded-xl border border-[#D8E6E8] bg-white p-4 sm:p-5 shadow-[0_6px_24px_rgba(23,75,87,.035)]">
+      <section className="rounded-xl border border-[#D8E6E8] bg-white p-4 shadow-[0_6px_24px_rgba(23,75,87,.035)] sm:p-5">
         <div className={isArabic ? "text-right" : "text-left"}>
           <h2 className="font-bold text-[#29464D]">
             {t("مسار معالجة طلب المساعدة")}
@@ -226,6 +228,7 @@ export function OrganizationAssistanceRequestsPage() {
           ))}
         </div>
       </section>
+
       {/* Notice */}
       {notice && (
         <div
@@ -240,7 +243,7 @@ export function OrganizationAssistanceRequestsPage() {
       )}
 
       {/* Filters */}
-      <section className="rounded-xl bg-white p-4 sm:p-5 shadow-[0_6px_24px_rgba(23,75,87,.03)]">
+      <section className="rounded-xl bg-white p-4 shadow-[0_6px_24px_rgba(23,75,87,.03)] sm:p-5">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
           <div className={isArabic ? "text-right" : "text-left"}>
             <h2 className="text-xl font-bold text-[#333333]">
@@ -343,6 +346,7 @@ export function OrganizationAssistanceRequestsPage() {
     </div>
   );
 }
+
 function SelectField({
   value,
   onChange,
@@ -443,11 +447,13 @@ function RequestCard({
           <InfoCard
             icon={Package}
             label={t("الكمية المطلوبة")}
-            value={t("{{count}} عبوة", {
-              count:
-                request.requestedPackageCount?.toLocaleString(numberLocale) ??
-                "0",
-            })}
+            value={
+              request.requestedPackageCount != null
+                ? `${Number(request.requestedPackageCount).toLocaleString(
+                    numberLocale,
+                  )} ${t("عبوة")}`
+                : "—"
+            }
             direction={direction}
           />
 
@@ -475,6 +481,7 @@ function RequestCard({
             direction={direction}
           />
         )}
+
         {actionable ? (
           <div className="mt-5 border-t border-[#E7EFF0] pt-5">
             <div className="grid gap-3 sm:grid-cols-[190px_1fr]">
@@ -546,20 +553,17 @@ function RequestCard({
 function StatusBadge({ label, status }) {
   const styles = {
     Pending: "border-[#D5E3E6] bg-[#F2F6F7] text-[#60777D]",
-
     UnderReview: "border-[#C9E0E5] bg-[#E6F3F6] text-[#216474]",
-
     Fulfilled: "border-[#BFD9DE] bg-[#EAF4F3] text-[#174B57]",
-
     Rejected: "border-[#F1D4D7] bg-[#FFF1F2] text-[#C34A57]",
-
     Cancelled: "border-[#DCE4E6] bg-[#F4F7F8] text-[#72868B]",
   };
 
   return (
     <span
       className={`shrink-0 rounded-full border px-3 py-1.5 text-[11px] font-bold ${
-        styles[status] || "border-[#D5E3E6] bg-[#F2F6F7] text-[#60777D]"
+        styles[status] ||
+        "border-[#D5E3E6] bg-[#F2F6F7] text-[#60777D]"
       }`}
     >
       {label}

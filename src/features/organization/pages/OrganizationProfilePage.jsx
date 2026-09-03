@@ -189,7 +189,9 @@ export function OrganizationProfilePage() {
     try {
       setDownloadingId(document.documentId);
 
-      const response = await downloadVerificationDocument(document.documentId);
+      const response = await downloadVerificationDocument(
+        document.documentId,
+      );
 
       const url = URL.createObjectURL(response.data);
 
@@ -239,10 +241,12 @@ export function OrganizationProfilePage() {
       className="min-h-[calc(100vh-164px)] space-y-5 bg-[#F4F8F8]"
     >
       {/* Hero */}
-      <section className="relative h-[230px] w-full overflow-hidden rounded-[14px] bg-[#10505A] text-white sm:h-[271px] sm:rounded-[16px]">
+      <section className="relative h-[190px] w-full overflow-hidden rounded-[14px] bg-[#10505A] text-white sm:h-[271px] sm:rounded-[16px]">
         <div
           aria-hidden="true"
-          className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-300 ${isArabic ? "" : "scale-x-[-1]"}`}
+          className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-300 max-sm:hidden ${
+            isArabic ? "" : "scale-x-[-1]"
+          }`}
           style={{
             backgroundImage: `url("${PROFILE_HERO_IMAGE}")`,
           }}
@@ -250,7 +254,7 @@ export function OrganizationProfilePage() {
 
         <div
           aria-hidden="true"
-          className={`absolute inset-0 ${
+          className={`absolute inset-0 max-sm:hidden ${
             isArabic
               ? "bg-[linear-gradient(270deg,#10505A_0%,rgba(33,100,116,.25)_70%,rgba(33,100,116,.05)_100%)]"
               : "bg-[linear-gradient(90deg,#10505A_0%,rgba(33,100,116,.25)_70%,rgba(33,100,116,.05)_100%)]"
@@ -281,6 +285,7 @@ export function OrganizationProfilePage() {
           </div>
         </div>
       </section>
+
       {/* Notice */}
       {notice && (
         <div
@@ -303,7 +308,7 @@ export function OrganizationProfilePage() {
             setNotice(null);
             save.mutate(form);
           }}
-          className="rounded-xl border border-[#DCE8EA] bg-white p-4 sm:p-6 shadow-[0_8px_30px_rgba(23,75,87,.04)]"
+          className="rounded-xl border border-[#DCE8EA] bg-white p-4 shadow-[0_8px_30px_rgba(23,75,87,.04)] sm:p-6"
         >
           <div className="flex items-center gap-3 border-b border-[#E7EFF0] pb-5">
             <span className="grid size-10 place-items-center rounded-xl bg-[#E6F3F6] text-[#216474]">
@@ -423,12 +428,15 @@ export function OrganizationProfilePage() {
           >
             <Save size={16} />
 
-            {save.isPending ? t("جاري الحفظ...") : t("حفظ بيانات المنظمة")}
+            {save.isPending
+              ? t("جاري الحفظ...")
+              : t("حفظ بيانات المنظمة")}
           </button>
         </form>
+
         {/* Verification side */}
         <div className="space-y-5">
-          <section className="rounded-xl border border-[#DCE8EA] bg-white p-4 sm:p-5 shadow-[0_8px_30px_rgba(23,75,87,.04)]">
+          <section className="rounded-xl border border-[#DCE8EA] bg-white p-4 shadow-[0_8px_30px_rgba(23,75,87,.04)] sm:p-5">
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-center gap-3">
                 <span className="grid size-10 place-items-center rounded-xl bg-[#E6F3F6] text-[#216474]">
@@ -495,7 +503,7 @@ export function OrganizationProfilePage() {
 
           <form
             onSubmit={submitDocument}
-            className="rounded-xl border border-[#DCE8EA] bg-white p-4 sm:p-5 shadow-[0_8px_30px_rgba(23,75,87,.04)]"
+            className="rounded-xl border border-[#DCE8EA] bg-white p-4 shadow-[0_8px_30px_rgba(23,75,87,.04)] sm:p-5"
           >
             <div className={isArabic ? "text-right" : "text-left"}>
               <h2 className="font-bold text-[#29464D]">
@@ -518,7 +526,9 @@ export function OrganizationProfilePage() {
                 <div dir={direction} className="relative">
                   <select
                     value={documentType}
-                    onChange={(event) => setDocumentType(event.target.value)}
+                    onChange={(event) =>
+                      setDocumentType(event.target.value)
+                    }
                     className="h-11 w-full appearance-none rounded-lg border border-[#D8E5E7] bg-[#F8FBFB] pe-10 ps-3 text-sm font-medium text-[#47666D] outline-none transition hover:border-[#AFC9CD] focus:border-[#216474] focus:bg-white"
                   >
                     {documentTypes.map((item) => (
@@ -550,7 +560,9 @@ export function OrganizationProfilePage() {
                   type="file"
                   className="sr-only"
                   accept=".pdf,.png,.jpg,.jpeg"
-                  onChange={(event) => setFile(event.target.files?.[0] || null)}
+                  onChange={(event) =>
+                    setFile(event.target.files?.[0] || null)
+                  }
                 />
               </label>
 
@@ -573,8 +585,9 @@ export function OrganizationProfilePage() {
           </form>
         </div>
       </section>
+
       {/* Documents */}
-      <section className="rounded-xl border border-[#DCE8EA] bg-white p-4 sm:p-6 shadow-[0_8px_30px_rgba(23,75,87,.04)]">
+      <section className="rounded-xl border border-[#DCE8EA] bg-white p-4 shadow-[0_8px_30px_rgba(23,75,87,.04)] sm:p-6">
         <div className={isArabic ? "text-right" : "text-left"}>
           <h2 className="text-lg font-bold text-[#29464D]">
             {t("المستندات المرفوعة")}
@@ -674,7 +687,8 @@ function VerificationBadge({ status, label }) {
   return (
     <span
       className={`shrink-0 rounded-full border px-3 py-1.5 text-[11px] font-bold ${
-        styles[status] || "border-[#D4E3E6] bg-[#F0F6F7] text-[#52727A]"
+        styles[status] ||
+        "border-[#D4E3E6] bg-[#F0F6F7] text-[#52727A]"
       }`}
     >
       {label}
@@ -690,7 +704,9 @@ function InfoCard({ icon: Icon, label, value, direction = "rtl" }) {
     >
       <Icon size={16} className="text-[#216474]" />
 
-      <span className="mt-2 block text-[10px] text-[#93A4A8]">{label}</span>
+      <span className="mt-2 block text-[10px] text-[#93A4A8]">
+        {label}
+      </span>
 
       <strong className="mt-1 block truncate text-xs text-[#36565D]">
         {value || "—"}

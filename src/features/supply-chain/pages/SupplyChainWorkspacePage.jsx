@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import {
   AlertTriangle,
   ArrowRight,
@@ -79,6 +84,7 @@ const RepresentativeRouteMap = lazy(() =>
 const SUPPLY_HERO_IMAGE = "/assets/app/pharmacy.png";
 const ADMIN_HERO_IMAGE = "/assets/app/home/background_hero_admin.png";
 const WAREHOUSE_HERO_IMAGE = "/assets/app/home/SupplyChainWorkspace.png";
+const SUPPLY_DATA_STALE_TIME = 2 * 60_000;
 
 const warehousePathTabs = {
   "/app/warehouse/inventory": "inventory",
@@ -175,24 +181,34 @@ function Stat({
     <button
       type="button"
       onClick={onClick}
-      className="relative min-h-[145px] w-full overflow-hidden rounded-[14px] border border-[#DCE8EA] bg-white p-5 text-start shadow-[0_10px_30px_rgba(23,75,87,.04)] transition hover:-translate-y-0.5 hover:border-[#8BD0CB] hover:shadow-[0_14px_34px_rgba(23,75,87,.10)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#216474]"
+      className="relative min-h-[130px] w-full overflow-hidden rounded-[14px] border border-[#DCE8EA] bg-white p-4 text-start shadow-[0_10px_30px_rgba(23,75,87,.04)] transition hover:-translate-y-0.5 hover:border-[#8BD0CB] hover:shadow-[0_14px_34px_rgba(23,75,87,.10)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#216474] sm:min-h-[145px] sm:p-5"
     >
       <span
-        className={`absolute top-5 grid size-11 place-items-center rounded-xl ${
-          isArabic ? "right-5" : "left-5"
+        className={`absolute top-4 grid size-10 place-items-center rounded-xl sm:top-5 sm:size-11 ${
+          isArabic ? "right-4 sm:right-5" : "left-4 sm:left-5"
         } ${className}`}
       >
         <Icon size={20} strokeWidth={1.8} />
       </span>
 
-      <div className={isArabic ? "pr-16 text-right" : "pl-16 text-left"}>
-        <p className="text-[12px] font-semibold text-[#71858A]">{label}</p>
+      <div
+        className={
+          isArabic
+            ? "pr-14 text-right sm:pr-16"
+            : "pl-14 text-left sm:pl-16"
+        }
+      >
+        <p className="text-[12px] font-semibold leading-5 text-[#71858A]">
+          {label}
+        </p>
 
-        <strong className="mt-3 block text-[28px] font-black leading-none text-[#17363E]">
+        <strong className="mt-2.5 block text-[24px] font-black leading-none text-[#17363E] sm:mt-3 sm:text-[28px]">
           {Number(value || 0).toLocaleString(resolveLocale(currentLanguage))}
         </strong>
 
-        <p className="mt-4 text-[11px] leading-5 text-[#A5A5A5]">{hint}</p>
+        <p className="mt-3 text-[11px] leading-5 text-[#A5A5A5] sm:mt-4">
+          {hint}
+        </p>
       </div>
     </button>
   );
@@ -232,21 +248,21 @@ function OrderCard({
   const visibleStatus =
     order.shipment?.status === "Arrived" ? "Arrived" : order.status;
   return (
-    <article className="rounded-[14px] border border-[#DCE8EA] bg-white p-5 shadow-[0_10px_28px_rgba(23,75,87,.04)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_34px_rgba(23,75,87,.07)]">
+    <article className="rounded-[14px] border border-[#DCE8EA] bg-white p-4 shadow-[0_10px_28px_rgba(23,75,87,.04)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_34px_rgba(23,75,87,.07)] sm:p-5">
       <div className="flex flex-wrap justify-between gap-3">
-        <div>
+        <div className="min-w-0">
           <p className="font-mono text-xs font-black text-[#216474]">
             {order.orderCode}
           </p>
-          <h3 className="mt-2 text-lg font-black">
+          <h3 className="mt-2 break-words text-base font-black leading-7 sm:text-lg">
             {role === "Pharmacy" ? order.warehouseName : order.pharmacyName}
           </h3>
-          <p className="mt-1 text-xs text-[#829499]">
+          <p className="mt-1 text-xs leading-5 text-[#829499]">
             {formatDate(order.createdAtUtc, currentLanguage, true)}
           </p>
         </div>
         <span
-          className={`h-fit rounded-full px-3 py-1.5 text-xs font-black ${tone(visibleStatus)}`}
+          className={`h-fit shrink-0 rounded-full px-3 py-1.5 text-[11px] font-black sm:text-xs ${tone(visibleStatus)}`}
         >
           {t(labels[visibleStatus] || visibleStatus)}
         </span>
@@ -429,27 +445,30 @@ export function SupplyChainWorkspacePage() {
     queryKey: supplyKeys.dashboard,
     queryFn: getSupplyDashboard,
     enabled: isWarehouseOverview,
-    staleTime: 30_000,
+    staleTime: SUPPLY_DATA_STALE_TIME,
     refetchOnWindowFocus: false,
   });
   const orders = useQuery({
     queryKey: [...supplyKeys.orders, user?.id || user?.email || role],
     queryFn: getSupplyOrders,
     enabled: role === "Representative" || activeTab === "orders",
-    staleTime: 15_000,
+    staleTime: 45_000,
+    placeholderData: keepPreviousData,
     refetchOnWindowFocus: false,
   });
   const batches = useQuery({
     queryKey: supplyKeys.batches,
     queryFn: getBatches,
     enabled: role === "Warehouse" && activeTab === "inventory",
-    staleTime: 30_000,
+    staleTime: SUPPLY_DATA_STALE_TIME,
+    placeholderData: keepPreviousData,
   });
   const reps = useQuery({
     queryKey: supplyKeys.representatives,
     queryFn: getRepresentatives,
     enabled: role === "Warehouse" && ["orders", "team"].includes(activeTab),
-    staleTime: 30_000,
+    staleTime: SUPPLY_DATA_STALE_TIME,
+    placeholderData: keepPreviousData,
   });
   const adminBatches = useQuery({
     queryKey: [...supplyKeys.adminBatches, adminResourceSearch],
@@ -469,7 +488,8 @@ export function SupplyChainWorkspacePage() {
     enabled:
       ["Warehouse", "Pharmacy", "Admin"].includes(role) &&
       ["invoices", "accounts"].includes(activeTab),
-    staleTime: 30_000,
+    staleTime: SUPPLY_DATA_STALE_TIME,
+    placeholderData: keepPreviousData,
   });
   const returns = useQuery({
     queryKey: [...supplyKeys.returns, role],
@@ -477,7 +497,8 @@ export function SupplyChainWorkspacePage() {
     enabled:
       ["Warehouse", "Pharmacy", "Admin"].includes(role) &&
       activeTab === "returns",
-    staleTime: 30_000,
+    staleTime: SUPPLY_DATA_STALE_TIME,
+    placeholderData: keepPreviousData,
   });
   const recalls = useQuery({
     queryKey: [...supplyKeys.recalls, role],
@@ -485,25 +506,61 @@ export function SupplyChainWorkspacePage() {
     enabled:
       ["Warehouse", "Pharmacy", "Admin"].includes(role) &&
       activeTab === "recalls",
-    staleTime: 30_000,
+    staleTime: SUPPLY_DATA_STALE_TIME,
+    placeholderData: keepPreviousData,
   });
   const marketplace = useQuery({
     queryKey: supplyKeys.marketplace,
     queryFn: getMarketplace,
     enabled: role === "Pharmacy" && activeTab === "marketplace",
-    staleTime: 60_000,
+    staleTime: SUPPLY_DATA_STALE_TIME,
+    placeholderData: keepPreviousData,
   });
   const suggestions = useQuery({
     queryKey: supplyKeys.suggestions,
     queryFn: getRestockSuggestions,
     enabled: role === "Pharmacy" && activeTab === "suggestions",
-    staleTime: 30_000,
+    staleTime: SUPPLY_DATA_STALE_TIME,
+    placeholderData: keepPreviousData,
   });
   const catalog = useQuery({
     queryKey: ["supply-chain", "catalog", selectedWarehouse?.id, catalogSearch],
     queryFn: () => getWarehouseCatalog(selectedWarehouse.id, catalogSearch),
     enabled: role === "Pharmacy" && !!selectedWarehouse,
+    staleTime: SUPPLY_DATA_STALE_TIME,
+    placeholderData: keepPreviousData,
   });
+  useEffect(() => {
+    if (role !== "Warehouse") return undefined;
+
+    const timer = window.setTimeout(() => {
+      const identity = user?.id || user?.email || role;
+      Promise.allSettled([
+        qc.prefetchQuery({
+          queryKey: [...supplyKeys.orders, identity],
+          queryFn: getSupplyOrders,
+          staleTime: 45_000,
+        }),
+        qc.prefetchQuery({
+          queryKey: supplyKeys.batches,
+          queryFn: getBatches,
+          staleTime: SUPPLY_DATA_STALE_TIME,
+        }),
+        qc.prefetchQuery({
+          queryKey: supplyKeys.representatives,
+          queryFn: getRepresentatives,
+          staleTime: SUPPLY_DATA_STALE_TIME,
+        }),
+        qc.prefetchQuery({
+          queryKey: [...supplyKeys.returns, role],
+          queryFn: getSupplyReturns,
+          staleTime: SUPPLY_DATA_STALE_TIME,
+        }),
+      ]);
+    }, 250);
+
+    return () => window.clearTimeout(timer);
+  }, [qc, role, user?.email, user?.id]);
   const mutation = useMutation({
     mutationFn: ({ type, id, value, coordinates, note, payment }) =>
       type === "order"
@@ -591,9 +648,19 @@ export function SupplyChainWorkspacePage() {
   });
   const reviewReturnMutation = useMutation({
     mutationFn: ({ id, payload }) => reviewSupplyReturn(id, payload),
-    onSuccess: () => {
+    onSuccess: (updatedReturn) => {
       setReturnReview(null);
-      qc.invalidateQueries({ queryKey: supplyKeys.returns });
+      qc.setQueriesData({ queryKey: supplyKeys.returns }, (items) =>
+        Array.isArray(items)
+          ? items.map((item) =>
+              item.id === updatedReturn?.id ? updatedReturn : item,
+            )
+          : items,
+      );
+      qc.invalidateQueries({
+        queryKey: supplyKeys.returns,
+        refetchType: "inactive",
+      });
       qc.invalidateQueries({ queryKey: supplyKeys.batches });
       qc.invalidateQueries({ queryKey: supplyKeys.dashboard });
     },
@@ -753,15 +820,15 @@ export function SupplyChainWorkspacePage() {
     <div dir={direction} lang={currentLanguage}>
       {showOverviewHero && (
         <section
-          className="relative isolate min-h-[220px] overflow-hidden rounded-[14px] text-white shadow-[0_22px_55px_rgba(23,75,87,.16)]
-sm:min-h-[230px]
+          className="relative isolate min-h-0 overflow-hidden rounded-[14px] bg-[#10505A] text-white shadow-[0_22px_55px_rgba(23,75,87,.16)]
+sm:min-h-[230px] sm:bg-transparent
 lg:min-h-[250px]"
         >
           <img
             src={supplyHeroImage}
             alt=""
             aria-hidden="true"
-            className={`absolute inset-0 h-full w-full object-cover ${
+            className={`absolute inset-0 hidden h-full w-full object-cover sm:block ${
               isAdminAccount
                 ? "object-[center_46%]"
                 : isWarehouseAccount
@@ -783,7 +850,7 @@ lg:min-h-[250px]"
           />
 
           <div
-            className="absolute inset-0"
+            className="absolute inset-0 hidden sm:block"
             style={{
               background: isAdminAccount
                 ? isArabic
@@ -799,30 +866,30 @@ lg:min-h-[250px]"
             }}
           />
 
-          <div className="relative z-10 flex min-h-[190px] flex-col justify-between gap-6 px-6 py-6 sm:min-h-[205px] lg:min-h-[220px] lg:flex-row lg:items-center lg:px-8">
+          <div className="relative z-10 flex min-h-0 flex-col justify-between gap-5 px-4 py-5 sm:min-h-[205px] sm:gap-6 sm:px-6 sm:py-6 lg:min-h-[220px] lg:flex-row lg:items-center lg:px-8">
             <div className={`min-w-0 ${isArabic ? "text-right" : "text-left"}`}>
-              <div className="flex items-center gap-3">
-                <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-white/[.10] text-[#E6F3F6] backdrop-blur-sm">
+              <div className="flex items-start gap-2.5 sm:items-center sm:gap-3">
+                <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-white/[.10] text-[#E6F3F6] backdrop-blur-sm sm:size-11">
                   <Truck size={25} strokeWidth={1.8} />
                 </span>
 
-                <div>
-                  <p className="text-xs font-bold text-[#E6F3F6]/80">
+                <div className="min-w-0">
+                  <p className="text-[11px] font-bold leading-5 text-[#E6F3F6]/80 sm:text-xs">
                     {t("شبكة دوائي للأعمال")}
                   </p>
 
-                  <h1 className="mt-1 text-[24px] font-black text-white sm:text-[28px]">
+                  <h1 className="mt-1.5 break-words text-xl font-black leading-8 text-white sm:mt-1 sm:text-[28px] sm:leading-tight">
                     {title}
                   </h1>
 
-                  <p className="mt-1 max-w-2xl text-xs leading-6 text-[#D6D6D6] sm:text-sm">
+                  <p className="mt-2.5 max-w-2xl text-xs leading-6 text-[#D6D6D6] sm:mt-1 sm:text-sm">
                     {sub}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="grid w-full gap-3 sm:grid-cols-2 lg:w-auto lg:min-w-[280px]">
+            <div className="grid w-full gap-2.5 sm:gap-3 sm:grid-cols-2 lg:w-auto lg:min-w-[280px]">
               <div
                 className={`relative min-h-[88px] rounded-[12px] border border-white/80 bg-white p-4 text-[#17363E] shadow-[0_10px_28px_rgba(4,45,53,.13)] ${isArabic ? "pl-14 text-right" : "pr-14 text-left"}`}
               >
@@ -962,7 +1029,7 @@ lg:min-h-[250px]"
                 navigate(warehouseTabPaths[x] || "/app/supply-chain");
               }
             }}
-            className={`rounded-xl px-5 py-3 text-sm font-black ${activeTab === x ? "bg-[#216474] text-white shadow-[0_8px_18px_rgba(33,100,116,.14)]" : "border border-[#DCE8EA] bg-white text-[#60777D] hover:bg-[#F4FAFA] hover:text-[#216474]"}`}
+            className={`rounded-xl px-4 py-2.5 text-[13px] font-black sm:px-5 sm:py-3 sm:text-sm ${activeTab === x ? "bg-[#216474] text-white shadow-[0_8px_18px_rgba(33,100,116,.14)]" : "border border-[#DCE8EA] bg-white text-[#60777D] hover:bg-[#F4FAFA] hover:text-[#216474]"}`}
           >
             {t(
               {
@@ -1092,7 +1159,7 @@ lg:min-h-[250px]"
           </div>
         )}
         {activeTab === "inventory" && (
-          <div className="surface p-5">
+          <div className="surface p-4 sm:p-5">
             <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h2 className="text-lg font-black">
@@ -1240,7 +1307,7 @@ lg:min-h-[250px]"
             </div>
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {visibleRepresentatives.map((r) => (
-                <article key={r.id} className="surface p-5">
+                <article key={r.id} className="surface p-4 sm:p-5">
                   <div className="flex items-start justify-between">
                     <span className="grid size-12 place-items-center rounded-2xl bg-[#EAF4F3]">
                       <UserRoundCheck />
@@ -1581,7 +1648,7 @@ function OrderDetailsDialog({
   return (
     <div
       onMouseDown={onClose}
-      className="fixed inset-0 z-[100] grid place-items-center bg-[#071f25]/65 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] grid place-items-center bg-[#071f25]/65 p-3 backdrop-blur-sm sm:p-4"
     >
       <div
         onMouseDown={(event) => event.stopPropagation()}
@@ -1591,39 +1658,39 @@ function OrderDetailsDialog({
         dir={direction}
         lang={currentLanguage}
       >
-        <header className="relative overflow-hidden bg-[linear-gradient(270deg,#10505A_0%,#216474_100%)] p-6 text-white">
-          <div className="pointer-events-none absolute -end-14 -top-20 size-52 rounded-full border-[28px] border-white/[.04]" />
+        <header className="relative overflow-hidden bg-[linear-gradient(270deg,#10505A_0%,#216474_100%)] p-4 text-white sm:p-6">
+          <div className="pointer-events-none absolute -end-14 -top-20 hidden size-52 rounded-full border-[28px] border-white/[.04] sm:block" />
           <button
             type="button"
             aria-label="إغلاق نافذة التفاصيل"
             onClick={onClose}
-            className="absolute start-5 top-5 z-20 grid size-11 place-items-center rounded-xl border border-white/15 bg-white/15 transition hover:bg-white/25 focus:outline-none focus:ring-2 focus:ring-white"
+            className="absolute start-4 top-4 z-20 grid size-9 place-items-center rounded-xl border border-white/15 bg-white/15 transition hover:bg-white/25 focus:outline-none focus:ring-2 focus:ring-white sm:start-5 sm:top-5 sm:size-11"
           >
             <X />
           </button>
-          <div className="relative z-10 pe-14">
+          <div className="relative z-10 pe-12 sm:pe-14">
             <p className="font-mono text-xs font-black text-[#E6F3F6]">
               {order.orderCode}
             </p>
-            <div className="mt-3 flex flex-wrap items-center gap-3">
-              <h2 className="text-3xl font-black">
+            <div className="mt-2.5 flex flex-wrap items-center gap-2 sm:mt-3 sm:gap-3">
+              <h2 className="break-words text-xl font-black leading-8 sm:text-3xl sm:leading-tight">
                 {role === "Pharmacy" ? order.warehouseName : order.pharmacyName}
               </h2>
               <span
-                className={`rounded-full px-3 py-1 text-xs font-black ${tone(order.status)}`}
+                className={`shrink-0 rounded-full px-3 py-1 text-[11px] font-black sm:text-xs ${tone(order.status)}`}
               >
                 {t(labels[order.status] || order.status)}
               </span>
             </div>
-            <p className="mt-2 flex items-center gap-2 text-sm text-white/55">
-              <CalendarDays size={15} />
+            <p className="mt-2 flex items-center gap-2 text-xs leading-5 text-white/55 sm:text-sm">
+              <CalendarDays size={15} className="shrink-0" />
               {formatDate(order.createdAtUtc, currentLanguage, true)}
             </p>
           </div>
         </header>
-        <div className="grid gap-5 p-5 lg:grid-cols-[1fr_310px]">
-          <main className="space-y-5">
-            <section className="surface p-5">
+        <div className="grid gap-4 p-4 sm:gap-5 sm:p-5 lg:grid-cols-[1fr_310px]">
+          <main className="space-y-4 sm:space-y-5">
+            <section className="surface p-4 sm:p-5">
               <h3 className="font-black">{t("مراحل معالجة الطلب")}</h3>
               <div className="mt-5 flex items-start">
                 {steps.map((step, index) => (
@@ -1648,7 +1715,7 @@ function OrderDetailsDialog({
                 ))}
               </div>
             </section>
-            <section className="surface p-5">
+            <section className="surface p-4 sm:p-5">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-black">{t("تفاصيل الأدوية")}</h3>
@@ -1686,7 +1753,7 @@ function OrderDetailsDialog({
               </div>
             </section>
             {order.shipment && (
-              <section className="surface p-5">
+              <section className="surface p-4 sm:p-5">
                 <h3 className="font-black">{t("بيانات الشحنة والتتبع")}</h3>
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   <InfoBox
@@ -1738,8 +1805,8 @@ function OrderDetailsDialog({
               </section>
             )}
           </main>
-          <aside className="space-y-5">
-            <section className="surface p-5">
+          <aside className="space-y-4 sm:space-y-5">
+            <section className="surface p-4 sm:p-5">
               <div className="flex items-center gap-3">
                 <span className="grid size-11 place-items-center rounded-xl bg-[#EAF4F3] text-[#216474]">
                   <Building2 size={20} />
@@ -1797,7 +1864,7 @@ function OrderDetailsDialog({
                 </div>
               )}
             </section>
-            <section className="surface p-5">
+            <section className="surface p-4 sm:p-5">
               <h3 className="font-black">{t("ملخص التكلفة")}</h3>
               <div className="mt-4 space-y-3 text-sm">
                 <div className="flex justify-between">
@@ -1815,7 +1882,7 @@ function OrderDetailsDialog({
               </div>
             </section>
             {role === "Warehouse" && (
-              <section className="surface p-5">
+              <section className="surface p-4 sm:p-5">
                 <h3 className="font-black">{t("إجراءات المستودع")}</h3>
                 {next && (
                   <button
@@ -1878,7 +1945,7 @@ function OrderDetailsDialog({
               </section>
             )}
             {role === "Representative" && order.shipment && (
-              <section className="surface p-5">
+              <section className="surface p-4 sm:p-5">
                 <h3 className="font-black">إجراءات مهمة التوصيل</h3>
                 <p className="mt-2 text-xs leading-6 text-[#829499]">
                   حدّث حالة الشحنة بالترتيب. يتم إرفاق موقعك الحالي مع كل تحديث
@@ -1954,7 +2021,7 @@ function OrderDetailsDialog({
               </section>
             )}
             {role === "Pharmacy" && order.status === "Delivered" && (
-              <section className="surface p-5">
+              <section className="surface p-4 sm:p-5">
                 <h3 className="font-black">خدمة ما بعد الاستلام</h3>
                 <p className="mt-2 text-xs leading-6 text-[#829499]">
                   يمكنك إنشاء طلب إرجاع لبند تم استلامه من هذا الطلب.
@@ -2043,18 +2110,21 @@ function MarketplacePanel({
               <p className="mt-1 truncate text-xs text-[#A5A5A5]">
                 {w.address}
               </p>
-              <div className="mt-4 grid grid-cols-3 gap-2 text-center text-[11px]">
-                <div className="rounded-xl bg-[#F8FBFB] p-3">
-                  <b className="block text-base">{w.availableMedicines}</b>دواء
+              <div className="mt-4 grid grid-cols-3 gap-1.5 text-center text-[10px] sm:gap-2 sm:text-[11px]">
+                <div className="rounded-xl bg-[#F8FBFB] p-2 sm:p-3">
+                  <b className="block text-sm sm:text-base">
+                    {w.availableMedicines}
+                  </b>
+                  دواء
                 </div>
-                <div className="rounded-xl bg-[#F8FBFB] p-3">
-                  <b className="block text-sm">
+                <div className="rounded-xl bg-[#F8FBFB] p-2 sm:p-3">
+                  <b className="block text-[13px] sm:text-sm">
                     {money(w.minimumOrderAmount, currentLanguage)}
                   </b>
                   الحد الأدنى
                 </div>
-                <div className="rounded-xl bg-[#F8FBFB] p-3">
-                  <b className="block text-sm">
+                <div className="rounded-xl bg-[#F8FBFB] p-2 sm:p-3">
+                  <b className="block text-[13px] sm:text-sm">
                     {money(w.deliveryFee, currentLanguage)}
                   </b>
                   التوصيل
@@ -2105,7 +2175,7 @@ function MarketplacePanel({
     });
   return (
     <div className="grid gap-5 xl:grid-cols-[1fr_360px]">
-      <section className="surface p-5">
+      <section className="surface p-4 sm:p-5">
         <div className="flex flex-col gap-4 border-b border-slate-100 pb-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <button
@@ -2327,7 +2397,7 @@ function ReturnsPanel({
   return (
     <div className="grid gap-4 md:grid-cols-2">
       {items.map((item) => (
-        <article key={item.id} className="surface p-5">
+        <article key={item.id} className="surface p-4 sm:p-5">
           <div className="flex items-start justify-between gap-3">
             <span className="grid size-11 place-items-center rounded-xl bg-amber-50 text-amber-700">
               <RotateCcw size={20} />
@@ -2696,7 +2766,7 @@ function DeliveryPaymentDialog({ order, busy, error, onClose, onConfirm }) {
       >
         <div className="rounded-2xl bg-[#F8FBFB] p-4">
           <p className="text-sm font-black">{order.warehouseName}</p>
-          <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
+          <div className="mt-3 grid grid-cols-3 gap-1.5 text-center text-[11px] sm:gap-2 sm:text-xs">
             <AccountValue
               label="إجمالي الفاتورة"
               value={money(
@@ -2973,25 +3043,27 @@ function RecallDialog({ batch, busy, error, onClose, onSubmit }) {
 
 function SimpleDialog({ title, icon: Icon, onClose, children }) {
   return (
-    <div className="fixed inset-0 z-[120] grid place-items-center bg-[#071f25]/65 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[120] grid place-items-center bg-[#071f25]/65 p-3 backdrop-blur-sm sm:p-4">
       <div
         dir="rtl"
-        className="max-h-[92vh] w-full max-w-xl overflow-auto rounded-[1.75rem] bg-white shadow-2xl"
+        className="max-h-[92vh] w-full max-w-xl overflow-auto rounded-2xl bg-white shadow-2xl sm:rounded-[1.75rem]"
       >
-        <header className="flex items-center justify-between bg-[#174B57] p-5 text-white">
-          <div className="flex items-center gap-3">
-            <Icon size={23} />
-            <h2 className="text-xl font-black">{title}</h2>
+        <header className="flex items-center justify-between gap-3 bg-[#174B57] p-4 text-white sm:p-5">
+          <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
+            <Icon size={23} className="shrink-0" />
+            <h2 className="min-w-0 break-words text-base font-black leading-6 sm:text-xl sm:leading-tight">
+              {title}
+            </h2>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="grid size-9 place-items-center rounded-xl bg-white/10"
+            className="grid size-9 shrink-0 place-items-center rounded-xl bg-white/10"
           >
             <X size={19} />
           </button>
         </header>
-        <div className="p-6">{children}</div>
+        <div className="p-4 sm:p-6">{children}</div>
       </div>
     </div>
   );
@@ -3050,18 +3122,18 @@ function WarehouseDialog({ mode, batch, onClose, onSaved }) {
     onChange: (e) => setForm((x) => ({ ...x, [name]: e.target.value })),
   });
   return (
-    <div className="fixed inset-0 z-[100] grid place-items-center bg-[#071f25]/65 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[100] grid place-items-center bg-[#071f25]/65 p-3 backdrop-blur-sm sm:p-4">
       <div
         className="max-h-[92vh] w-full max-w-2xl overflow-auto rounded-[16px] bg-white shadow-2xl"
         dir={direction}
         lang={currentLanguage}
       >
-        <div className="flex items-center justify-between bg-[#174B57] p-6 text-white">
-          <div>
+        <div className="flex items-center justify-between gap-3 bg-[#174B57] p-4 text-white sm:p-6">
+          <div className="min-w-0">
             <p className="text-xs font-bold text-[#E6F3F6]">
               {t("إدارة المستودع")}
             </p>
-            <h2 className="mt-1 text-2xl font-black">
+            <h2 className="mt-1 break-words text-lg font-black leading-7 sm:text-2xl sm:leading-tight">
               {isBatch
                 ? batch
                   ? "تعديل الدفعة الدوائية"
@@ -3071,7 +3143,7 @@ function WarehouseDialog({ mode, batch, onClose, onSaved }) {
           </div>
           <button
             onClick={onClose}
-            className="grid size-10 place-items-center rounded-xl bg-white/10"
+            className="grid size-9 shrink-0 place-items-center rounded-xl bg-white/10 sm:size-10"
           >
             <X />
           </button>
@@ -3081,7 +3153,7 @@ function WarehouseDialog({ mode, batch, onClose, onSaved }) {
             e.preventDefault();
             save.mutate();
           }}
-          className="grid gap-4 p-6 sm:grid-cols-2"
+          className="grid gap-4 p-4 sm:grid-cols-2 sm:p-6"
         >
           {isBatch ? (
             <>
@@ -3436,7 +3508,7 @@ function InvoicesPanel({ invoices, loading, role, onManage }) {
           hint="مغلقة ماليًا"
           className="bg-[#EAF4F3] text-[#174B57]"
         />
-        <article className="surface p-5">
+        <article className="surface p-4 sm:p-5">
           <span className="grid size-12 place-items-center rounded-2xl bg-[#FFF7DF] text-[#DFAE0D]">
             <WalletCards />
           </span>
@@ -3480,21 +3552,21 @@ function InvoicesPanel({ invoices, loading, role, onManage }) {
                 )}
               </span>
             </div>
-            <div className="grid grid-cols-3 gap-2 p-5 text-center text-xs">
-              <div className="rounded-xl bg-[#F8FBFB] p-3">
-                <b className="block text-sm">
+            <div className="grid grid-cols-3 gap-1.5 p-4 text-center text-[11px] sm:gap-2 sm:p-5 sm:text-xs">
+              <div className="rounded-xl bg-[#F8FBFB] p-2 sm:p-3">
+                <b className="block text-[13px] sm:text-sm">
                   {money(invoice.totalAmount, currentLanguage)}
                 </b>
                 الإجمالي
               </div>
-              <div className="rounded-xl bg-[#F8FBFB] p-3">
-                <b className="block text-sm text-[#174B57]">
+              <div className="rounded-xl bg-[#F8FBFB] p-2 sm:p-3">
+                <b className="block text-[13px] text-[#174B57] sm:text-sm">
                   {money(invoice.paidAmount, currentLanguage)}
                 </b>
                 المدفوع
               </div>
-              <div className="rounded-xl bg-[#F8FBFB] p-3">
-                <b className="block text-sm text-[#E11D48]">
+              <div className="rounded-xl bg-[#F8FBFB] p-2 sm:p-3">
+                <b className="block text-[13px] text-[#E11D48] sm:text-sm">
                   {money(invoice.remainingAmount, currentLanguage)}
                 </b>
                 المتبقي
@@ -3780,8 +3852,8 @@ function InvoiceDialog({ invoice, role, busy, error, onClose, onSubmit }) {
         </header>
         <div className="grid gap-5 p-5 lg:grid-cols-[1fr_280px]">
           <main className="space-y-4">
-            <section className="surface p-5">
-              <div className="grid grid-cols-3 gap-3 text-center text-xs">
+            <section className="surface p-4 sm:p-5">
+              <div className="grid grid-cols-3 gap-2 text-center text-[11px] sm:gap-3 sm:text-xs">
                 <InfoBox
                   label="الإجمالي"
                   value={money(invoice.totalAmount, currentLanguage)}

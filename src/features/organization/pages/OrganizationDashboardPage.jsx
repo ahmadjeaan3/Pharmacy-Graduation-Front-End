@@ -134,9 +134,7 @@ export function OrganizationDashboardPage() {
   ];
 
   const PrimaryArrow = isArabic ? ArrowUpLeft : ArrowUpRight;
-
   const SecondaryArrow = isArabic ? ArrowLeft : ArrowRight;
-
   const LinkArrow = isArabic ? ArrowLeft : ArrowRight;
 
   return (
@@ -146,11 +144,11 @@ export function OrganizationDashboardPage() {
       className="flex w-full flex-col gap-6"
     >
       {/* البانر */}
-      <section className="relative min-h-[271px] w-full overflow-hidden rounded-xl bg-[#10505a] text-white max-sm:min-h-[310px]">
+      <section className="relative min-h-[271px] w-full overflow-hidden rounded-xl bg-[#10505a] text-white max-sm:min-h-[430px] max-sm:rounded-xl">
         {/* صورة البانر فقط */}
         <div
           aria-hidden="true"
-          className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-300 ${
+          className={`absolute inset-0 hidden bg-cover bg-center bg-no-repeat transition-transform duration-300 sm:block ${
             isArabic ? "" : "scale-x-[-1]"
           }`}
           style={{
@@ -161,7 +159,7 @@ export function OrganizationDashboardPage() {
         {/* طبقة التعتيم */}
         <div
           aria-hidden="true"
-          className={`absolute inset-0 ${
+          className={`absolute inset-0 hidden sm:block ${
             isArabic
               ? "bg-[linear-gradient(270deg,#10505a_0%,rgba(33,100,116,.25)_70%,rgba(33,100,116,.05)_100%)]"
               : "bg-[linear-gradient(90deg,#10505a_0%,rgba(33,100,116,.25)_70%,rgba(33,100,116,.05)_100%)]"
@@ -171,7 +169,7 @@ export function OrganizationDashboardPage() {
         {/* بيانات المنظمة */}
         <div
           dir={direction}
-          className={`absolute start-4 top-8 z-10 flex w-[calc(100%-2rem)] max-w-[540px] flex-col sm:start-8 sm:top-12 lg:start-[41px] ${
+          className={`absolute inset-x-4 top-6 z-10 flex w-[calc(100%-2rem)] max-w-[540px] flex-col sm:start-8 sm:top-12 sm:inset-x-auto lg:start-[41px] ${
             isArabic ? "items-end text-right" : "items-start text-left"
           }`}
         >
@@ -204,6 +202,7 @@ export function OrganizationDashboardPage() {
             }`}
           >
             <MapPin size={18} strokeWidth={1.7} />
+
             <span dir={direction}>
               {[data.area, data.city]
                 .filter(Boolean)
@@ -221,7 +220,7 @@ export function OrganizationDashboardPage() {
           >
             <Link
               to="/app/organization/campaigns"
-              className={`flex h-12 min-w-[180px] items-center justify-center gap-2 rounded-lg bg-white px-6 text-base font-medium text-[#216474] transition hover:bg-[#f8f8f8] ${
+              className={`flex h-12 w-full min-w-[180px] items-center justify-center gap-2 rounded-lg bg-white px-6 text-base font-medium text-[#216474] transition hover:bg-[#f8f8f8] sm:w-auto ${
                 isArabic ? "flex-row-reverse" : "flex-row"
               }`}
             >
@@ -232,7 +231,7 @@ export function OrganizationDashboardPage() {
 
             <Link
               to="/app/organization/offers"
-              className={`flex h-12 min-w-[180px] items-center justify-center gap-2 rounded-lg border border-white bg-transparent px-6 text-base font-medium text-white transition hover:bg-white/10 ${
+              className={`flex h-12 w-full min-w-[180px] items-center justify-center gap-2 rounded-lg border border-white bg-transparent px-6 text-base font-medium text-white transition hover:bg-white/10 sm:w-auto ${
                 isArabic ? "flex-row-reverse" : "flex-row"
               }`}
             >
@@ -246,32 +245,39 @@ export function OrganizationDashboardPage() {
         {/* بطاقة حالة المنظمة */}
         <div
           dir={direction}
-          className={`absolute top-[48px] z-10 flex h-[119px] w-[249px] flex-col rounded-xl border border-white/15 bg-white/20 px-[18px] py-5 backdrop-blur-[10px] ${
+          className={`absolute left-4 right-4 top-auto z-10 mt-0 flex h-[119px] w-auto flex-col rounded-xl border border-white bg-white px-[18px] py-5 shadow-[0_12px_30px_rgba(0,0,0,.12)] backdrop-blur-[10px] max-sm:bottom-5 sm:top-[48px] sm:bottom-auto sm:left-auto sm:right-auto sm:w-[249px] ${
             isArabic
-              ? "items-start text-right lg:left-[41px]"
-              : "items-start text-left lg:right-[41px]"
+              ? "items-start text-right sm:lg:left-[41px]"
+              : "items-start text-left sm:lg:right-[41px]"
           }`}
         >
-          <div className="flex w-full items-center justify-between text-xs text-[#d6d6d6]">
+          <div className="flex w-full items-center justify-between text-xs text-[#829499]">
             <span>{t("حالة المنظمة")}</span>
 
             <BadgeCheck
               size={20}
               strokeWidth={1.8}
-              className={data.isApproved ? "text-[#dfae0d]" : "text-[#dfae0d]"}
+              className="text-[#dfae0d]"
             />
           </div>
 
-          <strong className="mt-3 block w-full text-base font-medium leading-6 text-[#e6f3f6]">
-            {data.isApproved ? t("معتمدة وجاهزة للعمل") : t(verification.label)}
+          <strong className="mt-3 block w-full text-base font-medium leading-6 text-[#29464D]">
+            {data.isApproved
+              ? t("معتمدة وجاهزة للعمل")
+              : t(verification.label)}
           </strong>
 
           <Link
             to="/app/organization/profile"
-            className="mt-3 flex w-full items-center justify-start gap-2 text-xs font-medium text-[#dfae0d]"
+            className="mt-3 flex w-full items-center justify-start gap-2 text-xs font-medium text-[#216474]"
           >
             <span>{t("مراجعة الملف والتحقق منه")}</span>
-            <LinkArrow size={16} strokeWidth={1.7} className="shrink-0" />
+
+            <LinkArrow
+              size={16}
+              strokeWidth={1.7}
+              className="shrink-0"
+            />
           </Link>
         </div>
       </section>
@@ -411,7 +417,9 @@ export function OrganizationDashboardPage() {
           <div
             dir={direction}
             className={`flex min-w-0 items-center gap-3 ${
-              isArabic ? "flex-row text-right" : "flex-row text-left"
+              isArabic
+                ? "flex-row text-right"
+                : "flex-row text-left"
             }`}
           >
             <div className="min-w-0">
@@ -467,7 +475,8 @@ export function OrganizationDashboardPage() {
                   },
                 ];
 
-                const accent = accentClasses[index % accentClasses.length];
+                const accent =
+                  accentClasses[index % accentClasses.length];
 
                 return (
                   <article
@@ -475,6 +484,7 @@ export function OrganizationDashboardPage() {
                     className={`group relative min-h-[165px] overflow-hidden rounded-[18px] border border-[#174b57]/[0.08] bg-white p-5 shadow-[0_8px_28px_rgba(23,75,87,0.055)] transition duration-300 hover:-translate-y-1 hover:border-[#216474]/20 hover:shadow-[0_18px_38px_rgba(23,75,87,0.11)] ${
                       isArabic ? "text-right" : "text-left"
                     }`}
+                    key={campaign.id || index}
                   >
                     {/* زخرفة داخلية */}
                     <span
@@ -486,7 +496,9 @@ export function OrganizationDashboardPage() {
                     <div
                       dir="ltr"
                       className={`relative flex w-full items-center justify-between gap-3 ${
-                        isArabic ? "flex-row-reverse" : "flex-row"
+                        isArabic
+                          ? "flex-row-reverse"
+                          : "flex-row"
                       }`}
                     >
                       {/* الأيقونة + الاسم */}
@@ -525,7 +537,9 @@ export function OrganizationDashboardPage() {
                     <div
                       dir="ltr"
                       className={`relative mt-4 flex items-center justify-between gap-3 ${
-                        isArabic ? "flex-row-reverse" : "flex-row"
+                        isArabic
+                          ? "flex-row-reverse"
+                          : "flex-row"
                       }`}
                     >
                       <span
@@ -552,7 +566,10 @@ export function OrganizationDashboardPage() {
                         className="inline-flex shrink-0 items-center gap-1 text-[11px] font-bold text-[#216474] transition group-hover:gap-2"
                       >
                         <span>{t("التفاصيل")}</span>
-                        <LinkArrow size={13} strokeWidth={1.8} />
+                        <LinkArrow
+                          size={13}
+                          strokeWidth={1.8}
+                        />
                       </Link>
                     </div>
                   </article>

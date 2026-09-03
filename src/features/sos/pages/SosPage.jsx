@@ -72,6 +72,7 @@ export function SosPage() {
 
 /* =========================================================
    USER REQUEST
+   ⚠️ بدون أي تعديل
 ========================================================= */
 
 function UserRequest() {
@@ -116,11 +117,14 @@ function UserRequest() {
         className="
           relative isolate
           -mt-6
+          min-h-[140px]
           overflow-hidden
-          bg-[#0D7586]
+          bg-[#10505A]
           text-white
           sm:-mt-7
+          sm:min-h-[180px]
           lg:-mt-8
+          lg:min-h-[240px]
         "
         style={{
           width: "100vw",
@@ -134,11 +138,13 @@ function UserRequest() {
           draggable={false}
           className="
             absolute inset-0 -z-20
+            hidden
             h-full w-full
             select-none
             object-cover
             object-center
             opacity-80
+            lg:block
           "
         />
 
@@ -146,7 +152,9 @@ function UserRequest() {
           aria-hidden="true"
           className="
             absolute inset-0 -z-10
+            hidden
             bg-[linear-gradient(90deg,rgba(0,60,73,.18),rgba(3,110,126,.58),rgba(0,63,76,.44))]
+            lg:block
           "
         />
 
@@ -154,25 +162,30 @@ function UserRequest() {
           className="
             mx-auto
             grid
-            min-h-[240px]
+            min-h-[140px]
             w-full
             max-w-[1200px]
             items-center
-            gap-7
+            gap-5
             px-5
-            py-8
+            py-5
+            sm:min-h-[180px]
+            sm:gap-7
             sm:px-7
+            sm:py-6
+            lg:min-h-[240px]
             lg:grid-cols-[1fr_auto]
             lg:px-8
+            lg:py-8
           "
         >
           {/* Title */}
 
-          <div className="flex min-w-0 items-center gap-4 text-right">
+          <div className="flex min-w-0 items-center gap-3 text-right sm:gap-4">
             <span
               className="
                 grid
-                size-12
+                size-11
                 shrink-0
                 place-items-center
                 rounded-[10px]
@@ -180,25 +193,35 @@ function UserRequest() {
                 border-white/15
                 bg-white/10
                 backdrop-blur-sm
+                sm:size-12
               "
             >
               <Pill
+                size={21}
+                strokeWidth={1.8}
+                className="sm:hidden"
+              />
+
+              <Pill
                 size={23}
                 strokeWidth={1.8}
+                className="hidden sm:block"
               />
             </span>
 
             <div className="min-w-0">
-              <span className="text-[11px] font-medium text-white/75">
+              <span className="text-[10px] font-medium text-white/75 sm:text-[11px]">
                 خدمة المساعدة الدوائية
               </span>
 
               <h1
                 className="
-                  mt-1.5
-                  text-[27px]
+                  mt-1
+                  break-words
+                  text-[23px]
                   font-bold
                   leading-tight
+                  sm:mt-1.5
                   sm:text-[30px]
                 "
               >
@@ -207,11 +230,14 @@ function UserRequest() {
 
               <p
                 className="
-                  mt-2
+                  mt-1.5
                   max-w-[680px]
-                  text-[12px]
-                  leading-6
+                  text-[11px]
+                  leading-5
                   text-white/75
+                  sm:mt-2
+                  sm:text-[12px]
+                  sm:leading-6
                 "
               >
                 حدد الدواء الذي تحتاجه وسنرسل طلبك إلى الصيدليات
@@ -233,19 +259,21 @@ function UserRequest() {
               border
               border-amber-200/20
               bg-white/10
-              px-5
-              py-4
+              px-4
+              py-3
               text-right
               backdrop-blur-sm
+              sm:px-5
+              sm:py-4
               lg:w-[360px]
             "
           >
             <AlertTriangle
-              size={20}
+              size={19}
               className="shrink-0 text-amber-200"
             />
 
-            <p className="text-[11px] leading-6 text-white/80">
+            <p className="text-[10px] leading-5 text-white/80 sm:text-[11px] sm:leading-6">
               إذا كانت الحالة تهدد الحياة فاتصل فوراً بالإسعاف أو
               رقم الطوارئ المحلي. هذه الخدمة ليست بديلاً عن الطوارئ.
             </p>
@@ -423,7 +451,16 @@ function RequestsCenter({ admin = false }) {
   });
 
   return (
-    <div dir="rtl" className="space-y-5">
+    <div
+      dir="rtl"
+      className="
+        w-full
+        min-w-0
+        space-y-5
+        overflow-x-hidden
+        sm:space-y-6
+      "
+    >
       {/* =====================================================
           HERO
       ===================================================== */}
@@ -442,7 +479,20 @@ function RequestsCenter({ admin = false }) {
           FILTERS
       ===================================================== */}
 
-      <section className="surface flex flex-wrap gap-2 p-4">
+      <section
+        className="
+          surface
+          flex
+          min-w-0
+          flex-col
+          gap-2
+          p-3
+          sm:flex-row
+          sm:flex-wrap
+          sm:gap-2
+          sm:p-4
+        "
+      >
         {[
           ["", "الكل"],
           ["New", "جديدة"],
@@ -453,11 +503,18 @@ function RequestsCenter({ admin = false }) {
             type="button"
             key={value}
             onClick={() => setStatus(value)}
-            className={
-              status === value
-                ? "btn-primary"
-                : "btn-secondary"
-            }
+            className={`
+              ${
+                status === value
+                  ? value === ""
+                    ? "btn-primary !bg-[#10505A] hover:!bg-[#0D4650]"
+                    : "btn-primary"
+                  : "btn-secondary"
+              }
+              w-full
+              justify-center
+              sm:w-auto
+            `}
           >
             {label}
           </button>
@@ -469,7 +526,16 @@ function RequestsCenter({ admin = false }) {
       ===================================================== */}
 
       {requests.isError && (
-        <p className="surface p-5 font-bold text-rose-700">
+        <p
+          className="
+            surface
+            p-4
+            text-sm
+            font-bold
+            text-rose-700
+            sm:p-5
+          "
+        >
           تعذر تحميل الطلبات.
         </p>
       )}
@@ -502,16 +568,20 @@ function AdminSosHero({ requestCount }) {
   return (
     <section
       className="
-        relative isolate
-        min-h-[270px]
+        relative
+        isolate
+        min-h-[140px]
+        w-full
         overflow-hidden
-        rounded-[2rem]
+        rounded-[14px]
         border
         border-[#d5e7e8]
-        bg-[#8bcbd0]
+        bg-[#10505A]
         text-white
         shadow-[0_24px_60px_rgba(23,75,87,.13)]
-        sm:min-h-[300px]
+        sm:min-h-[180px]
+        md:min-h-[210px]
+        lg:min-h-[250px]
       "
     >
       <img
@@ -520,50 +590,110 @@ function AdminSosHero({ requestCount }) {
         aria-hidden="true"
         draggable={false}
         className="
-          absolute inset-0 -z-20
-          h-full w-full
+          absolute
+          inset-0
+          -z-20
+          hidden
+          h-full
+          w-full
           select-none
           object-cover
           object-[42%_center]
-          sm:object-center
+          lg:block
         "
       />
 
       <div
         className="
-          absolute inset-0 -z-10
+          absolute
+          inset-0
+          -z-10
+          hidden
           bg-[linear-gradient(90deg,rgba(255,255,255,.02)_0%,rgba(20,91,103,.12)_38%,rgba(8,73,85,.76)_72%,rgba(7,61,72,.9)_100%)]
+          lg:block
         "
       />
 
       <div
         className="
+          relative
+          z-10
           flex
-          min-h-[270px]
+          min-h-[140px]
+          w-full
           flex-col
+          items-stretch
           justify-center
-          gap-6
-          px-6
-          py-8
-          sm:min-h-[300px]
-          sm:px-9
+          gap-4
+          px-5
+          py-5
+          sm:min-h-[180px]
+          sm:gap-6
+          sm:px-6
+          sm:py-6
+          md:min-h-[210px]
+          md:px-8
+          lg:min-h-[250px]
           lg:flex-row
           lg:items-center
           lg:justify-between
-          lg:px-12
+          lg:gap-8
+          lg:px-10
+          lg:py-7
         "
       >
-        <div className="max-w-[720px] text-white">
-          <p className="flex items-center gap-2 text-sm font-bold text-[#b9f0ec]">
-            <ShieldCheck size={17} />
+        <div
+          className="
+            min-w-0
+            max-w-[720px]
+            text-right
+            text-white
+          "
+        >
+          <p
+            className="
+              flex
+              flex-wrap
+              items-center
+              gap-2
+              text-[11px]
+              font-bold
+              text-[#b9f0ec]
+              sm:text-sm
+            "
+          >
+            <ShieldCheck size={16} />
             رقابة إدارية محمية
           </p>
 
-          <h1 className="mt-3 text-3xl font-black leading-tight drop-shadow-sm sm:text-4xl lg:text-[44px]">
+          <h1
+            className="
+              mt-1.5
+              break-words
+              text-[23px]
+              font-black
+              leading-tight
+              drop-shadow-sm
+              sm:mt-3
+              sm:text-4xl
+              lg:text-[44px]
+            "
+          >
             مراقبة طلبات الدواء العاجلة
           </h1>
 
-          <p className="mt-3 max-w-2xl text-sm leading-7 text-white/80">
+          <p
+            className="
+              mt-2
+              max-w-2xl
+              text-[11px]
+              leading-5
+              text-white/80
+              sm:mt-3
+              sm:text-sm
+              sm:leading-7
+            "
+          >
             متابعة وإدارة طلبات المساعدة الدوائية العاجلة ومراقبة
             حالة الطلبات والجهات التي تتولى معالجتها.
           </p>
@@ -572,52 +702,79 @@ function AdminSosHero({ requestCount }) {
         <div
           className="
             flex
-            w-fit
-            min-w-[180px]
+            min-h-14
+            w-full
+            min-w-0
+            shrink-0
             items-center
             gap-3
             rounded-2xl
             border
             border-white/35
             bg-white/90
-            px-5
-            py-4
+            px-4
+            py-3
             text-[#174b57]
             shadow-xl
             backdrop-blur-md
+            sm:min-h-16
+            sm:w-fit
+            sm:min-w-[180px]
+            sm:px-5
+            sm:py-4
           "
         >
           <span
             className="
               grid
-              size-11
+              size-10
+              shrink-0
               place-items-center
               rounded-xl
               bg-[#e5f3f2]
               text-[#216474]
+              sm:size-11
             "
           >
-            <Database size={21} />
+            <Database size={20} />
           </span>
 
-          <div>
-            <span className="text-xs font-bold text-[#71858a]">
+          <div className="min-w-0">
+            <span className="text-[11px] font-bold text-[#71858a] sm:text-xs">
               الطلبات الحالية
             </span>
 
-            <strong className="mt-0.5 block text-2xl font-black">
+            <strong className="mt-0.5 block text-xl font-black sm:text-2xl">
               {requestCount}
             </strong>
           </div>
         </div>
       </div>
+
+      {/* Decorative circle - desktop only */}
+
+      <div
+        aria-hidden="true"
+        className="
+          pointer-events-none
+          absolute
+          -top-20
+          -left-14
+          hidden
+          size-64
+          rounded-full
+          border-[40px]
+          border-white/[.04]
+          lg:block
+        "
+      />
     </section>
   );
 }
 
 /* =========================================================
    PHARMACY SOS HERO
-   SAME STYLE AS PharmacyWorkingHoursPage
+   SAME RESPONSIVE STYLE
 ========================================================= */
 
 function PharmacySosHero({ requestCount }) {
@@ -641,12 +798,15 @@ function PharmacySosHero({ requestCount }) {
       className="
         relative
         isolate
-        min-h-[220px]
+        min-h-[140px]
+        w-full
         overflow-hidden
         rounded-[14px]
+        bg-[#10505A]
         text-white
         shadow-[0_22px_55px_rgba(23,75,87,.16)]
-        sm:min-h-[230px]
+        sm:min-h-[180px]
+        md:min-h-[210px]
         lg:min-h-[250px]
       "
     >
@@ -662,11 +822,14 @@ function PharmacySosHero({ requestCount }) {
         className={`
           absolute
           inset-0
+          -z-20
+          hidden
           h-full
           w-full
           select-none
           object-cover
           object-[center_38%]
+          lg:block
           ${isArabic ? "scale-x-[-1]" : ""}
         `}
       />
@@ -676,7 +839,7 @@ function PharmacySosHero({ requestCount }) {
       =================================================== */}
 
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 -z-10 hidden lg:block"
         style={{
           background: isArabic
             ? "linear-gradient(270deg,#10505A 0%,rgba(16,80,90,.90) 38%,rgba(33,100,116,.48) 70%,rgba(33,100,116,.08) 100%)"
@@ -694,10 +857,12 @@ function PharmacySosHero({ requestCount }) {
           pointer-events-none
           absolute
           -top-20
+          hidden
           size-64
           rounded-full
           border-[40px]
           border-white/[.04]
+          lg:block
           ${isArabic ? "-left-14" : "-right-14"}
         `}
       />
@@ -711,18 +876,27 @@ function PharmacySosHero({ requestCount }) {
           relative
           z-10
           flex
-          min-h-[220px]
+          min-h-[140px]
+          w-full
           flex-col
-          items-center
+          items-stretch
           justify-center
-          gap-7
-          px-6
-          py-7
-          sm:min-h-[230px]
+          gap-4
+          px-5
+          py-5
+          sm:min-h-[180px]
+          sm:gap-6
+          sm:px-6
+          sm:py-6
+          md:min-h-[210px]
+          md:px-8
           lg:min-h-[250px]
           lg:flex-row
+          lg:items-center
           lg:justify-between
+          lg:gap-8
           lg:px-10
+          lg:py-7
         "
       >
         {/* =================================================
@@ -733,53 +907,72 @@ function PharmacySosHero({ requestCount }) {
           className={`
             flex
             min-w-0
-            items-center
-            gap-5
+            w-full
+            items-start
+            gap-3
+            sm:gap-4
+            lg:max-w-[720px]
+            lg:items-center
+            lg:gap-5
             ${isArabic ? "text-right" : "text-left"}
           `}
         >
           <span
             className="
               grid
-              size-12
+              size-11
               shrink-0
               place-items-center
               rounded-lg
               bg-[rgba(230,243,246,.10)]
               text-[#E6F3F6]
               backdrop-blur-sm
+              sm:size-12
             "
           >
             <ShieldAlert
+              size={25}
+              strokeWidth={1.7}
+              className="sm:hidden"
+            />
+
+            <ShieldAlert
               size={28}
               strokeWidth={1.7}
+              className="hidden sm:block"
             />
           </span>
 
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <p
               className="
                 flex
+                flex-wrap
                 items-center
                 gap-2
-                text-[12px]
+                text-[10px]
                 font-bold
                 text-[#BFE8E7]
+                sm:text-[12px]
               "
             >
-              <Pill size={14} />
+              <Pill size={13} />
 
               {t("مركز طلبات المساعدة")}
             </p>
 
             <h1
               className="
-                mt-2
-                text-[28px]
+                mt-1
+                break-words
+                text-[22px]
                 font-medium
-                leading-[1.2]
+                leading-[1.25]
                 text-white
-                sm:text-[30px]
+                sm:mt-2
+                sm:text-[27px]
+                md:text-[29px]
+                lg:text-[30px]
               "
             >
               {t("الطلبات الدوائية العاجلة")}
@@ -787,11 +980,14 @@ function PharmacySosHero({ requestCount }) {
 
             <p
               className="
-                mt-3
+                mt-1.5
                 max-w-[560px]
-                text-[14px]
-                leading-7
+                text-[11px]
+                leading-5
                 text-[#D6D6D6]
+                sm:mt-3
+                sm:text-[14px]
+                sm:leading-7
               "
             >
               {t(
@@ -808,48 +1004,59 @@ function PharmacySosHero({ requestCount }) {
         <div
           className="
             flex
-            min-w-[190px]
+            min-h-14
+            w-full
+            min-w-0
             shrink-0
             items-center
             gap-3
             rounded-[14px]
             border
-            border-white/15
-            bg-[rgba(2,77,82,.58)]
-            px-5
-            py-4
-            backdrop-blur-[10px]
+            border-white/70
+            bg-white
+            px-4
+            py-3
+            text-[#174B57]
+            shadow-lg
+            sm:min-h-16
+            sm:w-fit
+            sm:min-w-[190px]
+            sm:px-5
+            sm:py-4
           "
         >
           <span
             className="
               grid
-              size-11
+              size-10
               shrink-0
               place-items-center
               rounded-xl
-              bg-[rgba(230,243,246,.10)]
-              text-[#E6F3F6]
+              bg-[#E6F3F6]
+              text-[#216474]
+              sm:size-11
             "
           >
             <FileText
-              size={22}
+              size={20}
               strokeWidth={1.8}
             />
           </span>
 
-          <div>
-            <p className="text-xs text-[#D6D6D6]">
+          <div className="min-w-0">
+            <p className="text-[10px] text-[#71858A] sm:text-xs">
               {t("الطلبات الحالية")}
             </p>
 
             <strong
               className="
-                mt-1
+                mt-0.5
                 block
-                text-2xl
+                text-xl
                 font-black
-                text-[#E6F3F6]
+                text-[#174B57]
+                sm:mt-1
+                sm:text-2xl
               "
             >
               {requestCount}
@@ -876,29 +1083,45 @@ function AlertList({
   const canManage = admin || provider;
 
   return (
-    <section className="grid gap-4 lg:grid-cols-2">
+    <section
+      className="
+        grid
+        min-w-0
+        gap-4
+        lg:grid-cols-2
+      "
+    >
       {items.map((item) => (
         <article
           key={item.id}
           className="
             surface
+            min-w-0
+            overflow-hidden
             border-s-4
             border-s-[#168da0]
-            p-5
+            p-4
+            sm:p-5
           "
         >
           {/* =================================================
               HEADER
           ================================================= */}
 
-          <div className="flex justify-between gap-3">
-            <div>
-              <h3 className="text-lg font-black">
+          <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div
+              className="
+                min-w-0
+                flex-1
+                text-right
+              "
+            >
+              <h3 className="break-words text-lg font-black">
                 {item.medicineName || "طلب قديم"}
               </h3>
 
               {canManage && (
-                <p className="mt-1 text-sm font-bold text-slate-600">
+                <p className="mt-1 break-words text-sm font-bold text-slate-600">
                   {item.userName}
                 </p>
               )}
@@ -913,6 +1136,9 @@ function AlertList({
             <span
               className="
                 h-fit
+                w-fit
+                max-w-full
+                shrink-0
                 rounded-full
                 bg-cyan-50
                 px-3
@@ -931,7 +1157,7 @@ function AlertList({
           ================================================= */}
 
           {item.message && (
-            <p className="mt-4 text-sm leading-7">
+            <p className="mt-4 break-words text-sm leading-7">
               {item.message}
             </p>
           )}
@@ -941,11 +1167,27 @@ function AlertList({
           ================================================= */}
 
           {canManage && (
-            <div className="mt-4 flex flex-wrap gap-2">
+            <div
+              className="
+                mt-4
+                flex
+                w-full
+                min-w-0
+                flex-col
+                gap-2
+                sm:flex-row
+                sm:flex-wrap
+              "
+            >
               {item.phoneNumber && (
                 <a
                   href={`tel:${item.phoneNumber}`}
-                  className="btn-secondary"
+                  className="
+                    btn-secondary
+                    w-full
+                    justify-center
+                    sm:w-auto
+                  "
                 >
                   <Phone size={16} />
                   اتصال بالمستخدم
@@ -958,7 +1200,12 @@ function AlertList({
                     target="_blank"
                     rel="noreferrer"
                     href={`https://www.google.com/maps?q=${item.latitude},${item.longitude}`}
-                    className="btn-secondary"
+                    className="
+                      btn-secondary
+                      w-full
+                      justify-center
+                      sm:w-auto
+                    "
                   >
                     <MapPin size={16} />
                     فتح الموقع
@@ -982,7 +1229,13 @@ function AlertList({
                     "InProgress",
                   )
                 }
-                className="btn-primary mt-4"
+                className="
+                  btn-primary
+                  mt-4
+                  w-full
+                  justify-center
+                  sm:w-auto
+                "
               >
                 <Clock3 size={16} />
                 بدء المتابعة
@@ -1004,7 +1257,13 @@ function AlertList({
                     "Resolved",
                   )
                 }
-                className="btn-primary mt-4"
+                className="
+                  btn-primary
+                  mt-4
+                  w-full
+                  justify-center
+                  sm:w-auto
+                "
               >
                 <CheckCircle2 size={16} />
                 تمت المساعدة
@@ -1016,7 +1275,7 @@ function AlertList({
           ================================================= */}
 
           {item.handledByName && (
-            <p className="mt-3 text-xs text-slate-500">
+            <p className="mt-3 break-words text-xs text-slate-500">
               جهة المتابعة: {item.handledByName}
             </p>
           )}
@@ -1026,7 +1285,7 @@ function AlertList({
           ================================================= */}
 
           {mine && item.resolutionNote && (
-            <p className="mt-2 text-xs text-slate-500">
+            <p className="mt-2 break-words text-xs text-slate-500">
               الملاحظة: {item.resolutionNote}
             </p>
           )}
@@ -1042,9 +1301,11 @@ function AlertList({
           className="
             surface
             col-span-full
-            p-12
+            p-8
             text-center
+            text-sm
             text-slate-500
+            sm:p-12
           "
         >
           لا توجد طلبات مطابقة.

@@ -289,37 +289,40 @@ export function AdminHomeTickerPage() {
   return (
     <div className="space-y-5 sm:space-y-6">
       {/* Hero */}
-      <section className="relative isolate min-h-[230px] overflow-hidden rounded-[16px] bg-[#10505A] px-5 py-7 text-white shadow-[0_22px_55px_rgba(23,75,87,.14)] sm:min-h-[250px] sm:px-7 sm:py-8 lg:min-h-[271px] lg:px-10">
+      <section className="relative isolate min-h-[230px] overflow-hidden rounded-[16px] bg-[#10505A] px-5 py-6 text-white shadow-[0_22px_55px_rgba(23,75,87,.14)] sm:min-h-[250px] sm:px-7 sm:py-8 lg:min-h-[271px] lg:px-10">
+        {/* صورة الهيرو — ديسكتوب فقط */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 -z-20 bg-cover bg-[position:42%_center] bg-no-repeat"
+          className="absolute inset-0 -z-20 hidden bg-cover bg-[position:42%_center] bg-no-repeat md:block"
           style={{
             backgroundImage: `url("${ADMIN_HERO_IMAGE}")`,
           }}
         />
 
+        {/* Gradient — ديسكتوب فقط */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 -z-10 bg-[linear-gradient(270deg,#0D4E59_0%,rgba(13,78,89,.92)_34%,rgba(33,100,116,.48)_68%,rgba(33,100,116,.10)_100%)]"
+          className="absolute inset-0 -z-10 hidden bg-[linear-gradient(270deg,#0D4E59_0%,rgba(13,78,89,.92)_34%,rgba(33,100,116,.48)_68%,rgba(33,100,116,.10)_100%)] md:block"
         />
 
-        <div className="noise absolute inset-0 -z-[5] opacity-25" />
+        {/* خلفية سادة للجوال — بدون صورة */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 block bg-[#10505A] md:hidden"
+        />
 
-        <div className="absolute -start-20 -top-28 -z-[4] size-72 rounded-full border-[48px] border-white/[.03]" />
-        <div className="absolute -bottom-24 end-10 -z-[4] size-56 rounded-full bg-[#8BD0CB]/8 blur-2xl" />
-
-        <div className="relative flex min-h-[175px] flex-col justify-center gap-7 sm:min-h-[190px] lg:min-h-[207px] lg:flex-row lg:items-center lg:justify-between">
-          <div>
+        <div className="relative flex min-h-[178px] flex-col justify-center gap-6 sm:min-h-[190px] sm:gap-7 lg:min-h-[207px] lg:flex-row lg:items-center lg:justify-between">
+          <div className="min-w-0">
             <p className="flex items-center gap-2 text-sm font-black text-[#8BD0CB]">
               <Sparkles size={16} />
               إدارة محتوى الصفحة الرئيسية
             </p>
 
-            <h1 className="mt-3 text-3xl font-black lg:text-4xl">
+            <h1 className="mt-3 text-2xl font-black leading-tight sm:text-3xl lg:text-4xl">
               شريط الإعلانات والمناوبات
             </h1>
 
-            <p className="mt-3 max-w-2xl text-sm leading-7 text-white/70">
+            <p className="mt-3 max-w-2xl text-xs leading-6 text-white/70 sm:text-sm sm:leading-7">
               أنشئ إعلانًا أو انشر صيدلية مناوبة، وحدد وقت ظهوره وترتيبه من لوحة
               واحدة واضحة.
             </p>
@@ -328,7 +331,7 @@ export function AdminHomeTickerPage() {
           <button
             type="button"
             onClick={resetForm}
-            className="inline-flex h-[50px] w-fit items-center justify-center gap-2 rounded-[10px] border border-white bg-white px-6 text-sm font-black text-[#216474] shadow-[0_10px_26px_rgba(0,0,0,.16)] transition hover:-translate-y-0.5 hover:bg-[#F4FAFA] hover:shadow-[0_14px_30px_rgba(0,0,0,.20)]"
+            className="inline-flex h-[48px] w-full shrink-0 items-center justify-center gap-2 rounded-[10px] border border-white bg-white px-5 text-sm font-black text-[#216474] shadow-[0_10px_26px_rgba(0,0,0,.16)] transition hover:-translate-y-0.5 hover:bg-[#F4FAFA] hover:shadow-[0_14px_30px_rgba(0,0,0,.20)] sm:h-[50px] sm:w-fit sm:px-6"
           >
             <Plus size={18} />
             إنشاء عنصر جديد
@@ -613,85 +616,83 @@ export function AdminHomeTickerPage() {
 
           {/* Preview */}
           <aside className="relative overflow-hidden border-t border-[#DCE8EA] bg-[#F4F8F8] p-5 xl:border-s xl:border-t-0 lg:p-8">
-            <div className="absolute -end-16 -top-20 size-56 rounded-full bg-[#6E969E]/10 blur-2xl" />
+            <div className="relative">
+              <p className="flex items-center gap-2 text-xs font-black text-[#216474]">
+                <Eye size={15} />
+                معاينة مباشرة
+              </p>
 
-            <p className="relative flex items-center gap-2 text-xs font-black text-[#216474]">
-              <Eye size={15} />
-              معاينة مباشرة
-            </p>
+              <h3 className="mt-2 text-lg font-black text-[#29464D]">
+                هكذا سيظهر المحتوى للزوار
+              </h3>
 
-            <h3 className="relative mt-2 text-lg font-black text-[#29464D]">
-              هكذا سيظهر المحتوى للزوار
-            </h3>
-
-            <div className="relative mt-7 overflow-hidden rounded-[14px] bg-[#174B57] p-5 text-white shadow-[0_20px_45px_rgba(23,75,87,.18)]">
-              <div className="absolute -end-8 -top-8 size-28 rounded-full border-[18px] border-white/5" />
-
-              <div className="relative flex items-start gap-3">
-                <span
-                  className={`grid size-11 shrink-0 place-items-center rounded-xl ${
-                    form.type === "DutyPharmacy"
-                      ? "bg-[#F5CB72] text-[#173D46]"
-                      : "bg-white/[.10] text-[#8BD0CB]"
-                  }`}
-                >
-                  {form.type === "DutyPharmacy" ? (
-                    <Building2 size={20} />
-                  ) : (
-                    <BellRing size={20} />
-                  )}
-                </span>
-
-                <div className="min-w-0">
-                  <span className="text-[10px] font-black text-[#8BD0CB]">
-                    {form.type === "DutyPharmacy"
-                      ? "صيدلية مناوبة"
-                      : "إعلان المنصة"}
+              <div className="relative mt-7 overflow-hidden rounded-[14px] bg-[#174B57] p-5 text-white shadow-[0_20px_45px_rgba(23,75,87,.18)]">
+                <div className="relative flex items-start gap-3">
+                  <span
+                    className={`grid size-11 shrink-0 place-items-center rounded-xl ${
+                      form.type === "DutyPharmacy"
+                        ? "bg-[#F5CB72] text-[#173D46]"
+                        : "bg-white/[.10] text-[#8BD0CB]"
+                    }`}
+                  >
+                    {form.type === "DutyPharmacy" ? (
+                      <Building2 size={20} />
+                    ) : (
+                      <BellRing size={20} />
+                    )}
                   </span>
 
-                  <h4 className="mt-1 break-words font-black">
-                    {form.title || "عنوان الإعلان يظهر هنا"}
-                  </h4>
+                  <div className="min-w-0">
+                    <span className="text-[10px] font-black text-[#8BD0CB]">
+                      {form.type === "DutyPharmacy"
+                        ? "صيدلية مناوبة"
+                        : "إعلان المنصة"}
+                    </span>
+
+                    <h4 className="mt-1 break-words font-black">
+                      {form.title || "عنوان الإعلان يظهر هنا"}
+                    </h4>
+                  </div>
+                </div>
+
+                <p className="relative mt-4 min-h-14 break-words text-sm leading-7 text-white/65">
+                  {form.message ||
+                    "اكتب نص الإعلان لتشاهد معاينة حقيقية قبل نشره في الصفحة الرئيسية."}
+                </p>
+
+                {form.type === "DutyPharmacy" && (
+                  <div className="relative mt-4 flex items-center gap-2 rounded-xl bg-white/[.07] px-3 py-2.5 text-xs font-bold">
+                    <AlarmClock size={15} className="text-[#F5CB72]" />
+
+                    {selectedPharmacy?.name || "اسم الصيدلية المختارة"}
+                  </div>
+                )}
+
+                <div className="relative mt-4 flex items-center justify-between border-t border-white/10 pt-3 text-[10px] text-white/40">
+                  <span>{form.isActive ? "جاهز للنشر" : "غير منشور"}</span>
+
+                  <span>ترتيب {Number(form.sortOrder) || 0}</span>
                 </div>
               </div>
 
-              <p className="relative mt-4 min-h-14 break-words text-sm leading-7 text-white/65">
-                {form.message ||
-                  "اكتب نص الإعلان لتشاهد معاينة حقيقية قبل نشره في الصفحة الرئيسية."}
-              </p>
+              <div className="relative mt-5 rounded-xl border border-[#DCE8EA] bg-white p-4">
+                <p className="flex items-center gap-2 text-xs font-black text-[#29464D]">
+                  <Clock3 size={15} className="text-[#216474]" />
+                  مدة الظهور
+                </p>
 
-              {form.type === "DutyPharmacy" && (
-                <div className="relative mt-4 flex items-center gap-2 rounded-xl bg-white/[.07] px-3 py-2.5 text-xs font-bold">
-                  <AlarmClock size={15} className="text-[#F5CB72]" />
+                <p className="mt-2 text-xs leading-6 text-[#71858A]">
+                  {form.startsAtUtc
+                    ? `يبدأ ${formatDate(form.startsAtUtc)}`
+                    : "يبدأ مباشرة بعد النشر"}
 
-                  {selectedPharmacy?.name || "اسم الصيدلية المختارة"}
-                </div>
-              )}
+                  <br />
 
-              <div className="relative mt-4 flex items-center justify-between border-t border-white/10 pt-3 text-[10px] text-white/40">
-                <span>{form.isActive ? "جاهز للنشر" : "غير منشور"}</span>
-
-                <span>ترتيب {Number(form.sortOrder) || 0}</span>
+                  {form.endsAtUtc
+                    ? `وينتهي ${formatDate(form.endsAtUtc)}`
+                    : "ويستمر دون تاريخ انتهاء"}
+                </p>
               </div>
-            </div>
-
-            <div className="relative mt-5 rounded-xl border border-[#DCE8EA] bg-white p-4">
-              <p className="flex items-center gap-2 text-xs font-black text-[#29464D]">
-                <Clock3 size={15} className="text-[#216474]" />
-                مدة الظهور
-              </p>
-
-              <p className="mt-2 text-xs leading-6 text-[#71858A]">
-                {form.startsAtUtc
-                  ? `يبدأ ${formatDate(form.startsAtUtc)}`
-                  : "يبدأ مباشرة بعد النشر"}
-
-                <br />
-
-                {form.endsAtUtc
-                  ? `وينتهي ${formatDate(form.endsAtUtc)}`
-                  : "ويستمر دون تاريخ انتهاء"}
-              </p>
             </div>
           </aside>
         </div>
@@ -815,7 +816,9 @@ function StatCard({ icon: Icon, label, detail, value, tone = "primary" }) {
           {label}
         </span>
 
-        <span className="mt-1 block text-[10px] text-[#A5A5A5]">{detail}</span>
+        <span className="mt-1 block text-[10px] text-[#A5A5A5]">
+          {detail}
+        </span>
       </div>
     </article>
   );
@@ -833,7 +836,9 @@ function TickerCard({ item, onEdit, onToggle, onDelete, busy }) {
       <div className="flex items-start gap-4">
         <span
           className={`grid size-12 shrink-0 place-items-center rounded-xl ${
-            duty ? "bg-[#F0F6F7] text-[#52727A]" : "bg-[#EAF4F3] text-[#216474]"
+            duty
+              ? "bg-[#F0F6F7] text-[#52727A]"
+              : "bg-[#EAF4F3] text-[#216474]"
           }`}
         >
           {duty ? <Building2 size={21} /> : <BellRing size={21} />}
