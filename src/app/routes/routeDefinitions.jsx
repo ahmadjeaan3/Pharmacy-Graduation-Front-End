@@ -75,39 +75,25 @@ export const dashboardRouteGroups = [
     key: "warehouse",
     allowedRoles: ["Warehouse"],
     routes: [
-      { path: "warehouse/inventory", element: <SupplyChainWorkspacePage /> },
-      { path: "warehouse/orders", element: <SupplyChainWorkspacePage /> },
       {
         path: "warehouse/shipments",
         element: redirect("/app/warehouse/orders"),
       },
       {
-        path: "warehouse/representatives",
-        element: <SupplyChainWorkspacePage />,
-      },
-      {
         path: "warehouse/batches",
         element: redirect("/app/warehouse/inventory"),
       },
-      { path: "warehouse/invoices", element: <SupplyChainWorkspacePage /> },
-      { path: "warehouse/accounts", element: <SupplyChainWorkspacePage /> },
-      { path: "warehouse/returns", element: <SupplyChainWorkspacePage /> },
-      { path: "warehouse/recalls", element: <SupplyChainWorkspacePage /> },
       { path: "warehouse/profile", element: redirect("/app/settings") },
       { path: "warehouse/working-hours", element: redirect("/app/settings") },
+      { path: "warehouse/*", element: <SupplyChainWorkspacePage /> },
     ],
   },
   {
     key: "representative",
     allowedRoles: ["Representative"],
     routes: [
-      {
-        path: "representative/deliveries",
-        element: <SupplyChainWorkspacePage />,
-      },
-      { path: "representative/route", element: <SupplyChainWorkspacePage /> },
-      { path: "representative/history", element: <SupplyChainWorkspacePage /> },
       { path: "representative/profile", element: redirect("/app/settings") },
+      { path: "representative/*", element: <SupplyChainWorkspacePage /> },
     ],
   },
   {
