@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   ArrowLeft,
   CalendarDays,
+  CheckCircle2,
   ChevronDown,
   Gift,
   HandHeart,
@@ -13,8 +14,11 @@ import {
   Pill,
   Search,
   ShieldCheck,
+  X,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
+import { useSearchParams } from "react-router-dom";
 
 import { getApiErrorMessage } from "../../../shared/api/errors";
 import {
@@ -32,6 +36,7 @@ import {
 
 import { AssistanceRequestForm } from "../components/AssistanceRequestForm";
 import { DonationOfferForm } from "../components/DonationOfferForm";
+import { ProtectedDonationImage } from "../components/ProtectedDonationImage";
 
 import {
   assistanceStatuses,
@@ -115,8 +120,21 @@ function getStatusClasses(status) {
 ========================================================= */
 
 export function DonationsPage() {
-  const [formType, setFormType] = useState("offer");
-  const [showForm, setShowForm] = useState(false);
+  const [searchParams] = useSearchParams();
+  const requestedAction =
+    searchParams.get("action") === "assistance" ? "assistance" : "offer";
+  const initialTarget = useMemo(
+    () => ({
+      organizationId: searchParams.get("organizationId") || "",
+      campaignId: searchParams.get("campaignId") || "",
+    }),
+    [searchParams],
+  );
+  const hasRequestedForm = Boolean(
+    searchParams.get("action") || initialTarget.campaignId,
+  );
+  const [formType, setFormType] = useState(requestedAction);
+  const [showForm, setShowForm] = useState(hasRequestedForm);
 
   const [listType, setListType] = useState("offer");
 
@@ -124,6 +142,8 @@ export function DonationsPage() {
   const [assistanceStatus, setAssistanceStatus] = useState("");
 
   const [search, setSearch] = useState("");
+  const [visibleCount, setVisibleCount] = useState(5);
+  const [selectedRecord, setSelectedRecord] = useState(null);
 
   const offerParams = {
     status: offerStatus,
@@ -395,9 +415,9 @@ export function DonationsPage() {
 
             <div className="p-5 lg:p-7">
               {formType === "offer" ? (
-                <DonationOfferForm />
+                <DonationOfferForm initialTarget={initialTarget} />
               ) : (
-                <AssistanceRequestForm />
+                <AssistanceRequestForm initialTarget={initialTarget} />
               )}
             </div>
           </section>
@@ -422,6 +442,7 @@ export function DonationsPage() {
               onClick={() => {
                 setListType("offer");
                 setShowForm(false);
+                setVisibleCount(5);
               }}
               className={`
                 inline-flex
@@ -447,6 +468,7 @@ export function DonationsPage() {
               onClick={() => {
                 setListType("assistance");
                 setShowForm(false);
+                setVisibleCount(5);
               }}
               className={`
                 inline-flex
@@ -495,7 +517,10 @@ export function DonationsPage() {
 
               <input
                 value={search}
-                onChange={(event) => setSearch(event.target.value)}
+                onChange={(event) => {
+                  setSearch(event.target.value);
+                  setVisibleCount(5);
+                }}
                 placeholder="ابحث داخل سجل التبرعات..."
                 className="
                   min-w-0 flex-1
@@ -511,7 +536,10 @@ export function DonationsPage() {
             <div className="relative w-full sm:w-[150px]">
               <select
                 value={activeStatus}
-                onChange={(event) => setActiveStatus(event.target.value)}
+                onChange={(event) => {
+                  setActiveStatus(event.target.value);
+                  setVisibleCount(5);
+                }}
                 className="
                   h-10 w-full
                   appearance-none
@@ -577,22 +605,26 @@ export function DonationsPage() {
                   ${activeQuery.isFetching ? "opacity-60" : ""}
                 `}
               >
-                {filteredRecords.slice(0, 5).map((record) => (
+                {filteredRecords.slice(0, visibleCount).map((record) => (
                   <DonationRow
                     key={
                       listType === "offer" ? record.offerId : record.requestId
                     }
                     record={record}
                     type={listType}
+                    onViewDetails={() =>
+                      setSelectedRecord({ record, type: listType })
+                    }
                   />
                 ))}
               </div>
             )}
 
-            {filteredRecords.length > 5 ? (
+            {filteredRecords.length > visibleCount ? (
               <div className="mt-7 flex justify-center">
                 <button
                   type="button"
+                  onClick={() => setVisibleCount((count) => count + 5)}
                   className="
                     inline-flex h-10
                     min-w-[180px]
@@ -616,6 +648,17 @@ export function DonationsPage() {
           </div>
         </section>
       </main>
+
+      {selectedRecord
+        ? createPortal(
+            <DonationDetailsDialog
+              record={selectedRecord.record}
+              type={selectedRecord.type}
+              onClose={() => setSelectedRecord(null)}
+            />,
+            document.body,
+          )
+        : null}
     </div>
   );
 }
@@ -710,7 +753,7 @@ function FormTab({ active, icon: Icon, label, onClick }) {
   );
 }
 
-function DonationRow({ record, type }) {
+function DonationRow({ record, type, onViewDetails }) {
   const status = getRecordStatus(record, type);
 
   const isOffer = type === "offer";
@@ -804,6 +847,7 @@ function DonationRow({ record, type }) {
       {/* التفاصيل */}
       <button
         type="button"
+        onClick={onViewDetails}
         className="
           inline-flex h-9
           min-w-[132px]
@@ -823,6 +867,182 @@ function DonationRow({ record, type }) {
         <ArrowLeft size={14} />
       </button>
     </article>
+  );
+}
+
+function DonationDetailsDialog({ record, type, onClose }) {
+  const isOffer = type === "offer";
+  const status = getRecordStatus(record, type);
+  const quantity = isOffer ? record.packageCount : record.requestedPackageCount;
+  const date = isOffer
+    ? record.expiryDateUtc || record.createdAtUtc
+    : record.neededBeforeUtc || record.createdAtUtc;
+  const organization =
+    record.targetOrganizationName || record.campaignTitle || "منظمة معتمدة";
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    const closeOnEscape = (event) => event.key === "Escape" && onClose();
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", closeOnEscape);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-[9999] grid place-items-center overflow-y-auto bg-[#102f36]/55 p-4 backdrop-blur-sm"
+      role="presentation"
+      onMouseDown={(event) => event.target === event.currentTarget && onClose()}
+    >
+      <section
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="donation-details-title"
+        className="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-3xl bg-white shadow-2xl"
+      >
+        <header className="flex items-center justify-between gap-4 bg-[#174B57] px-5 py-4 text-white">
+          <div>
+            <p className="text-xs text-white/65">
+              {isOffer ? "تفاصيل عرض التبرع" : "تفاصيل طلب المساعدة"}
+            </p>
+            <h2 id="donation-details-title" className="mt-1 text-lg font-bold">
+              {record.medicineName || "دواء"}
+            </h2>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="grid size-10 place-items-center rounded-xl bg-white/10 transition hover:bg-white/20"
+            aria-label="إغلاق التفاصيل"
+          >
+            <X size={19} />
+          </button>
+        </header>
+
+        <div className="space-y-4 p-5">
+          {isOffer ? <DonationProgress record={record} /> : null}
+
+          {isOffer ? (
+            <ProtectedDonationImage url={record.donationImageUrl} />
+          ) : null}
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <DetailsItem label="الدواء" value={record.medicineName} />
+            <DetailsItem label="الاسم العلمي" value={record.scientificName} />
+            <DetailsItem label="الجهة" value={organization} />
+            <DetailsItem label="الحملة" value={record.campaignTitle} />
+            <DetailsItem
+              label="الكمية"
+              value={`${Number(quantity || 0).toLocaleString("ar-SY-u-nu-latn")} عبوة`}
+            />
+            <DetailsItem
+              label={isOffer ? "تاريخ الصلاحية" : "مطلوب قبل"}
+              value={formatDate(date)}
+            />
+            <DetailsItem label="الحالة" value={status.label || record.status} />
+            {isOffer ? (
+              <DetailsItem
+                label="صيدلية التحقق"
+                value={record.reviewingPharmacyName}
+              />
+            ) : null}
+          </div>
+
+          {(record.notes || record.reviewNote) && (
+            <div className="rounded-2xl border border-[#174B57]/10 bg-[#F5F9F9] p-4">
+              <span className="text-xs text-[#71858A]">الملاحظات</span>
+              <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-[#334F56]">
+                {record.notes || record.reviewNote}
+              </p>
+            </div>
+          )}
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="h-11 w-full rounded-xl bg-[#216474] text-sm font-bold text-white transition hover:bg-[#174B57]"
+          >
+            إغلاق
+          </button>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function DonationProgress({ record }) {
+  const pharmacyStatus = String(record.pharmacyReviewStatus || "");
+  const offerStatus = String(record.status || "");
+  const rejected =
+    pharmacyStatus === "PharmacyRejected" || offerStatus === "Rejected";
+  const steps = [
+    { label: "تم إرسال العرض", complete: true },
+    {
+      label: "تحقق الصيدلية",
+      complete: ["PharmacyApproved", "ReceivedByPharmacy"].includes(
+        pharmacyStatus,
+      ),
+    },
+    {
+      label: "استلام الصيدلية",
+      complete: pharmacyStatus === "ReceivedByPharmacy",
+    },
+    {
+      label: "مراجعة المنظمة",
+      complete: ["Approved", "Received"].includes(offerStatus),
+    },
+    { label: "اكتمل الاستلام", complete: offerStatus === "Received" },
+  ];
+
+  return (
+    <div className="rounded-2xl border border-[#216474]/12 bg-[#F4F9F9] p-4">
+      <div className="flex items-center justify-between gap-3">
+        <strong className="text-sm text-[#29464D]">مسار التبرع</strong>
+        {rejected ? (
+          <span className="rounded-full bg-rose-50 px-3 py-1 text-[11px] font-bold text-rose-600">
+            توقف المسار بسبب الرفض
+          </span>
+        ) : null}
+      </div>
+      <div className="mt-4 grid gap-2 sm:grid-cols-5">
+        {steps.map((step, index) => (
+          <div
+            key={step.label}
+            className={`rounded-xl border px-2 py-3 text-center text-[11px] font-semibold ${
+              step.complete
+                ? "border-emerald-100 bg-white text-emerald-700"
+                : "border-[#174B57]/8 bg-white/55 text-[#91A0A3]"
+            }`}
+          >
+            <span
+              className={`mx-auto mb-2 grid size-6 place-items-center rounded-full ${
+                step.complete
+                  ? "bg-emerald-100 text-emerald-700"
+                  : "bg-slate-100 text-slate-400"
+              }`}
+            >
+              {step.complete ? <CheckCircle2 size={14} /> : index + 1}
+            </span>
+            {step.label}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function DetailsItem({ label, value }) {
+  return (
+    <div className="rounded-2xl border border-[#174B57]/8 bg-[#F8FBFB] p-3.5">
+      <span className="text-[11px] text-[#8A9A9E]">{label}</span>
+      <strong className="mt-1.5 block break-words text-sm font-semibold text-[#29464D]">
+        {value || "—"}
+      </strong>
+    </div>
   );
 }
 

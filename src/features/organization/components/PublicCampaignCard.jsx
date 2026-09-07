@@ -1,14 +1,18 @@
 import {
   ArrowLeft,
   CalendarDays,
+  ChevronDown,
+  ChevronUp,
   CircleAlert,
   Gift,
   MapPin,
 } from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { formatOrgDate } from "../utils/organizationFormatters";
 
 export function PublicCampaignCard({ campaign, showOrganization = true }) {
+  const [showDetails, setShowDetails] = useState(false);
   const location =
     [campaign.area, campaign.city].filter(Boolean).join("، ") || "غير محدد";
 
@@ -106,14 +110,13 @@ export function PublicCampaignCard({ campaign, showOrganization = true }) {
 
         {/* الوصف */}
         <p
-          className="
+          className={`
             mt-3
-            line-clamp-3
-            min-h-[72px]
+            ${showDetails ? "" : "line-clamp-3 min-h-[72px]"}
             text-[13px]
             leading-6
             text-[#7C8D91]
-          "
+          `}
         >
           {campaign.description ||
             "حملة دوائية مقدمة من منظمة معتمدة ضمن منصة دوائي."}
@@ -141,14 +144,14 @@ export function PublicCampaignCard({ campaign, showOrganization = true }) {
             </p>
 
             <p
-              className="
+              className={`
                 mt-2
-                line-clamp-2
+                ${showDetails ? "whitespace-pre-wrap" : "line-clamp-2"}
                 text-[13px]
                 font-medium
                 leading-6
                 text-[#5F7378]
-              "
+              `}
             >
               {campaign.requestedMedicinesSummary}
             </p>
@@ -186,7 +189,7 @@ export function PublicCampaignCard({ campaign, showOrganization = true }) {
       {/* Footer الكارد */}
       <div
         className="
-          flex items-center
+          flex flex-wrap items-center
           justify-between
           gap-3
           border-t
@@ -194,41 +197,42 @@ export function PublicCampaignCard({ campaign, showOrganization = true }) {
           px-5 py-4
         "
       >
-        {/* نوع الحملة */}
-        <span
-          className={`
-            text-[12px]
-            font-semibold
-            ${
-              campaign.acceptsPublicDonations
-                ? "text-[#216474]"
-                : "text-[#71858A]"
-            }
-          `}
-        >
-          {campaign.acceptsPublicDonations
-            ? "تستقبل عروض التبرع"
-            : "مخصصة لطلبات المساعدة"}
-        </span>
+        {campaign.acceptsPublicDonations ? (
+          <Link
+            to={`/app/donations?action=offer&organizationId=${campaign.organizationId}&campaignId=${campaign.campaignId}`}
+            className="inline-flex items-center gap-2 rounded-lg bg-[#216474] px-4 py-2 text-[12px] font-semibold text-white transition hover:bg-[#174B57]"
+          >
+            <Gift size={14} />
+            تبرع لهذه الحملة
+          </Link>
+        ) : (
+          <Link
+            to={`/app/donations?action=assistance&organizationId=${campaign.organizationId}&campaignId=${campaign.campaignId}`}
+            className="inline-flex items-center gap-2 rounded-lg bg-[#E8F3F4] px-4 py-2 text-[12px] font-semibold text-[#216474] transition hover:bg-[#DCECED]"
+          >
+            طلب مساعدة من الحملة
+          </Link>
+        )}
 
-        {/* عرض المنظمة */}
-        <Link
-          to={`/app/organizations/${campaign.organizationId}`}
-          className="
-            inline-flex
-            items-center
-            gap-1
-            text-[12px]
-            font-semibold
-            text-[#216474]
-            transition
-            group-hover:gap-2
-            hover:text-[#174B57]
-          "
-        >
-          عرض المنظمة
-          <ArrowLeft size={14} />
-        </Link>
+        {showOrganization ? (
+          <Link
+            to={`/app/organizations/${campaign.organizationId}`}
+            className="inline-flex items-center gap-1 text-[12px] font-semibold text-[#216474] transition group-hover:gap-2 hover:text-[#174B57]"
+          >
+            عرض المنظمة
+            <ArrowLeft size={14} />
+          </Link>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setShowDetails((value) => !value)}
+            aria-expanded={showDetails}
+            className="inline-flex items-center gap-1 text-[12px] font-semibold text-[#216474] transition hover:text-[#174B57]"
+          >
+            {showDetails ? "إخفاء التفاصيل" : "تفاصيل الحملة"}
+            {showDetails ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          </button>
+        )}
       </div>
     </article>
   );

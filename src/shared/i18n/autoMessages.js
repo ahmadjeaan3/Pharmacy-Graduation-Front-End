@@ -1926,6 +1926,8 @@ export const autoMessages = {
     "عرض المنظمة": "Presentation of the organization",
     "عرض تبرع": "Offer a donation",
     "عرض تبرع جديد": "New donation offer",
+    "عرض تبرعات {{title}}": "View donations for {{title}}",
+    "عرض المتبرعين وعروض التبرع": "View donors and donation offers",
     "عرض جميع الإشعارات": "View all notifications",
     "عرض سجل البحث": "View search history",
     "عرض صيدلية": "Pharmacy display",

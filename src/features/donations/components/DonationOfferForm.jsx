@@ -3,11 +3,12 @@ import {
   Building2,
   CheckCircle2,
   Gift,
+  ImagePlus,
   PackageCheck,
   Send,
   ShieldCheck,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getApiErrorMessage } from "../../../shared/api/errors";
 import {
   createDonationOffer,
@@ -27,12 +28,22 @@ const initialForm = {
   expiryDate: "",
   isSealed: true,
   notes: "",
+  image: null,
 };
 
-export function DonationOfferForm() {
+export function DonationOfferForm({ initialTarget = {} }) {
   const client = useQueryClient();
-  const [form, setForm] = useState(initialForm);
+  const [form, setForm] = useState(() => ({
+    ...initialForm,
+    organizationId: initialTarget.organizationId || "",
+    campaignId: initialTarget.campaignId || "",
+  }));
   const [notice, setNotice] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
+  useEffect(
+    () => () => imagePreview && URL.revokeObjectURL(imagePreview),
+    [imagePreview],
+  );
   const pharmacies = useQuery({
     queryKey: donationKeys.verificationPharmacies,
     queryFn: getVerificationPharmacies,
@@ -45,7 +56,8 @@ export function DonationOfferForm() {
         ok: true,
         text: "تم إرسال العرض إلى الصيدلية المختارة للتحقق من العبوة والصلاحية. لن يظهر للجمعية قبل توثيقه.",
       });
-      setForm(initialForm);
+      setForm({ ...initialForm });
+      setImagePreview("");
       await client.invalidateQueries({ queryKey: ["donations", "offers"] });
     },
     onError: (error) =>
@@ -57,6 +69,8 @@ export function DonationOfferForm() {
     setNotice(null);
     if (!form.medicine)
       return setNotice({ ok: false, text: "اختر الدواء المراد التبرع به." });
+    if (!form.image)
+      return setNotice({ ok: false, text: "أرفق صورة واضحة لعبوة الدواء." });
     mutation.mutate({
       medicineId: form.medicine.id,
       reviewingPharmacyId: form.reviewingPharmacyId,
@@ -66,6 +80,7 @@ export function DonationOfferForm() {
       expiryDateUtc: toUtcDate(form.expiryDate),
       isSealed: form.isSealed,
       notes: form.notes.trim() || null,
+      image: form.image,
     });
   };
 
@@ -93,6 +108,58 @@ export function DonationOfferForm() {
         value={form.medicine}
         onChange={(medicine) => set("medicine", medicine)}
       />
+      <div className="rounded-2xl border border-[#216474]/15 bg-[#F4F9F8] p-4">
+        <div className="flex items-start gap-3">
+          <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-white text-[#216474] shadow-sm">
+            <ImagePlus size={19} />
+          </span>
+          <div>
+            <strong className="block text-sm text-[#29464D]">
+              صورة عبوة الدواء
+            </strong>
+            <p className="mt-1 text-xs leading-6 text-[#71858A]">
+              صوّر اسم الدواء والعيار وتاريخ الصلاحية والعبوة كاملة بوضوح لتتمكن
+              الصيدلية من المعاينة قبل موعد التسليم.
+            </p>
+          </div>
+        </div>
+        <label className="mt-4 flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#216474]/25 bg-white p-5 text-center transition hover:border-[#216474]/50">
+          <ImagePlus size={25} className="text-[#216474]" />
+          <span className="mt-2 text-sm font-bold text-[#29464D]">
+            {form.image ? form.image.name : "اختيار صورة الدواء"}
+          </span>
+          <small className="mt-1 text-xs text-[#829499]">
+            JPG أو PNG أو WebP — بحد أقصى 5MB
+          </small>
+          <input
+            type="file"
+            className="sr-only"
+            accept="image/jpeg,image/png,image/webp"
+            required
+            onChange={(event) => {
+              const file = event.target.files?.[0] || null;
+              if (file && file.size > 5 * 1024 * 1024) {
+                event.target.value = "";
+                set("image", null);
+                setNotice({
+                  ok: false,
+                  text: "حجم الصورة أكبر من 5MB. اختر صورة أصغر.",
+                });
+                return;
+              }
+              set("image", file);
+              setImagePreview(file ? URL.createObjectURL(file) : "");
+            }}
+          />
+        </label>
+        {imagePreview ? (
+          <img
+            src={imagePreview}
+            alt="معاينة صورة الدواء"
+            className="mt-4 max-h-72 w-full rounded-2xl border border-[#174B57]/10 object-contain"
+          />
+        ) : null}
+      </div>
       <DonationTargetPicker
         purpose="offer"
         organizationId={form.organizationId}
@@ -244,6 +311,7 @@ export function DonationOfferForm() {
           disabled={
             mutation.isPending ||
             !form.medicine ||
+            !form.image ||
             !form.organizationId ||
             !form.reviewingPharmacyId
           }

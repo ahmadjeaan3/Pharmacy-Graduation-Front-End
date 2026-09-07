@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
 
 import { getApiErrorMessage } from "../../../shared/api/errors";
 import {
@@ -26,6 +27,7 @@ import {
   getStatusMeta,
   offerStatuses,
 } from "../../donations/utils/donationFormatters";
+import { ProtectedDonationImage } from "../../donations/components/ProtectedDonationImage";
 import {
   getOrganizationCampaigns,
   getOrganizationDonationOffers,
@@ -40,6 +42,7 @@ const OFFERS_HERO_IMAGE =
 export function OrganizationDonationOffersPage() {
   const { t, i18n } = useTranslation();
   const client = useQueryClient();
+  const [searchParams] = useSearchParams();
 
   const currentLanguage = (i18n.resolvedLanguage || i18n.language || "ar")
     .split("-")[0]
@@ -49,7 +52,9 @@ export function OrganizationDonationOffersPage() {
   const direction = isArabic ? "rtl" : "ltr";
 
   const [status, setStatus] = useState("");
-  const [campaignId, setCampaignId] = useState("");
+  const [campaignId, setCampaignId] = useState(
+    () => searchParams.get("campaignId") || "",
+  );
   const [search, setSearch] = useState("");
   const [notice, setNotice] = useState(null);
 
@@ -437,6 +442,8 @@ function OfferCard({
       </div>
 
       <div className="p-5">
+        <ProtectedDonationImage url={offer.donationImageUrl} />
+
         <div className="grid gap-3 sm:grid-cols-2">
           <InfoCard
             icon={UserRound}
@@ -592,8 +599,7 @@ function StatusBadge({ label, status }) {
   return (
     <span
       className={`shrink-0 rounded-full border px-3 py-1.5 text-[11px] font-bold ${
-        styles[status] ||
-        "border-[#D5E3E6] bg-[#F2F6F7] text-[#60777D]"
+        styles[status] || "border-[#D5E3E6] bg-[#F2F6F7] text-[#60777D]"
       }`}
     >
       {label}

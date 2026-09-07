@@ -4,6 +4,7 @@ import {
   ChevronDown,
   ChevronLeft,
   Edit3,
+  Eye,
   Grid2X2,
   Heart,
   List,
@@ -17,6 +18,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 
 import { getApiErrorMessage } from "../../../shared/api/errors";
 import {
@@ -518,9 +520,7 @@ export function OrganizationCampaignsPage() {
                     required
                     maxLength={2000}
                     value={form.description}
-                    onChange={(event) =>
-                      set("description", event.target.value)
-                    }
+                    onChange={(event) => set("description", event.target.value)}
                     placeholder={t(
                       "اكتب وصفًا واضحًا ومختصرًا للحملة وأهدافها...",
                     )}
@@ -586,9 +586,7 @@ export function OrganizationCampaignsPage() {
                     <input
                       type="date"
                       value={form.startsAt}
-                      onChange={(event) =>
-                        set("startsAt", event.target.value)
-                      }
+                      onChange={(event) => set("startsAt", event.target.value)}
                       className="h-11 w-full rounded-lg border border-[#D8E5E7] bg-white px-4 text-sm text-[#667D82] outline-none transition hover:border-[#B9CFD3] focus:border-[#216474] focus:ring-2 focus:ring-[#216474]/10"
                     />
                   </label>
@@ -618,9 +616,7 @@ export function OrganizationCampaignsPage() {
 
                   <CompactToggle
                     checked={form.acceptsPublicDonations}
-                    onChange={(value) =>
-                      set("acceptsPublicDonations", value)
-                    }
+                    onChange={(value) => set("acceptsPublicDonations", value)}
                     label={t("استقبال تبرعات عامة")}
                     description={t("السماح للمستخدمين بالتبرع")}
                   />
@@ -751,9 +747,7 @@ export function OrganizationCampaignsPage() {
           ) : !filteredCampaigns.length ? (
             <UserEmptyState
               title={t("لا توجد حملات مطابقة")}
-              description={t(
-                "أنشئ حملة جديدة أو غيّر مرشح الحالة أو البحث.",
-              )}
+              description={t("أنشئ حملة جديدة أو غيّر مرشح الحالة أو البحث.")}
             />
           ) : viewMode === "grid" ? (
             <div
@@ -870,9 +864,7 @@ function CampaignsTable({
                         : "bg-[#E6F3F6] text-[#216474]"
                     }`}
                   >
-                    {campaign.isUrgent
-                      ? t("حملة عاجلة")
-                      : t("حملة دوائية")}
+                    {campaign.isUrgent ? t("حملة عاجلة") : t("حملة دوائية")}
                   </span>
                 </td>
 
@@ -912,8 +904,7 @@ function CampaignsTable({
                     <span className="truncate">
                       {[campaign.area, campaign.city]
                         .filter(Boolean)
-                        .join(isArabic ? "، " : ", ") ||
-                        t("غير محدد")}
+                        .join(isArabic ? "، " : ", ") || t("غير محدد")}
                     </span>
                   </span>
                 </td>
@@ -932,6 +923,17 @@ function CampaignsTable({
 
                 <td className="px-4 py-4">
                   <div className="flex items-center justify-center gap-2">
+                    <Link
+                      to={`/app/organization/offers?campaignId=${campaign.campaignId}`}
+                      aria-label={t("عرض تبرعات {{title}}", {
+                        title: campaign.title,
+                      })}
+                      title={t("عروض التبرع")}
+                      className="grid size-9 place-items-center rounded-xl border border-emerald-100 bg-emerald-50 text-emerald-700 transition hover:border-emerald-200 hover:bg-emerald-100"
+                    >
+                      <Eye size={15} strokeWidth={1.9} />
+                    </Link>
+
                     <button
                       type="button"
                       onClick={() => onEdit(campaign)}
@@ -1124,7 +1126,6 @@ function CampaignGridCard({
 
         <span className="flex items-center gap-2 text-[#71858a]">
           <CalendarDays size={14} />
-
           {t("حتى")} {formatOrgDate(campaign.endsAtUtc)}
         </span>
       </div>
@@ -1150,6 +1151,14 @@ function CampaignGridCard({
           direction={direction}
         />
       </div>
+
+      <Link
+        to={`/app/organization/offers?campaignId=${campaign.campaignId}`}
+        className="mt-3 flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-[#216474] text-xs font-bold text-white transition hover:bg-[#174B57]"
+      >
+        <Eye size={15} />
+        {t("عرض المتبرعين وعروض التبرع")}
+      </Link>
     </article>
   );
 }

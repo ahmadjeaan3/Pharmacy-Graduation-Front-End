@@ -443,13 +443,10 @@ export function DashboardLayout() {
               }`}
             >
               {/* Logo */}
-              <NavLink
+              <Brand
                 to="/app"
-                aria-label={t("الرئيسية")}
                 className="flex shrink-0 items-center justify-center"
-              >
-                <Brand />
-              </NavLink>
+              />
 
               {/* Main user navigation - text only like Figma */}
               <nav

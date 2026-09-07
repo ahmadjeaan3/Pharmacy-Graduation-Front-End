@@ -18,6 +18,7 @@ import {
   ErrorState,
   LoadingState,
 } from "../../../shared/components/AsyncStates";
+import { ProtectedDonationImage } from "../../donations/components/ProtectedDonationImage";
 
 /* =========================================================
    HERO
@@ -46,19 +47,12 @@ const getOffers = async () =>
     })
   ).data;
 
-const reviewOffer = async ({
-  offerId,
-  status,
-  reviewNote,
-}) =>
+const reviewOffer = async ({ offerId, status, reviewNote }) =>
   (
-    await apiClient.put(
-      `/pharmacy/donations/offers/${offerId}/review`,
-      {
-        status,
-        reviewNote: reviewNote || null,
-      },
-    )
+    await apiClient.put(`/pharmacy/donations/offers/${offerId}/review`, {
+      status,
+      reviewNote: reviewNote || null,
+    })
   ).data;
 
 /* =========================================================
@@ -98,9 +92,7 @@ const localeMap = {
 };
 
 const normalizeLanguage = (language = "ar") =>
-  String(language)
-    .split("-")[0]
-    .toLowerCase();
+  String(language).split("-")[0].toLowerCase();
 
 const resolveLocale = (language = "ar") =>
   localeMap[normalizeLanguage(language)] || localeMap.ar;
@@ -113,9 +105,7 @@ export function PharmacyDonationReviewsPage() {
   const { t, i18n } = useTranslation();
 
   const currentLanguage = normalizeLanguage(
-    i18n.resolvedLanguage ||
-      i18n.language ||
-      "ar",
+    i18n.resolvedLanguage || i18n.language || "ar",
   );
 
   const isArabic = currentLanguage === "ar";
@@ -144,9 +134,7 @@ export function PharmacyDonationReviewsPage() {
     onSuccess: async () => {
       setNotice({
         ok: true,
-        text: t(
-          "تم حفظ قرار الصيدلية وإرسال الإشعارات اللازمة.",
-        ),
+        text: t("تم حفظ قرار الصيدلية وإرسال الإشعارات اللازمة."),
       });
 
       await client.invalidateQueries({
@@ -171,10 +159,7 @@ export function PharmacyDonationReviewsPage() {
           HERO
       ===================================================== */}
 
-      <DonationHero
-        t={t}
-        isArabic={isArabic}
-      />
+      <DonationHero t={t} isArabic={isArabic} />
 
       {/* =====================================================
           STEPS
@@ -196,9 +181,7 @@ export function PharmacyDonationReviewsPage() {
           icon={ShieldCheck}
           number="2"
           title={t("فحص مهني")}
-          text={t(
-            "تأكد من الإغلاق، الصلاحية، التخزين وسلامة العبوة.",
-          )}
+          text={t("تأكد من الإغلاق، الصلاحية، التخزين وسلامة العبوة.")}
           isArabic={isArabic}
           t={t}
         />
@@ -245,9 +228,7 @@ export function PharmacyDonationReviewsPage() {
       ===================================================== */}
 
       {query.isLoading ? (
-        <LoadingState
-          label={t("جاري تحميل عروض التبرع...")}
-        />
+        <LoadingState label={t("جاري تحميل عروض التبرع...")} />
       ) : query.isError ? (
         <ErrorState
           message={getApiErrorMessage(query.error)}
@@ -423,17 +404,9 @@ function DonationHero({ t, isArabic }) {
               sm:size-12
             "
           >
-            <Gift
-              size={24}
-              strokeWidth={1.7}
-              className="sm:hidden"
-            />
+            <Gift size={24} strokeWidth={1.7} className="sm:hidden" />
 
-            <Gift
-              size={28}
-              strokeWidth={1.7}
-              className="hidden sm:block"
-            />
+            <Gift size={28} strokeWidth={1.7} className="hidden sm:block" />
           </span>
 
           <div className="min-w-0 flex-1">
@@ -522,16 +495,11 @@ function DonationHero({ t, isArabic }) {
               text-[#E6F3F6]
             "
           >
-            <PackageCheck
-              size={21}
-              strokeWidth={1.8}
-            />
+            <PackageCheck size={21} strokeWidth={1.8} />
           </span>
 
           <div className="min-w-0">
-            <p className="text-xs text-[#D6D6D6]">
-              {t("حالة الخدمة")}
-            </p>
+            <p className="text-xs text-[#D6D6D6]">{t("حالة الخدمة")}</p>
 
             <strong
               className="
@@ -556,14 +524,7 @@ function DonationHero({ t, isArabic }) {
    STEP
 ========================================================= */
 
-function Step({
-  icon: Icon,
-  number,
-  title,
-  text,
-  isArabic,
-  t,
-}) {
+function Step({ icon: Icon, number, title, text, isArabic, t }) {
   return (
     <article
       className="
@@ -626,37 +587,20 @@ function Step({
    OFFER CARD
 ========================================================= */
 
-function OfferCard({
-  offer,
-  pending,
-  onReview,
-  t,
-  currentLanguage,
-  isArabic,
-}) {
-  const [note, setNote] = useState(
-    offer.pharmacyReviewNote || "",
-  );
+function OfferCard({ offer, pending, onReview, t, currentLanguage, isArabic }) {
+  const [note, setNote] = useState(offer.pharmacyReviewNote || "");
 
   const meta =
-    statusMeta[offer.pharmacyReviewStatus] ||
-    statusMeta.PendingPharmacyReview;
+    statusMeta[offer.pharmacyReviewStatus] || statusMeta.PendingPharmacyReview;
 
-  const waiting =
-    offer.pharmacyReviewStatus ===
-    "PendingPharmacyReview";
+  const waiting = offer.pharmacyReviewStatus === "PendingPharmacyReview";
 
-  const accepted =
-    offer.pharmacyReviewStatus ===
-    "PharmacyApproved";
+  const accepted = offer.pharmacyReviewStatus === "PharmacyApproved";
 
   const formattedExpiry = offer.expiryDateUtc
-    ? new Intl.DateTimeFormat(
-        resolveLocale(currentLanguage),
-        {
-          dateStyle: "medium",
-        },
-      ).format(new Date(offer.expiryDateUtc))
+    ? new Intl.DateTimeFormat(resolveLocale(currentLanguage), {
+        dateStyle: "medium",
+      }).format(new Date(offer.expiryDateUtc))
     : t("غير محددة");
 
   return (
@@ -703,8 +647,7 @@ function OfferCard({
           </h2>
 
           <p className="mt-1 break-words text-xs text-[#829499]">
-            {offer.scientificName ||
-              t("الاسم العلمي غير محدد")}
+            {offer.scientificName || t("الاسم العلمي غير محدد")}
           </p>
         </div>
 
@@ -729,6 +672,10 @@ function OfferCard({
           DETAILS
       =================================================== */}
 
+      <div className="mt-4">
+        <ProtectedDonationImage url={offer.donationImageUrl} />
+      </div>
+
       <div
         className="
           mt-4
@@ -746,20 +693,14 @@ function OfferCard({
         <Detail
           icon={Gift}
           label={t("المتبرع")}
-          value={
-            offer.donorFullName ||
-            t("مستخدم المنصة")
-          }
+          value={offer.donorFullName || t("مستخدم المنصة")}
           isArabic={isArabic}
         />
 
         <Detail
           icon={Phone}
           label={t("الهاتف")}
-          value={
-            offer.donorPhoneNumber ||
-            t("غير مسجل")
-          }
+          value={offer.donorPhoneNumber || t("غير مسجل")}
           isArabic={isArabic}
           ltr
         />
@@ -838,12 +779,8 @@ function OfferCard({
               `}
               value={note}
               maxLength={1000}
-              onChange={(event) =>
-                setNote(event.target.value)
-              }
-              placeholder={t(
-                "دوّن نتيجة فحص العبوة والصلاحية وحالة التخزين",
-              )}
+              onChange={(event) => setNote(event.target.value)}
+              placeholder={t("دوّن نتيجة فحص العبوة والصلاحية وحالة التخزين")}
             />
           </label>
 
@@ -874,18 +811,11 @@ function OfferCard({
                     sm:w-auto
                   "
                   disabled={pending}
-                  onClick={() =>
-                    onReview(
-                      "PharmacyApproved",
-                      note.trim(),
-                    )
-                  }
+                  onClick={() => onReview("PharmacyApproved", note.trim())}
                 >
                   <CheckCircle2 size={16} />
 
-                  {t(
-                    "قبول مبدئي وتحديد التسليم",
-                  )}
+                  {t("قبول مبدئي وتحديد التسليم")}
                 </button>
 
                 {/* =================================================
@@ -902,12 +832,7 @@ function OfferCard({
                     sm:w-auto
                   "
                   disabled={pending}
-                  onClick={() =>
-                    onReview(
-                      "PharmacyRejected",
-                      note.trim(),
-                    )
-                  }
+                  onClick={() => onReview("PharmacyRejected", note.trim())}
                 >
                   <XCircle size={16} />
 
@@ -930,18 +855,11 @@ function OfferCard({
                   sm:w-auto
                 "
                 disabled={pending}
-                onClick={() =>
-                  onReview(
-                    "ReceivedByPharmacy",
-                    note.trim(),
-                  )
-                }
+                onClick={() => onReview("ReceivedByPharmacy", note.trim())}
               >
                 <PackageCheck size={16} />
 
-                {t(
-                  "تأكيد الاستلام والتوثيق",
-                )}
+                {t("تأكيد الاستلام والتوثيق")}
               </button>
             )}
           </div>
@@ -955,13 +873,7 @@ function OfferCard({
    DETAIL
 ========================================================= */
 
-function Detail({
-  icon: Icon,
-  label,
-  value,
-  isArabic,
-  ltr = false,
-}) {
+function Detail({ icon: Icon, label, value, isArabic, ltr = false }) {
   return (
     <div
       className="
@@ -971,14 +883,9 @@ function Detail({
         gap-2
       "
     >
-      <Icon
-        size={14}
-        className="shrink-0 text-[#6f888d]"
-      />
+      <Icon size={14} className="shrink-0 text-[#6f888d]" />
 
-      <span className="shrink-0 text-[#829499]">
-        {label}
-      </span>
+      <span className="shrink-0 text-[#829499]">{label}</span>
 
       <strong
         dir={ltr ? "ltr" : undefined}

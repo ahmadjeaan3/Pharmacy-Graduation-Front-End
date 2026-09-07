@@ -24,8 +24,17 @@ export const donationKeys = {
   ],
 };
 
-export const createDonationOffer = async (payload) =>
-  (await apiClient.post("/donations/offers", payload)).data;
+export const createDonationOffer = async (payload) => {
+  const form = new FormData();
+  Object.entries(payload).forEach(([key, value]) => {
+    if (value !== null && value !== undefined && value !== "") {
+      form.append(key, value);
+    }
+  });
+  return (await apiClient.post("/donations/offers", form)).data;
+};
+export const getDonationImage = async (url) =>
+  (await apiClient.get(url, { responseType: "blob" })).data;
 export const getVerificationPharmacies = async () =>
   (await apiClient.get("/donations/verification-pharmacies")).data;
 export const getMyDonationOffers = async (params = {}) =>

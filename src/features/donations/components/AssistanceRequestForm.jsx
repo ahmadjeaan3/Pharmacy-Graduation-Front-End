@@ -16,9 +16,13 @@ const initialForm = {
   notes: "",
 };
 
-export function AssistanceRequestForm() {
+export function AssistanceRequestForm({ initialTarget = {} }) {
   const client = useQueryClient();
-  const [form, setForm] = useState(initialForm);
+  const [form, setForm] = useState(() => ({
+    ...initialForm,
+    organizationId: initialTarget.organizationId || "",
+    campaignId: initialTarget.campaignId || "",
+  }));
   const [notice, setNotice] = useState(null);
   const mutation = useMutation({
     mutationFn: createAssistanceRequest,
@@ -27,7 +31,7 @@ export function AssistanceRequestForm() {
         ok: true,
         text: "تم إرسال طلب المساعدة إلى المنظمة ويمكنك متابعة حالته من سجلك.",
       });
-      setForm(initialForm);
+      setForm({ ...initialForm });
       await client.invalidateQueries({
         queryKey: ["donations", "assistance-requests"],
       });
