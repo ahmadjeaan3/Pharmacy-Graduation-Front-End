@@ -155,7 +155,11 @@ export function RequestCard({ request }) {
           <span>
             {t("الكمية")}:{" "}
             <strong className="font-semibold text-[#29464D]">
-              {request.requestedQuantity.toLocaleString(i18n.language)}
+              {request.requestedQuantity.toLocaleString(
+                i18n.language === "ar"
+                  ? "ar-SY-u-nu-latn"
+                  : i18n.language,
+              )}
             </strong>
           </span>
         </span>

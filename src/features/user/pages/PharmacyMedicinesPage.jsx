@@ -232,7 +232,7 @@ export function PharmacyMedicinesPage() {
           </div>
 
           <div className="mt-3 flex items-center justify-between gap-3 text-xs text-[#829499]">
-            <span>{medicines.length.toLocaleString("ar-SY")} دواء</span>
+            <span>{medicines.length.toLocaleString("ar-SY-u-nu-latn")} دواء</span>
             {search ? (
               <button
                 type="button"

@@ -1,6 +1,6 @@
 export const getActiveLocale = () => {
   const language = document.documentElement.lang || "ar";
-  return language === "ar" ? "ar-SY" : language;
+  return language === "ar" ? "ar-SY-u-nu-latn" : language;
 };
 
 const distanceUnits = {

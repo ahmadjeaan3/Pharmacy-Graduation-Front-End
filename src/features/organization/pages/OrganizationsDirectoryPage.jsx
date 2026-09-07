@@ -212,7 +212,7 @@ export function OrganizationsDirectoryPage() {
               active={activeView === "organizations"}
               icon={Building2}
               label={`المنظمات المعتمدة (${organizationCount.toLocaleString(
-                "ar-SY",
+                "ar-SY-u-nu-latn",
               )})`}
               onClick={() => setParams({})}
             />
@@ -221,7 +221,7 @@ export function OrganizationsDirectoryPage() {
               active={activeView === "campaigns"}
               icon={Gift}
               label={`الحملات النشطة (${campaignCount.toLocaleString(
-                "ar-SY",
+                "ar-SY-u-nu-latn",
               )})`}
               onClick={() => setParams({ view: "campaigns" })}
             />
@@ -320,7 +320,7 @@ function HeroStatCard({ icon: Icon, label, value }) {
         <span className="block text-[9.5px] text-white/70">{label}</span>
 
         <strong className="mt-1 block text-[20px] font-bold text-white">
-          {Number(value || 0).toLocaleString("ar-SY")}
+          {Number(value || 0).toLocaleString("ar-SY-u-nu-latn")}
         </strong>
       </div>
     </div>
@@ -469,7 +469,7 @@ function OrganizationsGrid({ organizations, searching }) {
           >
             <span className="text-[11px] font-medium text-[#DFAF45]">
               {Number(organization.activeCampaignsCount || 0).toLocaleString(
-                "ar-SY",
+                "ar-SY-u-nu-latn",
               )}{" "}
               حملات نشطة
             </span>

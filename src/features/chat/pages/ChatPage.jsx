@@ -360,7 +360,7 @@ export function ChatPage() {
 
                           <small className="mt-1 block text-[10px] text-[#A0ACAF]">
                             {activityDate
-                              ? new Date(activityDate).toLocaleString("ar-SY", {
+                              ? new Date(activityDate).toLocaleString("ar-SY-u-nu-latn", {
                                   day: "numeric",
                                   month: "short",
                                   hour: "numeric",

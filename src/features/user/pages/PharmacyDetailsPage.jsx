@@ -121,38 +121,6 @@ function getDayIndex(dayOfWeek) {
 }
 
 
-const ARABIC_WEEK_DAYS = [
-  { index: 6, label: "السبت" },
-  { index: 0, label: "الأحد" },
-  { index: 1, label: "الاثنين" },
-  { index: 2, label: "الثلاثاء" },
-  { index: 3, label: "الأربعاء" },
-  { index: 4, label: "الخميس" },
-  { index: 5, label: "الجمعة" },
-];
-
-function getFullWorkingWeek(workingHours) {
-  const normalized = (workingHours || []).map((item) => ({
-    ...item,
-    dayIndex: getDayIndex(item.dayOfWeek),
-  }));
-
-  return ARABIC_WEEK_DAYS.map((day) => {
-    const item = normalized.find(
-      (entry) => entry.dayIndex === day.index,
-    );
-
-    return {
-      ...day,
-      isClosed: item?.isClosed ?? false,
-      hasSchedule: Boolean(item),
-      value: item
-        ? formatWorkingTime(item)
-        : "غير محدد",
-    };
-  });
-}
-
 function formatWorkingTime(item) {
   if (!item || item.isClosed) {
     return "مغلق";
@@ -206,12 +174,6 @@ export function PharmacyDetailsPage() {
 
   const [ratingDraft, setRatingDraft] = useState(null);
 
-  /*
-    Figma يعرض الخريطة مباشرة، لذلك نبدأ بـ true.
-    المستخدم ما زال يستطيع إخفاء/إظهار الخريطة من زر الـ Hero.
-  */
-  const [showDirections, setShowDirections] = useState(true);
-
   const query = useQuery({
     queryKey: userKeys.pharmacy(pharmacyId),
     queryFn: () => getPharmacyDetails(pharmacyId),
@@ -220,7 +182,7 @@ export function PharmacyDetailsPage() {
   const routeQuery = useQuery({
     queryKey: userKeys.nearestPharmacyRoute({ pharmacyId }),
     queryFn: () => getNearestPharmacyRoute({ pharmacyId }),
-    enabled: showDirections && Boolean(pharmacyId),
+    enabled: Boolean(pharmacyId),
   });
 
   const requestMutation = useMutation({
@@ -294,9 +256,6 @@ export function PharmacyDetailsPage() {
     score: query.data.currentUserRating || 0,
     comment: query.data.currentUserComment || "",
   };
-
-  const fullWorkingWeek =
-    getFullWorkingWeek(workingHours);
 
   const groupedHours =
     getGroupedWorkingHours(workingHours);
@@ -448,14 +407,14 @@ export function PharmacyDetailsPage() {
                   />
 
                   <strong className="font-medium text-white">
-                    {ratingValue.toLocaleString("ar-SY", {
+                    {ratingValue.toLocaleString("ar-SY-u-nu-latn", {
                       maximumFractionDigits: 1,
                     })}
                   </strong>
 
                   <span>
                     (
-                    {Number(pharmacy.ratingsCount || 0).toLocaleString("ar-SY")}
+                    {Number(pharmacy.ratingsCount || 0).toLocaleString("ar-SY-u-nu-latn")}
                     )
                   </span>
                 </span>
@@ -494,7 +453,7 @@ export function PharmacyDetailsPage() {
                   {Number(
                     query.data.availableMedicinesCount ??
                       availableMedicines.length,
-                  ).toLocaleString("ar-SY")}
+                  ).toLocaleString("ar-SY-u-nu-latn")}
                 </strong>
               </div>
             </div>
@@ -533,7 +492,7 @@ export function PharmacyDetailsPage() {
               mx-auto grid w-full max-w-[1200px]
               gap-3 px-5 pb-7
               sm:px-7
-              md:grid-cols-3
+              md:grid-cols-2
               lg:px-8
             "
           >
@@ -551,51 +510,19 @@ export function PharmacyDetailsPage() {
             inline-flex h-11
             items-center justify-center gap-2
             rounded-[8px]
-            border border-white/25
-            bg-white/10
-            text-[13px] font-medium
-            text-white
-            backdrop-blur-sm
-            transition hover:bg-white/20
+            border border-[#FFD267]/70
+            bg-gradient-to-l from-[#FFD267] to-[#F5BD3E]
+            text-[13px] font-bold
+            text-[#174B57]
+            shadow-[0_8px_22px_rgba(245,189,62,0.20)]
+            transition duration-200
+            hover:-translate-y-0.5 hover:from-[#FFDA7D] hover:to-[#F8C751]
+            hover:shadow-[0_11px_26px_rgba(245,189,62,0.28)]
+            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80
           "
         >
           <Search size={18} className="shrink-0" />
           البحث داخل الصيدلية
-        </button>
-
-        <button
-          type="button"
-          onClick={() => {
-            const next = !showDirections;
-            setShowDirections(next);
-
-            if (!showDirections) {
-              window.setTimeout(() => {
-                document
-                  .getElementById("pharmacy-directions")
-                  ?.scrollIntoView({
-                    behavior: "smooth",
-                    block: "center",
-                  });
-              }, 80);
-            }
-          }}
-          className="
-            inline-flex h-11
-            items-center justify-center gap-2
-            rounded-[8px]
-            border border-white/25
-            bg-white/10
-            text-[13px] font-medium
-            text-white
-            backdrop-blur-sm
-            transition hover:bg-white/20
-          "
-        >
-          <Navigation size={18} className="shrink-0" />
-          {showDirections
-            ? "إخفاء الخريطة"
-            : "الانتقال للموقع على الخريطة"}
         </button>
 
         {pharmacy.phoneNumber ? (
@@ -605,12 +532,15 @@ export function PharmacyDetailsPage() {
               inline-flex h-11
               items-center justify-center gap-2
               rounded-[8px]
-              border border-white/25
-              bg-white/10
-              text-[13px] font-medium
+              border border-[#75C7AE]/55
+              bg-gradient-to-l from-[#2F9B7F] to-[#237A69]
+              text-[13px] font-bold
               text-white
-              backdrop-blur-sm
-              transition hover:bg-white/20
+              shadow-[0_8px_22px_rgba(35,122,105,0.24)]
+              transition duration-200
+              hover:-translate-y-0.5 hover:from-[#36A98A] hover:to-[#1E6F60]
+              hover:shadow-[0_11px_26px_rgba(35,122,105,0.32)]
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD267]
             "
           >
             <Phone size={18} className="shrink-0" />
@@ -858,47 +788,31 @@ export function PharmacyDetailsPage() {
               bg-white
             "
           >
-            {showDirections ? (
-              <>
-                {routeQuery.isPending ? (
-                  <UserLoadingState label="جاري تجهيز مسار الوصول داخل المنصة..." />
-                ) : null}
+            {routeQuery.isPending ? (
+              <UserLoadingState label="جاري تجهيز مسار الوصول داخل المنصة..." />
+            ) : null}
 
-                {routeQuery.isError ? (
-                  <UserErrorState
-                    message={getApiErrorMessage(
-                      routeQuery.error,
-                    )}
-                    onRetry={routeQuery.refetch}
-                  />
-                ) : null}
+            {routeQuery.isError ? (
+              <UserErrorState
+                message={getApiErrorMessage(routeQuery.error)}
+                onRetry={routeQuery.refetch}
+              />
+            ) : null}
 
-                {routeMapContext ? (
-                  <Suspense
-                    fallback={
-                      <UserLoadingState label="جاري تحميل خريطة الصيدلية..." />
-                    }
-                  >
-                    <NearbyPharmaciesMap
-                      locationContext={routeMapContext}
-                      route={routeQuery.data}
-                      limit={1}
-                      title="مسار الوصول إلى الصيدلية"
-                    />
-                  </Suspense>
-                ) : null}
-              </>
-            ) : (
-              <div
-                className="
-                  flex min-h-[360px]
-                  items-center justify-center
-                  text-sm text-[#A5A5A5]
-                "
+            {routeMapContext ? (
+              <Suspense
+                fallback={
+                  <UserLoadingState label="جاري تحميل خريطة الصيدلية..." />
+                }
               >
-                اضغط على زر الخريطة في الأعلى لإظهار مسار الوصول.
-              </div>
-            )}
+                <NearbyPharmaciesMap
+                  locationContext={routeMapContext}
+                  route={routeQuery.data}
+                  limit={1}
+                  title="مسار الوصول إلى الصيدلية"
+                />
+              </Suspense>
+            ) : null}
           </div>
 
           {/* معلومات الوصول */}

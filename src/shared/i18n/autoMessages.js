@@ -224,6 +224,14 @@ export const autoMessages = {
     "اختر من دليل الأدوية": "Choose from medicine catalog",
     "رقم الدفعة": "Batch number",
     "موقع التخزين": "Storage location",
+    "مثال: المنطقة A — الممر 03 — الرف B2":
+      "Example: Zone A — aisle 03 — shelf B2",
+    "اكتب موقعاً واضحاً يساعد العامل على الوصول للدفعة بسرعة.":
+      "Enter a clear location so staff can find the batch quickly.",
+    "ابحث بالدواء أو رقم الدفعة أو موقع التخزين":
+      "Search by medicine, batch number, or storage location",
+    "لا توجد دفعات مطابقة للبحث.": "No batches match your search.",
+    "موقع التخزين:": "Storage location:",
     الكمية: "Quantity",
     "سعر الشراء": "Purchase price",
     "سعر الجملة": "Wholesale price",
@@ -323,6 +331,7 @@ export const autoMessages = {
     "تفاصيل الأدوية": "Medicine details",
     "بنود ضمن الطلب": "Items in the order",
     "لم تحدد الدفعة": "Batch not specified",
+    "توزيع الكمية على الدفعات": "Batch quantity allocation",
 
     "بيانات الشحنة والتتبع": "Shipment & tracking details",
     "رقم الشحنة": "Shipment number",
@@ -3717,6 +3726,14 @@ export const autoMessages = {
     "اختر من دليل الأدوية": "İlaç kataloğundan seç",
     "رقم الدفعة": "Parti numarası",
     "موقع التخزين": "Depolama konumu",
+    "مثال: المنطقة A — الممر 03 — الرف B2":
+      "Örnek: Bölge A — koridor 03 — raf B2",
+    "اكتب موقعاً واضحاً يساعد العامل على الوصول للدفعة بسرعة.":
+      "Personelin partiye hızlıca ulaşabilmesi için açık bir konum girin.",
+    "ابحث بالدواء أو رقم الدفعة أو موقع التخزين":
+      "İlaç, parti numarası veya depolama konumuna göre ara",
+    "لا توجد دفعات مطابقة للبحث.": "Aramayla eşleşen parti yok.",
+    "موقع التخزين:": "Depolama konumu:",
     الكمية: "Miktar",
     "سعر الشراء": "Alış fiyatı",
     "سعر الجملة": "Toptan fiyat",
@@ -3819,6 +3836,7 @@ export const autoMessages = {
     "تفاصيل الأدوية": "İlaç detayları",
     "بنود ضمن الطلب": "Siparişteki ürünler",
     "لم تحدد الدفعة": "Parti belirtilmedi",
+    "توزيع الكمية على الدفعات": "Miktarın partilere dağılımı",
 
     "بيانات الشحنة والتتبع": "Gönderi ve takip bilgileri",
 

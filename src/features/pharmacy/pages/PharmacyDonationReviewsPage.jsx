@@ -92,7 +92,7 @@ const statusMeta = {
 ========================================================= */
 
 const localeMap = {
-  ar: "ar-SY",
+  ar: "ar-SY-u-nu-latn",
   en: "en-US",
   tr: "tr-TR",
 };

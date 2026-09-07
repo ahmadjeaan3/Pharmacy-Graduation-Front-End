@@ -572,7 +572,7 @@ export function MedicineSearchPage() {
                                 {entry.searchedAt
                                   ? new Date(
                                       entry.searchedAt,
-                                    ).toLocaleDateString("ar-SY")
+                                    ).toLocaleDateString("ar-SY-u-nu-latn")
                                   : "مؤخراً"}
                               </span>
                             </div>
@@ -648,7 +648,7 @@ export function MedicineSearchPage() {
                     نتائج البحث
                   </h2>
                   <p className="mt-1 text-[11px] text-[#8A9A9E]">
-                    تم العثور على {results.length.toLocaleString("ar-SY")} نتيجة
+                    تم العثور على {results.length.toLocaleString("ar-SY-u-nu-latn")} نتيجة
                   </p>
                 </div>
               </div>
@@ -724,8 +724,8 @@ export function MedicineSearchPage() {
                       </h2>
 
                       <p className="mt-1 text-[12px] text-[#8A9A9E]">
-                        {results.length.toLocaleString("ar-SY")} نتيجة لدى{" "}
-                        {groupedCount.toLocaleString("ar-SY")} صيدلية
+                        {results.length.toLocaleString("ar-SY-u-nu-latn")} نتيجة لدى{" "}
+                        {groupedCount.toLocaleString("ar-SY-u-nu-latn")} صيدلية
                       </p>
                     </div>
 
@@ -800,7 +800,7 @@ export function MedicineSearchPage() {
                                 />
                                 {Number(
                                   item.pharmacy.averageRating || 0,
-                                ).toLocaleString("ar-SY", {
+                                ).toLocaleString("ar-SY-u-nu-latn", {
                                   maximumFractionDigits: 1,
                                 })}
                               </span>
@@ -896,7 +896,7 @@ export function MedicineSearchPage() {
                                 />
                                 {Number(
                                   pharmacy.averageRating || 0,
-                                ).toLocaleString("ar-SY", {
+                                ).toLocaleString("ar-SY-u-nu-latn", {
                                   maximumFractionDigits: 1,
                                 })}
                               </span>

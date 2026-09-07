@@ -64,7 +64,7 @@ export function AdminAccountsPage() {
 
   const locale =
     currentLanguage === "ar"
-      ? "ar-SY"
+      ? "ar-SY-u-nu-latn"
       : currentLanguage === "tr"
         ? "tr-TR"
         : "en-US";
@@ -484,7 +484,7 @@ function StatCard({
   label,
   value,
   tone = "primary",
-  locale = "ar-SY",
+  locale = "ar-SY-u-nu-latn",
 }) {
   return (
     <article className="rounded-[1.4rem] border border-[#174B57]/8 bg-white p-4 shadow-[0_10px_30px_rgba(23,75,87,.04)] sm:p-5">

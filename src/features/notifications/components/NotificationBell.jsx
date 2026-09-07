@@ -20,7 +20,7 @@ export function NotificationBell({ unreadCount = 0, roles = [] }) {
   const language = i18n.resolvedLanguage || i18n.language || "ar";
 
   const locale =
-    language === "ar" ? "ar-SY" : language === "tr" ? "tr-TR" : "en-US";
+    language === "ar" ? "ar-SY-u-nu-latn" : language === "tr" ? "tr-TR" : "en-US";
 
   const [open, setOpen] = useState(false);
 

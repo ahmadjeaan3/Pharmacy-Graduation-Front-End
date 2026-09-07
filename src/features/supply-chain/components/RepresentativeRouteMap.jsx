@@ -1,6 +1,7 @@
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import {
   MapContainer,
   Marker,
@@ -26,6 +27,13 @@ const destinationIcon = L.divIcon({
 });
 
 export function RepresentativeRouteMap({ route }) {
+  const { t, i18n } = useTranslation();
+  const currentLanguage = String(
+    i18n.resolvedLanguage || i18n.language || "ar",
+  )
+    .split("-")[0]
+    .toLowerCase();
+  const direction = currentLanguage === "ar" ? "rtl" : "ltr";
   const routePoints = useMemo(
     () => route.path?.map((point) => [point.latitude, point.longitude]) || [],
     [route.path],
@@ -56,14 +64,14 @@ export function RepresentativeRouteMap({ route }) {
           position={[route.originLatitude, route.originLongitude]}
           icon={driverIcon}
         >
-          <Popup>موقعك الحالي</Popup>
+          <Popup>{t("موقعك الحالي")}</Popup>
         </Marker>
         <Marker
           position={[route.destinationLatitude, route.destinationLongitude]}
           icon={destinationIcon}
         >
           <Popup>
-            <div dir="rtl" className="text-right">
+            <div dir={direction} lang={currentLanguage} className="text-start">
               <b>{route.pharmacyName}</b>
               <p className="mt-1 text-xs text-slate-500">
                 {route.pharmacyAddress}

@@ -977,7 +977,7 @@ function UserDashboardPage() {
                                     />
 
                                     {rating.toLocaleString(
-                                      "ar-SY",
+                                      "ar-SY-u-nu-latn",
                                       {
                                         maximumFractionDigits: 1,
                                       },

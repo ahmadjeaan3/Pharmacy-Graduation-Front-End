@@ -26,7 +26,7 @@ const policyContent = {
   ar: {
     language: "العربية",
     dir: "rtl",
-    locale: "ar-SY",
+    locale: "ar-SY-u-nu-latn",
     title: "سياسة الخصوصية",
     eyebrow: "خصوصيتك جزء من رعايتك",
     intro:

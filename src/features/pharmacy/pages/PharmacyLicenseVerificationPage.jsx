@@ -91,7 +91,7 @@ const statusInfo = {
 const formatBytes = (bytes) =>
   `${(Number(bytes || 0) / 1024 / 1024).toFixed(2)} MB`;
 
-const formatDate = (value, locale = "ar-SY") =>
+const formatDate = (value, locale = "ar-SY-u-nu-latn") =>
   value
     ? new Intl.DateTimeFormat(locale, {
         dateStyle: "medium",
@@ -122,7 +122,7 @@ export function PharmacyLicenseVerificationPage() {
       ? "en-US"
       : currentLanguage === "tr"
         ? "tr-TR"
-        : "ar-SY";
+        : "ar-SY-u-nu-latn";
 
   const client = useQueryClient();
 

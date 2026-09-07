@@ -112,7 +112,7 @@ export const getOrganizationLocale = (currentLanguage = "ar") => {
     return "en-US";
   }
 
-  return "ar-SY";
+  return "ar-SY-u-nu-latn";
 };
 
 /**

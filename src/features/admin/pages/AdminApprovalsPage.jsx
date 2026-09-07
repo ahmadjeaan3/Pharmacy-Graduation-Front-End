@@ -396,7 +396,7 @@ function WarehouseApprovalCard({
           <b className="block text-base text-[#17363e]">
             {Number(
               item.minimumOrderAmount,
-            ).toLocaleString("ar-SY")}
+            ).toLocaleString("ar-SY-u-nu-latn")}
           </b>
           الحد الأدنى
         </span>
@@ -405,7 +405,7 @@ function WarehouseApprovalCard({
           <b className="block text-base text-[#17363e]">
             {Number(
               item.deliveryFee,
-            ).toLocaleString("ar-SY")}
+            ).toLocaleString("ar-SY-u-nu-latn")}
           </b>
           أجور التوصيل
         </span>
@@ -467,7 +467,7 @@ function TabButton({
               : "bg-slate-100"
           }`}
         >
-          {count.toLocaleString("ar-SY")}
+          {count.toLocaleString("ar-SY-u-nu-latn")}
         </span>
       )}
 
@@ -592,7 +592,7 @@ function OrganizationApprovalCard({
       <InfoLine
         icon={FileCheck2}
         value={`${item.verificationDocumentsCount.toLocaleString(
-          "ar-SY",
+          "ar-SY-u-nu-latn",
         )} مستندات تحقق`}
       />
 

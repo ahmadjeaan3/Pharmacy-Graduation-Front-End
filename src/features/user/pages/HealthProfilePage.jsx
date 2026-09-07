@@ -1296,7 +1296,7 @@ function HealthCard({ card }) {
                 آخر تحديث: {formatDate(card.lastUpdatedAtUtc, true)}
               </span>
               <span className="print-only">
-                تاريخ إصدار التقرير: {new Date().toLocaleDateString("ar")}
+                تاريخ إصدار التقرير: {new Date().toLocaleDateString("ar-u-nu-latn")}
               </span>
             </div>
 

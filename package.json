@@ -10,6 +10,7 @@
     "format": "prettier --write src package.json eslint.config.js vite.config.js tailwind.config.js",
     "format:check": "prettier --check src package.json eslint.config.js vite.config.js tailwind.config.js",
     "translations:build": "node scripts/build-translations.mjs",
+    "translations:check:supply": "node scripts/check-i18n-coverage.mjs src/features/supply-chain",
     "direction:fix": "node scripts/logical-direction.mjs",
     "check": "npm run lint && npm run format:check && npm run build",
     "preview": "vite preview"

@@ -161,7 +161,7 @@ function PharmacyPopup({ pharmacy, number }) {
             className="me-1 inline text-amber-500"
             fill="currentColor"
           />
-          {Number(pharmacy.averageRating || 0).toLocaleString("ar-SY", {
+          {Number(pharmacy.averageRating || 0).toLocaleString("ar-SY-u-nu-latn", {
             maximumFractionDigits: 1,
           })}
         </span>
@@ -248,7 +248,7 @@ function MapSidebar({ pharmacies, route, title }) {
                     route?.distanceMeters ?? nearest.distanceMeters,
                   )}
                   {minutes
-                    ? ` • نحو ${minutes.toLocaleString("ar-SY")} دقيقة`
+                    ? ` • نحو ${minutes.toLocaleString("ar-SY-u-nu-latn")} دقيقة`
                     : ""}
                 </p>
               </div>

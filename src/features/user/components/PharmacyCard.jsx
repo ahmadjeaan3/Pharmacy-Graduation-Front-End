@@ -24,7 +24,7 @@ export function PharmacyCard({ pharmacy, onShowRoute }) {
         </span>
         <div className="flex items-center gap-1 text-sm font-bold text-amber-600">
           <Star size={16} fill="currentColor" />
-          {Number(pharmacy.averageRating || 0).toLocaleString("ar-SY", {
+          {Number(pharmacy.averageRating || 0).toLocaleString("ar-SY-u-nu-latn", {
             maximumFractionDigits: 1,
           })}
         </div>

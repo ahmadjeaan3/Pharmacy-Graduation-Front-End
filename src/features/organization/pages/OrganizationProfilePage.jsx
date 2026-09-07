@@ -479,7 +479,7 @@ export function OrganizationProfilePage() {
                 label={t("المستندات")}
                 value={verificationData.documents.length.toLocaleString(
                   currentLanguage === "ar"
-                    ? "ar-SY"
+                    ? "ar-SY-u-nu-latn"
                     : currentLanguage === "tr"
                       ? "tr-TR"
                       : "en-US",

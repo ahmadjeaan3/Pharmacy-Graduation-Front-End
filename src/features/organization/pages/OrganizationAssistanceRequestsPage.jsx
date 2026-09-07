@@ -398,7 +398,7 @@ function RequestCard({
 
   const numberLocale =
     currentLanguage === "ar"
-      ? "ar-SY"
+      ? "ar-SY-u-nu-latn"
       : currentLanguage === "tr"
         ? "tr-TR"
         : "en-US";

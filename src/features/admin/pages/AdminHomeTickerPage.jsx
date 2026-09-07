@@ -76,7 +76,7 @@ const toLocalInput = (value) => {
 
 const formatDate = (value) =>
   value
-    ? new Intl.DateTimeFormat("ar-SY", {
+    ? new Intl.DateTimeFormat("ar-SY-u-nu-latn", {
         day: "numeric",
         month: "short",
         year: "numeric",
@@ -809,7 +809,7 @@ function StatCard({ icon: Icon, label, detail, value, tone = "primary" }) {
 
       <div className="min-w-0 flex-1">
         <strong className="block text-[28px] font-black leading-none text-[#17363E]">
-          {Number(value || 0).toLocaleString("ar-SY")}
+          {Number(value || 0).toLocaleString("ar-SY-u-nu-latn")}
         </strong>
 
         <span className="mt-2 block text-[12px] font-bold text-[#71858A]">

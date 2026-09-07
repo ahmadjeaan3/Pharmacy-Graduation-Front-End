@@ -1231,7 +1231,7 @@ function formatNotificationCount(
 ) {
   const locale =
     currentLanguage === "ar"
-      ? "ar-SY"
+      ? "ar-SY-u-nu-latn"
       : currentLanguage === "tr"
         ? "tr-TR"
         : "en-US";

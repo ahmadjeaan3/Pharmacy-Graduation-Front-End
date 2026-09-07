@@ -222,7 +222,7 @@ export function formatNotificationDate(value, language = "ar") {
   const normalizedLanguage = String(language).split("-")[0].toLowerCase();
   const locale =
     normalizedLanguage === "ar"
-      ? "ar-SY"
+      ? "ar-SY-u-nu-latn"
       : normalizedLanguage === "tr"
         ? "tr-TR"
         : "en-US";

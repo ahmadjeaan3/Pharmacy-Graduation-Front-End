@@ -93,7 +93,7 @@ function formatRequestDate(value) {
     return "—";
   }
 
-  return new Intl.DateTimeFormat("ar-SY", {
+  return new Intl.DateTimeFormat("ar-SY-u-nu-latn", {
     day: "numeric",
     month: "long",
     year: "numeric",
@@ -109,7 +109,7 @@ function formatRequestTime(value) {
     return "—";
   }
 
-  return new Intl.DateTimeFormat("ar-SY", {
+  return new Intl.DateTimeFormat("ar-SY-u-nu-latn", {
     hour: "numeric",
     minute: "2-digit",
   }).format(date);
@@ -283,7 +283,7 @@ export function MedicineRequestsPage() {
                 </span>
 
                 <strong className="mt-1 block text-[20px] font-bold text-white">
-                  {activeCount.toLocaleString("ar-SY")}
+                  {activeCount.toLocaleString("ar-SY-u-nu-latn")}
                 </strong>
               </div>
             </div>
@@ -308,7 +308,7 @@ export function MedicineRequestsPage() {
                 </span>
 
                 <strong className="mt-1 block text-[20px] font-bold text-white">
-                  {allRequests.length.toLocaleString("ar-SY")}
+                  {allRequests.length.toLocaleString("ar-SY-u-nu-latn")}
                 </strong>
               </div>
             </div>
@@ -363,12 +363,12 @@ export function MedicineRequestsPage() {
                   {item.value === "Pending" &&
                   pendingCount > 0 ? (
                     <span className="me-1 opacity-70">
-                      ({pendingCount.toLocaleString("ar-SY")})
+                      ({pendingCount.toLocaleString("ar-SY-u-nu-latn")})
                     </span>
                   ) : item.value === "" &&
                     allRequests.length > 0 ? (
                     <span className="me-1 opacity-70">
-                      ({count.toLocaleString("ar-SY")})
+                      ({count.toLocaleString("ar-SY-u-nu-latn")})
                     </span>
                   ) : null}
                 </button>
@@ -689,7 +689,7 @@ export function MedicineRequestsPage() {
                             >
                               {Number(
                                 request.requestedQuantity || 0,
-                              ).toLocaleString("ar-SY")}
+                              ).toLocaleString("ar-SY-u-nu-latn")}
                             </strong>
                           </div>
                         </div>
@@ -827,7 +827,7 @@ export function MedicineRequestsPage() {
                           <strong className="mt-0.5 block font-semibold text-[#60777C]">
                             {Number(
                               request.requestedQuantity || 0,
-                            ).toLocaleString("ar-SY")}
+                            ).toLocaleString("ar-SY-u-nu-latn")}
                           </strong>
                         </div>
                       </div>

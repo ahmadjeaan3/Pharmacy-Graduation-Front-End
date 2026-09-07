@@ -141,7 +141,7 @@ function ServiceCard({ service, loading, aggregateError }) {
         <div className="mt-3 flex flex-wrap gap-2 text-[10px] font-bold text-[#52727a]">
           {service.count != null && (
             <span className="rounded-lg bg-white px-2 py-1">
-              {Number(service.count).toLocaleString("ar-SY")} دواء
+              {Number(service.count).toLocaleString("ar-SY-u-nu-latn")} دواء
             </span>
           )}
           {service.model && (

@@ -1,11 +1,57 @@
 import { useEffect } from "react";
 
 import i18n, { normalizeLanguage } from "./i18n";
+import { autoPatterns } from "./autoMessages";
 
 const arabicText = /[\u0600-\u06ff]/;
 const translatedTextNodes = new WeakMap();
 const translatedAttributes = new WeakMap();
 const translatableAttributes = ["aria-label", "placeholder", "title"];
+const compiledPatterns = new Map();
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function getCompiledPatterns(language) {
+  if (compiledPatterns.has(language)) return compiledPatterns.get(language);
+
+  const patterns = (autoPatterns[language] || [])
+    .filter(({ source }) => arabicText.test(source))
+    .map(({ source, target }) => {
+      const placeholders = [...source.matchAll(/__HAYAT_VALUE_(\d+)__/g)];
+      let cursor = 0;
+      let expression = "^";
+
+      for (const placeholder of placeholders) {
+        expression += escapeRegExp(source.slice(cursor, placeholder.index));
+        expression += "([\\s\\S]*?)";
+        cursor = placeholder.index + placeholder[0].length;
+      }
+      expression += `${escapeRegExp(source.slice(cursor))}$`;
+
+      return {
+        expression: new RegExp(expression),
+        target,
+      };
+    });
+
+  compiledPatterns.set(language, patterns);
+  return patterns;
+}
+
+function translateDynamicValue(value, language) {
+  for (const { expression, target } of getCompiledPatterns(language)) {
+    const match = value.match(expression);
+    if (!match) continue;
+
+    return target.replace(/__HAYAT_VALUE_(\d+)__/g, (_, index) =>
+      match[Number(index) + 1] ?? "",
+    );
+  }
+
+  return value;
+}
 
 function splitWhitespace(value) {
   const match = String(value).match(/^(\s*)([\s\S]*?)(\s*)$/);
@@ -23,7 +69,9 @@ function translateValue(value, language) {
   if (!key) return value;
 
   const translated = i18n.t(key, { lng: language, defaultValue: key });
-  return translated === key ? value : `${leading}${translated}${trailing}`;
+  const resolved =
+    translated === key ? translateDynamicValue(key, language) : translated;
+  return resolved === key ? value : `${leading}${resolved}${trailing}`;
 }
 
 function shouldIgnore(node) {

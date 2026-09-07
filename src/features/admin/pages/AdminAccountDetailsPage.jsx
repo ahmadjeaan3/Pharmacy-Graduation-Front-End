@@ -87,7 +87,7 @@ export function AdminAccountDetailsPage() {
 
   const locale =
     currentLanguage === "ar"
-      ? "ar-SY"
+      ? "ar-SY-u-nu-latn"
       : currentLanguage === "tr"
         ? "tr-TR"
         : "en-US";
@@ -864,7 +864,7 @@ function Stat({
   label,
   value,
   tone = "primary",
-  locale = "ar-SY",
+  locale = "ar-SY-u-nu-latn",
 }) {
   return (
     <article className="flex min-h-[108px] items-center gap-4 rounded-[1.35rem] border border-[#DCE8EA] bg-white px-5 py-4 shadow-[0_10px_30px_rgba(23,75,87,.04)]">

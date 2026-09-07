@@ -1,5 +1,5 @@
 const localeMap = {
-  ar: "ar-SA",
+  ar: "ar-SA-u-nu-latn",
   en: "en-US",
   tr: "tr-TR",
 };
@@ -28,7 +28,7 @@ export const formatNumber = (value, language = "ar") => {
 export const formatCurrency = (value, language = "ar") => {
   const normalized = resolveLanguage(language);
 
-  const locale = normalized === "ar" ? "ar-SY" : resolveLocale(normalized);
+  const locale = normalized === "ar" ? "ar-SY-u-nu-latn" : resolveLocale(normalized);
 
   const formattedValue = new Intl.NumberFormat(locale, {
     maximumFractionDigits: 2,

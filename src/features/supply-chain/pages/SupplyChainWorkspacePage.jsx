@@ -130,7 +130,7 @@ const labels = {
   Completed: "مكتمل",
 };
 const localeMap = {
-  ar: "ar-SY",
+  ar: "ar-SY-u-nu-latn",
   en: "en-US",
   tr: "tr-TR",
 };
@@ -437,6 +437,7 @@ export function SupplyChainWorkspacePage() {
   const [selectedWarehouse, setSelectedWarehouse] = useState(null);
   const [catalogSearch, setCatalogSearch] = useState("");
   const [adminResourceSearch, setAdminResourceSearch] = useState("");
+  const [batchSearch, setBatchSearch] = useState("");
   const [cart, setCart] = useState({});
   const [representativeLocation, setRepresentativeLocation] = useState(null);
   const [representativeLocationError, setRepresentativeLocationError] =
@@ -530,37 +531,6 @@ export function SupplyChainWorkspacePage() {
     staleTime: SUPPLY_DATA_STALE_TIME,
     placeholderData: keepPreviousData,
   });
-  useEffect(() => {
-    if (role !== "Warehouse") return undefined;
-
-    const timer = window.setTimeout(() => {
-      const identity = user?.id || user?.email || role;
-      Promise.allSettled([
-        qc.prefetchQuery({
-          queryKey: [...supplyKeys.orders, identity],
-          queryFn: getSupplyOrders,
-          staleTime: 45_000,
-        }),
-        qc.prefetchQuery({
-          queryKey: supplyKeys.batches,
-          queryFn: getBatches,
-          staleTime: SUPPLY_DATA_STALE_TIME,
-        }),
-        qc.prefetchQuery({
-          queryKey: supplyKeys.representatives,
-          queryFn: getRepresentatives,
-          staleTime: SUPPLY_DATA_STALE_TIME,
-        }),
-        qc.prefetchQuery({
-          queryKey: [...supplyKeys.returns, role],
-          queryFn: getSupplyReturns,
-          staleTime: SUPPLY_DATA_STALE_TIME,
-        }),
-      ]);
-    }, 250);
-
-    return () => window.clearTimeout(timer);
-  }, [qc, role, user?.email, user?.id]);
   const mutation = useMutation({
     mutationFn: ({ type, id, value, coordinates, note, payment }) =>
       type === "order"
@@ -805,6 +775,18 @@ export function SupplyChainWorkspacePage() {
           warehouseName: item.warehouseName,
         }))
       : batches.data || [];
+  const normalizedBatchSearch = batchSearch.trim().toLocaleLowerCase();
+  const displayedBatches =
+    role === "Warehouse" && normalizedBatchSearch
+      ? visibleBatches.filter((batch) =>
+          [batch.medicineName, batch.batchNumber, batch.storageLocation].some(
+            (value) =>
+              String(value || "")
+                .toLocaleLowerCase()
+                .includes(normalizedBatchSearch),
+          ),
+        )
+      : visibleBatches;
   const visibleRepresentatives =
     role === "Admin"
       ? (adminRepresentatives.data || []).map((item) => ({
@@ -1178,11 +1160,11 @@ lg:min-h-[250px]"
               {role === "Admin" ? (
                 <label className="relative w-full sm:w-80">
                   <Search
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#829499]"
+                    className="absolute start-3 top-1/2 -translate-y-1/2 text-[#829499]"
                     size={17}
                   />
                   <input
-                    className="form-input pr-10"
+                    className="form-input ps-10"
                     value={adminResourceSearch}
                     onChange={(event) =>
                       setAdminResourceSearch(event.target.value)
@@ -1191,16 +1173,32 @@ lg:min-h-[250px]"
                   />
                 </label>
               ) : (
-                <button
-                  onClick={() => setDialog("batch")}
-                  className="btn-primary"
-                >
-                  <Plus size={17} /> إضافة دفعة
-                </button>
+                <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+                  <label className="relative min-w-0 flex-1 sm:w-72">
+                    <Search
+                      className="absolute start-3 top-1/2 -translate-y-1/2 text-[#829499]"
+                      size={17}
+                    />
+                    <input
+                      className="form-input ps-10"
+                      value={batchSearch}
+                      onChange={(event) => setBatchSearch(event.target.value)}
+                      placeholder={t(
+                        "ابحث بالدواء أو رقم الدفعة أو موقع التخزين",
+                      )}
+                    />
+                  </label>
+                  <button
+                    onClick={() => setDialog("batch")}
+                    className="btn-primary justify-center"
+                  >
+                    <Plus size={17} /> إضافة دفعة
+                  </button>
+                </div>
               )}
             </div>
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-              {visibleBatches.map((b) => (
+              {displayedBatches.map((b) => (
                 <article
                   key={b.id}
                   className="rounded-2xl border border-[#174B57]/8 p-4"
@@ -1221,6 +1219,13 @@ lg:min-h-[250px]"
                   )}
                   <p className="mt-1 font-mono text-xs text-[#829499]">
                     {b.batchNumber}
+                  </p>
+                  <p className="mt-3 flex items-center gap-1.5 text-xs font-bold text-[#60777D]">
+                    <MapPin size={14} className="shrink-0 text-[#216474]" />
+                    <span>{t("موقع التخزين:")}</span>
+                    <b className="break-words text-[#29464D]">
+                      {b.storageLocation || t("غير محدد")}
+                    </b>
                   </p>
                   <div className="mt-4 flex justify-between text-sm">
                     <span>
@@ -1262,9 +1267,11 @@ lg:min-h-[250px]"
                   )}
                 </article>
               ))}
-              {!visibleBatches.length && (
+              {!displayedBatches.length && (
                 <div className="col-span-full rounded-2xl bg-[#F8FBFB] p-10 text-center text-sm text-[#71858A]">
-                  لا توجد دفعات. أضف أول دفعة لتصبح الأدوية متاحة للصيدليات.
+                  {visibleBatches.length
+                    ? t("لا توجد دفعات مطابقة للبحث.")
+                    : "لا توجد دفعات. أضف أول دفعة لتصبح الأدوية متاحة للصيدليات."}
                 </div>
               )}
             </div>
@@ -1284,11 +1291,11 @@ lg:min-h-[250px]"
               {role === "Admin" ? (
                 <label className="relative w-full sm:w-80">
                   <Search
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#829499]"
+                    className="absolute start-3 top-1/2 -translate-y-1/2 text-[#829499]"
                     size={17}
                   />
                   <input
-                    className="form-input pr-10"
+                    className="form-input ps-10"
                     value={adminResourceSearch}
                     onChange={(event) =>
                       setAdminResourceSearch(event.target.value)
@@ -1735,9 +1742,34 @@ function OrderDetailsDialog({
                       <b>{item.medicineName}</b>
                       <p className="mt-1 text-xs text-[#829499]">
                         {item.batchNumber
-                          ? `رقم الدفعة: ${item.batchNumber}`
+                          ? t("رقم الدفعة: {{batch}}", {
+                              batch: item.batchNumber,
+                            })
                           : t("لم تحدد الدفعة")}
                       </p>
+                      {item.batchAllocations?.length > 0 && (
+                        <div className="mt-3 space-y-2 rounded-xl bg-[#F5F9F9] p-3">
+                          <p className="text-[11px] font-black text-[#216474]">
+                            {t("توزيع الكمية على الدفعات")}
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {item.batchAllocations.map((allocation) => (
+                              <span
+                                key={allocation.id}
+                                className="inline-flex items-center gap-1.5 rounded-full border border-[#216474]/10 bg-white px-2.5 py-1 text-[11px] text-[#60777D]"
+                              >
+                                <b className="text-[#174B57]">
+                                  {allocation.batchNumber}
+                                </b>
+                                <span aria-hidden="true">•</span>
+                                <span>
+                                  {t("الكمية")}: {allocation.deliveredQuantity || allocation.reservedQuantity}
+                                </span>
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                     <span>
                       الكمية: <b>{item.approvedQuantity}</b>
@@ -1793,7 +1825,7 @@ function OrderDetailsDialog({
                           <b>{t(labels[event.status] || event.status)}</b>
                           <p className="mt-1 text-xs text-[#829499]">
                             {new Date(event.occurredAtUtc).toLocaleString(
-                              "ar-SY",
+                              "ar-SY-u-nu-latn",
                             )}{" "}
                             {event.note && `— ${event.note}`}
                           </p>
@@ -2580,7 +2612,7 @@ function RepresentativeRoutePanel({
               <small className="text-[#71858A]">المسافة</small>
               <b className="mt-1 block text-[#174B57]">
                 {(routeQuery.data.distanceMeters / 1000).toLocaleString(
-                  "ar-SY",
+                  "ar-SY-u-nu-latn",
                   {
                     maximumFractionDigits: 1,
                   },
@@ -2594,7 +2626,7 @@ function RepresentativeRoutePanel({
                 {Math.max(
                   1,
                   Math.round(routeQuery.data.durationSeconds / 60),
-                ).toLocaleString("ar-SY")}{" "}
+                ).toLocaleString("ar-SY-u-nu-latn")}{" "}
                 دقيقة
               </b>
             </div>
@@ -2735,7 +2767,7 @@ function ReturnReviewDialog({ review, busy, error, onClose, onSubmit }) {
 }
 
 function DeliveryPaymentDialog({ order, busy, error, onClose, onConfirm }) {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const currentLanguage = normalizeLanguage(
     i18n.resolvedLanguage || i18n.language || "ar",
   );
@@ -2819,7 +2851,7 @@ function DeliveryPaymentDialog({ order, busy, error, onClose, onConfirm }) {
                   className="form-input"
                   value={amount}
                   onChange={(event) => setAmount(event.target.value)}
-                  placeholder={`أقل من ${remaining}`}
+                  placeholder={t("أقل من {{remaining}}", { remaining })}
                 />
                 {partialInvalid && amount && (
                   <small className="mt-1 block font-bold text-rose-700">
@@ -2979,6 +3011,7 @@ function ReturnDialog({ order, returns, busy, error, onClose, onSubmit }) {
 }
 
 function RecallDialog({ batch, busy, error, onClose, onSubmit }) {
+  const { t } = useTranslation();
   const [form, setForm] = useState({
     medicineBatchId: batch.id,
     reason: "",
@@ -2986,7 +3019,7 @@ function RecallDialog({ batch, busy, error, onClose, onSubmit }) {
   });
   return (
     <SimpleDialog
-      title={`استدعاء دفعة ${batch.batchNumber}`}
+      title={t("استدعاء دفعة {{batch}}", { batch: batch.batchNumber })}
       icon={Megaphone}
       onClose={onClose}
     >
@@ -3042,10 +3075,16 @@ function RecallDialog({ batch, busy, error, onClose, onSubmit }) {
 }
 
 function SimpleDialog({ title, icon: Icon, onClose, children }) {
+  const { i18n } = useTranslation();
+  const currentLanguage = normalizeLanguage(
+    i18n.resolvedLanguage || i18n.language || "ar",
+  );
+
   return (
     <div className="fixed inset-0 z-[120] grid place-items-center bg-[#071f25]/65 p-3 backdrop-blur-sm sm:p-4">
       <div
-        dir="rtl"
+        dir={currentLanguage === "ar" ? "rtl" : "ltr"}
+        lang={currentLanguage}
         className="max-h-[92vh] w-full max-w-xl overflow-auto rounded-2xl bg-white shadow-2xl sm:rounded-[1.75rem]"
       >
         <header className="flex items-center justify-between gap-3 bg-[#174B57] p-4 text-white sm:p-5">
@@ -3113,6 +3152,7 @@ function WarehouseDialog({ mode, batch, onClose, onSaved }) {
             wholesalePrice: Number(form.wholesalePrice),
             productionDateUtc: form.productionDateUtc || null,
             expiryDateUtc: new Date(form.expiryDateUtc).toISOString(),
+            storageLocation: form.storageLocation.trim(),
           })
         : createRepresentative(form),
     onSuccess: onSaved,
@@ -3180,9 +3220,19 @@ function WarehouseDialog({ mode, batch, onClose, onSaved }) {
                   {...field("batchNumber")}
                 />
               </Field>
-              <Field label="موقع التخزين">
-                <input className="form-input" {...field("storageLocation")} />
-              </Field>
+              <label>
+                <span className="form-label">{t("موقع التخزين")}</span>
+                <input
+                  required
+                  maxLength={100}
+                  className="form-input"
+                  placeholder={t("مثال: المنطقة A — الممر 03 — الرف B2")}
+                  {...field("storageLocation")}
+                />
+                <span className="mt-1.5 block text-[11px] leading-5 text-[#829499]">
+                  {t("اكتب موقعاً واضحاً يساعد العامل على الوصول للدفعة بسرعة.")}
+                </span>
+              </label>
               <Field label="الكمية">
                 <input
                   required
@@ -4109,7 +4159,11 @@ function InvoicePrint({ invoice, currentLanguage }) {
   const locale = resolveLocale(currentLanguage);
   const isRefund = (payment) => Number(payment.amount) < 0;
   return (
-    <article className="invoice-print print-only" dir="rtl">
+    <article
+      className="invoice-print print-only"
+      dir={currentLanguage === "ar" ? "rtl" : "ltr"}
+      lang={currentLanguage}
+    >
       <header className="invoice-print__header">
         <div>
           <p className="invoice-print__brand">DAWAAI BUSINESS NETWORK</p>

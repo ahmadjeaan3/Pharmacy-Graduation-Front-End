@@ -319,7 +319,7 @@ export function DashboardLayout() {
 
   const locale =
     currentLanguage === "ar"
-      ? "ar-SY"
+      ? "ar-SY-u-nu-latn"
       : currentLanguage === "tr"
         ? "tr-TR"
         : "en-US";
@@ -491,7 +491,7 @@ export function DashboardLayout() {
                           {t(label)}
 
                           {isActive && !urgent ? (
-                            <span className="absolute -bottom-[9px] left-0 right-0 h-[2px] rounded-full bg-[#DFAE0D]" />
+                            <span className="absolute -bottom-[9px] inset-x-0 h-[2px] rounded-full bg-[#DFAE0D]" />
                           ) : null}
                         </span>
                       )}
@@ -528,7 +528,7 @@ export function DashboardLayout() {
                     {/* الاسم والسهم */}
                     <span
                       dir={isArabic ? "rtl" : "ltr"}
-                      className="inline-flex items-center gap-2 text-[14px] font-medium text-[#216474] ml-4"
+                      className="me-4 inline-flex items-center gap-2 text-[14px] font-medium text-[#216474]"
                     >
                       {/* السهم على اليمين في العربية */}
                       {isArabic && (
@@ -558,7 +558,7 @@ export function DashboardLayout() {
                     </span>
 
                     {/* النص أسفل الاسم */}
-                    <span className="mt-1 whitespace-nowrap text-[12px] text-[#666666] ml-4">
+                    <span className="me-4 mt-1 whitespace-nowrap text-[12px] text-[#666666]">
                       {t("ملفي الشخصي")}
                     </span>
                   </span>

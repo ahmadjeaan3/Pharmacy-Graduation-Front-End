@@ -284,7 +284,7 @@ export function SearchHistoryPage() {
 
                       <div className="mt-1.5 flex flex-wrap items-center gap-3 text-[10.5px] text-[#8A9A9E]">
                         <span>
-                          {item.resultCount.toLocaleString("ar-SY")} نتيجة
+                          {item.resultCount.toLocaleString("ar-SY-u-nu-latn")} نتيجة
                         </span>
 
                         {item.radiusInMeters ? (
@@ -328,7 +328,7 @@ export function SearchHistoryPage() {
                       </span>
 
                       <span>
-                        {item.resultCount.toLocaleString("ar-SY")} نتيجة
+                        {item.resultCount.toLocaleString("ar-SY-u-nu-latn")} نتيجة
                       </span>
 
                       {item.radiusInMeters ? (

@@ -1129,7 +1129,7 @@ function AlertList({
               <p className="mt-1 text-xs text-slate-500">
                 {new Date(
                   item.createdAtUtc,
-                ).toLocaleString("ar-SY")}
+                ).toLocaleString("ar-SY-u-nu-latn")}
               </p>
             </div>
 

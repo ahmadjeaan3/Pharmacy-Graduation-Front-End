@@ -269,7 +269,7 @@ export function PublicOrganizationDetailsPage() {
           <InfoCard
             icon={HandHeart}
             label="الحملات النشطة"
-            value={`${campaignsCount.toLocaleString("ar-SY")} حملات`}
+            value={`${campaignsCount.toLocaleString("ar-SY-u-nu-latn")} حملات`}
           />
         </section>
 
@@ -312,7 +312,7 @@ export function PublicOrganizationDetailsPage() {
                 text-[#216474]
               "
             >
-              {campaignsCount.toLocaleString("ar-SY")} حملات
+              {campaignsCount.toLocaleString("ar-SY-u-nu-latn")} حملات
             </span>
           </div>
 

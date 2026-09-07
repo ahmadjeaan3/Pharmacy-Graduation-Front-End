@@ -1,9 +1,10 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 
-import { autoMessages } from "./autoMessages";
-import { inventoryMessages } from "./inventoryMessages";
-import { landingMessages } from "./landingMessages";
+import { autoMessages } from "./autoMessages.js";
+import { inventoryMessages } from "./inventoryMessages.js";
+import { landingMessages } from "./landingMessages.js";
+import { supplyMessages } from "./supplyMessages.js";
 
 export const STORAGE_KEY = "hayat-dawaiya-language";
 
@@ -90,6 +91,7 @@ const resources = {
       ...autoMessages.en,
       ...landingMessages.en,
       ...inventoryMessages.en,
+      ...supplyMessages.en,
       "نسيت كلمة المرور؟": "Forgot password?",
       "روابط الصفحة": "Page links",
       "الوصفة الذكية": "Smart prescription",
@@ -184,6 +186,7 @@ const resources = {
       ...autoMessages.tr,
       ...landingMessages.tr,
       ...inventoryMessages.tr,
+      ...supplyMessages.tr,
       "نسيت كلمة المرور؟": "Şifrenizi mi unuttunuz?",
       "روابط الصفحة": "Sayfa bağlantıları",
       "الوصفة الذكية": "Akıllı reçete",
@@ -279,6 +282,10 @@ await i18n.use(initReactI18next).init({
 
   load: "languageOnly",
 
+  // UI copy is used as the translation key and can legitimately contain ':'.
+  // Disable namespace parsing so labels such as "الكمية:" resolve correctly.
+  nsSeparator: false,
+
   interpolation: {
     escapeValue: false,
   },
@@ -288,10 +295,10 @@ await i18n.use(initReactI18next).init({
 
   parseMissingKeyHandler: (key) => key,
 
-  saveMissing: import.meta.env.DEV,
+  saveMissing: Boolean(import.meta.env?.DEV),
 
   missingKeyHandler: (_languages, _namespace, key) => {
-    if (import.meta.env.DEV && normalizeLanguage(i18n.language) !== "ar") {
+    if (import.meta.env?.DEV && normalizeLanguage(i18n.language) !== "ar") {
       console.warn(`[i18n] Missing translation: ${key}`);
     }
   },

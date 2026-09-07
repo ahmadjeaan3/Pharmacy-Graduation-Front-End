@@ -7,7 +7,7 @@ export const quickPrompts = [
 export function formatChatDate(value, withTime = false) {
   if (!value) return "";
   return new Intl.DateTimeFormat(
-    "ar-SY",
+    "ar-SY-u-nu-latn",
     withTime
       ? { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }
       : { day: "numeric", month: "short", year: "numeric" },

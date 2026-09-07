@@ -701,7 +701,7 @@ function LogCard({ item }) {
 ========================================================= */
 
 function formatDate(value) {
-  return new Intl.DateTimeFormat("ar-SY", {
+  return new Intl.DateTimeFormat("ar-SY-u-nu-latn", {
     dateStyle: "short",
     timeStyle: "short",
   }).format(new Date(value));

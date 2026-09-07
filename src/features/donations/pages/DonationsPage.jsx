@@ -67,7 +67,7 @@ function formatDate(value) {
   if (!value) return "—";
 
   try {
-    return new Intl.DateTimeFormat("ar-SY", {
+    return new Intl.DateTimeFormat("ar-SY-u-nu-latn", {
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -438,7 +438,7 @@ export function DonationsPage() {
               <Gift size={16} />
               عروضي للتبرع
               <span className="rounded-full bg-white/15 px-2 py-0.5 text-[10px]">
-                {(offers.data || []).length.toLocaleString("ar-SY")}
+                {(offers.data || []).length.toLocaleString("ar-SY-u-nu-latn")}
               </span>
             </button>
 
@@ -463,7 +463,7 @@ export function DonationsPage() {
               <HandHeart size={16} />
               طلبات المساعدة
               <span className="rounded-full bg-white/15 px-2 py-0.5 text-[10px]">
-                {(requests.data || []).length.toLocaleString("ar-SY")}
+                {(requests.data || []).length.toLocaleString("ar-SY-u-nu-latn")}
               </span>
             </button>
           </div>
@@ -779,7 +779,7 @@ function DonationRow({ record, type }) {
       {/* الكمية */}
       <InfoCell
         label="الكمية"
-        value={`${Number(quantity || 0).toLocaleString("ar-SY")} عبوة`}
+        value={`${Number(quantity || 0).toLocaleString("ar-SY-u-nu-latn")} عبوة`}
         icon={Package}
       />
 

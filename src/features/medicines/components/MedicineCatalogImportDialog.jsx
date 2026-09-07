@@ -272,7 +272,7 @@ export function MedicineCatalogImportDialog({
                         {Number(
                           result[key] || 0,
                         ).toLocaleString(
-                          "ar-SY",
+                          "ar-SY-u-nu-latn",
                         )}
                       </strong>
 

@@ -43,6 +43,8 @@ export function PharmacyRequestDetailsPage() {
   const query = useQuery({
     queryKey: pharmacyKeys.request(requestId),
     queryFn: () => getPharmacyRequest(requestId),
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
   });
   const response = useMutation({
     mutationFn: (payload) => respondToPharmacyRequest(requestId, payload),

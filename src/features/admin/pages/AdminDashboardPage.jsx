@@ -36,7 +36,7 @@ export function AdminDashboardPage() {
     .toLowerCase();
 
   const locale =
-    language === "ar" ? "ar-SY" : language === "tr" ? "tr-TR" : "en-US";
+    language === "ar" ? "ar-SY-u-nu-latn" : language === "tr" ? "tr-TR" : "en-US";
 
   const [periodDays, setPeriodDays] = useState(7);
 

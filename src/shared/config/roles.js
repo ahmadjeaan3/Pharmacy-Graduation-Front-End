@@ -977,7 +977,7 @@ export const getRoleDefinition = (role) =>
 | tr
 |
 | كما تدعم القيم:
-| ar-SA
+| ar-SA-u-nu-latn
 | en-US
 | tr-TR
 |--------------------------------------------------------------------------

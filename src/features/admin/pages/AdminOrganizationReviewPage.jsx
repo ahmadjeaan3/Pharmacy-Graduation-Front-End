@@ -185,7 +185,7 @@ export function AdminOrganizationReviewPage() {
             <div>
               <h3 className="font-extrabold text-[#17363e]">مستندات التحقق</h3>
               <p className="mt-1 text-sm text-slate-400">
-                {organization.documents.length.toLocaleString("ar-SY")} مستندات
+                {organization.documents.length.toLocaleString("ar-SY-u-nu-latn")} مستندات
                 مرفوعة
               </p>
             </div>

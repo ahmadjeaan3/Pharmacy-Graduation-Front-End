@@ -449,7 +449,7 @@ export function LandingPage() {
   ];
   const statisticLocale =
     currentLanguage === "ar"
-      ? "ar-SY"
+      ? "ar-SY-u-nu-latn"
       : currentLanguage === "tr"
         ? "tr-TR"
         : "en-US";
