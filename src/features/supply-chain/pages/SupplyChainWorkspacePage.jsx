@@ -41,6 +41,11 @@ import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getPrimaryRole } from "../../../shared/config/roles";
+import {
+  BarsInsight,
+  DonutInsight,
+  ReportActions,
+} from "../../../shared/components/DashboardInsights";
 import { MedicineAlternativesButton } from "../../intelligence/components/MedicineAlternativesButton";
 import { useAuth } from "../../auth/hooks/useAuth";
 import { getMedicines } from "../../medicines/api/medicinesApi";
@@ -55,6 +60,7 @@ import {
   getBatches,
   getAdminBatches,
   getAdminRepresentatives,
+  getAdminSupplyOverview,
   getMarketplace,
   getRepresentatives,
   getRestockSuggestions,
@@ -193,9 +199,7 @@ function Stat({
 
       <div
         className={
-          isArabic
-            ? "pr-14 text-right sm:pr-16"
-            : "pl-14 text-left sm:pl-16"
+          isArabic ? "pr-14 text-right sm:pr-16" : "pl-14 text-left sm:pl-16"
         }
       >
         <p className="text-[12px] font-semibold leading-5 text-[#71858A]">
@@ -211,6 +215,188 @@ function Stat({
         </p>
       </div>
     </button>
+  );
+}
+
+function AdminOversightPanel({ query, t, isArabic, currentLanguage }) {
+  if (query.isLoading) {
+    return (
+      <div className="surface p-12 text-center">
+        <Clock3 className="mx-auto animate-pulse text-[#216474]" />
+        <h3 className="mt-3 font-black">
+          {t("جاري تحميل المؤشرات الرقابية...")}
+        </h3>
+      </div>
+    );
+  }
+
+  if (query.isError) {
+    return (
+      <div className="surface border border-[#FECDD3] p-10 text-center">
+        <AlertTriangle className="mx-auto text-[#E11D48]" />
+        <h3 className="mt-3 font-black text-[#E11D48]">
+          {t("تعذر تحميل مؤشرات التوريد")}
+        </h3>
+        <button
+          type="button"
+          onClick={() => query.refetch()}
+          className="btn-secondary mx-auto mt-5"
+        >
+          {t("إعادة المحاولة")}
+        </button>
+      </div>
+    );
+  }
+
+  const data = query.data || {};
+  const metrics = [
+    [
+      Building2,
+      "جهات التوريد الفعالة",
+      data.activeWarehouses,
+      "مستودعات معتمدة ونشطة",
+      "bg-[#EAF4F3] text-[#216474]",
+    ],
+    [
+      ShoppingCart,
+      "طلبات آخر 30 يومًا",
+      data.ordersLast30Days,
+      `${data.pendingOrders || 0} بانتظار المعالجة`,
+      "bg-[#F0F6F7] text-[#216474]",
+    ],
+    [
+      Truck,
+      "شحنات قيد التنفيذ",
+      data.activeShipments,
+      `${data.deliveredLast30Days || 0} تسليمًا خلال 30 يومًا`,
+      "bg-[#EAF4F3] text-[#174B57]",
+    ],
+    [
+      AlertTriangle,
+      "تعثرات التوصيل",
+      data.failedShipmentsLast30Days,
+      "فشل أو إعادة خلال 30 يومًا",
+      "bg-[#FFF1F2] text-[#E11D48]",
+    ],
+    [
+      ReceiptText,
+      "فواتير تحتاج متابعة",
+      data.unpaidInvoices,
+      `${data.overdueInvoices || 0} متأخرة دون كشف القيم أو الأطراف`,
+      "bg-[#FFF7DF] text-[#B7791F]",
+    ],
+    [
+      RotateCcw,
+      "مرتجعات مفتوحة",
+      data.openReturns,
+      `${data.completedReturnsLast30Days || 0} مغلقة لطلبات أُنشئت خلال 30 يومًا`,
+      "bg-[#F4F0FF] text-[#6D4CCB]",
+    ],
+    [
+      Megaphone,
+      "استدعاءات فعالة",
+      data.activeRecalls,
+      "حالات سلامة تستوجب المتابعة",
+      "bg-[#FFF1F2] text-[#E11D48]",
+    ],
+    [
+      Boxes,
+      "دفعات تحتاج انتباهًا",
+      (data.lowStockBatches || 0) + (data.expiringBatches || 0),
+      `${data.lowStockBatches || 0} منخفضة و${data.expiringBatches || 0} قريبة الانتهاء`,
+      "bg-[#FFF7DF] text-[#B7791F]",
+    ],
+  ];
+
+  return (
+    <div className="space-y-4">
+      <div className="rounded-2xl border border-[#BFE3DF] bg-[#F1FAF9] p-4 text-sm leading-7 text-[#315D66]">
+        <CheckCircle2 className="me-2 inline text-[#1E8A79]" size={18} />
+        <strong>{t("عرض رقابي يحمي الخصوصية:")}</strong>{" "}
+        {t(
+          "تظهر للأدمن المؤشرات والحالات التي تحتاج تدخلاً فقط، دون مبالغ الفواتير أو بيانات الدفع أو أسباب وملاحظات المرتجعات أو أسماء الأطراف.",
+        )}
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {metrics.map(([icon, label, value, hint, className]) => (
+          <Stat
+            key={label}
+            icon={icon}
+            label={t(label)}
+            value={value}
+            hint={t(hint)}
+            className={className}
+            isArabic={isArabic}
+            currentLanguage={currentLanguage}
+          />
+        ))}
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="surface p-5">
+          <p className="text-xs font-bold text-[#71858A]">
+            {t("نجاح التوصيل خلال 30 يومًا")}
+          </p>
+          <div className="mt-3 flex items-end justify-between gap-4">
+            <strong className="text-3xl font-black text-[#174B57]">
+              {data.deliverySuccessRate || 0}%
+            </strong>
+            <span className="text-xs text-[#829499]">
+              {t("من الشحنات المغلقة")}
+            </span>
+          </div>
+          <div className="mt-4 h-2 overflow-hidden rounded-full bg-[#EAF4F3]">
+            <div
+              className="h-full rounded-full bg-[#2A9D8F]"
+              style={{
+                width: `${Math.min(100, data.deliverySuccessRate || 0)}%`,
+              }}
+            />
+          </div>
+        </div>
+        <div className="surface p-5">
+          <p className="text-xs font-bold text-[#71858A]">
+            {t("نسبة المرتجعات إلى الطلبات")}
+          </p>
+          <div className="mt-3 flex items-end justify-between gap-4">
+            <strong className="text-3xl font-black text-[#B7791F]">
+              {data.returnRate || 0}%
+            </strong>
+            <span className="text-xs text-[#829499]">
+              {t("مؤشر جودة وليس كشفًا ماليًا")}
+            </span>
+          </div>
+          <div className="mt-4 h-2 overflow-hidden rounded-full bg-[#FFF7DF]">
+            <div
+              className="h-full rounded-full bg-[#E4B43E]"
+              style={{ width: `${Math.min(100, data.returnRate || 0)}%` }}
+            />
+          </div>
+        </div>
+      </div>
+      <ReportActions
+        title={t("تقرير الرقابة على التوريد")}
+        description={t(
+          "تقرير مجمع لاتخاذ القرار، دون أسماء الأطراف أو المبالغ أو مراجع الدفع والملاحظات الخاصة.",
+        )}
+        filename="admin-supply-oversight-report"
+        rows={[
+          [t("المستودعات النشطة"), data.activeWarehouses],
+          [t("الصيدليات النشطة"), data.activePharmacies],
+          [t("طلبات آخر 30 يومًا"), data.ordersLast30Days],
+          [t("طلبات معلقة"), data.pendingOrders],
+          [t("شحنات قيد التنفيذ"), data.activeShipments],
+          [t("تعثرات التوصيل"), data.failedShipmentsLast30Days],
+          [t("فواتير تحتاج متابعة"), data.unpaidInvoices],
+          [t("فواتير متأخرة"), data.overdueInvoices],
+          [t("مرتجعات مفتوحة"), data.openReturns],
+          [t("استدعاءات فعالة"), data.activeRecalls],
+          [t("نسبة نجاح التوصيل"), `${data.deliverySuccessRate || 0}%`],
+          [t("نسبة المرتجعات"), `${data.returnRate || 0}%`],
+        ]}
+      />
+    </div>
   );
 }
 function OrderCard({
@@ -411,12 +597,18 @@ export function SupplyChainWorkspacePage() {
   const qc = useQueryClient();
   const requestedTab = new URLSearchParams(location.search).get("tab");
   const [tab, setTab] = useState(
-    requestedTab || warehousePathTabs[location.pathname] || "orders",
+    requestedTab ||
+      warehousePathTabs[location.pathname] ||
+      (isAdminAccount ? "overview" : "orders"),
   );
   const activeTab =
     role === "Warehouse"
       ? requestedTab || warehousePathTabs[location.pathname] || tab
-      : tab;
+      : role === "Admin"
+        ? ["overview", "recalls"].includes(tab)
+          ? tab
+          : "overview"
+        : tab;
   const isWarehouseOverview =
     role === "Warehouse" && location.pathname === "/app";
   const isRepresentativeOverview =
@@ -447,6 +639,14 @@ export function SupplyChainWorkspacePage() {
     queryFn: getSupplyDashboard,
     enabled: isWarehouseOverview,
     staleTime: SUPPLY_DATA_STALE_TIME,
+    refetchOnWindowFocus: false,
+  });
+  const adminOverview = useQuery({
+    queryKey: supplyKeys.adminOverview,
+    queryFn: getAdminSupplyOverview,
+    enabled: isAdminAccount && activeTab === "overview",
+    staleTime: 60_000,
+    placeholderData: keepPreviousData,
     refetchOnWindowFocus: false,
   });
   const orders = useQuery({
@@ -487,7 +687,7 @@ export function SupplyChainWorkspacePage() {
     queryKey: [...supplyKeys.invoices, role],
     queryFn: () => getSupplyInvoices(),
     enabled:
-      ["Warehouse", "Pharmacy", "Admin"].includes(role) &&
+      ["Warehouse", "Pharmacy"].includes(role) &&
       ["invoices", "accounts"].includes(activeTab),
     staleTime: SUPPLY_DATA_STALE_TIME,
     placeholderData: keepPreviousData,
@@ -496,8 +696,7 @@ export function SupplyChainWorkspacePage() {
     queryKey: [...supplyKeys.returns, role],
     queryFn: getSupplyReturns,
     enabled:
-      ["Warehouse", "Pharmacy", "Admin"].includes(role) &&
-      activeTab === "returns",
+      ["Warehouse", "Pharmacy"].includes(role) && activeTab === "returns",
     staleTime: SUPPLY_DATA_STALE_TIME,
     placeholderData: keepPreviousData,
   });
@@ -753,21 +952,21 @@ export function SupplyChainWorkspacePage() {
   const tabs =
     role === "Representative"
       ? []
-      : [
-          "orders",
-          "invoices",
-          ...(role === "Warehouse" ? ["accounts"] : []),
-          ...(["Warehouse", "Pharmacy", "Admin"].includes(role)
-            ? ["returns", "recalls"]
-            : []),
-          ...(role === "Warehouse"
-            ? ["inventory", "team"]
-            : role === "Pharmacy"
-              ? ["marketplace", "suggestions"]
-              : role === "Admin"
-                ? ["inventory", "team"]
+      : role === "Admin"
+        ? ["overview", "recalls"]
+        : [
+            "orders",
+            "invoices",
+            ...(role === "Warehouse" ? ["accounts"] : []),
+            ...(["Warehouse", "Pharmacy", "Admin"].includes(role)
+              ? ["returns", "recalls"]
+              : []),
+            ...(role === "Warehouse"
+              ? ["inventory", "team"]
+              : role === "Pharmacy"
+                ? ["marketplace", "suggestions"]
                 : []),
-        ];
+          ];
   const visibleBatches =
     role === "Admin"
       ? (adminBatches.data || []).map((item) => ({
@@ -884,8 +1083,10 @@ lg:min-h-[250px]"
                 <p className="text-xs text-[#71858A]">{t("شحنات جارية")}</p>
 
                 <strong className="mt-2 block text-2xl font-black text-[#17363E]">
-                  {orders.data?.filter((x) => x.status === "OutForDelivery")
-                    .length || 0}
+                  {isAdminAccount
+                    ? adminOverview.data?.activeShipments || 0
+                    : orders.data?.filter((x) => x.status === "OutForDelivery")
+                        .length || 0}
                 </strong>
               </div>
 
@@ -901,8 +1102,10 @@ lg:min-h-[250px]"
                 <p className="text-xs text-[#71858A]">{t("تم تسليمها")}</p>
 
                 <strong className="mt-2 block text-2xl font-black text-[#17363E]">
-                  {orders.data?.filter((x) => x.status === "Delivered")
-                    .length || 0}
+                  {isAdminAccount
+                    ? adminOverview.data?.deliveredLast30Days || 0
+                    : orders.data?.filter((x) => x.status === "Delivered")
+                        .length || 0}
                 </strong>
               </div>
             </div>
@@ -961,6 +1164,83 @@ lg:min-h-[250px]"
           />
         </div>
       )}
+      {isWarehouseOverview && d && (
+        <div className="mt-5 space-y-5">
+          <div className="grid gap-5 xl:grid-cols-2">
+            <DonutInsight
+              title={t("صحة الدفعات")}
+              subtitle={t(
+                "مقارنة الدفعات السليمة مع الحالات التي تحتاج متابعة",
+              )}
+              centerLabel={t("دفعات فعالة")}
+              centerValue={d.activeBatches}
+              segments={[
+                {
+                  label: t("سليمة"),
+                  value: Math.max(
+                    0,
+                    (d.activeBatches || 0) -
+                      (d.lowStockBatches || 0) -
+                      (d.expiringBatches || 0),
+                  ),
+                  color: "#2A9D8F",
+                },
+                {
+                  label: t("منخفضة المخزون"),
+                  value: d.lowStockBatches,
+                  color: "#E4B43E",
+                },
+                {
+                  label: t("قريبة الانتهاء"),
+                  value: d.expiringBatches,
+                  color: "#E76F51",
+                },
+              ]}
+            />
+            <BarsInsight
+              title={t("حركة التشغيل")}
+              subtitle={t("المهام الحالية التي تحتاج متابعة المستودع")}
+              items={[
+                {
+                  label: t("طلبات معلقة"),
+                  value: d.pendingOrders,
+                  color: "#DFAE0D",
+                },
+                {
+                  label: t("توصيلات فعالة"),
+                  value: d.activeDeliveries,
+                  color: "#216474",
+                },
+                {
+                  label: t("دفعات منخفضة"),
+                  value: d.lowStockBatches,
+                  color: "#F97316",
+                },
+                {
+                  label: t("قريبة الانتهاء"),
+                  value: d.expiringBatches,
+                  color: "#E11D48",
+                },
+              ]}
+            />
+          </div>
+          <ReportActions
+            title={t("تقرير تشغيل المستودع")}
+            description={t(
+              "تصدير مؤشرات المخزون والطلبات والتوصيل الحالية للمراجعة واتخاذ القرار.",
+            )}
+            filename="warehouse-operational-report"
+            rows={[
+              [t("دفعات فعالة"), d.activeBatches],
+              [t("دفعات منخفضة المخزون"), d.lowStockBatches],
+              [t("دفعات قريبة الانتهاء"), d.expiringBatches],
+              [t("طلبات معلقة"), d.pendingOrders],
+              [t("توصيلات فعالة"), d.activeDeliveries],
+              [t("قيمة المخزون"), money(d.inventoryValue, currentLanguage)],
+            ]}
+          />
+        </div>
+      )}
       {isRepresentativeOverview && (
         <div className="mt-6 grid gap-4 sm:grid-cols-3">
           <Stat
@@ -1016,6 +1296,7 @@ lg:min-h-[250px]"
             {t(
               {
                 orders: "الطلبات والشحنات",
+                overview: "الملخص الرقابي",
                 invoices: "الفواتير والمدفوعات",
                 accounts: "حسابات الصيدليات",
                 inventory: "مخزون الدُفعات",
@@ -1058,6 +1339,14 @@ lg:min-h-[250px]"
         </div>
       )}
       <section className="mt-4">
+        {activeTab === "overview" && role === "Admin" && (
+          <AdminOversightPanel
+            query={adminOverview}
+            t={t}
+            isArabic={isArabic}
+            currentLanguage={currentLanguage}
+          />
+        )}
         {role === "Representative" && representativeLocationError && (
           <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-bold text-amber-800">
             <AlertTriangle className="me-2 inline" size={18} />
@@ -1763,7 +2052,9 @@ function OrderDetailsDialog({
                                 </b>
                                 <span aria-hidden="true">•</span>
                                 <span>
-                                  {t("الكمية")}: {allocation.deliveredQuantity || allocation.reservedQuantity}
+                                  {t("الكمية")}:{" "}
+                                  {allocation.deliveredQuantity ||
+                                    allocation.reservedQuantity}
                                 </span>
                               </span>
                             ))}
@@ -3230,7 +3521,9 @@ function WarehouseDialog({ mode, batch, onClose, onSaved }) {
                   {...field("storageLocation")}
                 />
                 <span className="mt-1.5 block text-[11px] leading-5 text-[#829499]">
-                  {t("اكتب موقعاً واضحاً يساعد العامل على الوصول للدفعة بسرعة.")}
+                  {t(
+                    "اكتب موقعاً واضحاً يساعد العامل على الوصول للدفعة بسرعة.",
+                  )}
                 </span>
               </label>
               <Field label="الكمية">
@@ -4173,55 +4466,143 @@ function InvoicePrint({ invoice, currentLanguage }) {
         <div className="invoice-print__number">
           <b>{invoice.invoiceNumber}</b>
           <span>
-            تاريخ الإصدار: {new Date(invoice.issuedAtUtc).toLocaleDateString(locale)}
+            تاريخ الإصدار:{" "}
+            {new Date(invoice.issuedAtUtc).toLocaleDateString(locale)}
           </span>
           <span>
-            تاريخ الاستحقاق: {new Date(invoice.dueAtUtc).toLocaleDateString(locale)}
+            تاريخ الاستحقاق:{" "}
+            {new Date(invoice.dueAtUtc).toLocaleDateString(locale)}
           </span>
         </div>
       </header>
 
       <section className="invoice-print__parties">
-        <div><span>من المستودع</span><b>{invoice.warehouseName}</b></div>
-        <div><span>إلى الصيدلية</span><b>{invoice.pharmacyName}</b></div>
-        <div><span>رقم طلب التوريد</span><b>{invoice.orderCode}</b></div>
-        <div><span>حالة الدفع</span><b>{paymentLabels[invoice.paymentStatus] || invoice.paymentStatus}</b></div>
+        <div>
+          <span>من المستودع</span>
+          <b>{invoice.warehouseName}</b>
+        </div>
+        <div>
+          <span>إلى الصيدلية</span>
+          <b>{invoice.pharmacyName}</b>
+        </div>
+        <div>
+          <span>رقم طلب التوريد</span>
+          <b>{invoice.orderCode}</b>
+        </div>
+        <div>
+          <span>حالة الدفع</span>
+          <b>{paymentLabels[invoice.paymentStatus] || invoice.paymentStatus}</b>
+        </div>
       </section>
 
       <table className="invoice-print__table">
-        <thead><tr><th>#</th><th>الدواء</th><th>رقم الدفعة</th><th>الكمية</th><th>سعر الوحدة</th><th>الإجمالي</th></tr></thead>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>الدواء</th>
+            <th>رقم الدفعة</th>
+            <th>الكمية</th>
+            <th>سعر الوحدة</th>
+            <th>الإجمالي</th>
+          </tr>
+        </thead>
         <tbody>
           {(invoice.items || []).map((item, index) => (
             <tr key={`${item.medicineName}-${item.batchNumber}-${index}`}>
-              <td>{index + 1}</td><td>{item.medicineName}</td><td>{item.batchNumber || "—"}</td><td>{item.quantity}</td><td>{money(item.unitPrice, currentLanguage)}</td><td>{money(item.lineTotal, currentLanguage)}</td>
+              <td>{index + 1}</td>
+              <td>{item.medicineName}</td>
+              <td>{item.batchNumber || "—"}</td>
+              <td>{item.quantity}</td>
+              <td>{money(item.unitPrice, currentLanguage)}</td>
+              <td>{money(item.lineTotal, currentLanguage)}</td>
             </tr>
           ))}
-          {!invoice.items?.length && <tr><td colSpan="6">لا توجد بنود متاحة في هذه النسخة.</td></tr>}
+          {!invoice.items?.length && (
+            <tr>
+              <td colSpan="6">لا توجد بنود متاحة في هذه النسخة.</td>
+            </tr>
+          )}
         </tbody>
       </table>
 
       <section className="invoice-print__totals">
-        <div><span>قيمة الأدوية</span><b>{money(invoice.subtotal, currentLanguage)}</b></div>
-        <div><span>التوصيل</span><b>{money(invoice.deliveryFee, currentLanguage)}</b></div>
-        <div><span>الخصم</span><b>- {money(invoice.discountAmount, currentLanguage)}</b></div>
-        <div><span>الضريبة</span><b>{money(invoice.taxAmount, currentLanguage)}</b></div>
-        <div className="invoice-print__grand"><span>إجمالي الفاتورة</span><b>{money(invoice.totalAmount, currentLanguage)}</b></div>
-        <div><span>المدفوع الصافي</span><b>{money(invoice.paidAmount, currentLanguage)}</b></div>
-        <div className="invoice-print__balance"><span>الرصيد المتبقي</span><b>{money(invoice.remainingAmount, currentLanguage)}</b></div>
+        <div>
+          <span>قيمة الأدوية</span>
+          <b>{money(invoice.subtotal, currentLanguage)}</b>
+        </div>
+        <div>
+          <span>التوصيل</span>
+          <b>{money(invoice.deliveryFee, currentLanguage)}</b>
+        </div>
+        <div>
+          <span>الخصم</span>
+          <b>- {money(invoice.discountAmount, currentLanguage)}</b>
+        </div>
+        <div>
+          <span>الضريبة</span>
+          <b>{money(invoice.taxAmount, currentLanguage)}</b>
+        </div>
+        <div className="invoice-print__grand">
+          <span>إجمالي الفاتورة</span>
+          <b>{money(invoice.totalAmount, currentLanguage)}</b>
+        </div>
+        <div>
+          <span>المدفوع الصافي</span>
+          <b>{money(invoice.paidAmount, currentLanguage)}</b>
+        </div>
+        <div className="invoice-print__balance">
+          <span>الرصيد المتبقي</span>
+          <b>{money(invoice.remainingAmount, currentLanguage)}</b>
+        </div>
       </section>
 
       {invoice.payments?.length > 0 && (
         <section className="invoice-print__payments">
           <h2>سجل الدفعات والتسويات</h2>
           <table className="invoice-print__table">
-            <thead><tr><th>التاريخ</th><th>النوع</th><th>الطريقة</th><th>المرجع</th><th>المبلغ</th></tr></thead>
-            <tbody>{invoice.payments.map((payment) => <tr key={payment.id}><td>{new Date(payment.paidAtUtc).toLocaleDateString(locale)}</td><td>{isRefund(payment) ? "تسوية مرتجع" : "دفعة"}</td><td>{paymentMethodLabels[payment.method] || payment.method}</td><td>{payment.referenceNumber || "—"}</td><td className={isRefund(payment) ? "invoice-print__negative" : ""}>{money(payment.amount, currentLanguage)}</td></tr>)}</tbody>
+            <thead>
+              <tr>
+                <th>التاريخ</th>
+                <th>النوع</th>
+                <th>الطريقة</th>
+                <th>المرجع</th>
+                <th>المبلغ</th>
+              </tr>
+            </thead>
+            <tbody>
+              {invoice.payments.map((payment) => (
+                <tr key={payment.id}>
+                  <td>
+                    {new Date(payment.paidAtUtc).toLocaleDateString(locale)}
+                  </td>
+                  <td>{isRefund(payment) ? "تسوية مرتجع" : "دفعة"}</td>
+                  <td>
+                    {paymentMethodLabels[payment.method] || payment.method}
+                  </td>
+                  <td>{payment.referenceNumber || "—"}</td>
+                  <td
+                    className={
+                      isRefund(payment) ? "invoice-print__negative" : ""
+                    }
+                  >
+                    {money(payment.amount, currentLanguage)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
           </table>
         </section>
       )}
 
-      {invoice.warehouseNote && <p className="invoice-print__note"><b>ملاحظة المستودع:</b> {invoice.warehouseNote}</p>}
-      <footer><span>توقيع المستودع</span><span>توقيع الصيدلية والاستلام</span></footer>
+      {invoice.warehouseNote && (
+        <p className="invoice-print__note">
+          <b>ملاحظة المستودع:</b> {invoice.warehouseNote}
+        </p>
+      )}
+      <footer>
+        <span>توقيع المستودع</span>
+        <span>توقيع الصيدلية والاستلام</span>
+      </footer>
     </article>
   );
 }

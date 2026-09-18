@@ -25,6 +25,7 @@ import {
 import { formatDate, formatRequestStatus } from "../utils/adminFormatters";
 import { useTranslation } from "react-i18next";
 import { AiServicesHealthPanel } from "../components/AiServicesHealthPanel";
+import { ReportActions } from "../../../shared/components/DashboardInsights";
 
 const ADMIN_HERO_IMAGE = "/assets/app/home/background_hero_admin.png";
 
@@ -36,7 +37,11 @@ export function AdminDashboardPage() {
     .toLowerCase();
 
   const locale =
-    language === "ar" ? "ar-SY-u-nu-latn" : language === "tr" ? "tr-TR" : "en-US";
+    language === "ar"
+      ? "ar-SY-u-nu-latn"
+      : language === "tr"
+        ? "tr-TR"
+        : "en-US";
 
   const [periodDays, setPeriodDays] = useState(7);
 
@@ -75,11 +80,7 @@ export function AdminDashboardPage() {
       value: isAllTime ? data.totalPharmacies : data.newPharmaciesInPeriod,
       detail: isAllTime
         ? formatApprovedDetail(data.approvedPharmacies, language, locale)
-        : formatPharmaciesTotalDetail(
-            data.totalPharmacies,
-            language,
-            locale,
-          ),
+        : formatPharmaciesTotalDetail(data.totalPharmacies, language, locale),
       icon: Building2,
       tone: "bg-[#FFF7DF] text-[#DFAE0D]",
     },
@@ -216,9 +217,7 @@ export function AdminDashboardPage() {
               مركز إدارة المنصة
             </p>
 
-            <h2 className="mt-2 text-3xl font-black">
-              نظرة عامة على دوائي
-            </h2>
+            <h2 className="mt-2 text-3xl font-black">نظرة عامة على دوائي</h2>
 
             <p className="mt-3 max-w-2xl leading-7 text-white/60">
               إحصاءات النشاط والطلبات خلال {activePeriodLabel}، مع عرض حالة
@@ -230,15 +229,11 @@ export function AdminDashboardPage() {
             <label className="flex min-h-[52px] items-center gap-2.5 rounded-xl border border-white/90 bg-white px-4 py-2.5 text-[#17363e] shadow-[0_10px_28px_rgba(4,45,53,.14)]">
               <CalendarRange size={17} className="text-[#DFAE0D]" />
 
-              <span className="text-xs font-bold text-[#71858a]">
-                عرض نشاط
-              </span>
+              <span className="text-xs font-bold text-[#71858a]">عرض نشاط</span>
 
               <select
                 value={periodDays}
-                onChange={(event) =>
-                  setPeriodDays(Number(event.target.value))
-                }
+                onChange={(event) => setPeriodDays(Number(event.target.value))}
                 className="cursor-pointer bg-transparent py-1 text-sm font-black text-[#17363e] outline-none [&>option]:text-[#333333]"
               >
                 <option value={1}>آخر 24 ساعة</option>
@@ -273,37 +268,33 @@ export function AdminDashboardPage() {
           query.isFetching ? "pointer-events-none opacity-55" : ""
         }`}
       >
-        {stats.map(
-          ({ label, value, detail, icon: Icon, tone }, index) => (
-            <Motion.article
-              key={label}
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.06 }}
-              className="rounded-[1.4rem] border border-[#174b57]/8 bg-white p-5 shadow-[0_12px_35px_rgba(23,75,87,.045)]"
-            >
-              <div className="flex items-start justify-between">
-                <span
-                  className={`grid size-11 place-items-center rounded-xl ${tone}`}
-                >
-                  <Icon size={21} />
-                </span>
+        {stats.map(({ label, value, detail, icon: Icon, tone }, index) => (
+          <Motion.article
+            key={label}
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.06 }}
+            className="rounded-[1.4rem] border border-[#174b57]/8 bg-white p-5 shadow-[0_12px_35px_rgba(23,75,87,.045)]"
+          >
+            <div className="flex items-start justify-between">
+              <span
+                className={`grid size-11 place-items-center rounded-xl ${tone}`}
+              >
+                <Icon size={21} />
+              </span>
 
-                <Activity size={17} className="text-[#C8DADD]" />
-              </div>
+              <Activity size={17} className="text-[#C8DADD]" />
+            </div>
 
-              <p className="mt-5 text-sm font-semibold text-[#71858a]">
-                {label}
-              </p>
+            <p className="mt-5 text-sm font-semibold text-[#71858a]">{label}</p>
 
-              <p className="mt-1 text-3xl font-black text-[#17363e]">
-                {value.toLocaleString(locale)}
-              </p>
+            <p className="mt-1 text-3xl font-black text-[#17363e]">
+              {value.toLocaleString(locale)}
+            </p>
 
-              <p className="mt-2 text-xs text-[#A5A5A5]">{detail}</p>
-            </Motion.article>
-          ),
-        )}
+            <p className="mt-2 text-xs text-[#A5A5A5]">{detail}</p>
+          </Motion.article>
+        ))}
       </section>
 
       <section className="grid gap-4 lg:grid-cols-3">
@@ -342,9 +333,7 @@ export function AdminDashboardPage() {
               </span>
 
               <div>
-                <h3 className="font-black text-[#17363e]">
-                  صحة دورة الطلبات
-                </h3>
+                <h3 className="font-black text-[#17363e]">صحة دورة الطلبات</h3>
 
                 <p className="mt-0.5 text-xs text-[#A5A5A5]">
                   توزيع طلبات الأدوية خلال {activePeriodLabel}
@@ -399,9 +388,7 @@ export function AdminDashboardPage() {
         <article className="rounded-[1.65rem] border border-[#174b57]/8 bg-white p-6 shadow-[0_14px_40px_rgba(23,75,87,.05)]">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-black text-[#17363e]">
-                تكوين مجتمع المنصة
-              </h3>
+              <h3 className="font-black text-[#17363e]">تكوين مجتمع المنصة</h3>
 
               <p className="mt-1 text-xs text-[#A5A5A5]">
                 لقطة حالية لإجمالي الحسابات ونسب جاهزيتها
@@ -467,6 +454,25 @@ export function AdminDashboardPage() {
         </article>
       </section>
 
+      <ReportActions
+        title="تقرير إدارة المنصة"
+        description="تصدير المؤشرات العامة والاعتمادات والطلبات للفترة المحددة؛ التقرير لا يتضمن بيانات صحية أو تفاصيل مالية خاصة."
+        filename="admin-platform-report"
+        rows={[
+          ["الفترة بالأيام", activePeriodDays || "كل الوقت"],
+          ["إجمالي المستخدمين", data.totalUsers],
+          ["المستخدمون النشطون", data.activeUsers],
+          ["إجمالي الصيدليات", data.totalPharmacies],
+          ["الصيدليات المعتمدة", data.approvedPharmacies],
+          ["إجمالي المنظمات", data.totalOrganizations],
+          ["المنظمات المعتمدة", data.approvedOrganizations],
+          ["طلبات الأدوية", data.totalMedicineRequests],
+          ["الطلبات النشطة", data.activeMedicineRequests],
+          ["عروض التبرع", data.totalDonationOffers],
+          ["طلبات المساعدة", data.totalAssistanceRequests],
+        ]}
+      />
+
       <section className="grid gap-4 md:grid-cols-3">
         <InsightCard
           icon={TrendingUp}
@@ -511,8 +517,7 @@ export function AdminDashboardPage() {
               </h3>
 
               <p className="mt-1 text-sm text-[#A5A5A5]">
-                متابعة سريعة للطلبات التي تحتاج تدخلاً خلال{" "}
-                {activePeriodLabel}
+                متابعة سريعة للطلبات التي تحتاج تدخلاً خلال {activePeriodLabel}
               </p>
             </div>
 
@@ -660,21 +665,13 @@ export function AdminDashboardPage() {
                     رقم الطلب
                   </th>
 
-                  <th className="w-[18%] px-5 py-4 font-black">
-                    الدواء
-                  </th>
+                  <th className="w-[18%] px-5 py-4 font-black">الدواء</th>
 
-                  <th className="w-[18%] px-5 py-4 font-black">
-                    المستخدم
-                  </th>
+                  <th className="w-[18%] px-5 py-4 font-black">المستخدم</th>
 
-                  <th className="w-[17%] px-5 py-4 font-black">
-                    الصيدلية
-                  </th>
+                  <th className="w-[17%] px-5 py-4 font-black">الصيدلية</th>
 
-                  <th className="w-[14%] px-5 py-4 font-black">
-                    الحالة
-                  </th>
+                  <th className="w-[14%] px-5 py-4 font-black">الحالة</th>
 
                   <th className="w-[12%] rounded-e-xl px-5 py-4 font-black">
                     التاريخ
@@ -912,9 +909,7 @@ function DonutChart({ segments, total, locale }) {
     offset: segments
       .slice(0, index)
       .reduce(
-        (sum, item) =>
-          sum +
-          (item.value / Math.max(total, 1)) * circumference,
+        (sum, item) => sum + (item.value / Math.max(total, 1)) * circumference,
         0,
       ),
   }));
@@ -932,8 +927,7 @@ function DonutChart({ segments, total, locale }) {
         />
 
         {segmentsWithOffset.map((segment) => {
-          const length =
-            (segment.value / Math.max(total, 1)) * circumference;
+          const length = (segment.value / Math.max(total, 1)) * circumference;
 
           const element = (
             <Motion.circle
@@ -949,10 +943,7 @@ function DonutChart({ segments, total, locale }) {
                 strokeDasharray: `0 ${circumference}`,
               }}
               animate={{
-                strokeDasharray: `${Math.max(
-                  length - 3,
-                  0,
-                )} ${circumference}`,
+                strokeDasharray: `${Math.max(length - 3, 0)} ${circumference}`,
               }}
               transition={{ duration: 0.8 }}
               style={{
@@ -1003,14 +994,7 @@ function ProgressMetric({ label, value, color, locale }) {
   );
 }
 
-function InsightCard({
-  icon: Icon,
-  label,
-  value,
-  detail,
-  tone,
-  locale,
-}) {
+function InsightCard({ icon: Icon, label, value, detail, tone, locale }) {
   return (
     <article className="group flex items-center gap-4 rounded-[1.4rem] border border-[#174b57]/8 bg-white p-5 shadow-[0_10px_30px_rgba(23,75,87,.04)] transition hover:-translate-y-1 hover:shadow-lg">
       <span
@@ -1028,9 +1012,7 @@ function InsightCard({
           {Number(value || 0).toLocaleString(locale)}
         </strong>
 
-        <small className="mt-1 block truncate text-[#A5A5A5]">
-          {detail}
-        </small>
+        <small className="mt-1 block truncate text-[#A5A5A5]">{detail}</small>
       </div>
     </article>
   );

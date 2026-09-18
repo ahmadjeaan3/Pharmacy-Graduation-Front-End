@@ -35,6 +35,11 @@ import {
   campaignStatusMeta,
   verificationMeta,
 } from "../utils/organizationFormatters";
+import {
+  BarsInsight,
+  DonutInsight,
+  ReportActions,
+} from "../../../shared/components/DashboardInsights";
 
 const ORGANIZATION_HERO_IMAGE =
   "/assets/app/organization/organization-dashboard-hero.png";
@@ -262,9 +267,7 @@ export function OrganizationDashboardPage() {
           </div>
 
           <strong className="mt-3 block w-full text-base font-medium leading-6 text-[#29464D]">
-            {data.isApproved
-              ? t("معتمدة وجاهزة للعمل")
-              : t(verification.label)}
+            {data.isApproved ? t("معتمدة وجاهزة للعمل") : t(verification.label)}
           </strong>
 
           <Link
@@ -273,11 +276,7 @@ export function OrganizationDashboardPage() {
           >
             <span>{t("مراجعة الملف والتحقق منه")}</span>
 
-            <LinkArrow
-              size={16}
-              strokeWidth={1.7}
-              className="shrink-0"
-            />
+            <LinkArrow size={16} strokeWidth={1.7} className="shrink-0" />
           </Link>
         </div>
       </section>
@@ -360,6 +359,71 @@ export function OrganizationDashboardPage() {
         )}
       </section>
 
+      <section className="grid gap-5 xl:grid-cols-2">
+        <DonutInsight
+          title={t("حالة الحملات")}
+          subtitle={t("مقارنة الحملات النشطة مع الحملات غير النشطة")}
+          centerLabel={t("إجمالي الحملات")}
+          centerValue={data.totalCampaignsCount}
+          segments={[
+            {
+              label: t("نشطة"),
+              value: data.activeCampaignsCount,
+              color: "#2A9D8F",
+            },
+            {
+              label: t("غير نشطة"),
+              value: Math.max(
+                0,
+                data.totalCampaignsCount - data.activeCampaignsCount,
+              ),
+              color: "#DCE8EA",
+            },
+          ]}
+        />
+        <BarsInsight
+          title={t("حركة العمل الإنساني")}
+          subtitle={t("العروض والطلبات المفتوحة التي تحتاج قرارًا")}
+          items={[
+            {
+              label: t("حملات نشطة"),
+              value: data.activeCampaignsCount,
+              color: "#216474",
+            },
+            {
+              label: t("عروض تبرع تنتظر المراجعة"),
+              value: data.pendingDonationOffersCount,
+              color: "#DFAE0D",
+            },
+            {
+              label: t("طلبات مساعدة مفتوحة"),
+              value: data.openAssistanceRequestsCount,
+              color: "#F97316",
+            },
+            {
+              label: t("مستندات تحقق"),
+              value: data.verificationDocumentsCount,
+              color: "#6E969E",
+            },
+          ]}
+        />
+      </section>
+
+      <ReportActions
+        title={t("تقرير نشاط المنظمة")}
+        description={t(
+          "تصدير ملخص الحملات والعروض وطلبات المساعدة للإدارة والمتابعة الدورية.",
+        )}
+        filename="organization-activity-report"
+        rows={[
+          [t("إجمالي الحملات"), data.totalCampaignsCount],
+          [t("الحملات النشطة"), data.activeCampaignsCount],
+          [t("عروض تنتظر المراجعة"), data.pendingDonationOffersCount],
+          [t("طلبات مساعدة مفتوحة"), data.openAssistanceRequestsCount],
+          [t("مستندات التحقق"), data.verificationDocumentsCount],
+        ]}
+      />
+
       {/* تنبيه الاعتماد */}
       {!data.isApproved && (
         <section
@@ -417,9 +481,7 @@ export function OrganizationDashboardPage() {
           <div
             dir={direction}
             className={`flex min-w-0 items-center gap-3 ${
-              isArabic
-                ? "flex-row text-right"
-                : "flex-row text-left"
+              isArabic ? "flex-row text-right" : "flex-row text-left"
             }`}
           >
             <div className="min-w-0">
@@ -475,8 +537,7 @@ export function OrganizationDashboardPage() {
                   },
                 ];
 
-                const accent =
-                  accentClasses[index % accentClasses.length];
+                const accent = accentClasses[index % accentClasses.length];
 
                 return (
                   <article
@@ -496,9 +557,7 @@ export function OrganizationDashboardPage() {
                     <div
                       dir="ltr"
                       className={`relative flex w-full items-center justify-between gap-3 ${
-                        isArabic
-                          ? "flex-row-reverse"
-                          : "flex-row"
+                        isArabic ? "flex-row-reverse" : "flex-row"
                       }`}
                     >
                       {/* الأيقونة + الاسم */}
@@ -537,9 +596,7 @@ export function OrganizationDashboardPage() {
                     <div
                       dir="ltr"
                       className={`relative mt-4 flex items-center justify-between gap-3 ${
-                        isArabic
-                          ? "flex-row-reverse"
-                          : "flex-row"
+                        isArabic ? "flex-row-reverse" : "flex-row"
                       }`}
                     >
                       <span
@@ -566,10 +623,7 @@ export function OrganizationDashboardPage() {
                         className="inline-flex shrink-0 items-center gap-1 text-[11px] font-bold text-[#216474] transition group-hover:gap-2"
                       >
                         <span>{t("التفاصيل")}</span>
-                        <LinkArrow
-                          size={13}
-                          strokeWidth={1.8}
-                        />
+                        <LinkArrow size={13} strokeWidth={1.8} />
                       </Link>
                     </div>
                   </article>

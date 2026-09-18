@@ -19,15 +19,17 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 import { getApiErrorMessage } from "../../../shared/api/errors";
-import {
-  getPharmacyDashboard,
-  pharmacyKeys,
-} from "../api/pharmacyApi";
+import { getPharmacyDashboard, pharmacyKeys } from "../api/pharmacyApi";
 import {
   PharmacyErrorState,
   PharmacyLoadingState,
 } from "../components/PharmacyStates";
 import { formatNumber } from "../utils/pharmacyFormatters";
+import {
+  BarsInsight,
+  DonutInsight,
+  ReportActions,
+} from "../../../shared/components/DashboardInsights";
 
 const PHARMACY_HERO_IMAGE = "/assets/app/pharmacy.png";
 
@@ -38,14 +40,7 @@ const statTones = {
   danger: "bg-[#FFF1F2] text-[#E11D48]",
 };
 
-function Stat({
-  icon: Icon,
-  label,
-  value,
-  hint,
-  tone = "primary",
-  isArabic,
-}) {
+function Stat({ icon: Icon, label, value, hint, tone = "primary", isArabic }) {
   return (
     <article className="relative min-h-[150px] overflow-hidden rounded-[1.35rem] border border-[#DCE8EA] bg-white p-5 shadow-[0_10px_30px_rgba(23,75,87,.04)]">
       <span
@@ -56,22 +51,14 @@ function Stat({
         <Icon size={20} strokeWidth={1.8} />
       </span>
 
-      <div
-        className={
-          isArabic ? "pr-16 text-right" : "pl-16 text-left"
-        }
-      >
-        <p className="text-[12px] font-semibold text-[#71858A]">
-          {label}
-        </p>
+      <div className={isArabic ? "pr-16 text-right" : "pl-16 text-left"}>
+        <p className="text-[12px] font-semibold text-[#71858A]">{label}</p>
 
         <strong className="mt-3 block text-[30px] font-black leading-none text-[#17363E]">
           {formatNumber(value)}
         </strong>
 
-        <p className="mt-4 text-[11px] leading-5 text-[#A5A5A5]">
-          {hint}
-        </p>
+        <p className="mt-4 text-[11px] leading-5 text-[#A5A5A5]">{hint}</p>
       </div>
     </article>
   );
@@ -80,11 +67,7 @@ function Stat({
 export function PharmacyDashboardPage() {
   const { t, i18n } = useTranslation();
 
-  const currentLanguage = (
-    i18n.resolvedLanguage ||
-    i18n.language ||
-    "ar"
-  )
+  const currentLanguage = (i18n.resolvedLanguage || i18n.language || "ar")
     .split("-")[0]
     .toLowerCase();
 
@@ -137,11 +120,7 @@ export function PharmacyDashboardPage() {
   const InventoryArrow = isArabic ? ArrowLeft : ArrowRight;
 
   return (
-    <div
-      dir={direction}
-      lang={currentLanguage}
-      className="space-y-6"
-    >
+    <div dir={direction} lang={currentLanguage} className="space-y-6">
       {/* Hero */}
       <section className="relative isolate min-h-[220px] overflow-hidden rounded-[14px] border-0 bg-[#10505A] text-white shadow-[0_22px_55px_rgba(23,75,87,.16)] sm:min-h-[230px] lg:min-h-[250px] lg:border-0">
         {/* Hero image - desktop only */}
@@ -174,11 +153,7 @@ export function PharmacyDashboardPage() {
 
         <div className="relative z-10 flex min-h-[220px] flex-col justify-between gap-8 px-6 py-7 sm:min-h-[230px] lg:min-h-[250px] lg:flex-row lg:items-center lg:px-9">
           {/* Main pharmacy info */}
-          <div
-            className={`min-w-0 ${
-              isArabic ? "text-right" : "text-left"
-            }`}
-          >
+          <div className={`min-w-0 ${isArabic ? "text-right" : "text-left"}`}>
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-2 rounded-full bg-[rgba(230,243,246,.84)] px-3 py-1.5 text-xs font-bold text-[#666666] backdrop-blur-sm">
                 <BadgeCheck size={14} />
@@ -192,9 +167,7 @@ export function PharmacyDashboardPage() {
                     : "bg-[#F0F6F7]/90 text-[#60777D]"
                 }`}
               >
-                {data.isOpenNow
-                  ? t("مفتوحة الآن")
-                  : t("مغلقة الآن")}
+                {data.isOpenNow ? t("مفتوحة الآن") : t("مغلقة الآن")}
               </span>
             </div>
 
@@ -205,13 +178,9 @@ export function PharmacyDashboardPage() {
             <p className="mt-3 flex items-center gap-2 text-sm text-[#D6D6D6]">
               <MapPin size={16} />
 
-              {[
-                data.area ? t(data.area) : "",
-                data.city ? t(data.city) : "",
-              ]
+              {[data.area ? t(data.area) : "", data.city ? t(data.city) : ""]
                 .filter(Boolean)
-                .join(isArabic ? "، " : ", ") ||
-                t("لم يحدد الموقع بعد")}
+                .join(isArabic ? "، " : ", ") || t("لم يحدد الموقع بعد")}
             </p>
           </div>
 
@@ -220,9 +189,7 @@ export function PharmacyDashboardPage() {
             {/* Profile completion */}
             <div
               className={`relative min-h-[92px] rounded-[12px] border border-white/20 bg-white p-4 shadow-sm ${
-                isArabic
-                  ? "pl-14 text-right"
-                  : "pr-14 text-left"
+                isArabic ? "pl-14 text-right" : "pr-14 text-left"
               }`}
             >
               <span
@@ -230,30 +197,20 @@ export function PharmacyDashboardPage() {
                   isArabic ? "left-4" : "right-4"
                 }`}
               >
-                <FileText
-                  size={24}
-                  strokeWidth={1.8}
-                />
+                <FileText size={24} strokeWidth={1.8} />
               </span>
 
-              <p className="text-xs text-[#60777D]">
-                {t("اكتمال الملف")}
-              </p>
+              <p className="text-xs text-[#60777D]">{t("اكتمال الملف")}</p>
 
               <strong className="mt-2 block text-2xl font-black text-[#174B57]">
-                {formatNumber(
-                  data.profileCompletionPercentage,
-                )}
-                %
+                {formatNumber(data.profileCompletionPercentage)}%
               </strong>
             </div>
 
             {/* Rating */}
             <div
               className={`relative min-h-[92px] rounded-[12px] border border-white/20 bg-white p-4 shadow-sm ${
-                isArabic
-                  ? "pl-14 text-right"
-                  : "pr-14 text-left"
+                isArabic ? "pl-14 text-right" : "pr-14 text-left"
               }`}
             >
               <span
@@ -261,20 +218,13 @@ export function PharmacyDashboardPage() {
                   isArabic ? "left-4" : "right-4"
                 }`}
               >
-                <Star
-                  size={24}
-                  className="fill-[#DFAE0D] text-[#DFAE0D]"
-                />
+                <Star size={24} className="fill-[#DFAE0D] text-[#DFAE0D]" />
               </span>
 
-              <p className="text-xs text-[#60777D]">
-                {t("التقييم")}
-              </p>
+              <p className="text-xs text-[#60777D]">{t("التقييم")}</p>
 
               <strong className="mt-2 block text-2xl font-black text-[#174B57]">
-                {Number(
-                  data.averageRating || 0,
-                ).toFixed(1)}
+                {Number(data.averageRating || 0).toFixed(1)}
               </strong>
             </div>
           </div>
@@ -298,9 +248,7 @@ export function PharmacyDashboardPage() {
           icon={PackageCheck}
           value={data.inStockCount}
           label={t("متوفر بالمخزون")}
-          hint={`${formatNumber(
-            data.lowStockCount,
-          )} ${t("أصناف منخفضة")}`}
+          hint={`${formatNumber(data.lowStockCount)} ${t("أصناف منخفضة")}`}
           tone="success"
           isArabic={isArabic}
         />
@@ -309,9 +257,7 @@ export function PharmacyDashboardPage() {
           icon={ClipboardList}
           value={data.pendingRequestsCount}
           label={t("طلبات تنتظر الرد")}
-          hint={`${formatNumber(
-            data.activeRequestsCount,
-          )} ${t("طلبات نشطة")}`}
+          hint={`${formatNumber(data.activeRequestsCount)} ${t("طلبات نشطة")}`}
           tone="warning"
           isArabic={isArabic}
         />
@@ -330,16 +276,71 @@ export function PharmacyDashboardPage() {
         />
       </section>
 
+      <section className="grid gap-5 xl:grid-cols-2">
+        <DonutInsight
+          title={t("توزيع حالة المخزون")}
+          subtitle={t("قراءة سريعة تساعد على ترتيب إعادة التعبئة والعزل")}
+          centerLabel={t("إجمالي الأصناف")}
+          centerValue={data.inventoryItemsCount}
+          segments={[
+            { label: t("متوفر"), value: data.inStockCount, color: "#2A9D8F" },
+            { label: t("منخفض"), value: data.lowStockCount, color: "#E4B43E" },
+            { label: t("نافد"), value: data.outOfStockCount, color: "#E76F51" },
+            { label: t("منتهي"), value: data.expiredCount, color: "#8B5CF6" },
+          ]}
+        />
+        <BarsInsight
+          title={t("مؤشرات التشغيل")}
+          subtitle={t("الطلبات والتنبيهات التي تحتاج متابعة من الصيدلية")}
+          items={[
+            {
+              label: t("طلبات نشطة"),
+              value: data.activeRequestsCount,
+              color: "#216474",
+            },
+            {
+              label: t("بانتظار الرد"),
+              value: data.pendingRequestsCount,
+              color: "#DFAE0D",
+            },
+            {
+              label: t("قريبة الانتهاء"),
+              value: data.expiringSoonCount,
+              color: "#F97316",
+            },
+            {
+              label: t("منخفضة المخزون"),
+              value: data.lowStockCount,
+              color: "#E11D48",
+            },
+          ]}
+        />
+      </section>
+
+      <ReportActions
+        title={t("تقرير تشغيل الصيدلية")}
+        description={t(
+          "تصدير ملخص المخزون والطلبات الحالية للمراجعة الإدارية دون بيانات المرضى.",
+        )}
+        filename="pharmacy-operational-report"
+        rows={[
+          [t("إجمالي أصناف المخزون"), data.inventoryItemsCount],
+          [t("متوفر"), data.inStockCount],
+          [t("منخفض المخزون"), data.lowStockCount],
+          [t("نافد"), data.outOfStockCount],
+          [t("منتهي الصلاحية"), data.expiredCount],
+          [t("قريب الانتهاء"), data.expiringSoonCount],
+          [t("طلبات نشطة"), data.activeRequestsCount],
+          [t("طلبات تنتظر الرد"), data.pendingRequestsCount],
+        ]}
+      />
+
       {/* Bottom sections */}
       <section className="grid gap-6 xl:grid-cols-[1.25fr_.75fr]">
         {/* Alerts */}
         <div className="overflow-hidden rounded-[1.55rem] border border-[#DCE8EA] bg-white shadow-[0_12px_35px_rgba(23,75,87,.045)]">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b-0 bg-[#FAFCFC] px-6 py-5 lg:border-b lg:border-[#E6EEF0]">
-            <div
-              className={
-                isArabic ? "text-right" : "text-left"
-              }
-            >
+            <div className={isArabic ? "text-right" : "text-left"}>
               <h2 className="font-black text-[#29464D]">
                 {t("تنبيهات تستحق المتابعة")}
               </h2>
@@ -361,11 +362,9 @@ export function PharmacyDashboardPage() {
           <div className="space-y-3 p-5">
             {alerts.length ? (
               alerts.map((item) => {
-                const isExpiring =
-                  item.alertType === "ExpiringSoon";
+                const isExpiring = item.alertType === "ExpiringSoon";
 
-                const isExpired =
-                  item.alertType === "Expired";
+                const isExpired = item.alertType === "Expired";
 
                 return (
                   <div
@@ -386,9 +385,7 @@ export function PharmacyDashboardPage() {
 
                     <div
                       className={`min-w-0 flex-1 ${
-                        isArabic
-                          ? "text-right"
-                          : "text-left"
+                        isArabic ? "text-right" : "text-left"
                       }`}
                     >
                       <p className="truncate text-sm font-bold text-[#29464D]">
@@ -397,9 +394,7 @@ export function PharmacyDashboardPage() {
 
                       <p className="mt-1 text-xs leading-5 text-[#829499]">
                         {isExpired
-                          ? t(
-                              "انتهت صلاحية هذا الصنف ويجب عزله عن الطلبات",
-                            )
+                          ? t("انتهت صلاحية هذا الصنف ويجب عزله عن الطلبات")
                           : isExpiring
                             ? `${t("متبقي")} ${formatNumber(
                                 item.daysUntilExpiry,
@@ -437,11 +432,7 @@ export function PharmacyDashboardPage() {
         {/* Readiness */}
         <div className="overflow-hidden rounded-[1.55rem] border border-[#DCE8EA] bg-white shadow-[0_12px_35px_rgba(23,75,87,.045)]">
           <div className="flex items-center justify-between gap-3 border-b border-[#E6EEF0] bg-[#FAFCFC] px-6 py-5">
-            <div
-              className={
-                isArabic ? "text-right" : "text-left"
-              }
-            >
+            <div className={isArabic ? "text-right" : "text-left"}>
               <h2 className="font-black text-[#29464D]">
                 {t("جاهزية الصيدلية")}
               </h2>
@@ -479,9 +470,7 @@ export function PharmacyDashboardPage() {
 
                   <span
                     className={`text-sm font-bold ${
-                      item.done
-                        ? "text-[#29464D]"
-                        : "text-[#829499]"
+                      item.done ? "text-[#29464D]" : "text-[#829499]"
                     }`}
                   >
                     {item.label}

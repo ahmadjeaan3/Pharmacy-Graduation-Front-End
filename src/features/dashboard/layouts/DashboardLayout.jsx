@@ -436,7 +436,7 @@ export function DashboardLayout() {
             USER NAVBAR - FIGMA MATCH
         ========================== */}
         <header className="sticky top-0 z-50 h-20 w-full border-b border-[rgba(102,102,102,.16)] bg-white">
-          <div className="mx-auto flex h-full w-full max-w-[1640px] items-center px-4 sm:px-6 lg:px-10 xl:px-[120px]">
+          <div className="mx-auto flex h-full w-full max-w-[1800px] items-center px-4 sm:px-6 lg:px-7 xl:px-8">
             <div
               className={`flex h-full w-full items-center justify-between ${
                 isArabic ? "flex-row" : "flex-row-reverse"
@@ -451,12 +451,12 @@ export function DashboardLayout() {
               {/* Main user navigation - text only like Figma */}
               <nav
                 aria-label={t("القائمة الرئيسية")}
-                className="hidden h-full min-w-0 flex-1 items-center justify-center lg:flex"
+                className="hidden h-full min-w-0 flex-1 items-center justify-center min-[1500px]:flex"
               >
                 <div
-                  className={`flex h-full items-center gap-4 xl:gap-6 ${
-                    isArabic ? "flex-row" : "flex-row-reverse"
-                  }`}
+                  className={`flex h-full min-w-0 items-center ${
+                    isArabic ? "gap-3 xl:gap-5" : "gap-2 xl:gap-3"
+                  } ${isArabic ? "flex-row" : "flex-row-reverse"}`}
                 >
                   {userTopNavItems.map(({ to, label, end, urgent }) => (
                     <NavLink
@@ -479,10 +479,14 @@ export function DashboardLayout() {
                         <span
                           className={`relative inline-flex items-center ${
                             urgent
-                              ? "text-[13px] tracking-tight"
+                              ? "text-[12px] tracking-tight xl:text-[13px]"
                               : isActive
-                                ? "text-[18px]"
-                                : "text-[16px]"
+                                ? isArabic
+                                  ? "text-[17px] xl:text-[18px]"
+                                  : "text-[15px] xl:text-[16px]"
+                                : isArabic
+                                  ? "text-[15px] xl:text-[16px]"
+                                  : "text-[13px] xl:text-[14px]"
                           }`}
                         >
                           {t(label)}
@@ -498,11 +502,11 @@ export function DashboardLayout() {
               </nav>
 
               {/* User profile - like Figma */}
-              <div className="relative hidden shrink-0 lg:block">
+              <div className="relative hidden shrink-0 min-[1500px]:block">
                 <button
                   type="button"
                   onClick={() => setOpen((value) => !value)}
-                  className={`flex h-14 min-w-[170px] items-center gap-3 rounded-xl px-1 transition hover:bg-[#F8FAFC] ${
+                  className={`flex h-14 min-w-[145px] max-w-[165px] items-center gap-2 rounded-xl px-1 transition hover:bg-[#F8FAFC] ${
                     isArabic ? "flex-row-reverse" : "flex-row"
                   }`}
                 >
@@ -525,7 +529,7 @@ export function DashboardLayout() {
                     {/* الاسم والسهم */}
                     <span
                       dir={isArabic ? "rtl" : "ltr"}
-                      className="me-4 inline-flex items-center gap-2 text-[14px] font-medium text-[#216474]"
+                      className="inline-flex max-w-full items-center gap-1.5 text-[13px] font-medium text-[#216474] xl:text-[14px]"
                     >
                       {/* السهم على اليمين في العربية */}
                       {isArabic && (
@@ -538,7 +542,7 @@ export function DashboardLayout() {
                         />
                       )}
 
-                      <span className="whitespace-nowrap">
+                      <span className="truncate whitespace-nowrap">
                         {t("مرحباً")} {userFirstName}
                       </span>
 
@@ -555,7 +559,7 @@ export function DashboardLayout() {
                     </span>
 
                     {/* النص أسفل الاسم */}
-                    <span className="me-4 mt-1 whitespace-nowrap text-[12px] text-[#666666]">
+                    <span className="mt-1 whitespace-nowrap text-[11px] text-[#666666] xl:text-[12px]">
                       {t("ملفي الشخصي")}
                     </span>
                   </span>
@@ -680,7 +684,7 @@ export function DashboardLayout() {
                 type="button"
                 onClick={() => setOpen((value) => !value)}
                 aria-label={t("فتح القائمة")}
-                className="grid size-11 place-items-center rounded-xl border border-[#174b57]/10 bg-white text-[#174b57] lg:hidden"
+                className="grid size-11 place-items-center rounded-xl border border-[#174b57]/10 bg-white text-[#174b57] min-[1500px]:hidden"
               >
                 {open ? <X size={22} /> : <Menu size={22} />}
               </button>
@@ -689,7 +693,7 @@ export function DashboardLayout() {
 
           {/* Mobile menu - dropdown from top */}
           {open ? (
-            <div className="border-t border-[#174B57]/8 bg-white px-4 py-4 shadow-lg lg:hidden">
+            <div className="border-t border-[#174B57]/8 bg-white px-4 py-4 shadow-lg min-[1500px]:hidden">
               <nav className="mx-auto grid max-w-xl gap-2">
                 {userTopNavItems.map(({ to, label, end }) => (
                   <NavLink

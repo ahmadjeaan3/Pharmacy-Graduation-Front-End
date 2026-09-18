@@ -12,7 +12,10 @@ export const supplyKeys = {
   suggestions: ["supply-chain", "suggestions"],
   adminBatches: ["supply-chain", "admin", "batches"],
   adminRepresentatives: ["supply-chain", "admin", "representatives"],
+  adminOverview: ["supply-chain", "admin", "overview"],
 };
+export const getAdminSupplyOverview = async () =>
+  (await apiClient.get("/supply-chain/admin/overview")).data;
 export const getSupplyDashboard = async () =>
   (await apiClient.get("/supply-chain/warehouse/dashboard")).data;
 export const getBatches = async () =>
