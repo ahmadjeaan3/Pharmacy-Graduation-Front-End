@@ -902,74 +902,262 @@ function DonationDetailsDialog({ record, type, onClose }) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="donation-details-title"
-        className="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-3xl bg-white shadow-2xl"
+        className={`max-h-[92vh] w-full overflow-y-auto bg-white shadow-2xl sm:rounded-[28px] ${
+          isOffer ? "max-w-5xl" : "max-w-3xl"
+        }`}
       >
-        <header className="flex items-center justify-between gap-4 bg-[#174B57] px-5 py-4 text-white">
-          <div>
-            <p className="text-xs text-white/65">
-              {isOffer ? "تفاصيل عرض التبرع" : "تفاصيل طلب المساعدة"}
-            </p>
-            <h2 id="donation-details-title" className="mt-1 text-lg font-bold">
-              {record.medicineName || "دواء"}
-            </h2>
+        <header
+          className={`relative isolate overflow-hidden px-5 py-5 text-white sm:px-7 sm:py-6 ${
+            isOffer
+              ? "bg-gradient-to-l from-[#0F5965] via-[#174B57] to-[#123C46]"
+              : "bg-gradient-to-l from-[#70445F] via-[#59394F] to-[#3F3046]"
+          }`}
+        >
+          <div className="pointer-events-none absolute -left-10 -top-20 size-48 rounded-full bg-white/10 blur-2xl" />
+          <div className="relative flex items-start justify-between gap-4">
+            <div className="flex min-w-0 items-center gap-4">
+              <span className="grid size-12 shrink-0 place-items-center rounded-2xl border border-white/15 bg-white/10 shadow-inner sm:size-14">
+                {isOffer ? <Gift size={25} /> : <HandHeart size={25} />}
+              </span>
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="text-xs font-medium text-white/70">
+                    {isOffer ? "عرض تبرع دوائي" : "طلب مساعدة دوائية"}
+                  </p>
+                  <span className="rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-[10px] font-bold text-white/90">
+                    {status.label || record.status || "غير محدد"}
+                  </span>
+                </div>
+                <h2
+                  id="donation-details-title"
+                  className="mt-1.5 truncate text-xl font-black sm:text-2xl"
+                >
+                  {record.medicineName || "دواء"}
+                </h2>
+                <p className="mt-1 text-xs text-white/60">
+                  {record.scientificName ||
+                    (isOffer
+                      ? "بيانات الدواء ومسار تسليمه"
+                      : "ملخص الحاجة والموعد المطلوب")}
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className="grid size-11 shrink-0 place-items-center rounded-2xl border border-white/10 bg-white/10 transition hover:rotate-90 hover:bg-white/20"
+              aria-label="إغلاق التفاصيل"
+            >
+              <X size={20} />
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="grid size-10 place-items-center rounded-xl bg-white/10 transition hover:bg-white/20"
-            aria-label="إغلاق التفاصيل"
-          >
-            <X size={19} />
-          </button>
         </header>
 
-        <div className="space-y-4 p-5">
-          {isOffer ? <DonationProgress record={record} /> : null}
-
+        <div className="p-4 sm:p-6">
           {isOffer ? (
-            <ProtectedDonationImage url={record.donationImageUrl} />
-          ) : null}
-
-          <div className="grid gap-3 sm:grid-cols-2">
-            <DetailsItem label="الدواء" value={record.medicineName} />
-            <DetailsItem label="الاسم العلمي" value={record.scientificName} />
-            <DetailsItem label="الجهة" value={organization} />
-            <DetailsItem label="الحملة" value={record.campaignTitle} />
-            <DetailsItem
-              label="الكمية"
-              value={`${Number(quantity || 0).toLocaleString("ar-SY-u-nu-latn")} عبوة`}
+            <OfferDetailsLayout
+              record={record}
+              organization={organization}
+              quantity={quantity}
+              date={date}
             />
-            <DetailsItem
-              label={isOffer ? "تاريخ الصلاحية" : "مطلوب قبل"}
-              value={formatDate(date)}
+          ) : (
+            <AssistanceDetailsLayout
+              record={record}
+              organization={organization}
+              quantity={quantity}
+              date={date}
+              status={status}
             />
-            <DetailsItem label="الحالة" value={status.label || record.status} />
-            {isOffer ? (
-              <DetailsItem
-                label="صيدلية التحقق"
-                value={record.reviewingPharmacyName}
-              />
-            ) : null}
-          </div>
-
-          {(record.notes || record.reviewNote) && (
-            <div className="rounded-2xl border border-[#174B57]/10 bg-[#F5F9F9] p-4">
-              <span className="text-xs text-[#71858A]">الملاحظات</span>
-              <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-[#334F56]">
-                {record.notes || record.reviewNote}
-              </p>
-            </div>
           )}
 
           <button
             type="button"
             onClick={onClose}
-            className="h-11 w-full rounded-xl bg-[#216474] text-sm font-bold text-white transition hover:bg-[#174B57]"
+            className={`mt-5 h-11 w-full rounded-xl text-sm font-bold text-white transition ${
+              isOffer
+                ? "bg-[#216474] hover:bg-[#174B57]"
+                : "bg-[#654057] hover:bg-[#4C3042]"
+            }`}
           >
             إغلاق
           </button>
         </div>
       </section>
+    </div>
+  );
+}
+
+function OfferDetailsLayout({ record, organization, quantity, date }) {
+  return (
+    <div className="space-y-5">
+      <DonationProgress record={record} />
+
+      <div className="grid gap-5 lg:grid-cols-[1.05fr_.95fr]">
+        <div className="overflow-hidden rounded-3xl border border-[#D9E8EA] bg-[#F5FAFA] p-3">
+          <div className="mb-3 flex items-center justify-between px-1">
+            <div>
+              <strong className="block text-sm text-[#254B54]">
+                صورة الدواء المرفقة
+              </strong>
+              <span className="mt-1 block text-[11px] text-[#829499]">
+                تستخدمها الصيدلية للتحقق الأولي قبل الاستلام
+              </span>
+            </div>
+            <span className="grid size-10 place-items-center rounded-xl bg-white text-[#216474] shadow-sm">
+              <ShieldCheck size={19} />
+            </span>
+          </div>
+          <div className="overflow-hidden rounded-2xl bg-white">
+            <ProtectedDonationImage url={record.donationImageUrl} />
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <div className="rounded-3xl border border-[#D9E8EA] bg-white p-5">
+            <div className="flex items-center gap-3 border-b border-[#E8F0F1] pb-4">
+              <span className="grid size-11 place-items-center rounded-2xl bg-[#E7F5F4] text-[#216474]">
+                <Pill size={20} />
+              </span>
+              <div>
+                <span className="text-[11px] text-[#829499]">بيانات العبوة</span>
+                <strong className="mt-1 block text-base text-[#17363E]">
+                  {record.medicineName || "دواء"}
+                </strong>
+              </div>
+            </div>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <DetailsItem label="الاسم العلمي" value={record.scientificName} />
+              <DetailsItem
+                label="الكمية المتبرع بها"
+                value={`${Number(quantity || 0).toLocaleString("ar-SY-u-nu-latn")} عبوة`}
+              />
+              <DetailsItem label="تاريخ الصلاحية" value={formatDate(date)} />
+              <DetailsItem
+                label="صيدلية التحقق"
+                value={record.reviewingPharmacyName}
+              />
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-[#F0DFC0] bg-[#FFF9ED] p-4">
+            <div className="flex items-start gap-3">
+              <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-white text-[#C48720] shadow-sm">
+                <HeartHandshake size={19} />
+              </span>
+              <div>
+                <span className="text-[11px] text-[#9D7B43]">وجهة التبرع</span>
+                <strong className="mt-1 block text-sm text-[#5A4524]">
+                  {organization}
+                </strong>
+                {record.campaignTitle ? (
+                  <p className="mt-1.5 text-xs text-[#8F7447]">
+                    ضمن حملة: {record.campaignTitle}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <RecordNotes record={record} tone="offer" />
+    </div>
+  );
+}
+
+function AssistanceDetailsLayout({
+  record,
+  organization,
+  quantity,
+  date,
+  status,
+}) {
+  return (
+    <div className="space-y-5">
+      <div className="grid gap-4 sm:grid-cols-[1.15fr_.85fr]">
+        <div className="relative overflow-hidden rounded-3xl border border-[#E5D5DF] bg-[#FBF6F9] p-5">
+          <div className="absolute -left-8 -top-10 size-28 rounded-full bg-[#B989A5]/15" />
+          <div className="relative">
+            <span className="text-xs font-bold text-[#8B657C]">
+              الحاجة المطلوبة
+            </span>
+            <h3 className="mt-3 text-xl font-black text-[#3E2D38]">
+              {record.medicineName || "دواء"}
+            </h3>
+            <p className="mt-1 text-xs text-[#8B7A84]">
+              {record.scientificName || "لم يُذكر اسم علمي"}
+            </p>
+            <div className="mt-5 flex items-end justify-between gap-4 border-t border-[#E9DDE4] pt-4">
+              <div>
+                <span className="block text-[11px] text-[#9C8793]">
+                  الكمية المطلوبة
+                </span>
+                <strong className="mt-1 block text-3xl font-black text-[#654057]">
+                  {Number(quantity || 0).toLocaleString("ar-SY-u-nu-latn")}
+                  <small className="me-1 text-sm font-bold">عبوة</small>
+                </strong>
+              </div>
+              <span className="grid size-12 place-items-center rounded-2xl bg-white text-[#70445F] shadow-sm">
+                <Package size={22} />
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-3xl bg-[#173F48] p-5 text-white">
+          <CalendarDays className="text-[#8BD0CB]" size={24} />
+          <span className="mt-5 block text-xs text-white/60">مطلوب قبل</span>
+          <strong className="mt-2 block text-lg font-black">
+            {formatDate(date)}
+          </strong>
+          <span className="mt-5 inline-flex rounded-full bg-white/10 px-3 py-1.5 text-[11px] font-bold">
+            {status.label || record.status || "قيد المتابعة"}
+          </span>
+        </div>
+      </div>
+
+      <div className="rounded-3xl border border-[#D9E8EA] bg-white p-5">
+        <div className="flex items-start gap-4">
+          <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[#E7F5F4] text-[#216474]">
+            <HandHeart size={22} />
+          </span>
+          <div className="min-w-0 flex-1">
+            <span className="text-[11px] text-[#829499]">الجهة المستلمة</span>
+            <strong className="mt-1 block text-base text-[#17363E]">
+              {organization}
+            </strong>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <DetailsItem label="الحملة" value={record.campaignTitle} />
+              <DetailsItem
+                label="تاريخ إنشاء الطلب"
+                value={formatDate(record.createdAtUtc)}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <RecordNotes record={record} tone="assistance" />
+    </div>
+  );
+}
+
+function RecordNotes({ record, tone }) {
+  const notes = record.notes || record.reviewNote;
+  if (!notes) return null;
+  return (
+    <div
+      className={`rounded-3xl border p-5 ${
+        tone === "assistance"
+          ? "border-[#E5D5DF] bg-[#FBF6F9]"
+          : "border-[#D9E8EA] bg-[#F5FAFA]"
+      }`}
+    >
+      <span className="text-xs font-bold text-[#71858A]">ملاحظات الحالة</span>
+      <p className="mt-2 whitespace-pre-wrap text-sm leading-7 text-[#334F56]">
+        {notes}
+      </p>
     </div>
   );
 }
@@ -999,7 +1187,7 @@ function DonationProgress({ record }) {
   ];
 
   return (
-    <div className="rounded-2xl border border-[#216474]/12 bg-[#F4F9F9] p-4">
+    <div className="rounded-3xl border border-[#D9E8EA] bg-[#F4F9F9] p-4 sm:p-5">
       <div className="flex items-center justify-between gap-3">
         <strong className="text-sm text-[#29464D]">مسار التبرع</strong>
         {rejected ? (
@@ -1008,21 +1196,20 @@ function DonationProgress({ record }) {
           </span>
         ) : null}
       </div>
-      <div className="mt-4 grid gap-2 sm:grid-cols-5">
+      <div className="relative mt-5 grid gap-3 sm:grid-cols-5 sm:gap-0">
+        <span className="absolute left-[10%] right-[10%] top-4 hidden h-px bg-[#CFE2E3] sm:block" />
         {steps.map((step, index) => (
           <div
             key={step.label}
-            className={`rounded-xl border px-2 py-3 text-center text-[11px] font-semibold ${
-              step.complete
-                ? "border-emerald-100 bg-white text-emerald-700"
-                : "border-[#174B57]/8 bg-white/55 text-[#91A0A3]"
+            className={`relative z-10 flex items-center gap-3 rounded-2xl px-2 py-2 text-[11px] font-semibold sm:flex-col sm:bg-transparent sm:text-center ${
+              step.complete ? "text-emerald-700" : "text-[#91A0A3]"
             }`}
           >
             <span
-              className={`mx-auto mb-2 grid size-6 place-items-center rounded-full ${
+              className={`grid size-8 shrink-0 place-items-center rounded-full border-4 border-[#F4F9F9] shadow-sm ${
                 step.complete
-                  ? "bg-emerald-100 text-emerald-700"
-                  : "bg-slate-100 text-slate-400"
+                  ? "bg-emerald-500 text-white"
+                  : "bg-white text-slate-400"
               }`}
             >
               {step.complete ? <CheckCircle2 size={14} /> : index + 1}
