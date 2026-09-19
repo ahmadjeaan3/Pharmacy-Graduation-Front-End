@@ -115,11 +115,32 @@ function htmlCell(value) {
     .replaceAll("'", "&#039;");
 }
 
-export function ReportActions({ title, description, filename, rows }) {
+export function ReportActions({
+  title,
+  description,
+  filename,
+  rows,
+  periodLabel,
+  executiveSummary,
+  narrativeSections = [],
+  recommendations = [],
+}) {
   const download = () => {
     const csv = [
-      "\uFEFFالبند,القيمة",
-      ...rows.map(([label, value]) => `${csvCell(label)},${csvCell(value)}`),
+      "\uFEFFالقسم,البند,القيمة أو البيان",
+      `${csvCell("بيانات التقرير")},${csvCell("عنوان التقرير")},${csvCell(title)}`,
+      `${csvCell("بيانات التقرير")},${csvCell("الفترة")},${csvCell(periodLabel || "غير محددة")}`,
+      `${csvCell("الملخص التنفيذي")},${csvCell("القراءة العامة")},${csvCell(executiveSummary || description)}`,
+      ...rows.map(
+        ([label, value]) =>
+          `${csvCell("المؤشرات")},${csvCell(label)},${csvCell(value)}`,
+      ),
+      ...narrativeSections.map(({ title: sectionTitle, text }) =>
+        `${csvCell("التحليل")},${csvCell(sectionTitle)},${csvCell(text)}`,
+      ),
+      ...recommendations.map((recommendation, index) =>
+        `${csvCell("التوصيات")},${csvCell(`التوصية ${index + 1}`)},${csvCell(recommendation)}`,
+      ),
     ].join("\r\n");
     const url = URL.createObjectURL(
       new Blob([csv], { type: "text/csv;charset=utf-8" }),
@@ -149,6 +170,21 @@ export function ReportActions({ title, description, filename, rows }) {
           </tr>`,
       )
       .join("");
+    const analysisHtml = narrativeSections
+      .map(
+        ({ title: sectionTitle, text }) => `
+          <article class="analysis-card">
+            <h3>${htmlCell(sectionTitle)}</h3>
+            <p>${htmlCell(text)}</p>
+          </article>`,
+      )
+      .join("");
+    const recommendationsHtml = recommendations
+      .map(
+        (recommendation, index) =>
+          `<li><b>${index + 1}.</b> ${htmlCell(recommendation)}</li>`,
+      )
+      .join("");
 
     reportWindow.document.open();
     reportWindow.document.write(`<!doctype html>
@@ -167,6 +203,10 @@ export function ReportActions({ title, description, filename, rows }) {
             h1 { margin: 0; color: #17363e; font-size: 25px; }
             .description { margin: 9px 0 0; color: #60777d; font-size: 12px; line-height: 1.8; }
             .meta { margin: 18px 0; padding: 12px 14px; border: 1px solid #dce8ea; border-radius: 10px; background: #f6fafa; color: #60777d; font-size: 11px; }
+            .summary { margin: 0 0 18px; padding: 16px; border-right: 4px solid #216474; border-radius: 10px; background: #eef7f7; }
+            .summary h2, .section-title { margin: 0 0 8px; color: #17363e; font-size: 16px; }
+            .summary p, .analysis-card p { margin: 0; color: #526b71; font-size: 12px; line-height: 1.9; }
+            .section-title { margin-top: 22px; padding-bottom: 7px; border-bottom: 1px solid #dce8ea; }
             table { width: 100%; border-collapse: collapse; overflow: hidden; border: 1px solid #dce8ea; border-radius: 10px; }
             thead { background: #174b57; color: #fff; }
             th, td { padding: 11px 13px; border-bottom: 1px solid #e6eef0; text-align: right; font-size: 12px; }
@@ -176,6 +216,10 @@ export function ReportActions({ title, description, filename, rows }) {
             tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
             td:first-child { width: 44px; color: #829499; text-align: center; }
             .value { width: 180px; color: #17363e; font-weight: 900; direction: ltr; text-align: left; }
+            .analysis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+            .analysis-card { padding: 13px; border: 1px solid #dce8ea; border-radius: 10px; background: #fbfdfd; break-inside: avoid; }
+            .analysis-card h3 { margin: 0 0 6px; color: #216474; font-size: 13px; }
+            .recommendations { margin: 0; padding: 14px 32px 14px 14px; border: 1px solid #f2d68a; border-radius: 10px; background: #fffaf0; color: #5f512d; font-size: 12px; line-height: 2; }
             footer { margin-top: 20px; padding-top: 12px; border-top: 1px solid #dce8ea; color: #829499; font-size: 10px; line-height: 1.7; }
             @media print {
               body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
@@ -193,11 +237,18 @@ export function ReportActions({ title, description, filename, rows }) {
               </div>
               <div class="brand">دوائي | Dawaai</div>
             </header>
-            <div class="meta">تاريخ إنشاء التقرير: ${htmlCell(generatedAt)}</div>
+            <div class="meta">الفترة المشمولة: ${htmlCell(periodLabel || "غير محددة")} &nbsp; | &nbsp; تاريخ إنشاء التقرير: ${htmlCell(generatedAt)}</div>
+            <section class="summary">
+              <h2>الملخص التنفيذي</h2>
+              <p>${htmlCell(executiveSummary || description)}</p>
+            </section>
+            <h2 class="section-title">جدول المؤشرات الأساسية</h2>
             <table aria-label="${htmlCell(title)}">
               <thead><tr><th>#</th><th>المؤشر</th><th>القيمة</th></tr></thead>
               <tbody>${tableRows}</tbody>
             </table>
+            ${analysisHtml ? `<h2 class="section-title">القراءة التحليلية</h2><section class="analysis-grid">${analysisHtml}</section>` : ""}
+            ${recommendationsHtml ? `<h2 class="section-title">التوصيات والإجراءات المقترحة</h2><ol class="recommendations">${recommendationsHtml}</ol>` : ""}
             <footer>تم إنشاء هذا التقرير من منصة دوائي. يعرض التقرير المؤشرات المسموح بها للحساب الحالي فقط.</footer>
           </main>
           <script>
@@ -211,7 +262,8 @@ export function ReportActions({ title, description, filename, rows }) {
   };
 
   return (
-    <section className="flex flex-col gap-4 rounded-2xl border border-[#CFE3E5] bg-[#F6FAFA] p-5 sm:flex-row sm:items-center sm:justify-between">
+    <section className="rounded-2xl border border-[#CFE3E5] bg-[#F6FAFA] p-5">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-start gap-3">
         <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-[#EAF4F3] text-[#216474]">
           <FileText size={20} />
@@ -237,6 +289,20 @@ export function ReportActions({ title, description, filename, rows }) {
           <Printer size={16} /> طباعة التقرير
         </button>
       </div>
+      </div>
+      {(executiveSummary || narrativeSections.length || recommendations.length) ? (
+        <div className="mt-4 grid gap-3 border-t border-[#dce8ea] pt-4 lg:grid-cols-[1.5fr_1fr]">
+          <div>
+            <h4 className="text-xs font-black text-[#29464d]">الملخص التنفيذي</h4>
+            <p className="mt-1 text-xs leading-6 text-[#71858a]">{executiveSummary || description}</p>
+          </div>
+          <div className="flex flex-wrap content-start gap-2">
+            <span className="rounded-full bg-white px-3 py-1.5 text-[11px] font-bold text-[#52727a]">{rows.length} مؤشرًا رقابيًا</span>
+            <span className="rounded-full bg-white px-3 py-1.5 text-[11px] font-bold text-[#52727a]">{narrativeSections.length} محاور تحليلية</span>
+            <span className="rounded-full bg-white px-3 py-1.5 text-[11px] font-bold text-[#52727a]">{recommendations.length} توصيات</span>
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }

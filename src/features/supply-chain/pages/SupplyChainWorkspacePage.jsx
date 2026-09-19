@@ -564,17 +564,18 @@ export function SupplyChainWorkspacePage() {
   const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const role = getPrimaryRole(user.roles);
   const normalizedRoles = (user?.roles || []).map((item) =>
     String(item).trim().toLowerCase(),
   );
-  const isAdminAccount =
-    String(role || "")
-      .trim()
-      .toLowerCase() === "admin" ||
+  const hasAdminRole =
     normalizedRoles.some((item) =>
       ["admin", "administrator", "systemadmin", "system-admin"].includes(item),
     );
+  // Some older sessions used Administrator/SystemAdmin, and a user can carry
+  // more than one role. Ministry access must always win so the page never
+  // falls back to pharmacy tabs that expose operational/private details.
+  const role = hasAdminRole ? "Admin" : getPrimaryRole(user?.roles);
+  const isAdminAccount = role === "Admin";
 
   const isWarehouseAccount =
     String(role || "")
@@ -652,7 +653,9 @@ export function SupplyChainWorkspacePage() {
   const orders = useQuery({
     queryKey: [...supplyKeys.orders, user?.id || user?.email || role],
     queryFn: getSupplyOrders,
-    enabled: role === "Representative" || activeTab === "orders",
+    enabled:
+      ["Warehouse", "Pharmacy", "Representative"].includes(role) &&
+      (role === "Representative" || activeTab === "orders"),
     staleTime: 45_000,
     placeholderData: keepPreviousData,
     refetchOnWindowFocus: false,
@@ -3142,7 +3145,9 @@ function DeliveryPaymentDialog({ order, busy, error, onClose, onConfirm }) {
                   className="form-input"
                   value={amount}
                   onChange={(event) => setAmount(event.target.value)}
-                  placeholder={t("أقل من {{remaining}}", { remaining })}
+                  placeholder={t("أقل من {{remaining}}", {
+                    remaining: money(remaining, currentLanguage),
+                  })}
                 />
                 {partialInvalid && amount && (
                   <small className="mt-1 block font-bold text-rose-700">

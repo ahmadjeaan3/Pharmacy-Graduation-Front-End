@@ -7,6 +7,10 @@ export const sosKeys = {
 };
 export const createSosAlert = async (payload) =>
   (await apiClient.post("/sos", payload)).data;
+export const createGuestSosAlert = async (payload) =>
+  (await apiClient.post("/sos/guest", payload)).data;
+export const trackGuestSosAlert = async (trackingToken) =>
+  (await apiClient.get(`/sos/guest/${encodeURIComponent(trackingToken)}`)).data;
 export const getMySosAlerts = async () => (await apiClient.get("/sos/me")).data;
 export const getNearbySosAlerts = async (status = "") =>
   (await apiClient.get("/sos/nearby", { params: status ? { status } : {} }))

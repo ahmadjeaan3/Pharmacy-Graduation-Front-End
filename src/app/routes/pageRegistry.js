@@ -156,6 +156,10 @@ export const SosPage = page(
   () => import("../../features/sos/pages/SosPage"),
   "SosPage",
 );
+export const PublicUrgentRequestPage = page(
+  () => import("../../features/sos/pages/PublicUrgentRequestPage"),
+  "PublicUrgentRequestPage",
+);
 export const SupplyChainWorkspacePage = page(
   () => import("../../features/supply-chain/pages/SupplyChainWorkspacePage"),
   "SupplyChainWorkspacePage",

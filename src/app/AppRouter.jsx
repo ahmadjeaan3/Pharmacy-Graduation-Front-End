@@ -16,6 +16,7 @@ import {
   LandingPage,
   NotFoundPage,
   PrivacyPolicyPage,
+  PublicUrgentRequestPage,
 } from "./routes/pageRegistry";
 
 function renderRoutes(routes) {
@@ -41,6 +42,7 @@ export function AppRouter() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/privacy" element={<PrivacyPolicyPage />} />
+        <Route path="/urgent-request" element={<PublicUrgentRequestPage />} />
 
         <Route element={<PublicOnlyRoute />}>
           {renderRoutes(publicOnlyRoutes)}

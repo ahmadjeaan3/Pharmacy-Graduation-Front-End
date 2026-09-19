@@ -57,6 +57,13 @@ function getInitialLanguage() {
 const resources = {
   ar: {
     translation: {
+      "{{count}} قيد المراجعة": "{{count}} قيد المراجعة",
+      "{{count}} طلب بانتظار المعالجة":
+        "{{count}} طلب بانتظار المعالجة",
+      "{{count}} تحتاج تعبئة": "{{count}} تحتاج تعبئة",
+      "رقم الدفعة: {{batch}}": "رقم الدفعة: {{batch}}",
+      "أقل من {{remaining}}": "أقل من {{remaining}}",
+      "استدعاء دفعة {{batch}}": "استدعاء دفعة {{batch}}",
       "الخطوة {{step}} من {{total}}": "الخطوة {{step}} من {{total}}",
 
       "بيانات {{account}}": "بيانات {{account}}",
@@ -92,6 +99,50 @@ const resources = {
       ...landingMessages.en,
       ...inventoryMessages.en,
       ...supplyMessages.en,
+      "وزارة الصحة": "Ministry of Health",
+      "التراخيص والاعتمادات": "Licensing & approvals",
+      "سجل المنشآت والحسابات": "Facilities & accounts registry",
+      "الدليل الوطني للأدوية": "National medicines directory",
+      "أمن الإمداد الدوائي": "Medicine supply security",
+      "البلاغات الدوائية العاجلة": "Urgent medicine alerts",
+      "التوعية والتعاميم": "Public guidance & circulars",
+      "الرقابة وسجل التدقيق": "Oversight & audit trail",
+      "الحوكمة والترخيص": "Governance & licensing",
+      "اعتماد المنشآت الصحية ومراجعة وثائقها وحالة امتثالها.":
+        "Approve health facilities and review their documents and compliance status.",
+      "{{count}} قيد المراجعة": "{{count}} under review",
+      "رصد الطلبات والشحنات والتأخير والاستدعاءات بمؤشرات مجمعة.":
+        "Monitor orders, shipments, delays, and recalls through aggregate indicators.",
+      "مراقبة وطنية": "National monitoring",
+      "الاستجابة الدوائية": "Medicine response",
+      "متابعة البلاغات العاجلة وضغط طلبات الأدوية دون كشف صحي غير لازم.":
+        "Monitor urgent alerts and medicine demand without unnecessary health-data exposure.",
+      "{{count}} طلب بانتظار المعالجة": "{{count}} requests awaiting action",
+      "نشر التنبيهات والإرشادات الرسمية للمستخدمين والمنشآت المستهدفة.":
+        "Publish official alerts and guidance to targeted users and facilities.",
+      "قناة رسمية": "Official channel",
+      "وزارة الصحة — مركز الرصد الدوائي الوطني":
+        "Ministry of Health — National Medicines Observatory",
+      "المشهد الصحي والدوائي على مستوى المنصة":
+        "Platform-wide health and medicine landscape",
+      "رقابة مجمعة على الاعتمادات وتوفر الدواء والاستجابة العامة؛ مع حماية التفاصيل الطبية والمالية الخاصة.":
+        "Aggregate oversight of approvals, medicine availability, and public response while protecting private medical and financial details.",
+      "فتح نطاق الرقابة": "Open oversight area",
+      "تراخيص صيدليات بانتظار القرار": "Pharmacy licenses awaiting a decision",
+      "منظمات صحية بانتظار الاعتماد": "Health organizations awaiting approval",
+      "ملفات امتثال تحتاج مراجعة": "Compliance files requiring review",
+      "مؤشر الاستجابة لطلبات الدواء": "Medicine request response indicator",
+      "سجل الجهات والأفراد على المنصة":
+        "Platform facilities and individuals registry",
+      "التقرير الرقابي لوزارة الصحة": "Ministry of Health oversight report",
+      "تصدير المؤشرات الوطنية المجمعة والاعتمادات والطلبات للفترة المحددة؛ من دون بيانات صحية شخصية أو تفاصيل مالية خاصة.":
+        "Export aggregate national indicators, approvals, and requests for the selected period without personal health data or private financial details.",
+      "مؤشر التدخل الرقابي": "Regulatory intervention indicator",
+      "مؤشر الطلب المجتمعي على الأدوية": "Community medicine demand indicator",
+      "أحدث بلاغات توفر الأدوية": "Latest medicine availability alerts",
+      "عرض رقابي محدود لآخر الحالات ضمن":
+        "Limited oversight view of the latest cases during",
+      "بيانات الأطراف محمية": "Party identities protected",
       "نسيت كلمة المرور؟": "Forgot password?",
       "روابط الصفحة": "Page links",
       "الوصفة الذكية": "Smart prescription",
@@ -187,6 +238,49 @@ const resources = {
       ...landingMessages.tr,
       ...inventoryMessages.tr,
       ...supplyMessages.tr,
+      "وزارة الصحة": "Sağlık Bakanlığı",
+      "التراخيص والاعتمادات": "Ruhsatlandırma ve onaylar",
+      "سجل المنشآت والحسابات": "Tesis ve hesap sicili",
+      "الدليل الوطني للأدوية": "Ulusal ilaç rehberi",
+      "أمن الإمداد الدوائي": "İlaç tedarik güvenliği",
+      "البلاغات الدوائية العاجلة": "Acil ilaç bildirimleri",
+      "التوعية والتعاميم": "Bilgilendirme ve genelgeler",
+      "الرقابة وسجل التدقيق": "Denetim ve işlem günlüğü",
+      "الحوكمة والترخيص": "Yönetişim ve ruhsatlandırma",
+      "اعتماد المنشآت الصحية ومراجعة وثائقها وحالة امتثالها.":
+        "Sağlık tesislerini onaylayın; belgelerini ve uyum durumlarını inceleyin.",
+      "{{count}} قيد المراجعة": "{{count}} incelemede",
+      "رصد الطلبات والشحنات والتأخير والاستدعاءات بمؤشرات مجمعة.":
+        "Siparişleri, sevkiyatları, gecikmeleri ve geri çağırmaları toplu göstergelerle izleyin.",
+      "مراقبة وطنية": "Ulusal izleme",
+      "الاستجابة الدوائية": "İlaç müdahalesi",
+      "متابعة البلاغات العاجلة وضغط طلبات الأدوية دون كشف صحي غير لازم.":
+        "Gereksiz sağlık verisi açıklamadan acil bildirimleri ve ilaç talep yoğunluğunu izleyin.",
+      "{{count}} طلب بانتظار المعالجة": "{{count}} talep işlem bekliyor",
+      "نشر التنبيهات والإرشادات الرسمية للمستخدمين والمنشآت المستهدفة.":
+        "Hedeflenen kullanıcılara ve tesislere resmi uyarı ve rehberlik yayınlayın.",
+      "قناة رسمية": "Resmî kanal",
+      "وزارة الصحة — مركز الرصد الدوائي الوطني":
+        "Sağlık Bakanlığı — Ulusal İlaç Gözlemevi",
+      "المشهد الصحي والدوائي على مستوى المنصة":
+        "Platform genelinde sağlık ve ilaç görünümü",
+      "رقابة مجمعة على الاعتمادات وتوفر الدواء والاستجابة العامة؛ مع حماية التفاصيل الطبية والمالية الخاصة.":
+        "Özel tıbbi ve mali ayrıntıları koruyarak onayları, ilaç bulunabilirliğini ve genel müdahaleyi toplu olarak izleyin.",
+      "فتح نطاق الرقابة": "Denetim alanını aç",
+      "تراخيص صيدليات بانتظار القرار": "Karar bekleyen eczane ruhsatları",
+      "منظمات صحية بانتظار الاعتماد": "Onay bekleyen sağlık kuruluşları",
+      "ملفات امتثال تحتاج مراجعة": "İncelenmesi gereken uyum dosyaları",
+      "مؤشر الاستجابة لطلبات الدواء": "İlaç talebi yanıt göstergesi",
+      "سجل الجهات والأفراد على المنصة": "Platform tesis ve kişi sicili",
+      "التقرير الرقابي لوزارة الصحة": "Sağlık Bakanlığı denetim raporu",
+      "تصدير المؤشرات الوطنية المجمعة والاعتمادات والطلبات للفترة المحددة؛ من دون بيانات صحية شخصية أو تفاصيل مالية خاصة.":
+        "Seçilen dönem için toplu ulusal göstergeleri, onayları ve talepleri kişisel sağlık verileri veya özel mali ayrıntılar olmadan dışa aktarın.",
+      "مؤشر التدخل الرقابي": "Düzenleyici müdahale göstergesi",
+      "مؤشر الطلب المجتمعي على الأدوية": "Toplumsal ilaç talebi göstergesi",
+      "أحدث بلاغات توفر الأدوية": "En son ilaç bulunabilirliği bildirimleri",
+      "عرض رقابي محدود لآخر الحالات ضمن":
+        "Dönemdeki son vakaların sınırlı denetim görünümü:",
+      "بيانات الأطراف محمية": "Taraf kimlikleri korunuyor",
       "نسيت كلمة المرور؟": "Şifrenizi mi unuttunuz?",
       "روابط الصفحة": "Sayfa bağlantıları",
       "الوصفة الذكية": "Akıllı reçete",

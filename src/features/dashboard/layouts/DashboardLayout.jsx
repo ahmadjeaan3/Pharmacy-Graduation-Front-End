@@ -5,6 +5,7 @@ import {
   FileText,
   HeartHandshake,
   LayoutDashboard,
+  Landmark,
   LogOut,
   Menu,
   Route,
@@ -60,7 +61,7 @@ const ROLE_DRAWER_VISUALS = {
     image: null,
   },
   Admin: {
-    icon: ShieldCheck,
+    icon: Landmark,
     image: null,
   },
 };
@@ -216,23 +217,23 @@ function getDashboardPageTitle(pathname) {
   ========================== */
 
   if (pathname.startsWith("/app/approvals")) {
-    return "طلبات الاعتماد";
+    return "التراخيص والاعتمادات";
   }
 
   if (pathname.startsWith("/app/accounts")) {
-    return "إدارة الحسابات";
+    return "سجل المنشآت والحسابات";
   }
 
   if (pathname.startsWith("/app/audit-logs")) {
-    return "سجل النشاطات";
+    return "الرقابة وسجل التدقيق";
   }
 
   if (pathname.startsWith("/app/medicines")) {
-    return "دليل الأدوية";
+    return "الدليل الوطني للأدوية";
   }
 
   if (pathname.startsWith("/app/home-ticker")) {
-    return "شريط الإعلانات";
+    return "التوعية والتعاميم";
   }
 
   /* =========================

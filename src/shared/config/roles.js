@@ -12,6 +12,7 @@ import {
   HeartHandshake,
   HeartPulse,
   LibraryBig,
+  Landmark,
   MapPin,
   Megaphone,
   PackageCheck,
@@ -857,70 +858,76 @@ const roleDefinitions = {
   Admin: {
     key: "Admin",
 
-    label: "الإدارة",
+    label: "وزارة الصحة",
 
     navigation: [
       {
         to: "/app/approvals",
-        label: "طلبات الاعتماد",
-        icon: Building2,
+        label: "التراخيص والاعتمادات",
+        icon: ShieldCheck,
       },
       {
         to: "/app/accounts",
-        label: "إدارة الحسابات",
-        icon: UserRound,
+        label: "سجل المنشآت والحسابات",
+        icon: Building2,
       },
       {
         to: "/app/medicines",
-        label: "دليل الأدوية",
+        label: "الدليل الوطني للأدوية",
         icon: LibraryBig,
       },
       {
         to: "/app/supply-chain",
-        label: "مراقبة التوريد",
+        label: "أمن الإمداد الدوائي",
         icon: Warehouse,
       },
       {
+        to: "/app/sos",
+        label: "البلاغات الدوائية العاجلة",
+        icon: ShieldAlert,
+      },
+      {
         to: "/app/home-ticker",
-        label: "شريط الإعلانات",
+        label: "التوعية والتعاميم",
         icon: Megaphone,
       },
       {
         to: "/app/audit-logs",
-        label: "سجل النشاطات",
+        label: "الرقابة وسجل التدقيق",
         icon: Activity,
-      },
-      {
-        to: "/app/sos",
-        label: "الطلبات الدوائية العاجلة",
-        icon: ShieldAlert,
       },
     ],
 
     dashboard: {
-      title: "لوحة الإدارة",
+      title: "مركز وزارة الصحة",
 
       description:
-        "إدارة الاعتمادات وكتالوج الأدوية ومتابعة عمليات المنصة وسلسلة التوريد.",
+        "مرصد وطني للاعتمادات وتوفر الدواء وسلامة الإمداد والرقابة على الجهات الصحية ضمن المنصة.",
 
       actions: [
         {
           to: "/app/approvals",
-          label: "طلبات الاعتماد",
-          text: "مراجعة الصيدليات والمنظمات والمستودعات وملفات التحقق.",
-          icon: Building2,
+          label: "التراخيص والاعتمادات",
+          text: "مراجعة واعتماد الصيدليات والمنظمات والمستودعات وملفات التحقق.",
+          icon: ShieldCheck,
         },
         {
           to: "/app/medicines",
-          label: "دليل الأدوية",
-          text: "عرض الأدوية وإضافة بياناتها المرجعية.",
+          label: "الدليل الوطني للأدوية",
+          text: "إدارة البيانات المرجعية للأدوية ومراجعة توحيد أسمائها.",
           icon: LibraryBig,
         },
         {
           to: "/app/supply-chain",
-          label: "مراقبة سلسلة التوريد",
-          text: "متابعة طلبات التوريد والشحنات والمستودعات والمندوبين.",
+          label: "أمن الإمداد الدوائي",
+          text: "رصد مؤشرات التوريد والشحنات والمرتجعات دون كشف التفاصيل المالية الخاصة.",
           icon: Warehouse,
+        },
+        {
+          to: "/app/audit-logs",
+          label: "الرقابة والتدقيق",
+          text: "مراجعة العمليات الحساسة ومسارات الاعتماد والتغييرات الإدارية.",
+          icon: Landmark,
         },
       ],
     },

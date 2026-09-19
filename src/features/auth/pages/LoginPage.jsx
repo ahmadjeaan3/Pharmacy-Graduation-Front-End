@@ -279,6 +279,13 @@ export function LoginPage() {
                 {t("إنشاء حساب")}
               </Link>
             </div>
+
+            <Link
+              to="/urgent-request"
+              className="mx-auto mt-4 flex w-fit items-center justify-center rounded-xl bg-[#fff0f3] px-4 py-2 text-xs font-bold text-[#b91337] transition hover:bg-[#ffe2e8]"
+            >
+              {t("تحتاج دواء ولا تملك حساباً؟ أرسل طلباً عاجلاً")}
+            </Link>
           </div>
         </section>
 

@@ -6,12 +6,16 @@ import {
   Building2,
   CalendarRange,
   HeartHandshake,
+  Landmark,
+  Megaphone,
   PackageSearch,
   PieChart,
   Search,
+  ShieldAlert,
   ShieldCheck,
   TrendingUp,
   UsersRound,
+  Warehouse,
 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -114,19 +118,19 @@ export function AdminDashboardPage() {
 
   const queues = [
     {
-      label: "صيدليات بانتظار الاعتماد",
+      label: t("تراخيص صيدليات بانتظار القرار"),
       value: data.pendingPharmacies,
       to: "/app/approvals?tab=pharmacies",
       icon: Building2,
     },
     {
-      label: "منظمات بانتظار الاعتماد",
+      label: t("منظمات صحية بانتظار الاعتماد"),
       value: data.pendingOrganizations,
       to: "/app/approvals?tab=organizations",
       icon: HeartHandshake,
     },
     {
-      label: "ملفات تحقق معلّقة",
+      label: t("ملفات امتثال تحتاج مراجعة"),
       value: data.pendingOrganizationVerifications,
       to: "/app/approvals?tab=organizations",
       icon: ShieldCheck,
@@ -188,6 +192,99 @@ export function AdminDashboardPage() {
   );
 
   const activeUserRate = percentage(data.activeUsers, data.totalUsers);
+  const pendingApprovalTotal =
+    data.pendingPharmacies +
+    data.pendingOrganizations +
+    data.pendingOrganizationVerifications;
+  const processedMedicineRequests =
+    data.availableMedicineRequests + data.unavailableMedicineRequests;
+  const medicineProcessingRate = percentage(
+    processedMedicineRequests,
+    data.totalMedicineRequests,
+  );
+  const executiveSummary = `يغطي هذا التقرير ${activePeriodLabel} ويقدم قراءة رقابية مجمعة لحركة المنصة. بلغ عدد الحسابات المسجلة ${totalAccounts.toLocaleString(locale)} حسابًا، منها ${data.activeUsers.toLocaleString(locale)} مستخدمًا نشطًا. وتوجد حاليًا ${pendingApprovalTotal.toLocaleString(locale)} ملفات اعتماد أو امتثال تحتاج إلى مراجعة، مقابل ${data.totalMedicineRequests.toLocaleString(locale)} طلب دواء بنسبة معالجة بلغت ${medicineProcessingRate.toLocaleString(locale)}%. كما سجلت المنصة ${data.totalDonationOffers.toLocaleString(locale)} عرض تبرع و${data.totalAssistanceRequests.toLocaleString(locale)} طلب مساعدة خلال النطاق المعروض.`;
+  const reportNarrativeSections = [
+    {
+      title: "الحوكمة والاعتماد",
+      text: `بلغت نسبة اعتماد الصيدليات ${pharmacyApprovalRate.toLocaleString(locale)}%، ونسبة اعتماد المنظمات ${organizationApprovalRate.toLocaleString(locale)}%. ويبلغ إجمالي الملفات التي تنتظر قرارًا أو استكمال مراجعة ${pendingApprovalTotal.toLocaleString(locale)} ملفًا، ما يستلزم ترتيب الأولويات وفق مدة الانتظار واكتمال الوثائق ومستوى المخاطر.`,
+    },
+    {
+      title: "الاستجابة لطلبات الدواء",
+      text: `استقبلت المنصة ${data.totalMedicineRequests.toLocaleString(locale)} طلب دواء؛ منها ${data.pendingMedicineRequests.toLocaleString(locale)} قيد الانتظار، و${data.availableMedicineRequests.toLocaleString(locale)} تم تأمينها، و${data.unavailableMedicineRequests.toLocaleString(locale)} تعذر تأمينها، و${data.cancelledMedicineRequests.toLocaleString(locale)} ألغيت. تعكس نسبة المعالجة الحالية البالغة ${medicineProcessingRate.toLocaleString(locale)}% مستوى الاستجابة التشغيلي خلال الفترة.`,
+    },
+    {
+      title: "الطلب المجتمعي والنشاط",
+      text: `سجل محرك البحث ${data.totalSearches.toLocaleString(locale)} عملية بحث، وانضم ${data.newUsersInPeriod.toLocaleString(locale)} مستخدم جديد خلال ${activePeriodLabel}. تساعد هذه المؤشرات في رصد تغير الطلب المجتمعي وتحديد الأدوية والمناطق التي تستدعي تنسيقًا مبكرًا.`,
+    },
+    {
+      title: "التبرعات والمساعدة",
+      text: `بلغ عدد عروض التبرع ${data.totalDonationOffers.toLocaleString(locale)} عرضًا، منها ${data.pendingDonationOffers.toLocaleString(locale)} بانتظار المراجعة. كما سُجل ${data.totalAssistanceRequests.toLocaleString(locale)} طلب مساعدة، وما يزال ${data.openAssistanceRequests.toLocaleString(locale)} منها مفتوحًا ويحتاج إلى متابعة الجهات المختصة.`,
+    },
+  ];
+  const reportRecommendations = [
+    pendingApprovalTotal > 0
+      ? `إعطاء أولوية لمراجعة ملفات الاعتماد والامتثال البالغ عددها ${pendingApprovalTotal.toLocaleString(locale)} ملفًا، مع توثيق سبب التأخير والقرار النهائي لكل ملف.`
+      : "الاستمرار في المراجعة الدورية لحالة تراخيص الصيدليات والمنظمات والمحافظة على زمن اعتماد منخفض.",
+    data.pendingMedicineRequests > 0
+      ? `متابعة طلبات الدواء المعلقة البالغ عددها ${data.pendingMedicineRequests.toLocaleString(locale)} طلبًا، وتصنيفها حسب مدة الانتظار والمنطقة وأهمية الدواء.`
+      : "المحافظة على آلية الاستجابة الحالية مع مراقبة أي ارتفاع مفاجئ في الطلبات الجديدة.",
+    data.unavailableMedicineRequests > 0
+      ? `تحليل الأدوية التي تعذر تأمينها في ${data.unavailableMedicineRequests.toLocaleString(locale)} طلبًا وربطها بمؤشرات المخزون والتوريد لاكتشاف النقص المتكرر.`
+      : "مواصلة الربط بين مؤشرات الطلب والمخزون للتنبؤ المبكر بأي نقص محتمل.",
+    data.pendingDonationOffers > 0
+      ? `استكمال مراجعة ${data.pendingDonationOffers.toLocaleString(locale)} عرض تبرع مع التحقق من الصلاحية وسلامة العبوات والجهة المستفيدة قبل الاعتماد.`
+      : "الاستمرار في توثيق دورة التبرع من العرض حتى التسليم مع الالتزام بضوابط السلامة الدوائية.",
+    "الحفاظ على عرض المؤشرات بصورة مجمعة، وعدم تضمين البيانات الصحية الشخصية أو أرقام التواصل أو التفاصيل المالية في التقارير الرقابية العامة.",
+  ];
+
+  const ministryScopes = [
+    {
+      title: t("الحوكمة والترخيص"),
+      description: t("اعتماد المنشآت الصحية ومراجعة وثائقها وحالة امتثالها."),
+      to: "/app/approvals",
+      icon: ShieldCheck,
+      badge: t("{{count}} قيد المراجعة", {
+        count: (
+          data.pendingPharmacies +
+          data.pendingOrganizations +
+          data.pendingOrganizationVerifications
+        ).toLocaleString(locale),
+      }),
+      tone: "bg-[#EAF4F3] text-[#216474]",
+    },
+    {
+      title: t("أمن الإمداد الدوائي"),
+      description: t(
+        "رصد الطلبات والشحنات والتأخير والاستدعاءات بمؤشرات مجمعة.",
+      ),
+      to: "/app/supply-chain",
+      icon: Warehouse,
+      badge: t("مراقبة وطنية"),
+      tone: "bg-[#FFF7DF] text-[#A66F00]",
+    },
+    {
+      title: t("الاستجابة الدوائية"),
+      description: t(
+        "متابعة البلاغات العاجلة وضغط طلبات الأدوية دون كشف صحي غير لازم.",
+      ),
+      to: "/app/sos",
+      icon: ShieldAlert,
+      badge: t("{{count}} طلب بانتظار المعالجة", {
+        count: data.pendingMedicineRequests.toLocaleString(locale),
+      }),
+      tone: "bg-[#FFF1F2] text-[#C6424E]",
+    },
+    {
+      title: t("التوعية والتعاميم"),
+      description: t(
+        "نشر التنبيهات والإرشادات الرسمية للمستخدمين والمنشآت المستهدفة.",
+      ),
+      to: "/app/home-ticker",
+      icon: Megaphone,
+      badge: t("قناة رسمية"),
+      tone: "bg-[#F0F6F7] text-[#52727A]",
+    },
+  ];
 
   return (
     <div className="space-y-5 sm:space-y-6">
@@ -213,15 +310,20 @@ export function AdminDashboardPage() {
 
         <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-sm font-bold text-[#8bd0cb]">
-              مركز إدارة المنصة
+            <p className="inline-flex items-center gap-2 text-sm font-bold text-[#A7DDD8]">
+              <Landmark size={17} />
+              {t("وزارة الصحة — مركز الرصد الدوائي الوطني")}
             </p>
 
-            <h2 className="mt-2 text-3xl font-black">نظرة عامة على دوائي</h2>
+            <h2 className="mt-2 max-w-3xl text-3xl font-black sm:text-4xl">
+              {t("المشهد الصحي والدوائي على مستوى المنصة")}
+            </h2>
 
             <p className="mt-3 max-w-2xl leading-7 text-white/60">
-              إحصاءات النشاط والطلبات خلال {activePeriodLabel}، مع عرض حالة
-              الاعتمادات الحالية للمنصة.
+              {t(
+                "رقابة مجمعة على الاعتمادات وتوفر الدواء والاستجابة العامة؛ مع حماية التفاصيل الطبية والمالية الخاصة.",
+              )}{" "}
+              — {activePeriodLabel}
             </p>
           </div>
 
@@ -260,6 +362,47 @@ export function AdminDashboardPage() {
           </div>
         </div>
       </Motion.section>
+
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {ministryScopes.map(
+          ({ title, description, to, icon: Icon, badge, tone }, index) => (
+            <Motion.article
+              key={title}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+              className="group flex min-h-[205px] flex-col rounded-[1.45rem] border border-[#174b57]/8 bg-white p-5 shadow-[0_12px_34px_rgba(23,75,87,.05)] transition hover:-translate-y-1 hover:border-[#216474]/20 hover:shadow-lg"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <span
+                  className={`grid size-12 place-items-center rounded-2xl ${tone}`}
+                >
+                  <Icon size={22} />
+                </span>
+                <span className="rounded-full bg-[#F5F9F9] px-3 py-1.5 text-[10px] font-black text-[#60777D]">
+                  {badge}
+                </span>
+              </div>
+
+              <h3 className="mt-5 font-black text-[#17363E]">{title}</h3>
+              <p className="mt-2 flex-1 text-xs leading-6 text-[#71858A]">
+                {description}
+              </p>
+
+              <Link
+                to={to}
+                className="mt-4 inline-flex items-center gap-2 text-xs font-black text-[#216474]"
+              >
+                {t("فتح نطاق الرقابة")}
+                <ArrowLeft
+                  size={15}
+                  className="transition group-hover:-translate-x-1"
+                />
+              </Link>
+            </Motion.article>
+          ),
+        )}
+      </section>
 
       <AiServicesHealthPanel />
 
@@ -333,7 +476,9 @@ export function AdminDashboardPage() {
               </span>
 
               <div>
-                <h3 className="font-black text-[#17363e]">صحة دورة الطلبات</h3>
+                <h3 className="font-black text-[#17363e]">
+                  {t("مؤشر الاستجابة لطلبات الدواء")}
+                </h3>
 
                 <p className="mt-0.5 text-xs text-[#A5A5A5]">
                   توزيع طلبات الأدوية خلال {activePeriodLabel}
@@ -388,7 +533,9 @@ export function AdminDashboardPage() {
         <article className="rounded-[1.65rem] border border-[#174b57]/8 bg-white p-6 shadow-[0_14px_40px_rgba(23,75,87,.05)]">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-black text-[#17363e]">تكوين مجتمع المنصة</h3>
+              <h3 className="font-black text-[#17363e]">
+                {t("سجل الجهات والأفراد على المنصة")}
+              </h3>
 
               <p className="mt-1 text-xs text-[#A5A5A5]">
                 لقطة حالية لإجمالي الحسابات ونسب جاهزيتها
@@ -455,21 +602,42 @@ export function AdminDashboardPage() {
       </section>
 
       <ReportActions
-        title="تقرير إدارة المنصة"
-        description="تصدير المؤشرات العامة والاعتمادات والطلبات للفترة المحددة؛ التقرير لا يتضمن بيانات صحية أو تفاصيل مالية خاصة."
-        filename="admin-platform-report"
+        title={t("التقرير الرقابي لوزارة الصحة")}
+        description={t(
+          "تصدير المؤشرات الوطنية المجمعة والاعتمادات والطلبات للفترة المحددة؛ من دون بيانات صحية شخصية أو تفاصيل مالية خاصة.",
+        )}
+        filename="ministry-health-oversight-report"
+        periodLabel={activePeriodLabel}
+        executiveSummary={executiveSummary}
+        narrativeSections={reportNarrativeSections}
+        recommendations={reportRecommendations}
         rows={[
           ["الفترة بالأيام", activePeriodDays || "كل الوقت"],
+          ["إجمالي الحسابات المسجلة", totalAccounts],
           ["إجمالي المستخدمين", data.totalUsers],
           ["المستخدمون النشطون", data.activeUsers],
+          ["مستخدمون جدد خلال الفترة", data.newUsersInPeriod],
           ["إجمالي الصيدليات", data.totalPharmacies],
           ["الصيدليات المعتمدة", data.approvedPharmacies],
+          ["نسبة اعتماد الصيدليات", `${pharmacyApprovalRate}%`],
+          ["صيدليات بانتظار القرار", data.pendingPharmacies],
           ["إجمالي المنظمات", data.totalOrganizations],
           ["المنظمات المعتمدة", data.approvedOrganizations],
+          ["نسبة اعتماد المنظمات", `${organizationApprovalRate}%`],
+          ["منظمات بانتظار القرار", data.pendingOrganizations],
+          ["ملفات امتثال تحتاج مراجعة", data.pendingOrganizationVerifications],
           ["طلبات الأدوية", data.totalMedicineRequests],
           ["الطلبات النشطة", data.activeMedicineRequests],
+          ["طلبات بانتظار المعالجة", data.pendingMedicineRequests],
+          ["طلبات تم تأمينها", data.availableMedicineRequests],
+          ["طلبات تعذر تأمينها", data.unavailableMedicineRequests],
+          ["طلبات ملغاة", data.cancelledMedicineRequests],
+          ["نسبة معالجة طلبات الدواء", `${medicineProcessingRate}%`],
+          ["عمليات البحث", data.totalSearches],
           ["عروض التبرع", data.totalDonationOffers],
+          ["عروض التبرع المعلقة", data.pendingDonationOffers],
           ["طلبات المساعدة", data.totalAssistanceRequests],
+          ["طلبات المساعدة المفتوحة", data.openAssistanceRequests],
         ]}
       />
 
@@ -513,11 +681,12 @@ export function AdminDashboardPage() {
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#E6EEF0] bg-[#FAFCFC] px-6 py-5">
             <div>
               <h3 className="font-extrabold text-[#17363e]">
-                مؤشر جاهزية الطلبات — {activePeriodLabel}
+                {t("مؤشر التدخل الرقابي")} — {activePeriodLabel}
               </h3>
 
               <p className="mt-1 text-sm text-[#A5A5A5]">
-                متابعة سريعة للطلبات التي تحتاج تدخلاً خلال {activePeriodLabel}
+                متابعة الحالات التي قد تستدعي تدخلاً أو تنسيقاً خلال{" "}
+                {activePeriodLabel}
               </p>
             </div>
 
@@ -595,7 +764,7 @@ export function AdminDashboardPage() {
 
             <div>
               <h3 className="font-extrabold text-[#17363e]">
-                عبارات البحث الأكثر استخداماً
+                {t("مؤشر الطلب المجتمعي على الأدوية")}
               </h3>
 
               <p className="text-xs text-[#A5A5A5]">
@@ -641,11 +810,11 @@ export function AdminDashboardPage() {
         <div className="flex flex-col gap-4 border-b border-[#174b57]/8 bg-gradient-to-l from-[#FAFCFC] to-[#F4F8F8] px-6 py-5 sm:flex-row sm:items-center sm:justify-between lg:px-7">
           <div>
             <h3 className="font-extrabold text-[#17363e]">
-              أحدث طلبات الأدوية
+              {t("أحدث بلاغات توفر الأدوية")}
             </h3>
 
             <p className="mt-1 text-sm text-[#A5A5A5]">
-              آخر عشرة طلبات ضمن {activePeriodLabel}
+              {t("عرض رقابي محدود لآخر الحالات ضمن")} {activePeriodLabel}
             </p>
           </div>
 
@@ -658,22 +827,24 @@ export function AdminDashboardPage() {
 
         {data.recentMedicineRequests.length ? (
           <div className="overflow-x-auto p-4 lg:p-6">
-            <table className="w-full min-w-[940px] table-fixed border-separate border-spacing-0 text-start text-sm">
+            <table className="w-full min-w-[780px] table-fixed border-separate border-spacing-0 text-start text-sm">
               <thead className="bg-[#EAF4F3]">
                 <tr className="text-xs text-[#71858a]">
-                  <th className="w-[21%] rounded-s-xl px-5 py-4 font-black">
-                    رقم الطلب
+                  <th className="w-[24%] rounded-s-xl px-5 py-4 font-black">
+                    رقم الحالة
                   </th>
 
-                  <th className="w-[18%] px-5 py-4 font-black">الدواء</th>
+                  <th className="w-[24%] px-5 py-4 font-black">
+                    الدواء المطلوب
+                  </th>
 
-                  <th className="w-[18%] px-5 py-4 font-black">المستخدم</th>
+                  <th className="w-[22%] px-5 py-4 font-black">
+                    نطاق الخصوصية
+                  </th>
 
-                  <th className="w-[17%] px-5 py-4 font-black">الصيدلية</th>
+                  <th className="w-[15%] px-5 py-4 font-black">الحالة</th>
 
-                  <th className="w-[14%] px-5 py-4 font-black">الحالة</th>
-
-                  <th className="w-[12%] rounded-e-xl px-5 py-4 font-black">
+                  <th className="w-[15%] rounded-e-xl px-5 py-4 font-black">
                     التاريخ
                   </th>
                 </tr>
@@ -711,32 +882,13 @@ export function AdminDashboardPage() {
                     </td>
 
                     <td className="border-b border-[#174b57]/7 px-5 py-4">
-                      <div className="flex min-w-0 items-center gap-2.5">
-                        <span className="grid size-8 shrink-0 place-items-center rounded-full bg-[#F0F6F7] text-xs font-black text-[#52727A]">
-                          {request.userFullName?.trim()?.[0] || "م"}
-                        </span>
-
-                        <span
-                          className="block truncate font-semibold text-[#60777c]"
-                          title={request.userFullName}
-                        >
-                          {request.userFullName}
-                        </span>
-                      </div>
-                    </td>
-
-                    <td className="border-b border-[#174b57]/7 px-5 py-4">
                       <div className="flex min-w-0 items-center gap-2">
-                        <Building2
+                        <ShieldCheck
                           size={15}
-                          className="shrink-0 text-[#DFAE0D]"
+                          className="shrink-0 text-[#216474]"
                         />
-
-                        <span
-                          className="block truncate text-[#60777c]"
-                          title={request.pharmacyName}
-                        >
-                          {request.pharmacyName}
+                        <span className="block truncate text-xs font-bold text-[#60777c]">
+                          {t("بيانات الأطراف محمية")}
                         </span>
                       </div>
                     </td>

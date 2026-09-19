@@ -1121,10 +1121,26 @@ function AlertList({
               </h3>
 
               {canManage && (
-                <p className="mt-1 break-words text-sm font-bold text-slate-600">
-                  {item.userName}
-                </p>
+                <div className="mt-1 flex flex-wrap items-center gap-2 text-sm font-bold text-slate-600">
+                  <span>{item.userName}</span>
+                  {item.isGuest ? (
+                    <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[11px] text-amber-800">
+                      طلب من دون حساب
+                    </span>
+                  ) : null}
+                  {item.publicReferenceCode ? (
+                    <span className="font-mono text-[11px] text-slate-400" dir="ltr">
+                      {item.publicReferenceCode}
+                    </span>
+                  ) : null}
+                </div>
               )}
+
+              {canManage && item.area ? (
+                <p className="mt-1 flex items-center gap-1 text-xs text-slate-500">
+                  <MapPin size={13} /> {item.area}
+                </p>
+              ) : null}
 
               <p className="mt-1 text-xs text-slate-500">
                 {new Date(
