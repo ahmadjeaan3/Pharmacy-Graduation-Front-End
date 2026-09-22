@@ -33,6 +33,7 @@ import {
   LoadingState as UserLoadingState,
 } from "../../../shared/components/AsyncStates";
 import { DAWAAI_MARK } from "../../../shared/components/Brand";
+import { isValidSyrianPhoneNumber } from "../../../shared/utils/validation";
 import { formatDate } from "../utils/userFormatters";
 import { getApiErrorMessage } from "../../../shared/api/errors";
 
@@ -309,8 +310,8 @@ function MedicalProfileForm({ profile, medical }) {
     const contactPhone = form.emergencyContactPhoneNumber.trim();
     if ((contactName && !contactPhone) || (!contactName && contactPhone))
       return "أدخل اسم جهة اتصال الطوارئ ورقم هاتفها معًا، أو اترك الحقلين فارغين.";
-    if (contactPhone && !/^\+?[0-9\s()-]{7,30}$/.test(contactPhone))
-      return "رقم هاتف الطوارئ غير صالح. استخدم أرقامًا ورمز الدولة عند الحاجة.";
+    if (contactPhone && !isValidSyrianPhoneNumber(contactPhone))
+      return "رقم هاتف الطوارئ غير صالح. استخدم رقماً سورياً مثل 09xxxxxxxx أو +9639xxxxxxxx.";
     return "";
   }, [form.emergencyContactName, form.emergencyContactPhoneNumber]);
   const completedFields = [

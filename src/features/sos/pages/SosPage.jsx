@@ -1,15 +1,20 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   AlertTriangle,
+  CalendarDays,
+  ChevronDown,
   CheckCircle2,
   Clock3,
   Database,
+  Eye,
   FileText,
+  Hash,
   MapPin,
   Phone,
   Pill,
   ShieldAlert,
   ShieldCheck,
+  UserRound,
 } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -31,11 +36,9 @@ import {
 
 const HEALTH_HERO_BACKGROUND = "/assets/app/home/hero_search.png";
 
-const ADMIN_HERO_BACKGROUND =
-  "/assets/app/home/background_hero_admin.png";
+const ADMIN_HERO_BACKGROUND = "/assets/app/home/background_hero_admin.png";
 
-const PHARMACY_HERO_IMAGE =
-  "/assets/app/pharmacy.png";
+const PHARMACY_HERO_IMAGE = "/assets/app/pharmacy.png";
 
 /* =========================================================
    STATUS
@@ -48,6 +51,25 @@ const statusLabels = {
   Cancelled: "ملغي",
 };
 
+const statusStyles = {
+  New: {
+    badge: "bg-amber-50 text-amber-800 ring-amber-200",
+    accent: "bg-amber-400",
+  },
+  InProgress: {
+    badge: "bg-sky-50 text-sky-800 ring-sky-200",
+    accent: "bg-sky-500",
+  },
+  Resolved: {
+    badge: "bg-emerald-50 text-emerald-800 ring-emerald-200",
+    accent: "bg-emerald-500",
+  },
+  Cancelled: {
+    badge: "bg-slate-100 text-slate-600 ring-slate-200",
+    accent: "bg-slate-400",
+  },
+};
+
 /* =========================================================
    MAIN PAGE
 ========================================================= */
@@ -55,9 +77,7 @@ const statusLabels = {
 export function SosPage() {
   const { user } = useAuth();
 
-  const roles = (user?.roles || []).map((role) =>
-    String(role).toLowerCase(),
-  );
+  const roles = (user?.roles || []).map((role) => String(role).toLowerCase());
 
   if (roles.includes("admin")) {
     return <RequestsCenter admin />;
@@ -196,17 +216,9 @@ function UserRequest() {
                 sm:size-12
               "
             >
-              <Pill
-                size={21}
-                strokeWidth={1.8}
-                className="sm:hidden"
-              />
+              <Pill size={21} strokeWidth={1.8} className="sm:hidden" />
 
-              <Pill
-                size={23}
-                strokeWidth={1.8}
-                className="hidden sm:block"
-              />
+              <Pill size={23} strokeWidth={1.8} className="hidden sm:block" />
             </span>
 
             <div className="min-w-0">
@@ -240,9 +252,8 @@ function UserRequest() {
                   sm:leading-6
                 "
               >
-                حدد الدواء الذي تحتاجه وسنرسل طلبك إلى الصيدليات
-                المعتمدة القريبة منك لمساعدتك في الحصول عليه بأسرع
-                وقت ممكن.
+                حدد الدواء الذي تحتاجه وسنرسل طلبك إلى الصيدليات المعتمدة
+                القريبة منك لمساعدتك في الحصول عليه بأسرع وقت ممكن.
               </p>
             </div>
           </div>
@@ -268,14 +279,11 @@ function UserRequest() {
               lg:w-[360px]
             "
           >
-            <AlertTriangle
-              size={19}
-              className="shrink-0 text-amber-200"
-            />
+            <AlertTriangle size={19} className="shrink-0 text-amber-200" />
 
             <p className="text-[10px] leading-5 text-white/80 sm:text-[11px] sm:leading-6">
-              إذا كانت الحالة تهدد الحياة فاتصل فوراً بالإسعاف أو
-              رقم الطوارئ المحلي. هذه الخدمة ليست بديلاً عن الطوارئ.
+              إذا كانت الحالة تهدد الحياة فاتصل فوراً بالإسعاف أو رقم الطوارئ
+              المحلي. هذه الخدمة ليست بديلاً عن الطوارئ.
             </p>
           </div>
         </div>
@@ -287,9 +295,7 @@ function UserRequest() {
 
       <section className="surface grid gap-4 p-5 sm:p-7">
         <div className="mb-1">
-          <h2 className="text-xl font-black text-[#29464d]">
-            تفاصيل الطلب
-          </h2>
+          <h2 className="text-xl font-black text-[#29464d]">تفاصيل الطلب</h2>
 
           <p className="mt-1 text-xs leading-6 text-[#829499]">
             أدخل اسم الدواء والمعلومات التي تساعد الصيدلية على فهم طلبك.
@@ -299,17 +305,13 @@ function UserRequest() {
         {/* Medicine */}
 
         <label>
-          <span className="form-label">
-            اسم الدواء الضروري *
-          </span>
+          <span className="form-label">اسم الدواء الضروري *</span>
 
           <input
             className="form-input"
             maxLength={200}
             value={medicineName}
-            onChange={(event) =>
-              setMedicineName(event.target.value)
-            }
+            onChange={(event) => setMedicineName(event.target.value)}
             placeholder="مثال: أنسولين سريع المفعول"
           />
         </label>
@@ -317,17 +319,13 @@ function UserRequest() {
         {/* Message */}
 
         <label>
-          <span className="form-label">
-            الحالة أو ملاحظات تساعد الصيدلية
-          </span>
+          <span className="form-label">الحالة أو ملاحظات تساعد الصيدلية</span>
 
           <textarea
             className="form-textarea min-h-28"
             maxLength={500}
             value={message}
-            onChange={(event) =>
-              setMessage(event.target.value)
-            }
+            onChange={(event) => setMessage(event.target.value)}
             placeholder="الحالة، التركيز المطلوب، أو أي توضيح مهم..."
           />
         </label>
@@ -353,15 +351,12 @@ function UserRequest() {
             type="checkbox"
             className="mt-1 size-5 accent-[#176273]"
             checked={consent}
-            onChange={(event) =>
-              setConsent(event.target.checked)
-            }
+            onChange={(event) => setConsent(event.target.checked)}
           />
 
           <span>
-            أوافق على مشاركة اسمي ورقم هاتفي وموقعي الدقيق وبيانات
-            هذا الطلب مع الصيدليات المعتمدة الموجودة ضمن 30 كم،
-            ومع إدارة النظام للمتابعة.
+            أوافق على مشاركة اسمي ورقم هاتفي وموقعي الدقيق وبيانات هذا الطلب مع
+            الصيدليات المعتمدة الموجودة ضمن 30 كم، ومع إدارة النظام للمتابعة.
           </span>
         </label>
 
@@ -370,9 +365,7 @@ function UserRequest() {
         <button
           type="button"
           disabled={
-            send.isPending ||
-            !consent ||
-            medicineName.trim().length < 2
+            send.isPending || !consent || medicineName.trim().length < 2
           }
           onClick={() => send.mutate()}
           className="
@@ -405,10 +398,7 @@ function UserRequest() {
           PREVIOUS REQUESTS
       ===================================================== */}
 
-      <AlertList
-        items={mine.data || []}
-        mine
-      />
+      <AlertList items={mine.data || []} mine />
     </div>
   );
 }
@@ -422,17 +412,13 @@ function RequestsCenter({ admin = false }) {
 
   const [status, setStatus] = useState("");
 
-  const queryKey = admin
-    ? sosKeys.admin
-    : sosKeys.nearby;
+  const queryKey = admin ? sosKeys.admin : sosKeys.nearby;
 
   const requests = useQuery({
     queryKey: [...queryKey, status],
 
     queryFn: () =>
-      admin
-        ? getAdminSosAlerts(status)
-        : getNearbySosAlerts(status),
+      admin ? getAdminSosAlerts(status) : getNearbySosAlerts(status),
 
     refetchInterval: 15000,
   });
@@ -466,13 +452,9 @@ function RequestsCenter({ admin = false }) {
       ===================================================== */}
 
       {admin ? (
-        <AdminSosHero
-          requestCount={requests.data?.length || 0}
-        />
+        <AdminSosHero requestCount={requests.data?.length || 0} />
       ) : (
-        <PharmacySosHero
-          requestCount={requests.data?.length || 0}
-        />
+        <PharmacySosHero requestCount={requests.data?.length || 0} />
       )}
 
       {/* =====================================================
@@ -694,8 +676,8 @@ function AdminSosHero({ requestCount }) {
               sm:leading-7
             "
           >
-            متابعة وإدارة طلبات المساعدة الدوائية العاجلة ومراقبة
-            حالة الطلبات والجهات التي تتولى معالجتها.
+            متابعة وإدارة طلبات المساعدة الدوائية العاجلة ومراقبة حالة الطلبات
+            والجهات التي تتولى معالجتها.
           </p>
         </div>
 
@@ -780,11 +762,7 @@ function AdminSosHero({ requestCount }) {
 function PharmacySosHero({ requestCount }) {
   const { t, i18n } = useTranslation();
 
-  const currentLanguage = (
-    i18n.resolvedLanguage ||
-    i18n.language ||
-    "ar"
-  )
+  const currentLanguage = (i18n.resolvedLanguage || i18n.language || "ar")
     .split("-")[0]
     .toLowerCase();
 
@@ -930,11 +908,7 @@ function PharmacySosHero({ requestCount }) {
               sm:size-12
             "
           >
-            <ShieldAlert
-              size={25}
-              strokeWidth={1.7}
-              className="sm:hidden"
-            />
+            <ShieldAlert size={25} strokeWidth={1.7} className="sm:hidden" />
 
             <ShieldAlert
               size={28}
@@ -1037,10 +1011,7 @@ function PharmacySosHero({ requestCount }) {
               sm:size-11
             "
           >
-            <FileText
-              size={20}
-              strokeWidth={1.8}
-            />
+            <FileText size={20} strokeWidth={1.8} />
           </span>
 
           <div className="min-w-0">
@@ -1072,15 +1043,10 @@ function PharmacySosHero({ requestCount }) {
    ALERT LIST
 ========================================================= */
 
-function AlertList({
-  items,
-  admin,
-  provider,
-  mine,
-  onUpdate,
-  busy,
-}) {
+function AlertList({ items, admin, provider, onUpdate, busy }) {
+  const { t } = useTranslation();
   const canManage = admin || provider;
+  const [expandedId, setExpandedId] = useState(null);
 
   return (
     <section
@@ -1095,216 +1061,207 @@ function AlertList({
         <article
           key={item.id}
           className="
-            surface
+            relative
             min-w-0
             overflow-hidden
-            border-s-4
-            border-s-[#168da0]
-            p-4
-            sm:p-5
+            rounded-[1.6rem]
+            border
+            border-[#174b57]/10
+            bg-white
+            shadow-[0_16px_40px_rgba(23,75,87,.08)]
+            transition
+            hover:-translate-y-0.5
+            hover:shadow-[0_20px_50px_rgba(23,75,87,.12)]
           "
         >
-          {/* =================================================
-              HEADER
-          ================================================= */}
+          <span
+            aria-hidden="true"
+            className={`absolute inset-x-0 top-0 h-1.5 ${
+              statusStyles[item.status]?.accent || "bg-[#168da0]"
+            }`}
+          />
 
-          <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-            <div
-              className="
-                min-w-0
-                flex-1
-                text-right
-              "
-            >
-              <h3 className="break-words text-lg font-black">
-                {item.medicineName || "طلب قديم"}
-              </h3>
-
-              {canManage && (
-                <div className="mt-1 flex flex-wrap items-center gap-2 text-sm font-bold text-slate-600">
-                  <span>{item.userName}</span>
-                  {item.isGuest ? (
-                    <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[11px] text-amber-800">
-                      طلب من دون حساب
-                    </span>
-                  ) : null}
-                  {item.publicReferenceCode ? (
-                    <span className="font-mono text-[11px] text-slate-400" dir="ltr">
-                      {item.publicReferenceCode}
-                    </span>
-                  ) : null}
+          <div className="p-5 sm:p-6">
+            <div className="flex min-w-0 items-start justify-between gap-4">
+              <div className="flex min-w-0 items-start gap-3">
+                <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[#e8f4f3] text-[#216474]">
+                  <Pill size={22} />
+                </span>
+                <div className="min-w-0 text-right">
+                  <p className="text-[11px] font-bold text-[#829499]">
+                    {t("الدواء المطلوب")}
+                  </p>
+                  <h3 className="mt-1 break-words text-lg font-black text-[#173f48] sm:text-xl">
+                    {item.medicineName || t("طلب قديم")}
+                  </h3>
                 </div>
-              )}
+              </div>
 
-              {canManage && item.area ? (
-                <p className="mt-1 flex items-center gap-1 text-xs text-slate-500">
-                  <MapPin size={13} /> {item.area}
-                </p>
-              ) : null}
-
-              <p className="mt-1 text-xs text-slate-500">
-                {new Date(
-                  item.createdAtUtc,
-                ).toLocaleString("ar-SY-u-nu-latn")}
-              </p>
+              <span
+                className={`h-fit shrink-0 rounded-full px-3 py-1.5 text-xs font-black ring-1 ring-inset ${
+                  statusStyles[item.status]?.badge ||
+                  "bg-cyan-50 text-cyan-800 ring-cyan-200"
+                }`}
+              >
+                {t(statusLabels[item.status] || item.status)}
+              </span>
             </div>
 
-            <span
-              className="
-                h-fit
-                w-fit
-                max-w-full
-                shrink-0
-                rounded-full
-                bg-cyan-50
-                px-3
-                py-1
-                text-xs
-                font-black
-                text-cyan-800
-              "
-            >
-              {statusLabels[item.status] || item.status}
-            </span>
-          </div>
+            {canManage && (
+              <div className="mt-5 grid gap-2 sm:grid-cols-2">
+                <RequestSummary icon={UserRound} label={t("صاحب الطلب")}>
+                  <span>{item.userName || t("غير مسجل")}</span>
+                  {item.isGuest ? (
+                    <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-black text-amber-800">
+                      {t("من دون حساب")}
+                    </span>
+                  ) : null}
+                </RequestSummary>
+                <RequestSummary icon={MapPin} label={t("المنطقة")}>
+                  {item.area || t("غير محددة")}
+                </RequestSummary>
+                <RequestSummary icon={CalendarDays} label={t("تاريخ الطلب")}>
+                  {new Date(item.createdAtUtc).toLocaleString(
+                    "ar-SY-u-nu-latn",
+                  )}
+                </RequestSummary>
+                <RequestSummary icon={Hash} label={t("رقم المتابعة")}>
+                  <span className="font-mono text-[11px]" dir="ltr">
+                    {item.publicReferenceCode || "—"}
+                  </span>
+                </RequestSummary>
+              </div>
+            )}
 
-          {/* =================================================
-              MESSAGE
-          ================================================= */}
+            {item.message && (
+              <div className="mt-4 rounded-2xl border border-[#174b57]/8 bg-[#f7faf9] p-4">
+                <p className="text-[11px] font-bold text-[#829499]">
+                  {t("تفاصيل الطلب")}
+                </p>
+                <p
+                  className={`mt-1 break-words text-sm leading-7 text-[#29464d] ${
+                    expandedId === item.id ? "" : "line-clamp-2"
+                  }`}
+                >
+                  {item.message}
+                </p>
+              </div>
+            )}
 
-          {item.message && (
-            <p className="mt-4 break-words text-sm leading-7">
-              {item.message}
-            </p>
-          )}
+            {expandedId === item.id && (
+              <div className="mt-4 overflow-hidden rounded-2xl border border-[#216474]/15 bg-[#f1f8f7]">
+                <div className="grid gap-px bg-[#216474]/10 sm:grid-cols-2">
+                  <DetailCell
+                    label={t("رقم الهاتف")}
+                    value={item.phoneNumber || t("غير متاح")}
+                    dir="ltr"
+                  />
+                  <DetailCell
+                    label={t("دقة الموقع")}
+                    value={
+                      item.accuracyMeters != null
+                        ? `${Math.round(item.accuracyMeters)} ${t("متر")}`
+                        : t("غير متاحة")
+                    }
+                  />
+                  <DetailCell
+                    label={t("جهة المتابعة")}
+                    value={item.handledByName || t("لم تستلم بعد")}
+                  />
+                  <DetailCell
+                    label={t("آخر تحديث")}
+                    value={
+                      item.updatedAtUtc
+                        ? new Date(item.updatedAtUtc).toLocaleString(
+                            "ar-SY-u-nu-latn",
+                          )
+                        : t("لا يوجد تحديث")
+                    }
+                  />
+                </div>
+                {item.resolutionNote && (
+                  <div className="border-t border-[#216474]/10 bg-white/70 p-4">
+                    <p className="text-[11px] font-bold text-[#829499]">
+                      {t("ملاحظة المعالجة")}
+                    </p>
+                    <p className="mt-1 text-sm leading-6 text-[#29464d]">
+                      {item.resolutionNote}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
 
-          {/* =================================================
-              CONTACT / LOCATION
-          ================================================= */}
+            <div className="mt-5 flex flex-col gap-2 border-t border-[#174b57]/8 pt-4 sm:flex-row sm:flex-wrap">
+              <button
+                type="button"
+                aria-expanded={expandedId === item.id}
+                onClick={() =>
+                  setExpandedId((current) =>
+                    current === item.id ? null : item.id,
+                  )
+                }
+                className="btn-secondary w-full justify-center sm:w-auto"
+              >
+                <Eye size={16} />
+                {expandedId === item.id
+                  ? t("إخفاء التفاصيل")
+                  : t("عرض التفاصيل")}
+                <ChevronDown
+                  size={15}
+                  className={`transition-transform ${
+                    expandedId === item.id ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
 
-          {canManage && (
-            <div
-              className="
-                mt-4
-                flex
-                w-full
-                min-w-0
-                flex-col
-                gap-2
-                sm:flex-row
-                sm:flex-wrap
-              "
-            >
-              {item.phoneNumber && (
+              {canManage && item.phoneNumber && (
                 <a
                   href={`tel:${item.phoneNumber}`}
-                  className="
-                    btn-secondary
-                    w-full
-                    justify-center
-                    sm:w-auto
-                  "
+                  className="btn-secondary w-full justify-center sm:w-auto"
                 >
                   <Phone size={16} />
-                  اتصال بالمستخدم
+                  {t("اتصال بالمستخدم")}
                 </a>
               )}
 
-              {item.latitude != null &&
-                item.longitude != null && (
-                  <a
-                    target="_blank"
-                    rel="noreferrer"
-                    href={`https://www.google.com/maps?q=${item.latitude},${item.longitude}`}
-                    className="
-                      btn-secondary
-                      w-full
-                      justify-center
-                      sm:w-auto
-                    "
-                  >
-                    <MapPin size={16} />
-                    فتح الموقع
-                  </a>
-                )}
+              {canManage && item.latitude != null && item.longitude != null && (
+                <a
+                  target="_blank"
+                  rel="noreferrer"
+                  href={`https://www.openstreetmap.org/?mlat=${item.latitude}&mlon=${item.longitude}#map=18/${item.latitude}/${item.longitude}`}
+                  className="btn-secondary w-full justify-center sm:w-auto"
+                >
+                  <MapPin size={16} />
+                  {t("عرض الموقع")}
+                </a>
+              )}
+
+              {canManage && item.status === "New" && (
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => onUpdate(item.id, "InProgress")}
+                  className="btn-primary w-full justify-center sm:ms-auto sm:w-auto"
+                >
+                  <Clock3 size={16} />
+                  {t("بدء المتابعة")}
+                </button>
+              )}
+
+              {canManage && item.status === "InProgress" && (
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => onUpdate(item.id, "Resolved")}
+                  className="btn-primary w-full justify-center sm:ms-auto sm:w-auto"
+                >
+                  <CheckCircle2 size={16} />
+                  {t("تمت المساعدة")}
+                </button>
+              )}
             </div>
-          )}
-
-          {/* =================================================
-              START
-          ================================================= */}
-
-          {canManage &&
-            item.status === "New" && (
-              <button
-                type="button"
-                disabled={busy}
-                onClick={() =>
-                  onUpdate(
-                    item.id,
-                    "InProgress",
-                  )
-                }
-                className="
-                  btn-primary
-                  mt-4
-                  w-full
-                  justify-center
-                  sm:w-auto
-                "
-              >
-                <Clock3 size={16} />
-                بدء المتابعة
-              </button>
-            )}
-
-          {/* =================================================
-              RESOLVE
-          ================================================= */}
-
-          {canManage &&
-            item.status === "InProgress" && (
-              <button
-                type="button"
-                disabled={busy}
-                onClick={() =>
-                  onUpdate(
-                    item.id,
-                    "Resolved",
-                  )
-                }
-                className="
-                  btn-primary
-                  mt-4
-                  w-full
-                  justify-center
-                  sm:w-auto
-                "
-              >
-                <CheckCircle2 size={16} />
-                تمت المساعدة
-              </button>
-            )}
-
-          {/* =================================================
-              HANDLER
-          ================================================= */}
-
-          {item.handledByName && (
-            <p className="mt-3 break-words text-xs text-slate-500">
-              جهة المتابعة: {item.handledByName}
-            </p>
-          )}
-
-          {/* =================================================
-              RESOLUTION NOTE
-          ================================================= */}
-
-          {mine && item.resolutionNote && (
-            <p className="mt-2 break-words text-xs text-slate-500">
-              الملاحظة: {item.resolutionNote}
-            </p>
-          )}
+          </div>
         </article>
       ))}
 
@@ -1331,6 +1288,34 @@ function AlertList({
   );
 }
 
+function RequestSummary({ icon: Icon, label, children }) {
+  return (
+    <div className="flex min-w-0 items-center gap-2 rounded-xl border border-[#174b57]/8 bg-[#fbfdfc] px-3 py-2.5">
+      <Icon size={15} className="shrink-0 text-[#216474]" />
+      <div className="min-w-0">
+        <p className="text-[10px] font-bold text-[#829499]">{label}</p>
+        <div className="mt-0.5 flex min-w-0 flex-wrap items-center gap-1.5 break-words text-xs font-bold text-[#29464d]">
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DetailCell({ label, value, dir }) {
+  return (
+    <div className="min-w-0 bg-white/85 p-4">
+      <p className="text-[10px] font-bold text-[#829499]">{label}</p>
+      <p
+        className="mt-1 break-words text-sm font-extrabold text-[#29464d]"
+        dir={dir}
+      >
+        {value}
+      </p>
+    </div>
+  );
+}
+
 /* =========================================================
    GEOLOCATION
 ========================================================= */
@@ -1338,11 +1323,7 @@ function AlertList({
 function locate() {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
-      return reject(
-        new Error(
-          "المتصفح لا يدعم تحديد الموقع.",
-        ),
-      );
+      return reject(new Error("المتصفح لا يدعم تحديد الموقع."));
     }
 
     navigator.geolocation.getCurrentPosition(
@@ -1354,11 +1335,7 @@ function locate() {
         }),
 
       () =>
-        reject(
-          new Error(
-            "تعذر تحديد موقعك. فعّل إذن الموقع ثم أعد المحاولة.",
-          ),
-        ),
+        reject(new Error("تعذر تحديد موقعك. فعّل إذن الموقع ثم أعد المحاولة.")),
 
       {
         enableHighAccuracy: true,

@@ -7,6 +7,7 @@ import {
   CalendarRange,
   HeartHandshake,
   Landmark,
+  MapPinned,
   Megaphone,
   PackageSearch,
   PieChart,
@@ -14,6 +15,7 @@ import {
   ShieldAlert,
   ShieldCheck,
   TrendingUp,
+  UserRoundCheck,
   UsersRound,
   Warehouse,
 } from "lucide-react";
@@ -32,6 +34,8 @@ import { AiServicesHealthPanel } from "../components/AiServicesHealthPanel";
 import { ReportActions } from "../../../shared/components/DashboardInsights";
 
 const ADMIN_HERO_IMAGE = "/assets/app/home/background_hero_admin.png";
+const AUDIENCE_INSIGHTS_IMAGE =
+  "/assets/app/admin/platform-audience-insights.png";
 
 export function AdminDashboardPage() {
   const { t, i18n } = useTranslation();
@@ -48,6 +52,7 @@ export function AdminDashboardPage() {
         : "en-US";
 
   const [periodDays, setPeriodDays] = useState(7);
+  const [activeDashboardTab, setActiveDashboardTab] = useState("overview");
 
   const query = useQuery({
     queryKey: adminKeys.dashboard(periodDays),
@@ -202,6 +207,63 @@ export function AdminDashboardPage() {
     processedMedicineRequests,
     data.totalMedicineRequests,
   );
+  const demographicUsersTotal = Number(data.demographicUsersTotal || 0);
+  const usersWithKnownAge = Number(data.usersWithKnownAge || 0);
+  const usersWithKnownLocation = Number(data.usersWithKnownLocation || 0);
+  const ageGroups = Array.isArray(data.ageGroups) ? data.ageGroups : [];
+  const geographicDistribution = Array.isArray(data.geographicDistribution)
+    ? data.geographicDistribution
+    : [];
+  const knownAgeRate = percentage(usersWithKnownAge, demographicUsersTotal);
+  const knownLocationRate = percentage(
+    usersWithKnownLocation,
+    demographicUsersTotal,
+  );
+  const regionsCovered = geographicDistribution.filter(
+    (item) => Number(item.count || 0) > 0,
+  ).length;
+  const audienceStrengths = [
+    {
+      label: "الحسابات النشطة",
+      value: `${activeUserRate.toLocaleString(locale)}%`,
+      detail: `${data.activeUsers.toLocaleString(locale)} حساب نشط من إجمالي حسابات المنصة`,
+    },
+    {
+      label: "معالجة طلبات الدواء",
+      value: `${medicineProcessingRate.toLocaleString(locale)}%`,
+      detail: `${processedMedicineRequests.toLocaleString(locale)} طلباً وصل إلى نتيجة`,
+    },
+    {
+      label: "الانتشار الجغرافي المرصود",
+      value: regionsCovered.toLocaleString(locale),
+      detail: "مناطق ظهرت فيها مواقع مستخدمين محفوظة بصورة مجمعة",
+    },
+  ];
+  const audienceGaps = [
+    {
+      label: "ملفات عمرية غير مكتملة",
+      value: Math.max(
+        demographicUsersTotal - usersWithKnownAge,
+        0,
+      ).toLocaleString(locale),
+      detail: "لا تدخل في توزيع الفئات العمرية حتى يستكمل المستخدم تاريخ الميلاد",
+    },
+    {
+      label: "مواقع غير متاحة للتحليل",
+      value: Math.max(
+        demographicUsersTotal - usersWithKnownLocation,
+        0,
+      ).toLocaleString(locale),
+      detail: "مستخدمون لم يحفظوا موقعاً؛ لا يتم تخمين منطقتهم حفاظاً على الدقة",
+    },
+    {
+      label: "طلبات تحتاج تدخلاً",
+      value: (
+        data.pendingMedicineRequests + data.unavailableMedicineRequests
+      ).toLocaleString(locale),
+      detail: "طلبات معلقة أو تعذر تأمينها وتستحق المتابعة التشغيلية",
+    },
+  ];
   const executiveSummary = `يغطي هذا التقرير ${activePeriodLabel} ويقدم قراءة رقابية مجمعة لحركة المنصة. بلغ عدد الحسابات المسجلة ${totalAccounts.toLocaleString(locale)} حسابًا، منها ${data.activeUsers.toLocaleString(locale)} مستخدمًا نشطًا. وتوجد حاليًا ${pendingApprovalTotal.toLocaleString(locale)} ملفات اعتماد أو امتثال تحتاج إلى مراجعة، مقابل ${data.totalMedicineRequests.toLocaleString(locale)} طلب دواء بنسبة معالجة بلغت ${medicineProcessingRate.toLocaleString(locale)}%. كما سجلت المنصة ${data.totalDonationOffers.toLocaleString(locale)} عرض تبرع و${data.totalAssistanceRequests.toLocaleString(locale)} طلب مساعدة خلال النطاق المعروض.`;
   const reportNarrativeSections = [
     {
@@ -362,6 +424,43 @@ export function AdminDashboardPage() {
           </div>
         </div>
       </Motion.section>
+
+      <nav
+        className="grid overflow-hidden rounded-2xl border border-[#174B57]/10 bg-white p-1.5 shadow-[0_8px_26px_rgba(23,75,87,.05)] sm:grid-cols-2"
+        aria-label="أقسام لوحة الوزارة"
+      >
+        <DashboardTabButton
+          active={activeDashboardTab === "overview"}
+          onClick={() => setActiveDashboardTab("overview")}
+          icon={Landmark}
+          title="النظرة الرقابية"
+          description="الاعتمادات والطلبات ومؤشرات التشغيل"
+        />
+        <DashboardTabButton
+          active={activeDashboardTab === "audience"}
+          onClick={() => setActiveDashboardTab("audience")}
+          icon={UsersRound}
+          title="تحليل مستخدمي المنصة"
+          description="الأعمار والانتشار الجغرافي وجودة البيانات"
+        />
+      </nav>
+
+      {activeDashboardTab === "audience" ? (
+        <AudienceInsightsSection
+          demographicUsersTotal={demographicUsersTotal}
+          usersWithKnownAge={usersWithKnownAge}
+          usersWithKnownLocation={usersWithKnownLocation}
+          knownAgeRate={knownAgeRate}
+          knownLocationRate={knownLocationRate}
+          regionsCovered={regionsCovered}
+          ageGroups={ageGroups}
+          geographicDistribution={geographicDistribution}
+          audienceStrengths={audienceStrengths}
+          audienceGaps={audienceGaps}
+          locale={locale}
+        />
+      ) : (
+        <>
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {ministryScopes.map(
@@ -617,6 +716,20 @@ export function AdminDashboardPage() {
           ["إجمالي المستخدمين", data.totalUsers],
           ["المستخدمون النشطون", data.activeUsers],
           ["مستخدمون جدد خلال الفترة", data.newUsersInPeriod],
+          ["المستخدمون الأفراد ضمن التحليل الديموغرافي", demographicUsersTotal],
+          ["ملفات مكتملة العمر", usersWithKnownAge],
+          ["نسبة اكتمال بيانات العمر", `${knownAgeRate}%`],
+          ["مستخدمون ذوو موقع محفوظ", usersWithKnownLocation],
+          ["نسبة اكتمال بيانات الموقع", `${knownLocationRate}%`],
+          ["عدد المناطق الجغرافية المرصودة", regionsCovered],
+          ...ageGroups.map((item) => [
+            `الفئة العمرية: ${item.label}`,
+            item.count,
+          ]),
+          ...geographicDistribution.map((item) => [
+            `التوزيع الجغرافي: ${item.label}`,
+            item.count,
+          ]),
           ["إجمالي الصيدليات", data.totalPharmacies],
           ["الصيدليات المعتمدة", data.approvedPharmacies],
           ["نسبة اعتماد الصيدليات", `${pharmacyApprovalRate}%`],
@@ -923,6 +1036,292 @@ export function AdminDashboardPage() {
           />
         )}
       </section>
+        </>
+      )}
+    </div>
+  );
+}
+
+function DashboardTabButton({ active, onClick, icon: Icon, title, description }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex min-h-[70px] items-center gap-3 rounded-xl px-4 py-3 text-start transition ${
+        active
+          ? "bg-[#216474] text-white shadow-[0_10px_26px_rgba(33,100,116,.18)]"
+          : "text-[#526C72] hover:bg-[#EEF6F6]"
+      }`}
+      aria-pressed={active}
+    >
+      <span
+        className={`grid size-10 shrink-0 place-items-center rounded-xl ${
+          active ? "bg-white/12 text-[#C9F1E9]" : "bg-[#EAF4F3] text-[#216474]"
+        }`}
+      >
+        <Icon size={19} />
+      </span>
+      <span className="min-w-0">
+        <strong className="block text-sm font-black">{title}</strong>
+        <small
+          className={`mt-1 block text-[11px] ${
+            active ? "text-white/65" : "text-[#8A9A9E]"
+          }`}
+        >
+          {description}
+        </small>
+      </span>
+    </button>
+  );
+}
+
+function AudienceInsightsSection({
+  demographicUsersTotal,
+  usersWithKnownAge,
+  usersWithKnownLocation,
+  knownAgeRate,
+  knownLocationRate,
+  regionsCovered,
+  ageGroups,
+  geographicDistribution,
+  audienceStrengths,
+  audienceGaps,
+  locale,
+}) {
+  return (
+    <Motion.section
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="overflow-hidden rounded-[1.7rem] border border-[#174b57]/10 bg-white shadow-[0_18px_48px_rgba(23,75,87,.07)]"
+    >
+      <div className="grid bg-[#0B4E59] lg:grid-cols-[1.06fr_.94fr]">
+        <div className="relative flex min-h-[390px] flex-col justify-center overflow-hidden px-6 py-9 text-white sm:px-9 lg:px-10">
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-[radial-gradient(circle_at_85%_20%,rgba(70,180,164,.22),transparent_38%),linear-gradient(145deg,#0B4E59_0%,#083E47_100%)]"
+          />
+          <div className="noise absolute inset-0 opacity-20" />
+
+          <div className="relative max-w-2xl">
+            <span className="w-fit rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-bold text-[#C7F0E9] backdrop-blur">
+              قراءة مجمعة تحمي خصوصية الأفراد
+            </span>
+            <h3 className="mt-5 max-w-xl text-2xl font-black leading-[1.45] sm:text-3xl">
+              من يستخدم منصة دوائي وأين يصل أثرها؟
+            </h3>
+            <p className="mt-3 max-w-xl text-sm leading-7 text-white/70">
+              مؤشرات فعلية محسوبة من الحسابات الفردية التي استكملت بياناتها،
+              وليست أرقاماً افتراضية. تُعرض المناطق والفئات العمرية بصورة
+              إجمالية من دون أسماء أو مواقع دقيقة.
+            </p>
+
+            <div className="mt-7 grid gap-3 sm:grid-cols-3">
+              <AudienceHeroMetric
+                icon={UsersRound}
+                value={demographicUsersTotal}
+                label="مستخدم فرد"
+                locale={locale}
+              />
+              <AudienceHeroMetric
+                icon={UserRoundCheck}
+                value={`${knownAgeRate}%`}
+                label="اكتمال بيانات العمر"
+                locale={locale}
+              />
+              <AudienceHeroMetric
+                icon={MapPinned}
+                value={regionsCovered}
+                label="منطقة مرصودة"
+                locale={locale}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="relative min-h-[280px] overflow-hidden sm:min-h-[340px] lg:min-h-[390px]">
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-cover bg-[position:25%_center] bg-no-repeat transition duration-700 hover:scale-[1.02]"
+            style={{ backgroundImage: `url("${AUDIENCE_INSIGHTS_IMAGE}")` }}
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-[linear-gradient(270deg,rgba(8,62,71,.72)_0%,rgba(8,62,71,.08)_35%,transparent_70%)]"
+          />
+          <div className="absolute bottom-5 left-5 rounded-xl border border-white/25 bg-[#073D46]/70 px-4 py-2.5 text-xs font-bold text-white backdrop-blur-md">
+            وصول صحي رقمي لمختلف الأعمار والمناطق
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-5 bg-[#F7FAFA] p-5 sm:p-6">
+        <div className="grid items-start gap-5 lg:grid-cols-2">
+          <DistributionPanel
+            title="الفئات العمرية"
+            description={`يعتمد على ${usersWithKnownAge.toLocaleString(locale)} ملفاً مكتمل العمر`}
+            items={ageGroups}
+            total={usersWithKnownAge}
+            locale={locale}
+            emptyMessage="لا توجد تواريخ ميلاد مكتملة بعد."
+          />
+          <DistributionPanel
+            title="الانتشار الجغرافي"
+            description={`يعتمد على ${usersWithKnownLocation.toLocaleString(locale)} موقعاً محفوظاً`}
+            items={geographicDistribution.slice(0, 7)}
+            total={usersWithKnownLocation}
+            locale={locale}
+            emptyMessage="لا توجد مواقع مستخدمين صالحة للتحليل بعد."
+          />
+        </div>
+
+        <article className="rounded-[1.35rem] border border-[#174b57]/8 bg-white p-5">
+          <div className="flex items-center gap-3">
+            <span className="grid size-11 place-items-center rounded-xl bg-[#EAF7F3] text-emerald-700">
+              <TrendingUp size={20} />
+            </span>
+            <div>
+              <h4 className="font-black text-[#17363E]">قراءة أداء المنصة</h4>
+              <p className="mt-1 text-[11px] text-[#829499]">
+                إيجابيات واضحة ونقاط تحتاج تحسيناً
+              </p>
+            </div>
+          </div>
+
+          <div className="grid gap-x-6 lg:grid-cols-2">
+            <PerformanceInsightList
+              title="مؤشرات إيجابية"
+              items={audienceStrengths}
+              tone="positive"
+            />
+            <PerformanceInsightList
+              title="فجوات ومخاطر"
+              items={audienceGaps}
+              tone="warning"
+            />
+          </div>
+        </article>
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#E3ECEC] bg-white px-6 py-4 text-[11px] text-[#71858A]">
+        <span>
+          التوزيع الجغرافي يربط GPS المحفوظ بأقرب مركز محافظة باستخدام
+          Haversine، ولا يعرض الإحداثيات الأصلية.
+        </span>
+        <span className="font-bold text-[#216474]">
+          اكتمال الموقع: {knownLocationRate.toLocaleString(locale)}%
+        </span>
+      </div>
+    </Motion.section>
+  );
+}
+
+function AudienceHeroMetric({ icon: Icon, value, label, locale }) {
+  const formattedValue =
+    typeof value === "number" ? value.toLocaleString(locale) : value;
+
+  return (
+    <div className="rounded-xl border border-white/14 bg-[#083F48]/65 p-3.5 backdrop-blur-sm">
+      <div className="flex items-center gap-2">
+        <span className="grid size-8 place-items-center rounded-lg bg-white/10 text-[#BCEDE4]">
+          <Icon size={16} />
+        </span>
+        <strong className="text-xl font-black">{formattedValue}</strong>
+      </div>
+      <span className="mt-2 block text-[11px] text-white/65">{label}</span>
+    </div>
+  );
+}
+
+function DistributionPanel({
+  title,
+  description,
+  items,
+  total,
+  locale,
+  emptyMessage,
+}) {
+  const visibleItems = items.filter((item) => Number(item.count || 0) > 0);
+
+  return (
+    <article className="rounded-[1.35rem] border border-[#174b57]/8 bg-white p-5">
+      <h4 className="font-black text-[#17363E]">{title}</h4>
+      <p className="mt-1 text-[11px] text-[#829499]">{description}</p>
+
+      {visibleItems.length ? (
+        <div className="mt-5 space-y-4">
+          {visibleItems.map((item, index) => {
+            const share = percentage(item.count, total);
+
+            return (
+              <div key={item.key || item.label}>
+                <div className="mb-2 flex items-center justify-between gap-3 text-xs">
+                  <span className="truncate font-bold text-[#526C72]">
+                    {item.label}
+                  </span>
+                  <span className="shrink-0 text-[#17363E]">
+                    <strong>{Number(item.count).toLocaleString(locale)}</strong>
+                    <small className="ms-1 text-[#93A3A6]">
+                      ({share.toLocaleString(locale)}%)
+                    </small>
+                  </span>
+                </div>
+                <div className="h-2 overflow-hidden rounded-full bg-[#EDF4F4]">
+                  <Motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${share}%` }}
+                    transition={{ duration: 0.7, delay: index * 0.06 }}
+                    className="h-full rounded-full bg-gradient-to-l from-[#16816F] to-[#216474]"
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="mt-5 rounded-xl border border-dashed border-[#CFE0E1] bg-[#F8FBFB] px-4 py-8 text-center text-xs text-[#829499]">
+          {emptyMessage}
+        </div>
+      )}
+    </article>
+  );
+}
+
+function PerformanceInsightList({ title, items, tone }) {
+  const positive = tone === "positive";
+
+  return (
+    <div className="mt-5">
+      <strong
+        className={`text-xs ${positive ? "text-emerald-700" : "text-amber-700"}`}
+      >
+        {title}
+      </strong>
+      <div className="mt-2 space-y-2">
+        {items.map((item) => (
+          <div
+            key={item.label}
+            className={`rounded-xl border px-3 py-2.5 ${
+              positive
+                ? "border-emerald-100 bg-emerald-50/60"
+                : "border-amber-100 bg-amber-50/70"
+            }`}
+          >
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-[11px] font-bold text-[#526C72]">
+                {item.label}
+              </span>
+              <strong
+                className={`text-sm ${positive ? "text-emerald-700" : "text-amber-700"}`}
+              >
+                {item.value}
+              </strong>
+            </div>
+            <p className="mt-1 text-[10px] leading-5 text-[#829499]">
+              {item.detail}
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { isValidPersonName, isValidSyrianPhoneNumber } from "../../../shared/utils/validation";
 
 import { getApiErrorMessage } from "../../../shared/api/errors";
 import { ProfileAvatar } from "../../../shared/components/ProfileAvatar";
@@ -610,6 +611,16 @@ export function SettingsPage() {
                   event.preventDefault();
 
                   setProfileMessage("");
+
+                  if (!isValidPersonName(profile.fullName)) {
+                    setProfileMessage(t("أدخل اسماً صحيحاً من دون أرقام أو رموز غير مناسبة."));
+                    return;
+                  }
+
+                  if (profile.phoneNumber.trim() && !isValidSyrianPhoneNumber(profile.phoneNumber)) {
+                    setProfileMessage(t("رقم الهاتف غير صالح. استخدم رقماً سورياً مثل 09xxxxxxxx أو +9639xxxxxxxx."));
+                    return;
+                  }
 
                   updateProfile.mutate({
                     fullName: profile.fullName.trim(),

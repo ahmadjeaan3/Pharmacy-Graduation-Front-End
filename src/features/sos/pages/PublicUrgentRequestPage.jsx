@@ -17,6 +17,7 @@ import { Brand } from "../../../shared/components/Brand";
 import { LanguageSwitcher } from "../../../shared/components/LanguageSwitcher";
 import { getLanguageDirection } from "../../../shared/i18n/i18n";
 import { createGuestSosAlert, trackGuestSosAlert } from "../api/sosApi";
+import { isValidPersonName, isValidSyrianPhoneNumber } from "../../../shared/utils/validation";
 
 const STORAGE_KEY = "dawaai-guest-urgent-request";
 const initialForm = {
@@ -73,6 +74,7 @@ export function PublicUrgentRequestPage() {
   const [trackingToken, setTrackingToken] = useState(readStoredTrackingToken);
   const [trackedRequest, setTrackedRequest] = useState(null);
   const [copied, setCopied] = useState(false);
+  const [clientError, setClientError] = useState("");
 
   const createMutation = useMutation({
     mutationFn: createGuestSosAlert,
@@ -114,6 +116,15 @@ export function PublicUrgentRequestPage() {
 
   const submit = (event) => {
     event.preventDefault();
+    setClientError("");
+    if (!isValidPersonName(form.fullName)) {
+      setClientError(t("أدخل اسماً صحيحاً من دون أرقام أو رموز غير مناسبة."));
+      return;
+    }
+    if (!isValidSyrianPhoneNumber(form.phoneNumber)) {
+      setClientError(t("رقم الهاتف غير صالح. استخدم رقماً سورياً مثل 09xxxxxxxx أو +9639xxxxxxxx."));
+      return;
+    }
     createMutation.mutate(form);
   };
 
@@ -236,7 +247,7 @@ export function PublicUrgentRequestPage() {
                 </div>
                 <div className="grid gap-5 sm:grid-cols-2">
                   <Field label={t("الاسم")} required><input required minLength={2} maxLength={120} value={form.fullName} onChange={update("fullName")} className="rounded-xl border border-[#cbdadd] px-4 py-3 outline-none focus:border-[#217083] focus:ring-4 focus:ring-[#217083]/10" placeholder={t("اكتب اسمك")} /></Field>
-                  <Field label={t("رقم الهاتف")} required><input required inputMode="tel" minLength={7} maxLength={20} value={form.phoneNumber} onChange={update("phoneNumber")} className="rounded-xl border border-[#cbdadd] px-4 py-3 outline-none focus:border-[#217083] focus:ring-4 focus:ring-[#217083]/10" placeholder="09xxxxxxxx" dir="ltr" /></Field>
+                  <Field label={t("رقم الهاتف")} required><input required inputMode="tel" pattern="(?:09[0-9]{8}|0[1-8][0-9]{7,8}|\+9639[0-9]{8}|\+963[1-8][0-9]{7,8}|009639[0-9]{8}|00963[1-8][0-9]{7,8})" minLength={9} maxLength={20} value={form.phoneNumber} onChange={update("phoneNumber")} className="rounded-xl border border-[#cbdadd] px-4 py-3 outline-none focus:border-[#217083] focus:ring-4 focus:ring-[#217083]/10" placeholder="09xxxxxxxx" dir="ltr" /></Field>
                   <Field label={t("المدينة والمنطقة")} required><input required minLength={2} maxLength={200} value={form.area} onChange={update("area")} className="rounded-xl border border-[#cbdadd] px-4 py-3 outline-none focus:border-[#217083] focus:ring-4 focus:ring-[#217083]/10" placeholder={t("مثال: دمشق، المزة")} /></Field>
                   <button type="button" onClick={requestLocation} disabled={locationState === "loading"} className={`flex min-h-[72px] items-center justify-between gap-3 rounded-xl border px-4 py-3 text-start transition ${locationState === "ready" ? "border-emerald-300 bg-emerald-50 text-emerald-800" : "border-[#cbdadd] bg-[#f7fbfb] hover:border-[#70a8b2]"}`}>
                     <span className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-white"><LocateFixed className="h-5 w-5" /></span><span><b className="block text-sm">{locationState === "ready" ? t("تم تحديد الموقع") : t("استخدام موقعي الحالي")}</b><small>{t("اختياري لتحديد أقرب الصيدليات")}</small></span></span>
@@ -256,7 +267,7 @@ export function PublicUrgentRequestPage() {
                   <span>{t("أوافق على مشاركة بيانات التواصل والمنطقة مع الصيدليات المعتمدة لمعالجة هذا الطلب فقط.")}</span>
                 </label>
                 <input tabIndex={-1} autoComplete="off" aria-hidden="true" value={form.website} onChange={update("website")} className="absolute -left-[9999px]" />
-                {createMutation.isError ? <p className="mt-4 rounded-xl bg-red-50 p-3 text-sm font-bold text-red-700">{apiError(createMutation.error, t("تعذر إرسال الطلب. حاول مجدداً."))}</p> : null}
+                {clientError || createMutation.isError ? <p className="mt-4 rounded-xl bg-red-50 p-3 text-sm font-bold text-red-700">{clientError || apiError(createMutation.error, t("تعذر إرسال الطلب. حاول مجدداً."))}</p> : null}
                 <button disabled={createMutation.isPending} className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-[#cf183f] px-5 py-4 text-base font-black text-white shadow-[0_10px_22px_rgba(207,24,63,.18)] transition hover:bg-[#b91337] disabled:opacity-60 sm:text-lg">
                   {createMutation.isPending ? t("جاري إرسال الطلب...") : t("إرسال الطلب إلى الصيدليات")}
                   <ArrowLeft className="h-5 w-5" />

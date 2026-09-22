@@ -88,6 +88,14 @@ export async function searchMedicines(payload) {
   return (await apiClient.post("/Users/me/search-medicines", payload)).data;
 }
 
+export async function getMedicineSearchSuggestions(query) {
+  return (
+    await apiClient.get("/Users/me/medicine-search-suggestions", {
+      params: { query },
+    })
+  ).data;
+}
+
 export async function getNearestPharmacies(params = {}) {
   return (
     await apiClient.get("/Users/me/nearest-pharmacies", {

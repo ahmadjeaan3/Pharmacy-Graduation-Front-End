@@ -14,6 +14,7 @@ import {
   Clock3,
   ExternalLink,
   Eye,
+  FileText,
   MapPin,
   Navigation,
   Megaphone,
@@ -432,7 +433,11 @@ function OrderCard({
           }[order.shipment?.status]
         : null;
   const visibleStatus =
-    order.shipment?.status === "Arrived" ? "Arrived" : order.status;
+    role === "Representative" && order.shipment?.status
+      ? order.shipment.status
+      : order.shipment?.status === "Arrived"
+        ? "Arrived"
+        : order.status;
   return (
     <article className="rounded-[14px] border border-[#DCE8EA] bg-white p-4 shadow-[0_10px_28px_rgba(23,75,87,.04)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_34px_rgba(23,75,87,.07)] sm:p-5">
       <div className="flex flex-wrap justify-between gap-3">
@@ -567,10 +572,9 @@ export function SupplyChainWorkspacePage() {
   const normalizedRoles = (user?.roles || []).map((item) =>
     String(item).trim().toLowerCase(),
   );
-  const hasAdminRole =
-    normalizedRoles.some((item) =>
-      ["admin", "administrator", "systemadmin", "system-admin"].includes(item),
-    );
+  const hasAdminRole = normalizedRoles.some((item) =>
+    ["admin", "administrator", "systemadmin", "system-admin"].includes(item),
+  );
   // Some older sessions used Administrator/SystemAdmin, and a user can carry
   // more than one role. Ministry access must always win so the page never
   // falls back to pharmacy tabs that expose operational/private details.
@@ -883,14 +887,22 @@ export function SupplyChainWorkspacePage() {
       (orders.data || []).filter(
         (order) =>
           order.shipment &&
-          !["Delivered", "Failed", "Returned"].includes(order.shipment.status),
+          !["Delivered", "Failed", "Returned"].includes(
+            order.shipment.status,
+          ) &&
+          !["Delivered", "Cancelled", "Rejected"].includes(order.status),
       ),
     [orders.data],
   );
   const completedRepresentativeOrders = useMemo(
     () =>
-      (orders.data || []).filter((order) =>
-        ["Delivered", "Failed", "Returned"].includes(order.shipment?.status),
+      (orders.data || []).filter(
+        (order) =>
+          order.shipment &&
+          (["Delivered", "Failed", "Returned"].includes(
+            order.shipment.status,
+          ) ||
+            ["Delivered", "Cancelled", "Rejected"].includes(order.status)),
       ),
     [orders.data],
   );
@@ -1282,6 +1294,51 @@ lg:min-h-[250px]"
           />
         </div>
       )}
+      {role === "Representative" && !isRepresentativeOverview && (
+        <section className="mt-6 overflow-hidden rounded-[1.6rem] border border-[#174b57]/10 bg-white shadow-[0_14px_38px_rgba(23,75,87,.07)]">
+          <div className="flex flex-col gap-4 bg-[linear-gradient(135deg,#174b57,#216474)] p-5 text-white sm:flex-row sm:items-center sm:justify-between sm:p-6">
+            <div className="flex items-center gap-3">
+              <span className="grid size-12 shrink-0 place-items-center rounded-2xl border border-white/15 bg-white/10">
+                {representativeView === "history" ? (
+                  <ReceiptText size={23} />
+                ) : representativeView === "route" ? (
+                  <Route size={23} />
+                ) : (
+                  <Truck size={23} />
+                )}
+              </span>
+              <div>
+                <p className="text-xs font-bold text-white/65">
+                  {t("مساحة عمل المندوب")}
+                </p>
+                <h1 className="mt-1 text-xl font-black sm:text-2xl">
+                  {t(
+                    representativeView === "history"
+                      ? "سجل التوصيلات"
+                      : representativeView === "route"
+                        ? "مسار المهمة الحالية"
+                        : "مهام التوصيل الحالية",
+                  )}
+                </h1>
+              </div>
+            </div>
+            <div className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-center backdrop-blur-sm">
+              <strong className="block text-2xl font-black">
+                {representativeView === "history"
+                  ? completedRepresentativeOrders.length
+                  : activeRepresentativeOrders.length}
+              </strong>
+              <span className="text-[11px] font-bold text-white/70">
+                {t(
+                  representativeView === "history"
+                    ? "مهمة مكتملة أو مغلقة"
+                    : "مهمة فعالة",
+                )}
+              </span>
+            </div>
+          </div>
+        </section>
+      )}
       <div
         className={`mt-6 flex flex-wrap gap-2 ${role === "Warehouse" ? "hidden" : ""}`}
       >
@@ -1376,19 +1433,20 @@ lg:min-h-[250px]"
               <div className="surface col-span-full border border-[#FECDD3] p-12 text-center">
                 <AlertTriangle className="mx-auto text-[#E11D48]" />
                 <h3 className="mt-3 font-black text-[#E11D48]">
-                  تعذر تحميل الطلبات والشحنات
+                  {t("تعذر تحميل الطلبات والشحنات")}
                 </h3>
                 <p className="mt-2 text-sm text-[#829499]">
-                  {orders.error?.response?.data?.error ||
-                    orders.error?.response?.data?.detail ||
-                    "تحقق من اتصال الباك وصلاحية الحساب."}
+                  {apiErrorText(
+                    orders.error,
+                    t("تحقق من اتصال الباك وصلاحية الحساب."),
+                  )}
                 </p>
                 <button
                   type="button"
                   onClick={() => orders.refetch()}
                   className="btn-primary mx-auto mt-5"
                 >
-                  إعادة المحاولة
+                  {t("إعادة المحاولة")}
                 </button>
               </div>
             ) : (role === "Representative" ? representativeOrders : orders.data)
@@ -1677,6 +1735,8 @@ lg:min-h-[250px]"
           <InvoicesPanel
             invoices={invoices.data || []}
             loading={invoices.isLoading}
+            error={invoices.error}
+            onRetry={invoices.refetch}
             role={role}
             onManage={setInvoiceToManage}
           />
@@ -1685,6 +1745,8 @@ lg:min-h-[250px]"
           <PharmacyAccountsPanel
             invoices={invoices.data || []}
             loading={invoices.isLoading}
+            error={invoices.error}
+            onRetry={invoices.refetch}
             onManage={setInvoiceToManage}
           />
         )}
@@ -1703,6 +1765,8 @@ lg:min-h-[250px]"
           <RecallsPanel
             items={recalls.data || []}
             loading={recalls.isLoading}
+            error={recalls.error}
+            onRetry={recalls.refetch}
           />
         )}
         {activeTab === "marketplace" && (
@@ -1726,35 +1790,44 @@ lg:min-h-[250px]"
             submit={() => orderMutation.mutate()}
             submitting={orderMutation.isPending}
             error={orderMutation.error}
+            queryError={marketplace.error}
+            onRetry={marketplace.refetch}
           />
         )}
-        {activeTab === "suggestions" && (
-          <div className="grid gap-4 md:grid-cols-2">
-            {suggestions.data?.map((i) => (
-              <article
-                key={i.medicineId}
-                className="surface flex items-center gap-4 p-5"
-              >
-                <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[#FFF7DF] text-[#DFAE0D]">
-                  <AlertTriangle />
-                </span>
-                <div>
-                  <h3 className="font-black">{i.medicineName}</h3>
-                  <p className="mt-1 text-xs text-[#829499]">
-                    {t("المتوفر")} {i.currentQuantity} · {t("المقترح")}{" "}
-                    {i.suggestedQuantity}
-                  </p>
-                  <p className="mt-2 text-sm font-bold text-[#216474]">
-                    {i.recommendedWarehouseName || t("لا يوجد مستودع متاح")}{" "}
-                    {i.bestPrice
-                      ? `· ${money(i.bestPrice, currentLanguage)}`
-                      : ""}
-                  </p>
-                </div>
-              </article>
-            ))}
-          </div>
-        )}
+        {activeTab === "suggestions" &&
+          (suggestions.isError ? (
+            <QueryErrorCard
+              title={t("تعذر تحميل الاقتراحات الذكية")}
+              error={suggestions.error}
+              onRetry={suggestions.refetch}
+            />
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2">
+              {suggestions.data?.map((i) => (
+                <article
+                  key={i.medicineId}
+                  className="surface flex items-center gap-4 p-5"
+                >
+                  <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[#FFF7DF] text-[#DFAE0D]">
+                    <AlertTriangle />
+                  </span>
+                  <div>
+                    <h3 className="font-black">{i.medicineName}</h3>
+                    <p className="mt-1 text-xs text-[#829499]">
+                      {t("المتوفر")} {i.currentQuantity} · {t("المقترح")}{" "}
+                      {i.suggestedQuantity}
+                    </p>
+                    <p className="mt-2 text-sm font-bold text-[#216474]">
+                      {i.recommendedWarehouseName || t("لا يوجد مستودع متاح")}{" "}
+                      {i.bestPrice
+                        ? `· ${money(i.bestPrice, currentLanguage)}`
+                        : ""}
+                    </p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ))}
       </section>
       {dialog && (
         <WarehouseDialog
@@ -1942,7 +2015,7 @@ function OrderDetailsDialog({
   }[order.shipment?.status];
   const mapUrl =
     order.pharmacyLatitude != null && order.pharmacyLongitude != null
-      ? `https://www.google.com/maps?q=${order.pharmacyLatitude},${order.pharmacyLongitude}`
+      ? `https://www.openstreetmap.org/?mlat=${order.pharmacyLatitude}&mlon=${order.pharmacyLongitude}#map=18/${order.pharmacyLatitude}/${order.pharmacyLongitude}`
       : null;
   return (
     <div
@@ -1953,41 +2026,65 @@ function OrderDetailsDialog({
         onMouseDown={(event) => event.stopPropagation()}
         role="dialog"
         aria-modal="true"
-        className="max-h-[94vh] w-full max-w-4xl overflow-auto rounded-[16px] bg-[#F8FBFB] shadow-2xl"
+        className="order-details-classic max-h-[94vh] w-full max-w-5xl overflow-auto rounded-[28px] border border-[#d7c8aa]/45 bg-[#f7f5ef] shadow-[0_35px_90px_rgba(3,32,38,.34)]"
         dir={direction}
         lang={currentLanguage}
       >
-        <header className="relative overflow-hidden bg-[linear-gradient(270deg,#10505A_0%,#216474_100%)] p-4 text-white sm:p-6">
-          <div className="pointer-events-none absolute -end-14 -top-20 hidden size-52 rounded-full border-[28px] border-white/[.04] sm:block" />
+        <header className="relative isolate min-h-[220px] overflow-hidden p-5 text-white sm:min-h-[260px] sm:p-8">
+          <img
+            src="/assets/app/supply-chain/medicine-delivery-classic.png"
+            alt=""
+            aria-hidden="true"
+            draggable={false}
+            className={`pointer-events-none absolute inset-0 -z-30 h-full w-full object-cover object-center ${
+              isArabic ? "" : "scale-x-[-1]"
+            }`}
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 -z-20"
+            style={{
+              background: isArabic
+                ? "linear-gradient(90deg,rgba(8,40,43,.14) 0%,rgba(10,55,59,.65) 42%,rgba(8,47,53,.96) 100%)"
+                : "linear-gradient(270deg,rgba(8,40,43,.14) 0%,rgba(10,55,59,.65) 42%,rgba(8,47,53,.96) 100%)",
+            }}
+          />
+          <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.28))]" />
           <button
             type="button"
             aria-label="إغلاق نافذة التفاصيل"
             onClick={onClose}
-            className="absolute start-4 top-4 z-20 grid size-9 place-items-center rounded-xl border border-white/15 bg-white/15 transition hover:bg-white/25 focus:outline-none focus:ring-2 focus:ring-white sm:start-5 sm:top-5 sm:size-11"
+            className="absolute start-5 top-5 z-20 grid size-10 place-items-center rounded-full border border-white/25 bg-[#0d3d43]/55 text-white shadow-lg backdrop-blur-md transition hover:scale-105 hover:bg-[#b48a43] focus:outline-none focus:ring-2 focus:ring-white sm:start-7 sm:top-7 sm:size-12"
           >
             <X />
           </button>
-          <div className="relative z-10 pe-12 sm:pe-14">
-            <p className="font-mono text-xs font-black text-[#E6F3F6]">
-              {order.orderCode}
+          <div className="relative z-10 flex min-h-[180px] max-w-2xl flex-col justify-center pe-12 sm:min-h-[196px] sm:pe-16">
+            <p className="mb-3 w-fit rounded-full border border-[#d9bd82]/45 bg-[#102f32]/55 px-3 py-1.5 text-[11px] font-black text-[#f3dfb3] backdrop-blur-md">
+              {t("سجل طلب التوريد")}
             </p>
-            <div className="mt-2.5 flex flex-wrap items-center gap-2 sm:mt-3 sm:gap-3">
-              <h2 className="break-words text-xl font-black leading-8 sm:text-3xl sm:leading-tight">
+            <div className="flex flex-wrap items-center gap-3">
+              <h2 className="break-words font-serif text-2xl font-black leading-9 tracking-tight text-[#fffdf5] sm:text-4xl sm:leading-tight">
                 {role === "Pharmacy" ? order.warehouseName : order.pharmacyName}
               </h2>
               <span
-                className={`shrink-0 rounded-full px-3 py-1 text-[11px] font-black sm:text-xs ${tone(order.status)}`}
+                className={`shrink-0 rounded-full border border-white/35 px-3 py-1 text-[11px] font-black shadow-sm sm:text-xs ${tone(order.status)}`}
               >
                 {t(labels[order.status] || order.status)}
               </span>
             </div>
-            <p className="mt-2 flex items-center gap-2 text-xs leading-5 text-white/55 sm:text-sm">
-              <CalendarDays size={15} className="shrink-0" />
-              {formatDate(order.createdAtUtc, currentLanguage, true)}
-            </p>
+            <div className="mt-5 flex flex-wrap gap-2.5 text-xs sm:text-sm">
+              <span className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-black/20 px-3 py-2 font-mono font-bold text-white/90 backdrop-blur-md">
+                <FileText size={15} className="text-[#e7c985]" />
+                {order.orderCode}
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-black/20 px-3 py-2 text-white/75 backdrop-blur-md">
+                <CalendarDays size={15} className="shrink-0 text-[#e7c985]" />
+                {formatDate(order.createdAtUtc, currentLanguage, true)}
+              </span>
+            </div>
           </div>
         </header>
-        <div className="grid gap-4 p-4 sm:gap-5 sm:p-5 lg:grid-cols-[1fr_310px]">
+        <div className="grid gap-4 bg-[radial-gradient(circle_at_top_right,rgba(191,159,94,.08),transparent_34%)] p-4 sm:gap-5 sm:p-6 lg:grid-cols-[1fr_320px]">
           <main className="space-y-4 sm:space-y-5">
             <section className="surface p-4 sm:p-5">
               <h3 className="font-black">{t("مراحل معالجة الطلب")}</h3>
@@ -2384,6 +2481,37 @@ function InfoBox({ label, value }) {
   );
 }
 
+function apiErrorText(error, fallback = "تعذر تنفيذ الطلب.") {
+  const status = error?.response?.status;
+  const message =
+    error?.response?.data?.error ||
+    error?.response?.data?.detail ||
+    error?.response?.data?.title ||
+    error?.message ||
+    fallback;
+  return status ? `${message} (${status})` : message;
+}
+
+function QueryErrorCard({ title, error, onRetry }) {
+  const { t } = useTranslation();
+  return (
+    <div className="surface border border-[#FECDD3] p-10 text-center">
+      <AlertTriangle className="mx-auto text-[#E11D48]" />
+      <h3 className="mt-3 font-black text-[#E11D48]">{title}</h3>
+      <p className="mt-2 text-sm text-[#829499]">
+        {apiErrorText(error, t("تحقق من اتصال الباك وصلاحية الحساب."))}
+      </p>
+      <button
+        type="button"
+        onClick={onRetry}
+        className="btn-secondary mx-auto mt-5"
+      >
+        {t("إعادة المحاولة")}
+      </button>
+    </div>
+  );
+}
+
 function MarketplacePanel({
   warehouses,
   selected,
@@ -2397,11 +2525,22 @@ function MarketplacePanel({
   submit,
   submitting,
   error,
+  queryError,
+  onRetry,
 }) {
   const { t, i18n } = useTranslation();
   const currentLanguage = normalizeLanguage(
     i18n.resolvedLanguage || i18n.language || "ar",
   );
+
+  if (queryError)
+    return (
+      <QueryErrorCard
+        title={t("تعذر تحميل مستودعات التوريد")}
+        error={queryError}
+        onRetry={onRetry}
+      />
+    );
 
   if (!selected)
     return (
@@ -2950,10 +3089,19 @@ function RepresentativeRoutePanel({
   );
 }
 
-function RecallsPanel({ items, loading }) {
+function RecallsPanel({ items, loading, error, onRetry }) {
+  const { t } = useTranslation();
   if (loading)
     return (
       <div className="surface p-10 text-center">جاري تحميل الاستدعاءات...</div>
+    );
+  if (error)
+    return (
+      <QueryErrorCard
+        title={t("تعذر تحميل استدعاءات الدفعات")}
+        error={error}
+        onRetry={onRetry}
+      />
     );
   return (
     <div className="grid gap-4 md:grid-cols-2">
@@ -3664,7 +3812,13 @@ const paymentMethodLabels = {
   ReturnSettlement: "تسوية مرتجع",
 };
 
-function PharmacyAccountsPanel({ invoices, loading, onManage }) {
+function PharmacyAccountsPanel({
+  invoices,
+  loading,
+  error,
+  onRetry,
+  onManage,
+}) {
   const { i18n } = useTranslation();
   const currentLanguage = normalizeLanguage(
     i18n.resolvedLanguage || i18n.language || "ar",
@@ -3700,6 +3854,14 @@ function PharmacyAccountsPanel({ invoices, loading, onManage }) {
   if (loading)
     return (
       <div className="surface p-12 text-center">جاري تحميل الحسابات...</div>
+    );
+  if (error)
+    return (
+      <QueryErrorCard
+        title="تعذر تحميل حسابات الصيدليات"
+        error={error}
+        onRetry={onRetry}
+      />
     );
 
   return (
@@ -3824,7 +3986,7 @@ function AccountValue({ label, value, tone = "text-[#174B57]" }) {
   );
 }
 
-function InvoicesPanel({ invoices, loading, role, onManage }) {
+function InvoicesPanel({ invoices, loading, error, onRetry, role, onManage }) {
   const { t, i18n } = useTranslation();
   const currentLanguage = normalizeLanguage(
     i18n.resolvedLanguage || i18n.language || "ar",
@@ -3838,6 +4000,14 @@ function InvoicesPanel({ invoices, loading, role, onManage }) {
   if (loading)
     return (
       <div className="surface p-12 text-center">جاري تحميل الفواتير...</div>
+    );
+  if (error)
+    return (
+      <QueryErrorCard
+        title={t("تعذر تحميل الفواتير")}
+        error={error}
+        onRetry={onRetry}
+      />
     );
   return (
     <div>

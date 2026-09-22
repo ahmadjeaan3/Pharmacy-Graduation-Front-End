@@ -30,6 +30,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 import { getApiErrorMessage } from "../../../shared/api/errors";
+import { isValidPersonName, isValidSyrianPhoneNumber } from "../../../shared/utils/validation";
 import { Brand } from "../../../shared/components/Brand";
 
 import {
@@ -476,6 +477,16 @@ function RegistrationForm({ type, accountTypes, language, onChangeType }) {
     setClientError("");
 
     if (step === 1) {
+      if (!isValidPersonName(form.fullName)) {
+        setClientError(t("أدخل اسماً حقيقياً من حرفين على الأقل، من دون أرقام أو رموز غير مناسبة."));
+        return;
+      }
+
+      if (form.phoneNumber.trim() && !isValidSyrianPhoneNumber(form.phoneNumber)) {
+        setClientError(t("رقم الهاتف غير صالح. استخدم رقماً سورياً مثل 09xxxxxxxx أو +9639xxxxxxxx."));
+        return;
+      }
+
       const passwordError = validatePassword(
         form.password,
         form.confirmPassword,
@@ -915,6 +926,7 @@ function AccountFields({
             maxLength={30}
             autoComplete="tel"
             inputMode="tel"
+            pattern="(?:09[0-9]{8}|0[1-8][0-9]{7,8}|\+9639[0-9]{8}|\+963[1-8][0-9]{7,8}|009639[0-9]{8}|00963[1-8][0-9]{7,8})"
             dir="ltr"
             value={form.phoneNumber}
             onChange={update("phoneNumber")}

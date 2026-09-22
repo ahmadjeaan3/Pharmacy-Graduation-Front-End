@@ -902,39 +902,77 @@ function DonationDetailsDialog({ record, type, onClose }) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="donation-details-title"
-        className={`max-h-[92vh] w-full overflow-y-auto bg-white shadow-2xl sm:rounded-[28px] ${
+        className={`max-h-[92vh] w-full overflow-y-auto shadow-2xl sm:rounded-[28px] ${
           isOffer ? "max-w-5xl" : "max-w-3xl"
-        }`}
+        } ${isOffer ? "border border-[#B8D5D7] bg-[#F6FAFA]" : "bg-white"}`}
       >
         <header
-          className={`relative isolate overflow-hidden px-5 py-5 text-white sm:px-7 sm:py-6 ${
+          className={`relative isolate overflow-hidden px-5 py-5 text-white sm:px-7 sm:py-7 ${
             isOffer
-              ? "bg-gradient-to-l from-[#0F5965] via-[#174B57] to-[#123C46]"
+              ? "min-h-[178px] border-b-4 border-[#62B8AB]"
               : "bg-gradient-to-l from-[#70445F] via-[#59394F] to-[#3F3046]"
           }`}
+          style={
+            isOffer
+              ? {
+                  backgroundImage:
+                    "linear-gradient(90deg, rgba(8,72,80,.22) 0%, rgba(8,72,80,.64) 48%, rgba(7,59,67,.96) 100%), url('/assets/app/donations/donation-details-classic.png')",
+                  backgroundPosition: "center",
+                  backgroundSize: "cover",
+                }
+              : undefined
+          }
         >
-          <div className="pointer-events-none absolute -left-10 -top-20 size-48 rounded-full bg-white/10 blur-2xl" />
+          <div
+            className={`pointer-events-none absolute inset-0 ${
+              isOffer
+                ? "bg-[radial-gradient(circle_at_78%_45%,rgba(111,220,198,.18),transparent_42%)]"
+                : "bg-transparent"
+            }`}
+          />
           <div className="relative flex items-start justify-between gap-4">
             <div className="flex min-w-0 items-center gap-4">
-              <span className="grid size-12 shrink-0 place-items-center rounded-2xl border border-white/15 bg-white/10 shadow-inner sm:size-14">
+              <span
+                className={`grid size-12 shrink-0 place-items-center border shadow-inner sm:size-14 ${
+                  isOffer
+                    ? "rounded-md border-[#A7D6D2]/55 bg-[#083F48]/75 text-[#C9F1E9] shadow-[inset_0_0_0_1px_rgba(255,255,255,.08),0_8px_25px_rgba(0,0,0,.22)]"
+                    : "rounded-2xl border-white/15 bg-white/10"
+                }`}
+              >
                 {isOffer ? <Gift size={25} /> : <HandHeart size={25} />}
               </span>
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <p className="text-xs font-medium text-white/70">
+                  <p
+                    className={`text-xs font-medium ${
+                      isOffer ? "tracking-wide text-[#CDE9E6]" : "text-white/70"
+                    }`}
+                  >
                     {isOffer ? "عرض تبرع دوائي" : "طلب مساعدة دوائية"}
                   </p>
-                  <span className="rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-[10px] font-bold text-white/90">
+                  <span
+                    className={`border px-2.5 py-1 text-[10px] font-bold ${
+                      isOffer
+                        ? "rounded-md border-[#B9E1DB]/60 bg-[#EAF8F5]/95 text-[#12555F]"
+                        : "rounded-full border-white/15 bg-white/10 text-white/90"
+                    }`}
+                  >
                     {status.label || record.status || "غير محدد"}
                   </span>
                 </div>
                 <h2
                   id="donation-details-title"
-                  className="mt-1.5 truncate text-xl font-black sm:text-2xl"
+                  className={`mt-2 truncate text-xl font-black sm:text-3xl ${
+                    isOffer ? "font-serif text-white drop-shadow-md" : ""
+                  }`}
                 >
                   {record.medicineName || "دواء"}
                 </h2>
-                <p className="mt-1 text-xs text-white/60">
+                <p
+                  className={`mt-1 text-xs ${
+                    isOffer ? "text-[#D4ECE9]" : "text-white/60"
+                  }`}
+                >
                   {record.scientificName ||
                     (isOffer
                       ? "بيانات الدواء ومسار تسليمه"
@@ -945,7 +983,11 @@ function DonationDetailsDialog({ record, type, onClose }) {
             <button
               type="button"
               onClick={onClose}
-              className="grid size-11 shrink-0 place-items-center rounded-2xl border border-white/10 bg-white/10 transition hover:rotate-90 hover:bg-white/20"
+              className={`grid size-11 shrink-0 place-items-center border transition hover:rotate-90 ${
+                isOffer
+                  ? "rounded-md border-[#A7D6D2]/45 bg-[#083F48]/65 text-[#E1F5F1] hover:bg-[#0F5965]"
+                  : "rounded-2xl border-white/10 bg-white/10 hover:bg-white/20"
+              }`}
               aria-label="إغلاق التفاصيل"
             >
               <X size={20} />
@@ -976,7 +1018,7 @@ function DonationDetailsDialog({ record, type, onClose }) {
             onClick={onClose}
             className={`mt-5 h-11 w-full rounded-xl text-sm font-bold text-white transition ${
               isOffer
-                ? "bg-[#216474] hover:bg-[#174B57]"
+                ? "rounded-md border border-[#174B57] bg-[#216474] font-serif shadow-[0_8px_20px_rgba(15,89,101,.16)] hover:bg-[#174B57]"
                 : "bg-[#654057] hover:bg-[#4C3042]"
             }`}
           >
@@ -994,17 +1036,17 @@ function OfferDetailsLayout({ record, organization, quantity, date }) {
       <DonationProgress record={record} />
 
       <div className="grid gap-5 lg:grid-cols-[1.05fr_.95fr]">
-        <div className="overflow-hidden rounded-3xl border border-[#D9E8EA] bg-[#F5FAFA] p-3">
+        <div className="overflow-hidden rounded-lg border border-[#CFE2E3] bg-[#EFF8F7] p-3 shadow-[0_10px_28px_rgba(15,89,101,.07)]">
           <div className="mb-3 flex items-center justify-between px-1">
             <div>
-              <strong className="block text-sm text-[#254B54]">
+              <strong className="block font-serif text-sm text-[#254B54]">
                 صورة الدواء المرفقة
               </strong>
-              <span className="mt-1 block text-[11px] text-[#829499]">
+              <span className="mt-1 block text-[11px] text-[#718B90]">
                 تستخدمها الصيدلية للتحقق الأولي قبل الاستلام
               </span>
             </div>
-            <span className="grid size-10 place-items-center rounded-xl bg-white text-[#216474] shadow-sm">
+            <span className="grid size-10 place-items-center rounded-md border border-[#C7DFDF] bg-white text-[#216474] shadow-sm">
               <ShieldCheck size={19} />
             </span>
           </div>
@@ -1014,35 +1056,45 @@ function OfferDetailsLayout({ record, organization, quantity, date }) {
         </div>
 
         <div className="space-y-3">
-          <div className="rounded-3xl border border-[#D9E8EA] bg-white p-5">
-            <div className="flex items-center gap-3 border-b border-[#E8F0F1] pb-4">
-              <span className="grid size-11 place-items-center rounded-2xl bg-[#E7F5F4] text-[#216474]">
+          <div className="rounded-lg border border-[#CFE2E3] bg-white p-5 shadow-[0_10px_28px_rgba(15,89,101,.06)]">
+            <div className="flex items-center gap-3 border-b border-[#E1EEEE] pb-4">
+              <span className="grid size-11 place-items-center rounded-md bg-[#E7F5F4] text-[#216474]">
                 <Pill size={20} />
               </span>
               <div>
-                <span className="text-[11px] text-[#829499]">بيانات العبوة</span>
-                <strong className="mt-1 block text-base text-[#17363E]">
+                <span className="text-[11px] text-[#789095]">بيانات العبوة</span>
+                <strong className="mt-1 block font-serif text-base text-[#17363E]">
                   {record.medicineName || "دواء"}
                 </strong>
               </div>
             </div>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <DetailsItem label="الاسم العلمي" value={record.scientificName} />
+              <DetailsItem
+                label="الاسم العلمي"
+                value={record.scientificName}
+                tone="classic"
+              />
               <DetailsItem
                 label="الكمية المتبرع بها"
                 value={`${Number(quantity || 0).toLocaleString("ar-SY-u-nu-latn")} عبوة`}
+                tone="classic"
               />
-              <DetailsItem label="تاريخ الصلاحية" value={formatDate(date)} />
+              <DetailsItem
+                label="تاريخ الصلاحية"
+                value={formatDate(date)}
+                tone="classic"
+              />
               <DetailsItem
                 label="صيدلية التحقق"
                 value={record.reviewingPharmacyName}
+                tone="classic"
               />
             </div>
           </div>
 
-          <div className="rounded-3xl border border-[#F0DFC0] bg-[#FFF9ED] p-4">
+          <div className="rounded-lg border border-[#BFE1DB] bg-[#EAF8F5] p-4">
             <div className="flex items-start gap-3">
-              <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-white text-[#C48720] shadow-sm">
+              <span className="grid size-10 shrink-0 place-items-center rounded-md border border-[#C5E3DE] bg-white text-[#16816F] shadow-sm">
                 <HeartHandshake size={19} />
               </span>
               <div>
@@ -1151,7 +1203,7 @@ function RecordNotes({ record, tone }) {
       className={`rounded-3xl border p-5 ${
         tone === "assistance"
           ? "border-[#E5D5DF] bg-[#FBF6F9]"
-          : "border-[#D9E8EA] bg-[#F5FAFA]"
+          : "border-[#CFE2E3] bg-[#F2F9F8]"
       }`}
     >
       <span className="text-xs font-bold text-[#71858A]">ملاحظات الحالة</span>
@@ -1187,9 +1239,9 @@ function DonationProgress({ record }) {
   ];
 
   return (
-    <div className="rounded-3xl border border-[#D9E8EA] bg-[#F4F9F9] p-4 sm:p-5">
+    <div className="rounded-lg border border-[#CFE2E3] bg-[#F2F9F8] p-4 shadow-[inset_0_0_35px_rgba(15,89,101,.04)] sm:p-5">
       <div className="flex items-center justify-between gap-3">
-        <strong className="text-sm text-[#29464D]">مسار التبرع</strong>
+        <strong className="font-serif text-sm text-[#254B54]">مسار التبرع</strong>
         {rejected ? (
           <span className="rounded-full bg-rose-50 px-3 py-1 text-[11px] font-bold text-rose-600">
             توقف المسار بسبب الرفض
@@ -1197,7 +1249,7 @@ function DonationProgress({ record }) {
         ) : null}
       </div>
       <div className="relative mt-5 grid gap-3 sm:grid-cols-5 sm:gap-0">
-        <span className="absolute left-[10%] right-[10%] top-4 hidden h-px bg-[#CFE2E3] sm:block" />
+        <span className="absolute left-[10%] right-[10%] top-4 hidden h-px bg-[#BFDAD9] sm:block" />
         {steps.map((step, index) => (
           <div
             key={step.label}
@@ -1206,7 +1258,7 @@ function DonationProgress({ record }) {
             }`}
           >
             <span
-              className={`grid size-8 shrink-0 place-items-center rounded-full border-4 border-[#F4F9F9] shadow-sm ${
+              className={`grid size-8 shrink-0 place-items-center rounded-full border-4 border-[#F2F9F8] shadow-sm ${
                 step.complete
                   ? "bg-emerald-500 text-white"
                   : "bg-white text-slate-400"
@@ -1222,11 +1274,27 @@ function DonationProgress({ record }) {
   );
 }
 
-function DetailsItem({ label, value }) {
+function DetailsItem({ label, value, tone = "default" }) {
   return (
-    <div className="rounded-2xl border border-[#174B57]/8 bg-[#F8FBFB] p-3.5">
-      <span className="text-[11px] text-[#8A9A9E]">{label}</span>
-      <strong className="mt-1.5 block break-words text-sm font-semibold text-[#29464D]">
+    <div
+      className={`border p-3.5 ${
+        tone === "classic"
+          ? "rounded-md border-[#D4E5E5] bg-[#F5FAFA]"
+          : "rounded-2xl border-[#174B57]/8 bg-[#F8FBFB]"
+      }`}
+    >
+      <span
+        className={`text-[11px] ${
+          tone === "classic" ? "text-[#789095]" : "text-[#8A9A9E]"
+        }`}
+      >
+        {label}
+      </span>
+      <strong
+        className={`mt-1.5 block break-words text-sm font-semibold ${
+          tone === "classic" ? "font-serif text-[#254B54]" : "text-[#29464D]"
+        }`}
+      >
         {value || "—"}
       </strong>
     </div>

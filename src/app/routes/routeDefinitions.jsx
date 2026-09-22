@@ -93,7 +93,22 @@ export const dashboardRouteGroups = [
     allowedRoles: ["Representative"],
     routes: [
       { path: "representative/profile", element: redirect("/app/settings") },
-      { path: "representative/*", element: <SupplyChainWorkspacePage /> },
+      {
+        path: "representative/deliveries",
+        element: <SupplyChainWorkspacePage />,
+      },
+      {
+        path: "representative/route",
+        element: <SupplyChainWorkspacePage />,
+      },
+      {
+        path: "representative/history",
+        element: <SupplyChainWorkspacePage />,
+      },
+      {
+        path: "representative/*",
+        element: redirect("/app/representative/deliveries"),
+      },
     ],
   },
   {

@@ -13,6 +13,13 @@ import { Link } from "react-router-dom";
 import { formatDistance, formatPrice } from "../../../shared/utils/formatters";
 import { intentLabel } from "../utils/chatFormatters";
 
+const retrievalConfidenceLabel = {
+  none: "غير متوفرة",
+  low: "منخفضة",
+  medium: "متوسطة",
+  high: "مرتفعة",
+};
+
 export function ChatReplyResults({ reply, onPrompt }) {
   if (!reply) return null;
   return (
@@ -27,7 +34,10 @@ export function ChatReplyResults({ reply, onPrompt }) {
           </span>
           {reply.aiRetrievalConfidence && (
             <span className="rounded-full border border-[#174b57]/10 bg-white px-2.5 py-1">
-              موثوقية الاسترجاع: {reply.aiRetrievalConfidence}
+              موثوقية الاسترجاع:{" "}
+              {retrievalConfidenceLabel[
+                String(reply.aiRetrievalConfidence).toLowerCase()
+              ] || reply.aiRetrievalConfidence}
             </span>
           )}
         </div>

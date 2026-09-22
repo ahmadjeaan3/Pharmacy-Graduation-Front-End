@@ -2,16 +2,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   BadgeCheck,
   Building2,
-  Check,
   Crosshair,
   ExternalLink,
   Keyboard,
-  LoaderCircle,
   MapPin,
   Navigation,
   Phone,
   Save,
-  Star,
 } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -19,9 +16,7 @@ import { useTranslation } from "react-i18next";
 import { getApiErrorMessage } from "../../../shared/api/errors";
 
 import {
-  getLocationCandidates,
   getMyPharmacy,
-  linkPharmacyLocation,
   updatePharmacyLocation,
   updatePharmacyProfile,
   pharmacyKeys,
@@ -31,6 +26,7 @@ import {
   PharmacyErrorState,
   PharmacyLoadingState,
 } from "../components/PharmacyStates";
+import { PharmacyLocationPickerMap } from "../components/PharmacyLocationPickerMap";
 
 const PHARMACY_HERO_IMAGE = "/assets/app/pharmacy.png";
 
@@ -47,11 +43,7 @@ const initialForm = {
 export function PharmacyProfilePage() {
   const { t, i18n } = useTranslation();
 
-  const currentLanguage = (
-    i18n.resolvedLanguage ||
-    i18n.language ||
-    "ar"
-  )
+  const currentLanguage = (i18n.resolvedLanguage || i18n.language || "ar")
     .split("-")[0]
     .toLowerCase();
 
@@ -77,11 +69,8 @@ export function PharmacyProfilePage() {
         city: profile.data.city || "",
         area: profile.data.area || "",
         address: profile.data.address || "",
-        timeZoneId:
-          profile.data.timeZoneId || "Asia/Riyadh",
-        hasDeliveryService: Boolean(
-          profile.data.hasDeliveryService,
-        ),
+        timeZoneId: profile.data.timeZoneId || "Asia/Riyadh",
+        hasDeliveryService: Boolean(profile.data.hasDeliveryService),
       }
     : initialForm;
 
@@ -129,9 +118,7 @@ export function PharmacyProfilePage() {
       setMessage({
         ok: true,
         text: variables.tryVerifyWithGoogle
-          ? t(
-              "تم حفظ موقع الجهاز، ويمكنك الآن مراجعة نتيجة المطابقة أدناه.",
-            )
+          ? t("تم حفظ موقع الجهاز، ويمكنك الآن مراجعة نتيجة المطابقة أدناه.")
           : t(
               "تم حفظ الإحداثيات اليدوية بنجاح، ويمكنك مطابقة الصيدلية مع الموقع الصحيح أدناه.",
             ),
@@ -147,60 +134,11 @@ export function PharmacyProfilePage() {
       }),
   });
 
-  const candidates = useQuery({
-    queryKey: pharmacyKeys.candidates(coords || {}),
-
-    queryFn: () =>
-      getLocationCandidates(
-        coords
-          ? {
-              latitude: coords.latitude,
-              longitude: coords.longitude,
-              radiusInMeters: 500,
-              take: 5,
-            }
-          : {},
-      ),
-
-    enabled: Boolean(
-      coords || profile.data?.hasLocation,
-    ),
-
-    retry: false,
-  });
-
-  const linkLocation = useMutation({
-    mutationFn: linkPharmacyLocation,
-
-    onSuccess: async () => {
-      setMessage({
-        ok: true,
-        text: t(
-          "تم ربط الصيدلية بالموقع المعتمد بنجاح.",
-        ),
-      });
-
-      await refresh();
-
-      await client.invalidateQueries({
-        queryKey: ["pharmacy", "location-candidates"],
-      });
-    },
-
-    onError: (error) =>
-      setMessage({
-        ok: false,
-        text: getApiErrorMessage(error),
-      }),
-  });
-
   const locate = () => {
     if (!navigator.geolocation) {
       return setMessage({
         ok: false,
-        text: t(
-          "تحديد الموقع غير مدعوم في هذا المتصفح.",
-        ),
+        text: t("تحديد الموقع غير مدعوم في هذا المتصفح."),
       });
     }
 
@@ -222,9 +160,8 @@ export function PharmacyProfilePage() {
           city: form.city || null,
           area: form.area || null,
           address: form.address || null,
-          timeZoneId:
-            form.timeZoneId || "Asia/Riyadh",
-          tryVerifyWithGoogle: true,
+          timeZoneId: form.timeZoneId || "Asia/Riyadh",
+          tryVerifyWithGoogle: false,
           overwriteNameFromGoogle: false,
           overwriteAddressFromGoogle: false,
         });
@@ -248,10 +185,7 @@ export function PharmacyProfilePage() {
     );
   };
 
-  const saveManualLocation = ({
-    latitude,
-    longitude,
-  }) => {
+  const saveManualLocation = ({ latitude, longitude }) => {
     const value = {
       latitude,
       longitude,
@@ -266,8 +200,7 @@ export function PharmacyProfilePage() {
       city: form.city || null,
       area: form.area || null,
       address: form.address || null,
-      timeZoneId:
-        form.timeZoneId || "Asia/Riyadh",
+      timeZoneId: form.timeZoneId || "Asia/Riyadh",
       tryVerifyWithGoogle: false,
       overwriteNameFromGoogle: false,
       overwriteAddressFromGoogle: false,
@@ -429,11 +362,7 @@ export function PharmacyProfilePage() {
               gap-3
               sm:gap-4
               lg:gap-5
-              ${
-                isArabic
-                  ? "flex-row-reverse"
-                  : ""
-              }
+              ${isArabic ? "flex-row-reverse" : ""}
             `}
           >
             <div
@@ -441,11 +370,7 @@ export function PharmacyProfilePage() {
                 min-w-0
                 flex-1
                 overflow-hidden
-                ${
-                  isArabic
-                    ? "text-right"
-                    : "text-left"
-                }
+                ${isArabic ? "text-right" : "text-left"}
               `}
             >
               <p
@@ -515,17 +440,9 @@ export function PharmacyProfilePage() {
                 sm:size-11
               "
             >
-              <MapPin
-                size={22}
-                strokeWidth={1.7}
-                className="sm:hidden"
-              />
+              <MapPin size={22} strokeWidth={1.7} className="sm:hidden" />
 
-              <MapPin
-                size={25}
-                strokeWidth={1.7}
-                className="hidden sm:block"
-              />
+              <MapPin size={25} strokeWidth={1.7} className="hidden sm:block" />
             </span>
           </div>
         </div>
@@ -622,21 +539,13 @@ export function PharmacyProfilePage() {
                 min-w-0
                 flex-1
                 overflow-hidden
-                ${
-                  isArabic
-                    ? "text-right"
-                    : "text-left"
-                }
+                ${isArabic ? "text-right" : "text-left"}
               `}
             >
-              <h3 className="break-words font-black">
-                {t("بيانات التعريف")}
-              </h3>
+              <h3 className="break-words font-black">{t("بيانات التعريف")}</h3>
 
               <p className="mt-1 break-words text-xs leading-5 text-[#829499]">
-                {t(
-                  "تظهر هذه المعلومات للمرضى عند فتح صفحة الصيدلية",
-                )}
+                {t("تظهر هذه المعلومات للمرضى عند فتح صفحة الصيدلية")}
               </p>
             </div>
           </div>
@@ -655,9 +564,7 @@ export function PharmacyProfilePage() {
             "
           >
             <label className="block min-w-0 max-w-full">
-              <span className="form-label">
-                {t("اسم الصيدلية")}
-              </span>
+              <span className="form-label">{t("اسم الصيدلية")}</span>
 
               <input
                 className="
@@ -676,9 +583,7 @@ export function PharmacyProfilePage() {
             </label>
 
             <label className="block min-w-0 max-w-full">
-              <span className="form-label">
-                {t("المدينة")}
-              </span>
+              <span className="form-label">{t("المدينة")}</span>
 
               <input
                 className="
@@ -697,9 +602,7 @@ export function PharmacyProfilePage() {
             </label>
 
             <label className="block min-w-0 max-w-full">
-              <span className="form-label">
-                {t("المنطقة أو الحي")}
-              </span>
+              <span className="form-label">{t("المنطقة أو الحي")}</span>
 
               <input
                 className="
@@ -718,9 +621,7 @@ export function PharmacyProfilePage() {
             </label>
 
             <label className="block min-w-0 max-w-full">
-              <span className="form-label">
-                {t("المنطقة الزمنية")}
-              </span>
+              <span className="form-label">{t("المنطقة الزمنية")}</span>
 
               <select
                 className="
@@ -734,24 +635,16 @@ export function PharmacyProfilePage() {
                 value={form.timeZoneId}
                 onChange={change("timeZoneId")}
               >
-                <option value="Asia/Riyadh">
-                  {t("توقيت الرياض")}
-                </option>
+                <option value="Asia/Riyadh">{t("توقيت الرياض")}</option>
 
-                <option value="Asia/Damascus">
-                  {t("توقيت دمشق")}
-                </option>
+                <option value="Asia/Damascus">{t("توقيت دمشق")}</option>
 
-                <option value="Asia/Baghdad">
-                  {t("توقيت بغداد")}
-                </option>
+                <option value="Asia/Baghdad">{t("توقيت بغداد")}</option>
               </select>
             </label>
 
             <label className="block min-w-0 max-w-full md:col-span-2">
-              <span className="form-label">
-                {t("العنوان التفصيلي")}
-              </span>
+              <span className="form-label">{t("العنوان التفصيلي")}</span>
 
               <input
                 className="
@@ -770,9 +663,7 @@ export function PharmacyProfilePage() {
             </label>
 
             <label className="block min-w-0 max-w-full md:col-span-2">
-              <span className="form-label">
-                {t("نبذة عن الصيدلية")}
-              </span>
+              <span className="form-label">{t("نبذة عن الصيدلية")}</span>
 
               <textarea
                 className="
@@ -788,9 +679,7 @@ export function PharmacyProfilePage() {
                 value={form.description}
                 onChange={change("description")}
                 maxLength={1000}
-                placeholder={t(
-                  "الخدمات والتخصصات التي تميز الصيدلية",
-                )}
+                placeholder={t("الخدمات والتخصصات التي تميز الصيدلية")}
               />
             </label>
           </div>
@@ -823,18 +712,14 @@ export function PharmacyProfilePage() {
               </span>
 
               <p className="mt-1 break-words text-xs leading-5 text-[#829499]">
-                {t(
-                  "فعّلها فقط إذا كانت الخدمة متاحة فعليًا",
-                )}
+                {t("فعّلها فقط إذا كانت الخدمة متاحة فعليًا")}
               </p>
             </div>
 
             <input
               type="checkbox"
               checked={form.hasDeliveryService}
-              onChange={change(
-                "hasDeliveryService",
-              )}
+              onChange={change("hasDeliveryService")}
               className="size-5 shrink-0 accent-[#216474]"
             />
           </label>
@@ -854,9 +739,7 @@ export function PharmacyProfilePage() {
           >
             <Save size={17} />
 
-            {saveProfile.isPending
-              ? t("جاري الحفظ...")
-              : t("حفظ البيانات")}
+            {saveProfile.isPending ? t("جاري الحفظ...") : t("حفظ البيانات")}
           </button>
         </form>
 
@@ -897,17 +780,10 @@ export function PharmacyProfilePage() {
                   top-1/2
                   -translate-y-1/2
                   text-[#174B57]/10
-                  ${
-                    isArabic
-                      ? "left-1 sm:left-5"
-                      : "right-1 sm:right-5"
-                  }
+                  ${isArabic ? "left-1 sm:left-5" : "right-1 sm:right-5"}
                 `}
               >
-                <Navigation
-                  size={78}
-                  strokeWidth={1.6}
-                />
+                <Navigation size={78} strokeWidth={1.6} />
               </div>
 
               <div className="relative min-w-0 max-w-full">
@@ -927,10 +803,7 @@ export function PharmacyProfilePage() {
                       sm:size-11
                     "
                   >
-                    <MapPin
-                      size={21}
-                      strokeWidth={1.9}
-                    />
+                    <MapPin size={21} strokeWidth={1.9} />
                   </span>
 
                   <div
@@ -938,11 +811,7 @@ export function PharmacyProfilePage() {
                       min-w-0
                       flex-1
                       overflow-hidden
-                      ${
-                        isArabic
-                          ? "text-right"
-                          : "text-left"
-                      }
+                      ${isArabic ? "text-right" : "text-left"}
                     `}
                   >
                     <h3 className="break-words text-lg font-black text-[#29464D] sm:text-xl">
@@ -952,9 +821,7 @@ export function PharmacyProfilePage() {
                     <p className="mt-2 break-words text-sm leading-6 text-[#60777D]">
                       {data.hasLocation
                         ? data.address
-                        : t(
-                            "لم يحدد موقع الصيدلية بعد",
-                          )}
+                        : t("لم يحدد موقع الصيدلية بعد")}
                     </p>
 
                     {data.hasLocation && (
@@ -969,13 +836,8 @@ export function PharmacyProfilePage() {
                         "
                         dir="ltr"
                       >
-                        {Number(
-                          data.latitude,
-                        ).toFixed(6)}
-                        ,{" "}
-                        {Number(
-                          data.longitude,
-                        ).toFixed(6)}
+                        {Number(data.latitude).toFixed(6)},{" "}
+                        {Number(data.longitude).toFixed(6)}
                       </p>
                     )}
                   </div>
@@ -986,15 +848,32 @@ export function PharmacyProfilePage() {
             {/* Location body */}
 
             <div className="box-border w-full min-w-0 max-w-full overflow-hidden p-4 sm:p-5">
+              <PharmacyLocationPickerMap
+                latitude={coords?.latitude ?? data.latitude}
+                longitude={coords?.longitude ?? data.longitude}
+                disabled={saveLocation.isPending}
+                t={t}
+                onChange={(value) => {
+                  setCoords({
+                    ...value,
+                    accuracyMeters: null,
+                  });
+                  setMessage({
+                    ok: true,
+                    text: t(
+                      "تم تحديد الموقع على الخريطة. راجع الإحداثيات ثم اضغط حفظ.",
+                    ),
+                  });
+                }}
+              />
+
               <div className="mb-4 min-w-0 max-w-full">
                 <h4 className="break-words font-extrabold text-[#173f48]">
                   {t("اختر طريقة تحديد الموقع")}
                 </h4>
 
                 <p className="mt-1 break-words text-xs leading-5 text-[#829499]">
-                  {t(
-                    "استخدم موقع الجهاز أو أدخل الإحداثيات بنفسك",
-                  )}
+                  {t("استخدم موقع الجهاز أو أدخل الإحداثيات بنفسك")}
                 </p>
               </div>
 
@@ -1035,11 +914,7 @@ export function PharmacyProfilePage() {
                       min-w-0
                       flex-1
                       overflow-hidden
-                      ${
-                        isArabic
-                          ? "text-right"
-                          : "text-left"
-                      }
+                      ${isArabic ? "text-right" : "text-left"}
                     `}
                   >
                     <h5 className="break-words text-sm font-extrabold">
@@ -1047,9 +922,7 @@ export function PharmacyProfilePage() {
                     </h5>
 
                     <p className="mt-0.5 break-words text-[11px] leading-5 text-[#829499]">
-                      {t(
-                        "يتطلب السماح للمتصفح بمعرفة موقع الجهاز",
-                      )}
+                      {t("يتطلب السماح للمتصفح بمعرفة موقع الجهاز")}
                     </p>
                   </div>
                 </div>
@@ -1057,10 +930,7 @@ export function PharmacyProfilePage() {
                 <button
                   type="button"
                   onClick={locate}
-                  disabled={
-                    finding ||
-                    saveLocation.isPending
-                  }
+                  disabled={finding || saveLocation.isPending}
                   className="
                     btn-primary
                     w-full
@@ -1072,9 +942,7 @@ export function PharmacyProfilePage() {
 
                   {finding
                     ? t("جاري تحديد الموقع...")
-                    : t(
-                        "استخدام موقعي الحالي",
-                      )}
+                    : t("استخدام موقعي الحالي")}
                 </button>
               </div>
 
@@ -1095,25 +963,26 @@ export function PharmacyProfilePage() {
               >
                 <span className="h-px min-w-0 flex-1 bg-[#174b57]/10" />
 
-                <span className="shrink-0">
-                  {t("أو")}
-                </span>
+                <span className="shrink-0">{t("أو")}</span>
 
                 <span className="h-px min-w-0 flex-1 bg-[#174b57]/10" />
               </div>
 
               <ManualLocationForm
-                currentLatitude={data.latitude}
-                currentLongitude={data.longitude}
+                key={`${coords?.latitude ?? data.latitude ?? ""}:${
+                  coords?.longitude ?? data.longitude ?? ""
+                }`}
+                currentLatitude={coords?.latitude ?? data.latitude}
+                currentLongitude={coords?.longitude ?? data.longitude}
                 pending={saveLocation.isPending}
                 onSave={saveManualLocation}
                 t={t}
                 direction={direction}
               />
 
-              {data.locationGoogleMapsUrl && (
+              {data.hasLocation && (
                 <a
-                  href={data.locationGoogleMapsUrl}
+                  href={`https://www.openstreetmap.org/?mlat=${data.latitude}&mlon=${data.longitude}#map=18/${data.latitude}/${data.longitude}`}
                   target="_blank"
                   rel="noreferrer"
                   className="
@@ -1146,16 +1015,11 @@ export function PharmacyProfilePage() {
               sm:p-5
             "
           >
-            <h3 className="break-words font-black">
-              {t("بيانات ثابتة")}
-            </h3>
+            <h3 className="break-words font-black">{t("بيانات ثابتة")}</h3>
 
             <div className="mt-4 space-y-3 text-sm">
               <div className="flex min-w-0 max-w-full items-center gap-3">
-                <BadgeCheck
-                  className="shrink-0 text-[#216474]"
-                  size={17}
-                />
+                <BadgeCheck className="shrink-0 text-[#216474]" size={17} />
 
                 <span className="min-w-0 shrink text-[#829499]">
                   {t("رقم الترخيص")}
@@ -1176,10 +1040,7 @@ export function PharmacyProfilePage() {
               </div>
 
               <div className="flex min-w-0 max-w-full items-center gap-3">
-                <Phone
-                  className="shrink-0 text-[#216474]"
-                  size={17}
-                />
+                <Phone className="shrink-0 text-[#216474]" size={17} />
 
                 <span className="min-w-0 shrink text-[#829499]">
                   {t("الهاتف")}
@@ -1195,225 +1056,13 @@ export function PharmacyProfilePage() {
                   "
                   dir="ltr"
                 >
-                  {data.phoneNumber ||
-                    t("غير مسجل")}
+                  {data.phoneNumber || t("غير مسجل")}
                 </strong>
               </div>
             </div>
           </section>
         </div>
       </div>
-
-      {/* =====================================================
-          LOCATION MATCHING
-      ====================================================== */}
-
-      <section
-        className="
-          surface
-          box-border
-          mt-5
-          w-full
-          min-w-0
-          max-w-full
-          overflow-hidden
-          p-4
-          sm:mt-6
-          sm:p-5
-          lg:p-6
-        "
-      >
-        <div
-          className="
-            flex
-            min-w-0
-            w-full
-            max-w-full
-            flex-col
-            justify-between
-            gap-3
-            md:flex-row
-            md:items-center
-          "
-        >
-          <div
-            className={`
-              min-w-0
-              flex-1
-              overflow-hidden
-              ${
-                isArabic
-                  ? "text-right"
-                  : "text-left"
-              }
-            `}
-          >
-            <h3 className="break-words text-lg font-black">
-              {t("مطابقة الموقع")}
-            </h3>
-
-            <p className="mt-1 break-words text-xs leading-5 text-[#829499]">
-              {t(
-                "اختر النتيجة التي تمثل صيدليتك بدقة لتثبيت الاسم والعنوان على الخريطة",
-              )}
-            </p>
-          </div>
-
-          {candidates.isFetching && (
-            <LoaderCircle
-              className="
-                shrink-0
-                animate-spin
-                self-end
-                text-[#216474]
-                md:self-auto
-              "
-              size={20}
-            />
-          )}
-        </div>
-
-        {candidates.isError ? (
-          <p className="mt-5 box-border w-full max-w-full overflow-hidden break-words rounded-xl bg-amber-50 p-4 text-sm leading-6 text-amber-700">
-            {getApiErrorMessage(
-              candidates.error,
-            )}
-          </p>
-        ) : (
-          <div
-            className="
-              mt-5
-              grid
-              w-full
-              min-w-0
-              max-w-full
-              grid-cols-1
-              gap-3
-              lg:grid-cols-2
-            "
-          >
-            {(candidates.data || []).map(
-              (item) => (
-                <article
-                  key={item.placeId}
-                  className={`
-                    box-border
-                    min-w-0
-                    max-w-full
-                    overflow-hidden
-                    rounded-2xl
-                    border
-                    p-4
-                    ${
-                      item.isBestMatch
-                        ? "border-[#216474]/30 bg-[#f2f8f7]"
-                        : "border-[#174b57]/9"
-                    }
-                  `}
-                >
-                  <div className="flex min-w-0 max-w-full gap-3">
-                    <span
-                      className="
-                        grid
-                        size-10
-                        shrink-0
-                        place-items-center
-                        rounded-xl
-                        bg-white
-                        text-[#216474]
-                        shadow-sm
-                      "
-                    >
-                      <MapPin size={18} />
-                    </span>
-
-                    <div className="min-w-0 flex-1 overflow-hidden">
-                      <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2">
-                        <h4 className="min-w-0 break-words font-extrabold">
-                          {item.name}
-                        </h4>
-
-                        {item.isBestMatch && (
-                          <span
-                            className="
-                              shrink-0
-                              rounded-full
-                              bg-[#216474]
-                              px-2
-                              py-1
-                              text-[10px]
-                              font-bold
-                              text-white
-                            "
-                          >
-                            {t("الأقرب للموقع")}
-                          </span>
-                        )}
-                      </div>
-
-                      <p className="mt-1 break-words text-xs leading-5 text-[#71858a]">
-                        {item.address}
-                      </p>
-
-                      <p className="mt-2 flex min-w-0 flex-wrap items-center gap-3 text-xs text-[#829499]">
-                        <span className="shrink-0">
-                          {Math.round(
-                            item.distanceMeters,
-                          )}{" "}
-                          {t("م")}
-                        </span>
-
-                        <span className="flex shrink-0 items-center gap-1">
-                          <Star
-                            size={12}
-                            className="fill-amber-400 text-amber-400"
-                          />
-
-                          {item.rating || "—"}
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    disabled={
-                      linkLocation.isPending ||
-                      data.externalPlaceId ===
-                        item.placeId
-                    }
-                    onClick={() =>
-                      linkLocation.mutate({
-                        placeId: item.placeId,
-                        overwriteName: false,
-                        overwriteAddress: true,
-                      })
-                    }
-                    className="
-                      btn-secondary
-                      mt-4
-                      w-full
-                      max-w-full
-                      justify-center
-                    "
-                  >
-                    {data.externalPlaceId ===
-                    item.placeId ? (
-                      <>
-                        <Check size={16} />
-
-                        {t("الموقع مرتبط")}
-                      </>
-                    ) : (
-                      t("اعتماد هذا الموقع")
-                    )}
-                  </button>
-                </article>
-              ),
-            )}
-          </div>
-        )}
-      </section>
     </div>
   );
 }
@@ -1435,8 +1084,7 @@ function ManualLocationForm({
     longitude: currentLongitude ?? "",
   });
 
-  const [validationError, setValidationError] =
-    useState("");
+  const [validationError, setValidationError] = useState("");
 
   const change = (key) => (event) => {
     setValues((old) => ({
@@ -1450,46 +1098,21 @@ function ManualLocationForm({
   const submit = (event) => {
     event.preventDefault();
 
-    if (
-      values.latitude === "" ||
-      values.longitude === ""
-    ) {
-      return setValidationError(
-        t(
-          "أدخل خط العرض وخط الطول قبل الحفظ.",
-        ),
-      );
+    if (values.latitude === "" || values.longitude === "") {
+      return setValidationError(t("أدخل خط العرض وخط الطول قبل الحفظ."));
     }
 
-    const latitude = Number(
-      values.latitude,
-    );
+    const latitude = Number(values.latitude);
 
-    const longitude = Number(
-      values.longitude,
-    );
+    const longitude = Number(values.longitude);
 
-    if (
-      !Number.isFinite(latitude) ||
-      latitude < -90 ||
-      latitude > 90
-    ) {
-      return setValidationError(
-        t(
-          "يجب أن يكون خط العرض رقمًا بين ‎-90 و90.",
-        ),
-      );
+    if (!Number.isFinite(latitude) || latitude < -90 || latitude > 90) {
+      return setValidationError(t("يجب أن يكون خط العرض رقمًا بين ‎-90 و90."));
     }
 
-    if (
-      !Number.isFinite(longitude) ||
-      longitude < -180 ||
-      longitude > 180
-    ) {
+    if (!Number.isFinite(longitude) || longitude < -180 || longitude > 180) {
       return setValidationError(
-        t(
-          "يجب أن يكون خط الطول رقمًا بين ‎-180 و180.",
-        ),
+        t("يجب أن يكون خط الطول رقمًا بين ‎-180 و180."),
       );
     }
 
@@ -1536,11 +1159,7 @@ function ManualLocationForm({
             min-w-0
             flex-1
             overflow-hidden
-            ${
-              direction === "rtl"
-                ? "text-right"
-                : "text-left"
-            }
+            ${direction === "rtl" ? "text-right" : "text-left"}
           `}
         >
           <h5 className="break-words text-sm font-extrabold">
@@ -1548,9 +1167,7 @@ function ManualLocationForm({
           </h5>
 
           <p className="mt-0.5 break-words text-[11px] leading-5 text-[#829499]">
-            {t(
-              "انسخ القيم الدقيقة من تطبيق الخرائط",
-            )}
+            {t("انسخ القيم الدقيقة من تطبيق الخرائط")}
           </p>
         </div>
       </div>
@@ -1567,9 +1184,7 @@ function ManualLocationForm({
         "
       >
         <label className="block min-w-0 max-w-full">
-          <span className="form-label">
-            {t("خط العرض")}
-          </span>
+          <span className="form-label">{t("خط العرض")}</span>
 
           <input
             className="
@@ -1590,17 +1205,13 @@ function ManualLocationForm({
             onChange={change("latitude")}
             placeholder="24.713552"
             aria-describedby={
-              validationError
-                ? "manual-location-error"
-                : undefined
+              validationError ? "manual-location-error" : undefined
             }
           />
         </label>
 
         <label className="block min-w-0 max-w-full">
-          <span className="form-label">
-            {t("خط الطول")}
-          </span>
+          <span className="form-label">{t("خط الطول")}</span>
 
           <input
             className="
@@ -1621,9 +1232,7 @@ function ManualLocationForm({
             onChange={change("longitude")}
             placeholder="46.675296"
             aria-describedby={
-              validationError
-                ? "manual-location-error"
-                : undefined
+              validationError ? "manual-location-error" : undefined
             }
           />
         </label>
@@ -1659,9 +1268,7 @@ function ManualLocationForm({
       >
         <Save size={16} />
 
-        {pending
-          ? t("جاري الحفظ...")
-          : t("حفظ الإحداثيات")}
+        {pending ? t("جاري الحفظ...") : t("حفظ الإحداثيات")}
       </button>
     </form>
   );

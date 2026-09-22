@@ -10,6 +10,7 @@ import {
   PackageSearch,
   Search,
   ShieldCheck,
+  Sparkles,
   SlidersHorizontal,
   Star,
 } from "lucide-react";
@@ -19,6 +20,7 @@ import { useTranslation } from "react-i18next";
 
 import {
   getLocationContext,
+  getMedicineSearchSuggestions,
   getNearestPharmacies,
   getNearestPharmacyRoute,
   getPopularMedicines,
@@ -173,7 +175,7 @@ export function MedicineSearchPage() {
         radiusInMeters: radius,
         take: 6,
         externalTake: 4,
-        includeExternalFallback: true,
+        includeExternalFallback: false,
         sortBy: "Distance",
       }),
   });
@@ -185,7 +187,7 @@ export function MedicineSearchPage() {
         radiusInMeters: radius,
         take: 20,
         externalTake: 4,
-        includeExternalFallback: true,
+        includeExternalFallback: false,
         sortBy,
       }),
     enabled: activeView === "pharmacies",
@@ -204,12 +206,44 @@ export function MedicineSearchPage() {
       : null;
   });
 
+  const effectiveSearchRequest = useMemo(() => {
+    if (!searchRequest) return null;
+
+    return {
+      ...searchRequest,
+      latitude: locationQuery.data?.hasSavedLocation
+        ? locationQuery.data.latitude
+        : null,
+      longitude: locationQuery.data?.hasSavedLocation
+        ? locationQuery.data.longitude
+        : null,
+    };
+  }, [
+    searchRequest,
+    locationQuery.data?.hasSavedLocation,
+    locationQuery.data?.latitude,
+    locationQuery.data?.longitude,
+  ]);
+
   const medicineSearchQuery = useQuery({
-    queryKey: ["user", "medicine-search", searchRequest],
-    queryFn: () => searchMedicines(searchRequest),
-    enabled: Boolean(searchRequest),
+    queryKey: [
+      "user",
+      "medicine-search",
+      effectiveSearchRequest,
+      locationQuery.data?.lastLocationUpdatedAtUtc || null,
+    ],
+    queryFn: () => searchMedicines(effectiveSearchRequest),
+    enabled: Boolean(effectiveSearchRequest),
     retry: 1,
     staleTime: 30_000,
+  });
+
+  const correctionQuery = useQuery({
+    queryKey: ["user", "medicine-search-suggestions", searchRequest?.query],
+    queryFn: () => getMedicineSearchSuggestions(searchRequest.query),
+    enabled: Boolean(searchRequest?.query?.trim().length >= 2),
+    retry: false,
+    staleTime: 5 * 60_000,
   });
 
   const routeQuery = useQuery({
@@ -236,9 +270,28 @@ export function MedicineSearchPage() {
     [searchMutation.data],
   );
 
+  const correctionMatches = useMemo(() => {
+    const response = correctionQuery.data;
+    if (!response || response.status === "exact") return [];
+
+    const source =
+      response.status === "keyboard_mismatch"
+        ? response.keyboardMatches
+        : response.matches;
+
+    return [...new Map((source || []).map((item) => [item.name, item])).values()]
+      .filter((item) => item?.name)
+      .slice(0, 5);
+  }, [correctionQuery.data]);
+
   const visibleResults = useMemo(
     () => results.slice(0, visibleCount),
     [results, visibleCount],
+  );
+
+  const hasOutsideRadiusResults = useMemo(
+    () => results.some((item) => item.isOutsideSearchRadius),
+    [results],
   );
 
   const groupedCount = useMemo(
@@ -462,6 +515,40 @@ export function MedicineSearchPage() {
       ====================================================== */}
       {activeView === "medicines" ? (
         <section className="mx-auto w-full max-w-[1380px] px-5 pb-12 pt-10 sm:px-7 lg:px-10">
+          {correctionMatches.length ? (
+            <div className="mb-6 rounded-2xl border border-[#c9dfe2] bg-[linear-gradient(135deg,#f4fbfb,#ffffff)] p-5 shadow-[0_8px_24px_rgba(23,75,87,.05)]">
+              <div className="flex items-start gap-3">
+                <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#dff1f2] text-[#176071]">
+                  <Sparkles size={20} />
+                </span>
+                <div className="min-w-0 flex-1 text-right">
+                  <h2 className="text-sm font-black text-[#183f49]">
+                    {correctionQuery.data?.status === "keyboard_mismatch"
+                      ? "يبدو أن لغة لوحة المفاتيح كانت مختلفة"
+                      : "هل تقصد أحد هذه الأدوية؟"}
+                  </h2>
+                  <p className="mt-1 text-xs leading-6 text-[#6f858a]">
+                    اختر الاسم الأقرب ليُعاد البحث به في مخزون الصيدليات.
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {correctionMatches.map((item) => (
+                      <button
+                        key={item.name}
+                        type="button"
+                        onClick={() => runPopularSearch(item.name)}
+                        className="rounded-full border border-[#b8d3d7] bg-white px-4 py-2 text-xs font-bold text-[#176071] transition hover:border-[#176071] hover:bg-[#eaf5f5]"
+                      >
+                        {item.name}
+                        <span className="ms-2 text-[10px] font-medium text-[#829499]">
+                          {Math.round(item.score)}%
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : null}
           {searchMutation.isPending ? (
             <UserLoadingState label="نبحث في الصيدليات القريبة..." />
           ) : searchMutation.isError ? (
@@ -736,6 +823,18 @@ export function MedicineSearchPage() {
                     />
                   </div>
 
+                  {hasOutsideRadiusResults ? (
+                    <div className="mb-4 rounded-[10px] border border-amber-200 bg-amber-50 px-4 py-3 text-right">
+                      <p className="text-[12px] font-bold text-amber-900">
+                        الدواء موجود في المنصة، لكن خارج نطاق البحث المحدد
+                      </p>
+                      <p className="mt-1 text-[11px] leading-5 text-amber-800">
+                        لم نجد نتيجة قريبة، لذلك نعرض أقرب صيدليات يتوفر لديها
+                        الدواء مع المسافة الحقيقية من موقعك.
+                      </p>
+                    </div>
+                  ) : null}
+
                   <div className="space-y-3">
                     {visibleResults.map((item) => {
                       const displayName =
@@ -791,6 +890,12 @@ export function MedicineSearchPage() {
                               <span>
                                 {formatDistance(item.pharmacy.distanceMeters)}
                               </span>
+
+                              {item.isOutsideSearchRadius ? (
+                                <span className="rounded-full bg-amber-50 px-2 py-1 font-semibold text-amber-700">
+                                  خارج النطاق
+                                </span>
+                              ) : null}
 
                               <span className="inline-flex items-center gap-1">
                                 <Star
@@ -943,39 +1048,6 @@ export function MedicineSearchPage() {
             </>
           )}
 
-          {routePharmacy ? (
-            <section id="selected-pharmacy-route" className="mt-8 scroll-mt-24">
-              {routeQuery.isPending ? (
-                <UserLoadingState
-                  label={t("جاري رسم طريق الوصول إلى الصيدلية...")}
-                />
-              ) : null}
-
-              {routeQuery.isError ? (
-                <UserErrorState
-                  message={getApiErrorMessage(routeQuery.error)}
-                  onRetry={routeQuery.refetch}
-                />
-              ) : null}
-
-              {routeMapContext ? (
-                <Suspense
-                  fallback={
-                    <UserLoadingState label={t("جاري تحميل خريطة المسار...")} />
-                  }
-                >
-                  <NearbyPharmaciesMap
-                    locationContext={routeMapContext}
-                    route={routeQuery.data}
-                    limit={1}
-                    title={`${t("مسار الوصول إلى الصيدلية")} — ${
-                      routePharmacy.pharmacyName
-                    }`}
-                  />
-                </Suspense>
-              ) : null}
-            </section>
-          ) : null}
         </section>
       ) : (
         <section className="mx-auto w-full max-w-[1440px] px-5 pb-14 pt-8 sm:px-7 lg:px-10">
@@ -1008,6 +1080,43 @@ export function MedicineSearchPage() {
           <PharmaciesResults query={pharmaciesQuery} onShowRoute={showRoute} />
         </section>
       )}
+
+      {routePharmacy ? (
+        <section
+          id="selected-pharmacy-route"
+          className="mx-auto mt-8 w-full max-w-[1440px] scroll-mt-24 px-5 pb-8 sm:px-7 lg:px-10"
+        >
+          {routeQuery.isPending ? (
+            <UserLoadingState
+              label={t("جاري رسم طريق الوصول إلى الصيدلية...")}
+            />
+          ) : null}
+
+          {routeQuery.isError ? (
+            <UserErrorState
+              message={getApiErrorMessage(routeQuery.error)}
+              onRetry={routeQuery.refetch}
+            />
+          ) : null}
+
+          {routeMapContext ? (
+            <Suspense
+              fallback={
+                <UserLoadingState label={t("جاري تحميل خريطة المسار...")} />
+              }
+            >
+              <NearbyPharmaciesMap
+                locationContext={routeMapContext}
+                route={routeQuery.data}
+                limit={1}
+                title={`${t("مسار الوصول إلى الصيدلية")} — ${
+                  routePharmacy.pharmacyName
+                }`}
+              />
+            </Suspense>
+          ) : null}
+        </section>
+      ) : null}
 
       {/* =====================================================
           FOOTER — نفس Footer الداشبورد

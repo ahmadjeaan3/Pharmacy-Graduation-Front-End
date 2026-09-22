@@ -3,6 +3,7 @@ import {
   ArrowRight,
   CheckCircle2,
   Clock3,
+  HeartPulse,
   Mail,
   MessageSquareText,
   Phone,
@@ -187,6 +188,7 @@ export function PharmacyRequestDetailsPage() {
               />
             </div>
           </section>
+          <PatientMedicalProfile data={data} t={t} />
         </div>
         <aside className="surface h-fit p-6 xl:sticky xl:top-28">
           <div className="flex items-center gap-3">
@@ -267,6 +269,68 @@ export function PharmacyRequestDetailsPage() {
           )}
         </aside>
       </div>
+    </div>
+  );
+}
+
+function PatientMedicalProfile({ data, t }) {
+  if (!data.medicalProfileAccessGranted) {
+    return (
+      <section className="surface border border-amber-100 bg-amber-50/40 p-6">
+        <div className="flex items-start gap-3">
+          <HeartPulse className="mt-0.5 shrink-0 text-amber-700" size={22} />
+          <div>
+            <h3 className="font-black text-amber-900">{t("الملف الصحي للمريض")}</h3>
+            <p className="mt-2 text-sm leading-7 text-amber-800">
+              {t("لم يمنح المريض إذناً بمشاركة ملفه الصحي مع الصيدلية ضمن هذا الطلب.")}
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  const profile = data.sharedMedicalProfile;
+  if (!profile?.hasMedicalProfile) {
+    return (
+      <section className="surface p-6">
+        <h3 className="flex items-center gap-2 font-black text-[#174b57]">
+          <HeartPulse size={20} /> {t("الملف الصحي للمريض")}
+        </h3>
+        <p className="mt-3 text-sm text-[#6f858a]">
+          {t("وافق المريض على المشاركة، لكن ملفه الصحي لا يحتوي معلومات بعد.")}
+        </p>
+      </section>
+    );
+  }
+
+  return (
+    <section className="surface overflow-hidden border border-[#cfe0e2]">
+      <div className="flex items-center gap-3 bg-[#eaf4f3] p-5 text-[#174b57]">
+        <span className="grid size-10 place-items-center rounded-xl bg-white"><HeartPulse size={21} /></span>
+        <div>
+          <h3 className="font-black">{t("معلومات صحية شاركها المريض")}</h3>
+          <p className="mt-1 text-xs text-[#607b81]">{t("للسلامة الدوائية ومعالجة هذا الطلب فقط")}</p>
+        </div>
+      </div>
+      <div className="grid gap-3 p-5 sm:grid-cols-2">
+        <Info label={t("العمر")} value={profile.age != null ? `${profile.age} ${t("سنة")}` : null} />
+        <Info label={t("فصيلة الدم")} value={profile.bloodType} />
+        <MedicalList label={t("الحساسيات")} values={profile.allergies} warning />
+        <MedicalList label={t("الأمراض المزمنة")} values={profile.chronicConditions} />
+        <MedicalList label={t("الأدوية الحالية")} values={profile.currentMedications} className="sm:col-span-2" />
+      </div>
+    </section>
+  );
+}
+
+function MedicalList({ label, values = [], warning = false, className = "" }) {
+  return (
+    <div className={`rounded-2xl border p-4 ${warning ? "border-rose-100 bg-rose-50/60" : "border-[#e0e9ea] bg-[#f8fbfb]"} ${className}`}>
+      <p className="text-xs font-black text-[#607b81]">{label}</p>
+      <p className={`mt-2 text-sm font-bold ${warning && values.length ? "text-rose-700" : "text-[#24464e]"}`}>
+        {values.length ? values.join("، ") : "لا توجد معلومات مسجلة"}
+      </p>
     </div>
   );
 }

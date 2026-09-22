@@ -192,7 +192,7 @@ function UserDashboardPage() {
       getUserDashboard({
         take: 3,
         externalTake: 3,
-        includeExternalFallback: true,
+        includeExternalFallback: false,
       }),
   });
 

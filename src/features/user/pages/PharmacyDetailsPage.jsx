@@ -10,6 +10,7 @@ import {
   ChevronRight,
   Clock3,
   Headphones,
+  HeartPulse,
   Info,
   LockKeyhole,
   MapPin,
@@ -27,6 +28,7 @@ import { Link, useParams, useSearchParams } from "react-router-dom";
 
 import {
   createMedicineRequest,
+  getMedicalProfile,
   getNearestPharmacyRoute,
   getPharmacyDetails,
   ratePharmacy,
@@ -170,6 +172,7 @@ export function PharmacyDetailsPage() {
     medicineId: searchParams.get("medicine") || "",
     requestedQuantity: 1,
     note: "",
+    shareMedicalProfileWithPharmacy: false,
   });
 
   const [ratingDraft, setRatingDraft] = useState(null);
@@ -177,6 +180,12 @@ export function PharmacyDetailsPage() {
   const query = useQuery({
     queryKey: userKeys.pharmacy(pharmacyId),
     queryFn: () => getPharmacyDetails(pharmacyId),
+  });
+
+  const medicalProfileQuery = useQuery({
+    queryKey: userKeys.medicalProfile,
+    queryFn: getMedicalProfile,
+    staleTime: 60_000,
   });
 
   const routeQuery = useQuery({
@@ -993,6 +1002,34 @@ export function PharmacyDetailsPage() {
                 هذا الدواء يتطلب وصفة طبية عند الاستلام.
               </p>
             ) : null}
+
+            <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-[10px] border border-[#cfe0e2] bg-[#f5fafa] p-4">
+              <input
+                type="checkbox"
+                checked={request.shareMedicalProfileWithPharmacy}
+                onChange={(event) =>
+                  setRequest({
+                    ...request,
+                    shareMedicalProfileWithPharmacy: event.target.checked,
+                  })
+                }
+                className="mt-1 size-5 shrink-0 accent-[#216474]"
+              />
+              <span className="min-w-0">
+                <span className="flex items-center gap-2 text-sm font-bold text-[#174b57]">
+                  <HeartPulse size={17} />
+                  السماح للصيدلي بمراجعة ملفي الصحي لهذا الطلب
+                </span>
+                <span className="mt-1 block text-xs leading-6 text-[#6f858a]">
+                  يطّلع فقط على العمر وفصيلة الدم والحساسيات والأمراض المزمنة والأدوية الحالية لتفادي التعارضات. لا تتم مشاركة جهة اتصال الطوارئ.
+                </span>
+                {medicalProfileQuery.isSuccess && !medicalProfileQuery.data?.hasMedicalProfile ? (
+                  <span className="mt-2 block text-xs font-semibold text-amber-700">
+                    ملفك الصحي فارغ حالياً؛ يمكنك تعبئته من صفحة الملف الصحي قبل الإرسال.
+                  </span>
+                ) : null}
+              </span>
+            </label>
 
             {requestMutation.isSuccess ? (
               <p className="mt-3 flex items-center gap-2 rounded-[8px] bg-emerald-50 px-3 py-2 text-sm font-bold text-emerald-700">

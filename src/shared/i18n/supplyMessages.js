@@ -4,9 +4,12 @@ export const supplyMessages = {
     مكتمل: "Completed",
     "اختيار مندوب وإسناد الشحنة": "Select a representative and assign shipment",
     "طلب توريد من سوق دوائي": "Supply order from Dawaai marketplace",
-    "تعذر قراءة موقعك. فعّل إذن الموقع لتوثيق حركة الشحنة بدقة.": "Unable to read your location. Enable location access to track the shipment accurately.",
-    "هذا الجهاز لا يدعم تحديد الموقع.": "This device does not support location services.",
-    "تعذر تحديد موقعك. اسمح للموقع باستخدام GPS ثم أعد المحاولة.": "Unable to determine your location. Allow GPS access and try again.",
+    "تعذر قراءة موقعك. فعّل إذن الموقع لتوثيق حركة الشحنة بدقة.":
+      "Unable to read your location. Enable location access to track the shipment accurately.",
+    "هذا الجهاز لا يدعم تحديد الموقع.":
+      "This device does not support location services.",
+    "تعذر تحديد موقعك. اسمح للموقع باستخدام GPS ثم أعد المحاولة.":
+      "Unable to determine your location. Allow GPS access and try again.",
     "شبكة دوائي للأعمال": "Dawaai Business Network",
     "{{count}} تحتاج تعبئة": "{{count}} need restocking",
     "مهام فعالة": "Active tasks",
@@ -18,16 +21,24 @@ export const supplyMessages = {
     "حسابات الصيدليات": "Pharmacy accounts",
     المرتجعات: "Returns",
     "استدعاءات الدفعات": "Batch recalls",
-    "لا توجد توصيلات مكتملة أو مغلقة بعد.": "There are no completed or closed deliveries yet.",
-    "لا توجد مهام توصيل فعالة مسندة إليك حاليًا.": "No active delivery tasks are currently assigned to you.",
+    "لا توجد توصيلات مكتملة أو مغلقة بعد.":
+      "There are no completed or closed deliveries yet.",
+    "لا توجد مهام توصيل فعالة مسندة إليك حاليًا.":
+      "No active delivery tasks are currently assigned to you.",
     "مخزون جميع المستودعات": "All warehouse inventory",
-    "عرض رقابي للكميات المحجوزة والصلاحية والتسعير دون صلاحية تعديل": "Read-only overview of reserved quantities, expiry dates, and pricing",
-    "ابحث بالمستودع أو الدواء أو رقم الدفعة": "Search by warehouse, medicine, or batch number",
-    "عرض رقابي لمندوبي جميع المستودعات وحالة كل مندوب": "Read-only overview of all warehouse representatives and their status",
-    "ابحث بالمستودع أو المندوب أو الرمز": "Search by warehouse, representative, or code",
+    "عرض رقابي للكميات المحجوزة والصلاحية والتسعير دون صلاحية تعديل":
+      "Read-only overview of reserved quantities, expiry dates, and pricing",
+    "ابحث بالمستودع أو الدواء أو رقم الدفعة":
+      "Search by warehouse, medicine, or batch number",
+    "عرض رقابي لمندوبي جميع المستودعات وحالة كل مندوب":
+      "Read-only overview of all warehouse representatives and their status",
+    "ابحث بالمستودع أو المندوب أو الرمز":
+      "Search by warehouse, representative, or code",
     "إغلاق نافذة التفاصيل": "Close details dialog",
-    "مثال: الصيدلية مغلقة أو تعذر التواصل": "Example: the pharmacy is closed or could not be reached",
-    "تحقق من اعتماد الحساب وصلاحيته ثم حاول مجددًا.": "Check account approval and permissions, then try again.",
+    "مثال: الصيدلية مغلقة أو تعذر التواصل":
+      "Example: the pharmacy is closed or could not be reached",
+    "تحقق من اعتماد الحساب وصلاحيته ثم حاول مجددًا.":
+      "Check account approval and permissions, then try again.",
     "تعذر رسم المسار حاليًا.": "Unable to draw the route right now.",
     "قبول طلب المرتجع": "Approve return request",
     "رفض طلب المرتجع": "Reject return request",
@@ -36,7 +47,8 @@ export const supplyMessages = {
     "مراجعة المرتجع": "Review return",
     "سبب الرفض": "Rejection reason",
     "ملاحظة المعالجة (اختياري)": "Processing note (optional)",
-    "وضّح للصيدلية سبب رفض المرتجع": "Explain the return rejection to the pharmacy",
+    "وضّح للصيدلية سبب رفض المرتجع":
+      "Explain the return rejection to the pharmacy",
     "أضف أي تفاصيل تفيد الصيدلية": "Add any details useful to the pharmacy",
     "تعذر تحديث حالة المرتجع.": "Unable to update the return status.",
     "تأكيد الإجراء": "Confirm action",
@@ -50,13 +62,15 @@ export const supplyMessages = {
     "بدون دفع": "No payment",
     "ترحيل كامل الرصيد": "Carry forward full balance",
     "قيمة الدفعة الجزئية": "Partial payment amount",
-    "تعذر تأكيد الاستلام وتسوية الحساب.": "Unable to confirm receipt and settle the account.",
+    "تعذر تأكيد الاستلام وتسوية الحساب.":
+      "Unable to confirm receipt and settle the account.",
     "جاري التأكيد...": "Confirming...",
     "تأكيد الاستلام والحساب": "Confirm receipt and account",
     "إنشاء طلب مرتجع": "Create return request",
     "الكمية المراد إرجاعها": "Quantity to return",
     "سبب الإرجاع": "Return reason",
-    "اكتب سببًا واضحًا، مثال: عبوة تالفة أو دواء غير مطلوب": "Enter a clear reason, such as damaged packaging or an unwanted medicine",
+    "اكتب سببًا واضحًا، مثال: عبوة تالفة أو دواء غير مطلوب":
+      "Enter a clear reason, such as damaged packaging or an unwanted medicine",
     "تعذر إرسال طلب المرتجع.": "Unable to submit the return request.",
     "إرسال طلب المرتجع": "Submit return request",
     "درجة الخطورة": "Severity",
@@ -74,13 +88,16 @@ export const supplyMessages = {
     "مرتجعات مسددة": "Settled returns",
     استدعاء: "Recall",
     "الكمية:": "Quantity:",
-    "لا يوجد مندوب ضمن الدوام، متاح، وبدون مهمة نشطة حاليًا.": "No on-shift, available representative without an active task is currently available.",
+    "لا يوجد مندوب ضمن الدوام، متاح، وبدون مهمة نشطة حاليًا.":
+      "No on-shift, available representative without an active task is currently available.",
     "إجراءات مهمة التوصيل": "Delivery task actions",
-    "حدّث حالة الشحنة بالترتيب. يتم إرفاق موقعك الحالي مع كل تحديث عند السماح باستخدام GPS.": "Update shipment status in order. Your current location is attached when GPS access is allowed.",
+    "حدّث حالة الشحنة بالترتيب. يتم إرفاق موقعك الحالي مع كل تحديث عند السماح باستخدام GPS.":
+      "Update shipment status in order. Your current location is attached when GPS access is allowed.",
     "ملاحظة عند تعذر المهمة": "Failure note",
     "إعادتها للمستودع": "Return to warehouse",
     "خدمة ما بعد الاستلام": "After-delivery service",
-    "يمكنك إنشاء طلب إرجاع لبند تم استلامه من هذا الطلب.": "You can create a return request for a delivered item in this order.",
+    "يمكنك إنشاء طلب إرجاع لبند تم استلامه من هذا الطلب.":
+      "You can create a return request for a delivered item in this order.",
     "جاري تحميل المرتجعات...": "Loading returns...",
     "تعذر تحميل المرتجعات": "Unable to load returns",
     "قيمة المرتجع:": "Return value:",
@@ -90,9 +107,11 @@ export const supplyMessages = {
     "إكمال المعالجة": "Complete processing",
     "لا توجد طلبات مرتجعات حاليًا.": "There are no return requests right now.",
     "لا توجد محطة توصيل حالية": "No current delivery stop",
-    "عندما يسند المستودع شحنة إليك سيظهر مسارها هنا تلقائيًا.": "When a warehouse assigns a shipment to you, its route will appear here automatically.",
+    "عندما يسند المستودع شحنة إليك سيظهر مسارها هنا تلقائيًا.":
+      "When a warehouse assigns a shipment to you, its route will appear here automatically.",
     "ابدأ من موقعك الحالي": "Start from your current location",
-    "فعّل GPS ليتم رسم طريق القيادة الحقيقي من مكانك إلى الصيدلية وتوثيق حركة الشحنة بدقة.": "Enable GPS to draw the actual driving route and accurately track the shipment.",
+    "فعّل GPS ليتم رسم طريق القيادة الحقيقي من مكانك إلى الصيدلية وتوثيق حركة الشحنة بدقة.":
+      "Enable GPS to draw the actual driving route and accurately track the shipment.",
     "تحديد موقعي ورسم المسار": "Locate me and draw route",
     "جاري حساب أفضل طريق...": "Calculating the best route...",
     "إعادة تحديد الموقع": "Update location",
@@ -127,20 +146,79 @@ export const supplyMessages = {
     "ملاحظة المستودع:": "Warehouse note:",
     "توقيع المستودع": "Warehouse signature",
     "توقيع الصيدلية والاستلام": "Pharmacy receipt signature",
-    "سيتم خصم الكمية من مخزون الصيدلية وإعادتها إلى دفعة المستودع. لا يمكن التراجع عن هذه الخطوة.": "The quantity will be deducted from pharmacy inventory and returned to the warehouse batch. This action cannot be undone.",
+    "سيتم خصم الكمية من مخزون الصيدلية وإعادتها إلى دفعة المستودع. لا يمكن التراجع عن هذه الخطوة.":
+      "The quantity will be deducted from pharmacy inventory and returned to the warehouse batch. This action cannot be undone.",
     "ماذا ستدفع الصيدلية الآن؟": "What will the pharmacy pay now?",
-    "يجب أن تكون الدفعة أكبر من صفر وأقل من الرصيد المتبقي.": "The payment must be greater than zero and less than the remaining balance.",
+    "يجب أن تكون الدفعة أكبر من صفر وأقل من الرصيد المتبقي.":
+      "The payment must be greater than zero and less than the remaining balance.",
     "نقدًا للمندوب": "Cash to representative",
     "تسوية من الحساب الآجل": "Settle from credit account",
-    "الفاتورة مسددة مسبقًا، سيتم تأكيد الاستلام دون تسجيل دفعة جديدة.": "The invoice is already paid; receipt will be confirmed without recording another payment.",
-    "سيتم تسليم الأدوية دون تحصيل، ويبقى كامل المبلغ دينًا في حساب الصيدلية لدى المستودع.": "Medicines will be delivered without collection and the full amount will remain due on the pharmacy account.",
-    "سبب الإرجاع يجب أن يكون 3 أحرف على الأقل.": "The return reason must contain at least 3 characters.",
-    "بعد موافقة المستودع وتسلمه للمرتجع، تُخصم الكمية من مخزون الصيدلية وتُعاد إلى دفعة المستودع عند إكمال المعالجة.": "After warehouse approval and receipt, the quantity is deducted from pharmacy inventory and restored to the warehouse batch.",
-    "سيتم إيقاف الدفعة فورًا وإشعار الصيدليات التي استلمت منها.": "The batch will be disabled immediately and affected pharmacies will be notified.",
-    "كشف مجمّع لكل صيدلية: الفواتير، المقبوضات، تسويات المرتجعات والرصيد المتبقي.": "Consolidated statement per pharmacy: invoices, collections, return settlements, and remaining balance.",
+    "الفاتورة مسددة مسبقًا، سيتم تأكيد الاستلام دون تسجيل دفعة جديدة.":
+      "The invoice is already paid; receipt will be confirmed without recording another payment.",
+    "سيتم تسليم الأدوية دون تحصيل، ويبقى كامل المبلغ دينًا في حساب الصيدلية لدى المستودع.":
+      "Medicines will be delivered without collection and the full amount will remain due on the pharmacy account.",
+    "سبب الإرجاع يجب أن يكون 3 أحرف على الأقل.":
+      "The return reason must contain at least 3 characters.",
+    "بعد موافقة المستودع وتسلمه للمرتجع، تُخصم الكمية من مخزون الصيدلية وتُعاد إلى دفعة المستودع عند إكمال المعالجة.":
+      "After warehouse approval and receipt, the quantity is deducted from pharmacy inventory and restored to the warehouse batch.",
+    "سيتم إيقاف الدفعة فورًا وإشعار الصيدليات التي استلمت منها.":
+      "The batch will be disabled immediately and affected pharmacies will be notified.",
+    "كشف مجمّع لكل صيدلية: الفواتير، المقبوضات، تسويات المرتجعات والرصيد المتبقي.":
+      "Consolidated statement per pharmacy: invoices, collections, return settlements, and remaining balance.",
     "رقم الدفعة: {{batch}}": "Batch number: {{batch}}",
     "أقل من {{remaining}}": "Less than {{remaining}}",
     "استدعاء دفعة {{batch}}": "Recall batch {{batch}}",
+    "جاري تحميل المؤشرات الرقابية...": "Loading oversight metrics...",
+    "تعذر تحميل مؤشرات التوريد": "Unable to load supply metrics",
+    "جهات التوريد الفعالة": "Active supply parties",
+    "مستودعات معتمدة ونشطة": "Approved and active warehouses",
+    "طلبات آخر 30 يومًا": "Orders in the last 30 days",
+    "شحنات قيد التنفيذ": "Shipments in progress",
+    "تعثرات التوصيل": "Delivery disruptions",
+    "فشل أو إعادة خلال 30 يومًا": "Failed or returned in the last 30 days",
+    "فواتير تحتاج متابعة": "Invoices requiring follow-up",
+    "مرتجعات مفتوحة": "Open returns",
+    "استدعاءات فعالة": "Active recalls",
+    "حالات سلامة تستوجب المتابعة": "Safety cases requiring follow-up",
+    "دفعات تحتاج انتباهًا": "Batches requiring attention",
+    "عرض رقابي يحمي الخصوصية:": "Privacy-preserving oversight view:",
+    "تظهر للأدمن المؤشرات والحالات التي تحتاج تدخلاً فقط، دون مبالغ الفواتير أو بيانات الدفع أو أسباب وملاحظات المرتجعات أو أسماء الأطراف.":
+      "Administrators see only aggregated metrics and cases requiring intervention, without invoice amounts, payment data, return reasons or notes, or party names.",
+    "نجاح التوصيل خلال 30 يومًا": "Delivery success in the last 30 days",
+    "من الشحنات المغلقة": "Of closed shipments",
+    "نسبة المرتجعات إلى الطلبات": "Returns-to-orders ratio",
+    "مؤشر جودة وليس كشفًا ماليًا":
+      "A quality metric, not a financial statement",
+    "تقرير الرقابة على التوريد": "Supply oversight report",
+    "تقرير مجمع لاتخاذ القرار، دون أسماء الأطراف أو المبالغ أو مراجع الدفع والملاحظات الخاصة.":
+      "An aggregated decision-support report without party names, amounts, payment references, or private notes.",
+    "المستودعات النشطة": "Active warehouses",
+    "الصيدليات النشطة": "Active pharmacies",
+    "فواتير متأخرة": "Overdue invoices",
+    "نسبة نجاح التوصيل": "Delivery success rate",
+    "نسبة المرتجعات": "Return rate",
+    "صحة الدفعات": "Batch health",
+    "مقارنة الدفعات السليمة مع الحالات التي تحتاج متابعة":
+      "Comparison of healthy batches with cases requiring follow-up",
+    سليمة: "Healthy",
+    "منخفضة المخزون": "Low stock",
+    "حركة التشغيل": "Operations activity",
+    "المهام الحالية التي تحتاج متابعة المستودع":
+      "Current tasks requiring warehouse follow-up",
+    "دفعات منخفضة": "Low-stock batches",
+    "تقرير تشغيل المستودع": "Warehouse operations report",
+    "تصدير مؤشرات المخزون والطلبات والتوصيل الحالية للمراجعة واتخاذ القرار.":
+      "Export current inventory, order, and delivery metrics for review and decision-making.",
+    "دفعات منخفضة المخزون": "Low-stock batches",
+    "دفعات قريبة الانتهاء": "Batches nearing expiry",
+    "قيمة المخزون": "Inventory value",
+    "الملخص الرقابي": "Oversight summary",
+    "تعذر تحميل الاقتراحات الذكية": "Unable to load smart suggestions",
+    "تعذر تنفيذ الطلب.": "Unable to complete the request.",
+    "تعذر تحميل مستودعات التوريد": "Unable to load supply warehouses",
+    "تعذر تحميل استدعاءات الدفعات": "Unable to load batch recalls",
+    "تعذر تحميل حسابات الصيدليات": "Unable to load pharmacy accounts",
+    "تعذر تحميل الفواتير": "Unable to load invoices",
   },
   tr: {
     "بانتظار مراجعة المستودع": "Depo incelemesi bekleniyor",
@@ -159,7 +237,8 @@ export const supplyMessages = {
     المرتجعات: "İadeler",
     "استدعاءات الدفعات": "Parti geri çağırmaları",
     "مخزون جميع المستودعات": "Tüm depoların stoğu",
-    "ابحث بالمستودع أو الدواء أو رقم الدفعة": "Depo, ilaç veya parti numarasına göre ara",
+    "ابحث بالمستودع أو الدواء أو رقم الدفعة":
+      "Depo, ilaç veya parti numarasına göre ara",
     "إغلاق نافذة التفاصيل": "Detay penceresini kapat",
     "تعذر رسم المسار حاليًا.": "Rota şu anda çizilemiyor.",
     "قبول طلب المرتجع": "İade talebini onayla",
@@ -248,41 +327,117 @@ export const supplyMessages = {
     "ملاحظة المستودع:": "Depo notu:",
     "توقيع المستودع": "Depo imzası",
     "توقيع الصيدلية والاستلام": "Eczane teslim imzası",
-    "تعذر قراءة موقعك. فعّل إذن الموقع لتوثيق حركة الشحنة بدقة.": "Konumunuz okunamadı. Gönderiyi doğru izlemek için konum iznini etkinleştirin.",
-    "هذا الجهاز لا يدعم تحديد الموقع.": "Bu cihaz konum hizmetlerini desteklemiyor.",
-    "تعذر تحديد موقعك. اسمح للموقع باستخدام GPS ثم أعد المحاولة.": "Konumunuz belirlenemedi. GPS erişimine izin verip tekrar deneyin.",
-    "لا توجد توصيلات مكتملة أو مغلقة بعد.": "Henüz tamamlanmış veya kapatılmış teslimat yok.",
-    "لا توجد مهام توصيل فعالة مسندة إليك حاليًا.": "Şu anda size atanmış aktif teslimat görevi yok.",
-    "عرض رقابي للكميات المحجوزة والصلاحية والتسعير دون صلاحية تعديل": "Ayrılan miktarlar, son kullanma tarihleri ve fiyatlar için salt okunur görünüm",
-    "عرض رقابي لمندوبي جميع المستودعات وحالة كل مندوب": "Tüm depo temsilcilerinin ve durumlarının salt okunur görünümü",
+    "تعذر قراءة موقعك. فعّل إذن الموقع لتوثيق حركة الشحنة بدقة.":
+      "Konumunuz okunamadı. Gönderiyi doğru izlemek için konum iznini etkinleştirin.",
+    "هذا الجهاز لا يدعم تحديد الموقع.":
+      "Bu cihaz konum hizmetlerini desteklemiyor.",
+    "تعذر تحديد موقعك. اسمح للموقع باستخدام GPS ثم أعد المحاولة.":
+      "Konumunuz belirlenemedi. GPS erişimine izin verip tekrar deneyin.",
+    "لا توجد توصيلات مكتملة أو مغلقة بعد.":
+      "Henüz tamamlanmış veya kapatılmış teslimat yok.",
+    "لا توجد مهام توصيل فعالة مسندة إليك حاليًا.":
+      "Şu anda size atanmış aktif teslimat görevi yok.",
+    "عرض رقابي للكميات المحجوزة والصلاحية والتسعير دون صلاحية تعديل":
+      "Ayrılan miktarlar, son kullanma tarihleri ve fiyatlar için salt okunur görünüm",
+    "عرض رقابي لمندوبي جميع المستودعات وحالة كل مندوب":
+      "Tüm depo temsilcilerinin ve durumlarının salt okunur görünümü",
     "ابحث بالمستودع أو المندوب أو الرمز": "Depo, temsilci veya koda göre ara",
-    "مثال: الصيدلية مغلقة أو تعذر التواصل": "Örnek: Eczane kapalı veya iletişim kurulamadı",
-    "تحقق من اعتماد الحساب وصلاحيته ثم حاول مجددًا.": "Hesap onayını ve yetkilerini kontrol edip tekrar deneyin.",
-    "وضّح للصيدلية سبب رفض المرتجع": "İadenin neden reddedildiğini eczaneye açıklayın",
-    "أضف أي تفاصيل تفيد الصيدلية": "Eczaneye yardımcı olacak ayrıntıları ekleyin",
+    "مثال: الصيدلية مغلقة أو تعذر التواصل":
+      "Örnek: Eczane kapalı veya iletişim kurulamadı",
+    "تحقق من اعتماد الحساب وصلاحيته ثم حاول مجددًا.":
+      "Hesap onayını ve yetkilerini kontrol edip tekrar deneyin.",
+    "وضّح للصيدلية سبب رفض المرتجع":
+      "İadenin neden reddedildiğini eczaneye açıklayın",
+    "أضف أي تفاصيل تفيد الصيدلية":
+      "Eczaneye yardımcı olacak ayrıntıları ekleyin",
     "تأكيد الاستلام وتسوية الحساب": "Teslimi onayla ve hesabı mahsuplaştır",
-    "تعذر تأكيد الاستلام وتسوية الحساب.": "Teslim ve hesap mahsuplaştırması onaylanamadı.",
+    "تعذر تأكيد الاستلام وتسوية الحساب.":
+      "Teslim ve hesap mahsuplaştırması onaylanamadı.",
     "تأكيد الاستلام والحساب": "Teslimi ve hesabı onayla",
-    "اكتب سببًا واضحًا، مثال: عبوة تالفة أو دواء غير مطلوب": "Açık bir neden yazın; örneğin hasarlı ambalaj veya istenmeyen ilaç",
-    "لا يوجد مندوب ضمن الدوام، متاح، وبدون مهمة نشطة حاليًا.": "Şu anda vardiyada, müsait ve aktif görevi olmayan temsilci yok.",
-    "حدّث حالة الشحنة بالترتيب. يتم إرفاق موقعك الحالي مع كل تحديث عند السماح باستخدام GPS.": "Gönderi durumunu sırayla güncelleyin. GPS izni verildiğinde konumunuz her güncellemeye eklenir.",
-    "يمكنك إنشاء طلب إرجاع لبند تم استلامه من هذا الطلب.": "Bu siparişte teslim alınan bir kalem için iade talebi oluşturabilirsiniz.",
-    "عندما يسند المستودع شحنة إليك سيظهر مسارها هنا تلقائيًا.": "Depo size bir gönderi atadığında rota burada otomatik görünür.",
-    "فعّل GPS ليتم رسم طريق القيادة الحقيقي من مكانك إلى الصيدلية وتوثيق حركة الشحنة بدقة.": "Gerçek sürüş rotasını çizmek ve gönderiyi doğru izlemek için GPS'i etkinleştirin.",
-    "سيتم خصم الكمية من مخزون الصيدلية وإعادتها إلى دفعة المستودع. لا يمكن التراجع عن هذه الخطوة.": "Miktar eczane stoğundan düşülüp depo partisine iade edilir. Bu işlem geri alınamaz.",
+    "اكتب سببًا واضحًا، مثال: عبوة تالفة أو دواء غير مطلوب":
+      "Açık bir neden yazın; örneğin hasarlı ambalaj veya istenmeyen ilaç",
+    "لا يوجد مندوب ضمن الدوام، متاح، وبدون مهمة نشطة حاليًا.":
+      "Şu anda vardiyada, müsait ve aktif görevi olmayan temsilci yok.",
+    "حدّث حالة الشحنة بالترتيب. يتم إرفاق موقعك الحالي مع كل تحديث عند السماح باستخدام GPS.":
+      "Gönderi durumunu sırayla güncelleyin. GPS izni verildiğinde konumunuz her güncellemeye eklenir.",
+    "يمكنك إنشاء طلب إرجاع لبند تم استلامه من هذا الطلب.":
+      "Bu siparişte teslim alınan bir kalem için iade talebi oluşturabilirsiniz.",
+    "عندما يسند المستودع شحنة إليك سيظهر مسارها هنا تلقائيًا.":
+      "Depo size bir gönderi atadığında rota burada otomatik görünür.",
+    "فعّل GPS ليتم رسم طريق القيادة الحقيقي من مكانك إلى الصيدلية وتوثيق حركة الشحنة بدقة.":
+      "Gerçek sürüş rotasını çizmek ve gönderiyi doğru izlemek için GPS'i etkinleştirin.",
+    "سيتم خصم الكمية من مخزون الصيدلية وإعادتها إلى دفعة المستودع. لا يمكن التراجع عن هذه الخطوة.":
+      "Miktar eczane stoğundan düşülüp depo partisine iade edilir. Bu işlem geri alınamaz.",
     "ماذا ستدفع الصيدلية الآن؟": "Eczane şimdi ne ödeyecek?",
-    "يجب أن تكون الدفعة أكبر من صفر وأقل من الرصيد المتبقي.": "Ödeme sıfırdan büyük ve kalan bakiyeden küçük olmalıdır.",
+    "يجب أن تكون الدفعة أكبر من صفر وأقل من الرصيد المتبقي.":
+      "Ödeme sıfırdan büyük ve kalan bakiyeden küçük olmalıdır.",
     "نقدًا للمندوب": "Temsilciye nakit",
     "تسوية من الحساب الآجل": "Vadeli hesaptan mahsuplaştır",
-    "الفاتورة مسددة مسبقًا، سيتم تأكيد الاستلام دون تسجيل دفعة جديدة.": "Fatura önceden ödendi; yeni ödeme kaydedilmeden teslim onaylanacak.",
-    "سيتم تسليم الأدوية دون تحصيل، ويبقى كامل المبلغ دينًا في حساب الصيدلية لدى المستودع.": "İlaçlar tahsilat yapılmadan teslim edilir ve tutarın tamamı eczane hesabında borç kalır.",
-    "سبب الإرجاع يجب أن يكون 3 أحرف على الأقل.": "İade nedeni en az 3 karakter olmalıdır.",
-    "بعد موافقة المستودع وتسلمه للمرتجع، تُخصم الكمية من مخزون الصيدلية وتُعاد إلى دفعة المستودع عند إكمال المعالجة.": "Depo onayı ve tesliminden sonra miktar eczane stoğundan düşülür ve işlem tamamlandığında depo partisine eklenir.",
-    "سيتم إيقاف الدفعة فورًا وإشعار الصيدليات التي استلمت منها.": "Parti hemen devre dışı bırakılır ve etkilenen eczanelere bildirim gönderilir.",
-    "كشف مجمّع لكل صيدلية: الفواتير، المقبوضات، تسويات المرتجعات والرصيد المتبقي.": "Her eczane için faturalar, tahsilatlar, iade mahsupları ve kalan bakiyeyi içeren özet döküm.",
+    "الفاتورة مسددة مسبقًا، سيتم تأكيد الاستلام دون تسجيل دفعة جديدة.":
+      "Fatura önceden ödendi; yeni ödeme kaydedilmeden teslim onaylanacak.",
+    "سيتم تسليم الأدوية دون تحصيل، ويبقى كامل المبلغ دينًا في حساب الصيدلية لدى المستودع.":
+      "İlaçlar tahsilat yapılmadan teslim edilir ve tutarın tamamı eczane hesabında borç kalır.",
+    "سبب الإرجاع يجب أن يكون 3 أحرف على الأقل.":
+      "İade nedeni en az 3 karakter olmalıdır.",
+    "بعد موافقة المستودع وتسلمه للمرتجع، تُخصم الكمية من مخزون الصيدلية وتُعاد إلى دفعة المستودع عند إكمال المعالجة.":
+      "Depo onayı ve tesliminden sonra miktar eczane stoğundan düşülür ve işlem tamamlandığında depo partisine eklenir.",
+    "سيتم إيقاف الدفعة فورًا وإشعار الصيدليات التي استلمت منها.":
+      "Parti hemen devre dışı bırakılır ve etkilenen eczanelere bildirim gönderilir.",
+    "كشف مجمّع لكل صيدلية: الفواتير، المقبوضات، تسويات المرتجعات والرصيد المتبقي.":
+      "Her eczane için faturalar, tahsilatlar, iade mahsupları ve kalan bakiyeyi içeren özet döküm.",
     "لا توجد بنود متاحة في هذه النسخة.": "Bu nüshada kalem bulunmuyor.",
     "رقم الدفعة: {{batch}}": "Parti numarası: {{batch}}",
     "أقل من {{remaining}}": "{{remaining}} değerinden az",
     "استدعاء دفعة {{batch}}": "{{batch}} partisini geri çağır",
+    "جاري تحميل المؤشرات الرقابية...": "Denetim göstergeleri yükleniyor...",
+    "تعذر تحميل مؤشرات التوريد": "Tedarik göstergeleri yüklenemedi",
+    "جهات التوريد الفعالة": "Aktif tedarik tarafları",
+    "مستودعات معتمدة ونشطة": "Onaylı ve aktif depolar",
+    "طلبات آخر 30 يومًا": "Son 30 gündeki siparişler",
+    "شحنات قيد التنفيذ": "Devam eden gönderiler",
+    "تعثرات التوصيل": "Teslimat aksaklıkları",
+    "فشل أو إعادة خلال 30 يومًا": "Son 30 günde başarısız veya iade edilen",
+    "فواتير تحتاج متابعة": "Takip gerektiren faturalar",
+    "مرتجعات مفتوحة": "Açık iadeler",
+    "استدعاءات فعالة": "Aktif geri çağırmalar",
+    "حالات سلامة تستوجب المتابعة": "Takip gerektiren güvenlik vakaları",
+    "دفعات تحتاج انتباهًا": "Dikkat gerektiren partiler",
+    "عرض رقابي يحمي الخصوصية:": "Gizliliği koruyan denetim görünümü:",
+    "تظهر للأدمن المؤشرات والحالات التي تحتاج تدخلاً فقط، دون مبالغ الفواتير أو بيانات الدفع أو أسباب وملاحظات المرتجعات أو أسماء الأطراف.":
+      "Yöneticiler yalnızca müdahale gerektiren toplu göstergeleri ve vakaları görür; fatura tutarları, ödeme verileri, iade nedenleri ve notları veya taraf adları gösterilmez.",
+    "نجاح التوصيل خلال 30 يومًا": "Son 30 gündeki teslimat başarısı",
+    "من الشحنات المغلقة": "Kapatılan gönderilerden",
+    "نسبة المرتجعات إلى الطلبات": "İadelerin siparişlere oranı",
+    "مؤشر جودة وليس كشفًا ماليًا": "Mali döküm değil, kalite göstergesi",
+    "تقرير الرقابة على التوريد": "Tedarik denetim raporu",
+    "تقرير مجمع لاتخاذ القرار، دون أسماء الأطراف أو المبالغ أو مراجع الدفع والملاحظات الخاصة.":
+      "Taraf adları, tutarlar, ödeme referansları veya özel notlar içermeyen toplu karar destek raporu.",
+    "المستودعات النشطة": "Aktif depolar",
+    "الصيدليات النشطة": "Aktif eczaneler",
+    "فواتير متأخرة": "Gecikmiş faturalar",
+    "نسبة نجاح التوصيل": "Teslimat başarı oranı",
+    "نسبة المرتجعات": "İade oranı",
+    "صحة الدفعات": "Parti sağlığı",
+    "مقارنة الدفعات السليمة مع الحالات التي تحتاج متابعة":
+      "Sağlıklı partiler ile takip gerektiren vakaların karşılaştırması",
+    سليمة: "Sağlıklı",
+    "منخفضة المخزون": "Düşük stok",
+    "حركة التشغيل": "Operasyon hareketi",
+    "المهام الحالية التي تحتاج متابعة المستودع":
+      "Depo takibi gerektiren mevcut görevler",
+    "دفعات منخفضة": "Düşük stoklu partiler",
+    "تقرير تشغيل المستودع": "Depo operasyon raporu",
+    "تصدير مؤشرات المخزون والطلبات والتوصيل الحالية للمراجعة واتخاذ القرار.":
+      "İnceleme ve karar alma için mevcut stok, sipariş ve teslimat göstergelerini dışa aktarın.",
+    "دفعات منخفضة المخزون": "Düşük stoklu partiler",
+    "دفعات قريبة الانتهاء": "Son kullanma tarihi yaklaşan partiler",
+    "قيمة المخزون": "Stok değeri",
+    "الملخص الرقابي": "Denetim özeti",
+    "تعذر تحميل الاقتراحات الذكية": "Akıllı öneriler yüklenemedi",
+    "تعذر تنفيذ الطلب.": "İstek tamamlanamadı.",
+    "تعذر تحميل مستودعات التوريد": "Tedarik depoları yüklenemedi",
+    "تعذر تحميل استدعاءات الدفعات": "Parti geri çağırmaları yüklenemedi",
+    "تعذر تحميل حسابات الصيدليات": "Eczane hesapları yüklenemedi",
+    "تعذر تحميل الفواتير": "Faturalar yüklenemedi",
   },
 };
