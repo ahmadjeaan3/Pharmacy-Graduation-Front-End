@@ -22,6 +22,11 @@ const retrievalConfidenceLabel = {
 
 export function ChatReplyResults({ reply, onPrompt }) {
   if (!reply) return null;
+  const normalizedConfidence = String(
+    reply.aiRetrievalConfidence || "",
+  ).toLowerCase();
+  const hasRetrievalConfidence =
+    normalizedConfidence && normalizedConfidence !== "none";
   return (
     <div className="ms-12 max-w-3xl space-y-3">
       <span className="inline-flex rounded-full bg-violet-50 px-3 py-1 text-[10px] font-black text-violet-700">
@@ -32,12 +37,11 @@ export function ChatReplyResults({ reply, onPrompt }) {
           <span className="rounded-full border border-emerald-100 bg-emerald-50 px-2.5 py-1 text-emerald-700">
             مساعد صيدلاني ذكي
           </span>
-          {reply.aiRetrievalConfidence && (
+          {hasRetrievalConfidence && (
             <span className="rounded-full border border-[#174b57]/10 bg-white px-2.5 py-1">
               موثوقية الاسترجاع:{" "}
-              {retrievalConfidenceLabel[
-                String(reply.aiRetrievalConfidence).toLowerCase()
-              ] || reply.aiRetrievalConfidence}
+              {retrievalConfidenceLabel[normalizedConfidence] ||
+                reply.aiRetrievalConfidence}
             </span>
           )}
         </div>

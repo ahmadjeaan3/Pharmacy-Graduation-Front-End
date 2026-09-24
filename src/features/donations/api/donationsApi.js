@@ -33,8 +33,22 @@ export const createDonationOffer = async (payload) => {
   });
   return (await apiClient.post("/donations/offers", form)).data;
 };
+
+// Donation image links come from the API as `/api/donation-images/{id}`,
+// while apiClient.baseURL already ends with `/api`. Axios concatenates those
+// values and would otherwise request `/api/api/donation-images/{id}`.
+export const normalizeDonationImageUrl = (url) => {
+  const normalized = String(url || "").trim();
+  if (!normalized || /^https?:\/\//i.test(normalized)) return normalized;
+  return normalized.replace(/^\/?api(?=\/)/i, "");
+};
+
 export const getDonationImage = async (url) =>
-  (await apiClient.get(url, { responseType: "blob" })).data;
+  (
+    await apiClient.get(normalizeDonationImageUrl(url), {
+      responseType: "blob",
+    })
+  ).data;
 export const getVerificationPharmacies = async () =>
   (await apiClient.get("/donations/verification-pharmacies")).data;
 export const getMyDonationOffers = async (params = {}) =>
