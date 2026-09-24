@@ -168,7 +168,7 @@ export function OrganizationCampaignsPage() {
     onError: (error) =>
       setNotice({
         ok: false,
-        text: error?.message || getApiErrorMessage(error),
+        text: getApiErrorMessage(error),
       }),
   });
 
@@ -193,7 +193,7 @@ export function OrganizationCampaignsPage() {
     onError: (error) =>
       setNotice({
         ok: false,
-        text: error?.message || getApiErrorMessage(error),
+        text: getApiErrorMessage(error),
       }),
   });
 
@@ -313,9 +313,12 @@ export function OrganizationCampaignsPage() {
 
   const handleDelete = (campaign) => {
     const confirmed = window.confirm(
-      t('هل أنت متأكد من حذف الحملة "{{title}}"؟', {
-        title: campaign.title,
-      }),
+      t(
+        'هل أنت متأكد من حذف الحملة "{{title}}"؟\nسيتم الاحتفاظ بعروض التبرع وطلبات المساعدة السابقة دون ربطها بالحملة.',
+        {
+          title: campaign.title,
+        },
+      ),
     );
 
     if (!confirmed) return;

@@ -31,7 +31,7 @@ import {
   ReportActions,
 } from "../../../shared/components/DashboardInsights";
 
-const PHARMACY_HERO_IMAGE = "/assets/app/pharmacy.png";
+const PHARMACY_HERO_IMAGE = `${import.meta.env.BASE_URL}assets/app/pharmacy.png`;
 
 const statTones = {
   primary: "bg-[#EAF4F3] text-[#216474]",

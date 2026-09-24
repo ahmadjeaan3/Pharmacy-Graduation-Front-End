@@ -125,6 +125,11 @@ function translateServerMessage(message) {
     return "تعذر العثور على ملف المنظمة المرتبط بالحساب.";
   if (normalized.includes("donation campaign was not found"))
     return "تعذر العثور على الحملة المطلوبة.";
+  if (
+    normalized.includes("campaign cannot be deleted") &&
+    normalized.includes("related")
+  )
+    return "لا يمكن حذف حملة مرتبطة بسجلات سابقة. غيّر حالتها إلى مغلقة أو ملغاة.";
   if (normalized.includes("donation offer was not found"))
     return "تعذر العثور على عرض التبرع المطلوب.";
   if (normalized.includes("donation offer can no longer be reviewed"))
@@ -139,6 +144,18 @@ function translateServerMessage(message) {
     return "نوع مستند التحقق المحدد غير مدعوم.";
   if (normalized.includes("only pdf, png, jpg"))
     return "الصيغ المقبولة للمستند هي PDF وPNG وJPG فقط.";
+  if (normalized.includes("prescription file is required"))
+    return "اختر صورة واضحة للوصفة أو ملف PDF ثم أعد المحاولة.";
+  if (
+    normalized.includes("prescription reading service") ||
+    normalized.includes("خدمة قراءة الوصفة غير متاحة")
+  )
+    return "خدمة قراءة الوصفة غير متاحة حاليًا. تحقق من تشغيل خدمة التحليل الذكي ثم أعد المحاولة.";
+  if (
+    normalized.includes("prescription is not clear") ||
+    normalized.includes("الوصفة غير واضحة")
+  )
+    return "الصورة غير واضحة أو الوصفة غير مطبوعة. التقط صورة مستقيمة بإضاءة جيدة ثم أعد المحاولة.";
   if (normalized.includes("verification document size"))
     return "يجب ألا يتجاوز حجم مستند التحقق 10 ميغابايت.";
   if (normalized.includes("chat session") && normalized.includes("not found"))

@@ -352,6 +352,15 @@ export function OrganizationDonationOffersPage() {
                   payload,
                 });
               }}
+              onImageDeleted={async () => {
+                setNotice({
+                  ok: true,
+                  text: t("تم حذف صورة العرض مع الاحتفاظ ببياناته."),
+                });
+                await client.invalidateQueries({
+                  queryKey: ["organization", "offers"],
+                });
+              }}
             />
           ))}
         </section>
@@ -391,6 +400,7 @@ function OfferCard({
   offer,
   pending,
   onReview,
+  onImageDeleted,
   t,
   direction,
   currentLanguage,
@@ -442,7 +452,12 @@ function OfferCard({
       </div>
 
       <div className="p-5">
-        <ProtectedDonationImage url={offer.donationImageUrl} />
+        <ProtectedDonationImage
+          url={offer.donationImageUrl}
+          offerId={offer.offerId}
+          canDelete
+          onDeleted={onImageDeleted}
+        />
 
         <div className="grid gap-3 sm:grid-cols-2">
           <InfoCard

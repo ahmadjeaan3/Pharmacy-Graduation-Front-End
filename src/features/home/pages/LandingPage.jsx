@@ -1489,16 +1489,6 @@ export function LandingPage() {
             sm:justify-start
           "
                 >
-                  {/* ================= SECONDARY ================= */}
-
-                  <Link
-                    to="/urgent-request"
-                    className="ml-button inline-flex h-[56px] w-full items-center justify-center gap-2 rounded-lg bg-[#cf183f] px-5 text-[17px] font-bold text-white shadow-[0_14px_30px_rgba(207,24,63,.2)] transition hover:bg-[#b91337] min-[420px]:w-auto"
-                  >
-                    <BellRing className="h-5 w-5" />
-                    <span>{t("أحتاج دواء بشكل عاجل")}</span>
-                  </Link>
-
                   <a
                     href="#features"
                     dir="ltr"

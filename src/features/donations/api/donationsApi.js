@@ -49,6 +49,8 @@ export const getDonationImage = async (url) =>
       responseType: "blob",
     })
   ).data;
+export const deleteDonationImage = async (offerId) =>
+  (await apiClient.delete(`/donation-images/${offerId}`)).data;
 export const getVerificationPharmacies = async () =>
   (await apiClient.get("/donations/verification-pharmacies")).data;
 export const getMyDonationOffers = async (params = {}) =>

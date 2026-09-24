@@ -29,7 +29,7 @@ import {
   getLanguageDirection,
   normalizeLanguage,
 } from "../../../shared/i18n/i18n";
-import { Brand } from "../../../shared/components/Brand";
+import { Brand, BrandMark } from "../../../shared/components/Brand";
 import { ProfileAvatar } from "../../../shared/components/ProfileAvatar";
 import { useAuth } from "../../auth/hooks/useAuth";
 import { accountKeys, getAccountProfile } from "../../settings/api/accountApi";
@@ -839,10 +839,8 @@ export function DashboardLayout() {
               aria-label={t("الرئيسية")}
               className="flex items-center justify-center"
             >
-              <img
-                src="/assets/app/brand/dawaai-logo-512.png"
+              <BrandMark
                 alt="Dawaai"
-                draggable={false}
                 className="h-[72px] w-auto select-none object-contain"
               />
             </NavLink>

@@ -14,7 +14,7 @@ import {
 import { Link } from "react-router-dom";
 import { QRCodeSVG } from "qrcode.react";
 import { getApiErrorMessage } from "../../../shared/api/errors";
-const HEALTH_HERO_BACKGROUND = "/assets/app/home/hero_search.png";
+const HEALTH_HERO_BACKGROUND = `${import.meta.env.BASE_URL}assets/app/home/hero_search.png`;
 import { MedicineAlternativesButton } from "../../intelligence/components/MedicineAlternativesButton";
 import {
   activatePrescriptionReminders,
@@ -35,7 +35,64 @@ const labels = {
   Cancelled: "ملغاة",
 };
 
-const SMART_PRESCRIPTION_IMAGE = "/assets/app/home/smart-prescription.png";
+const SMART_PRESCRIPTION_IMAGE = `${import.meta.env.BASE_URL}assets/app/home/smart-prescription.png`;
+const PRESCRIPTION_FILE_TYPES = new Map([
+  ["jpg", "image/jpeg"],
+  ["jpeg", "image/jpeg"],
+  ["png", "image/png"],
+  ["pdf", "application/pdf"],
+]);
+const MAX_PRESCRIPTION_FILE_SIZE = 10 * 1024 * 1024;
+
+function getPrescriptionContentType(file) {
+  const extension = file.name.split(".").pop()?.trim().toLowerCase() || "";
+  const expectedType = PRESCRIPTION_FILE_TYPES.get(extension);
+  const reportedType = file.type?.trim().toLowerCase();
+
+  if (!expectedType) return null;
+  if (!reportedType || reportedType === "application/octet-stream") {
+    return expectedType;
+  }
+  if (reportedType === "image/jpg" && expectedType === "image/jpeg") {
+    return expectedType;
+  }
+  return reportedType === expectedType ? expectedType : null;
+}
+
+async function preparePrescriptionFile(selected) {
+  if (!selected?.size) throw new Error("الملف فارغ أو تعذر قراءته.");
+  if (selected.size > MAX_PRESCRIPTION_FILE_SIZE) {
+    throw new Error("حجم الملف أكبر من 10 MB.");
+  }
+
+  const contentType = getPrescriptionContentType(selected);
+  if (!contentType) {
+    throw new Error("اختر صورة JPG أو PNG أو ملف PDF فقط.");
+  }
+
+  const header = new Uint8Array(await selected.slice(0, 8).arrayBuffer());
+  const isJpeg = header[0] === 0xff && header[1] === 0xd8;
+  const isPng =
+    header[0] === 0x89 &&
+    header[1] === 0x50 &&
+    header[2] === 0x4e &&
+    header[3] === 0x47;
+  const isPdf = String.fromCharCode(...header.slice(0, 5)) === "%PDF-";
+  const signatureMatches =
+    (contentType === "image/jpeg" && isJpeg) ||
+    (contentType === "image/png" && isPng) ||
+    (contentType === "application/pdf" && isPdf);
+
+  if (!signatureMatches) {
+    throw new Error("محتوى الملف لا يطابق صيغته. اختر ملفًا أصليًا غير تالف.");
+  }
+
+  if (selected.type === contentType) return selected;
+  return new File([selected], selected.name, {
+    type: contentType,
+    lastModified: selected.lastModified,
+  });
+}
 
 export function SmartPrescriptionsPage() {
   const client = useQueryClient();
@@ -69,21 +126,16 @@ export function SmartPrescriptionsPage() {
       if (fileInputRef.current) fileInputRef.current.value = "";
     },
   });
-  const selectFile = (selected) => {
+  const selectFile = async (selected) => {
     setFileError("");
     if (!selected) return;
-    const allowed = ["image/jpeg", "image/png", "application/pdf"];
-    if (!allowed.includes(selected.type)) {
+    try {
+      setFile(await preparePrescriptionFile(selected));
+    } catch (error) {
       setFile(null);
-      setFileError("اختر صورة JPG أو PNG أو ملف PDF فقط.");
-      return;
+      setFileError(error.message || "تعذر قراءة الملف المختار.");
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
-    if (selected.size > 10 * 1024 * 1024) {
-      setFile(null);
-      setFileError("حجم الملف أكبر من 10 MB.");
-      return;
-    }
-    setFile(selected);
   };
   const reserve = useMutation({
     mutationFn: ({ id, pharmacyId }) => reservePrescription(id, pharmacyId),
@@ -108,76 +160,76 @@ export function SmartPrescriptionsPage() {
     analyze.error || reserve.error || cancel.error || reminders.error;
   return (
     <div className="space-y-6 pb-4">
-     <section 
-  className="relative isolate overflow-hidden bg-[#0D7586] text-white" 
-  style={{ 
-    width: "100vw", 
-    marginInline: "calc(50% - 50vw)", 
-    marginTop: "-24px", 
-  }} 
-> 
-  {/* نفس خلفية هيرو الملف الصحي */}
-  <img 
-    src={HEALTH_HERO_BACKGROUND} 
-    alt="" 
-    aria-hidden="true" 
-    draggable={false} 
-    className="
+      <section
+        className="relative isolate overflow-hidden bg-[#0D7586] text-white"
+        style={{
+          width: "100vw",
+          marginInline: "calc(50% - 50vw)",
+          marginTop: "-24px",
+        }}
+      >
+        {/* نفس خلفية هيرو الملف الصحي */}
+        <img
+          src={HEALTH_HERO_BACKGROUND}
+          alt=""
+          aria-hidden="true"
+          draggable={false}
+          className="
       absolute inset-0 -z-20
       h-full w-full
       select-none object-cover object-center
       opacity-80
-    " 
-  /> 
+    "
+        />
 
-  {/* Overlay */}
-  <div 
-    aria-hidden="true" 
-    className="
+        {/* Overlay */}
+        <div
+          aria-hidden="true"
+          className="
       absolute inset-0 -z-10
       bg-[linear-gradient(90deg,rgba(0,60,73,.18),rgba(3,110,126,.58),rgba(0,63,76,.44))]
-    " 
-  /> 
+    "
+        />
 
-  <div className="mx-auto grid min-h-[330px] w-full max-w-[1440px] items-center gap-4 px-5 py-8 sm:px-8 lg:grid-cols-[minmax(0,1fr)_420px] lg:px-12 lg:py-10"> 
-    <div className="order-1 text-center lg:text-right"> 
-      <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-bold text-white/90 backdrop-blur-sm"> 
-        <Sparkles size={15} /> الوصفة الذكية 
-      </span> 
+        <div className="mx-auto grid min-h-[330px] w-full max-w-[1440px] items-center gap-4 px-5 py-8 sm:px-8 lg:grid-cols-[minmax(0,1fr)_420px] lg:px-12 lg:py-10">
+          <div className="order-1 text-center lg:text-right">
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-bold text-white/90 backdrop-blur-sm">
+              <Sparkles size={15} /> الوصفة الذكية
+            </span>
 
-      <h1 className="mx-auto mt-4 max-w-[700px] text-3xl font-black leading-[1.35] sm:text-4xl lg:mx-0 lg:text-[35px]"> 
-        ارفع وصفتك المطبوعة، ودعنا نقرأها لك 
-      </h1> 
+            <h1 className="mx-auto mt-4 max-w-[700px] text-3xl font-black leading-[1.35] sm:text-4xl lg:mx-0 lg:text-[35px]">
+              ارفع وصفتك المطبوعة، ودعنا نقرأها لك
+            </h1>
 
-      <p className="mx-auto mt-3 max-w-[680px] text-sm leading-7 text-white/75 lg:mx-0"> 
-        حمّل صورة واضحة أو ملف PDF، وسنستخرج الأدوية ونساعدك في إيجادها 
-        وحجزها من الصيدليات القريبة. 
-      </p> 
+            <p className="mx-auto mt-3 max-w-[680px] text-sm leading-7 text-white/75 lg:mx-0">
+              حمّل صورة واضحة أو ملف PDF، وسنستخرج الأدوية ونساعدك في إيجادها
+              وحجزها من الصيدليات القريبة.
+            </p>
 
-      <div className="mt-5 flex flex-wrap justify-center gap-3 text-xs font-bold text-white/85 lg:justify-start"> 
-        <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-2"> 
-          <ShieldCheck size={15} /> قراءة آمنة وواضحة 
-        </span> 
+            <div className="mt-5 flex flex-wrap justify-center gap-3 text-xs font-bold text-white/85 lg:justify-start">
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-2">
+                <ShieldCheck size={15} /> قراءة آمنة وواضحة
+              </span>
 
-        <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-2"> 
-          <FileImage size={15} /> JPG، PNG، PDF 
-        </span> 
-      </div> 
-    </div> 
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-2">
+                <FileImage size={15} /> JPG، PNG، PDF
+              </span>
+            </div>
+          </div>
 
-    <div className="order-2 flex items-center justify-center lg:justify-end"> 
-      <div className="relative h-[190px] w-full max-w-[320px] sm:h-[220px] lg:h-[270px] lg:max-w-[390px]"> 
-        <div className="absolute inset-x-8 bottom-2 h-16 rounded-full bg-cyan-200/30 blur-2xl" /> 
+          <div className="order-2 flex items-center justify-center lg:justify-end">
+            <div className="relative h-[190px] w-full max-w-[320px] sm:h-[220px] lg:h-[270px] lg:max-w-[390px]">
+              <div className="absolute inset-x-8 bottom-2 h-16 rounded-full bg-cyan-200/30 blur-2xl" />
 
-        <img 
-          src={SMART_PRESCRIPTION_IMAGE} 
-          alt="تحليل الوصفة الطبية بذكاء" 
-          className="relative h-full w-full object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,.22)]" 
-        /> 
-      </div> 
-    </div> 
-  </div> 
-</section>
+              <img
+                src={SMART_PRESCRIPTION_IMAGE}
+                alt="تحليل الوصفة الطبية بذكاء"
+                className="relative h-full w-full object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,.22)]"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
 
       <section className="surface mx-auto max-w-[1440px] p-4 sm:p-6">
         <div className="mb-4 text-center sm:text-right">
@@ -209,7 +261,7 @@ export function SmartPrescriptionsPage() {
           className="sr-only"
           type="file"
           accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
-          onChange={(event) => selectFile(event.target.files?.[0])}
+          onChange={(event) => void selectFile(event.target.files?.[0])}
         />
         <div className="mt-4 flex flex-col-reverse gap-3 sm:flex-row sm:items-center">
           {file ? (

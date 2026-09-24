@@ -7,7 +7,7 @@ export const prescriptionKeys = {
 };
 export async function analyzePrescription(file) {
   const body = new FormData();
-  body.append("file", file);
+  body.append("file", file, file.name);
   return (
     await apiClient.post("/prescriptions/analyze", body, {
       timeout: 120_000,
